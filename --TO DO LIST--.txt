@@ -6,7 +6,7 @@
 4 autumn themed
 
 =====LEVEL PROGRESS=====
-Level 80 - TBD
+Level 80 - no name yet [2v2] [Texture - 2] - ONGOING ((LEVEL2002 FOR SP))
 Level 82 - TBD
 Level 83 - Multi-Duel [3 Humans vs 3 AI] [Texture - 6] - ONGOING ((LEVEL2001 FOR SP))
 Level 84 - TBD
@@ -23,6 +23,10 @@ Level 131 - TBD
 Level 133 - TBD
 Level 134 - TBD
 
+=====TO DO=====
+-- make sure all textures are alpha-converted to 8p
+-- create custom bushes or similar stuff
+-- scenery stuff season-specific
 
 =====ISSUES=====
 Beta specific issues:

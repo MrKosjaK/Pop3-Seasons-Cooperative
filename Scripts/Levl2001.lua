@@ -1,9 +1,11 @@
 -- Includes
 include("Common.lua");
 
+G_NUM_OF_HUMANS_FOR_THIS_LEVEL = 3;
+
 function _OnLevelInit(level_id)
   -- Green stuff
-	AI_Initialize(TRIBE_GREEN);
+  AI_Initialize(TRIBE_GREEN);
 
   set_player_can_cast(M_SPELL_BLAST, TRIBE_GREEN);
   set_player_can_cast(M_SPELL_CONVERT_WILD, TRIBE_GREEN);

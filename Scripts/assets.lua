@@ -6,6 +6,18 @@ gns = gnsi()
 sti = spells_type_info()
 --------------------------------------------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------------------------------
+--is player human
+function isHuman(player)
+	return getPlayer(player).PlayerType == HUMAN_PLAYER
+end
+
+--is player alive
+function isAlive(player)
+	return GetPop(player) > 0
+end
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------
 --pow 2 turn
 function every2Pow(a)
   if (_gsi.Counts.GameTurn % 2^a == 0) then
@@ -96,6 +108,18 @@ function randomItemFromTable(t)
 
   local idx = math.random(1, #t)
   return t[idx], idx
+end
+
+--remove index from table
+function removeFromTable(tbl, value)
+	if tbl ~= nil then
+		for k,v in ipairs(tbl) do
+			if value == v then
+				table.remove(tbl,k)
+				break
+			end
+		end
+	end
 end
 --------------------------------------------------------------------------------------------------------------------------------------------
 --quick shaman nil
