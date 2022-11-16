@@ -39,10 +39,10 @@ function _OnTurn(turn)
 
 		-- Don't build the drum tower
 		AI_SetMainDrumTower(TRIBE_RED, false, 0, 0);
-		
+
 		G_INIT = false;
 	end
-	
+
 	Sulk(TRIBE_RED,6);
 end
 
