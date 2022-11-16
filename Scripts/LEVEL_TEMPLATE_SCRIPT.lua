@@ -6,21 +6,19 @@ function _OnLevelInit(level_id)
 end
 
 function _OnTurn(turn)
-	Sulk(TRIBE_RED,6);
 end
-
-
-function _OnPlayerDeath(pn)
-end
-
-
 
 function _OnCreateThing(t)
 end
 
-
-function _OnSave(sd)
+function _OnPlayerDeath(pn)
 end
 
-function _OnLoad(ld)
+function _OnFrame(w,h,guiW)
+end
+
+function _OnKeyUp(k)
+end
+
+function _OnKeyDown(k)
 end

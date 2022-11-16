@@ -23,15 +23,12 @@ import(Module_String);
 import(Module_System);
 import(Module_Table);
 
-
 -- Includes
 include("assets.lua"); -- Misc useful tools
 include("PSHelpers.lua"); -- PopScript helpers
 
 -- Global variables
 G_GAMESTAGE = 0; --game always starts in early-game stage
-
--- DOESN'T NEED SAVING
 G_GAME_RESYNC = false;
 G_PLR_PTR =
 {
