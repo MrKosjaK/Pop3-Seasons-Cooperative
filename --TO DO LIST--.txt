@@ -8,7 +8,7 @@
 =====LEVEL PROGRESS=====
 Level 80 - TBD
 Level 82 - TBD
-Level 83 - TBD
+Level 83 - Multi-Duel [3 Humans vs 3 AI] [Texture - 6] - ONGOING
 Level 84 - TBD
 Level 94 - TBD
 Level 100 - TBD
