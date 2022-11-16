@@ -25,20 +25,17 @@ import(Module_Table);
 
 
 -- Includes
-include("assets.lua") -- Misc useful tools
-include("PSHelpers.lua") -- PopScript helpers
+include("assets.lua"); -- Misc useful tools
+include("PSHelpers.lua"); -- PopScript helpers
 
 -- Global variables
-
--- NEED SAVING
 G_GAMESTAGE = 0; --game always starts in early-game stage
 G_INIT = true;
 
 -- DOESN'T NEED SAVING
-G_GAME_LOADED = false;
-G_LEVEL = gns.StartLevelNumber;
-G_PLAYER = 0
-G_PLR_PTR = {
+G_GAME_RESYNC = false;
+G_PLR_PTR =
+{
   [0] = getPlayer(TRIBE_BLUE),
   getPlayer(TRIBE_RED),
   getPlayer(TRIBE_YELLOW),
@@ -47,7 +44,9 @@ G_PLR_PTR = {
   getPlayer(TRIBE_PINK),
   getPlayer(TRIBE_BLACK),
   getPlayer(TRIBE_ORANGE),
-}
+};
+
+-- CONSTANT POINTERS
 G_SPELL_CONST = spells_type_info();
 G_BLDG_CONST = building_type_info();
 G_ENCY = encyclopedia_info();
