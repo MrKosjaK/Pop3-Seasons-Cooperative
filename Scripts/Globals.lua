@@ -30,7 +30,6 @@ include("PSHelpers.lua"); -- PopScript helpers
 
 -- Global variables
 G_GAMESTAGE = 0; --game always starts in early-game stage
-G_INIT = true;
 
 -- DOESN'T NEED SAVING
 G_GAME_RESYNC = false;

@@ -7,6 +7,12 @@ enable_feature(F_MINIMAP_ENEMIES); -- who the hell plays with minimap off?
 enable_feature(F_WILD_NO_RESPAWN); -- disable wild respawning, oh boy.
 
 
+
+function OnLevelInit(level_id)
+	if _OnLevelInit ~= nil then _OnLevelInit(level_id); end
+end
+
+
 function OnTurn()
 	if _OnTurn ~= nil then _OnTurn(getTurn()) end
 end
