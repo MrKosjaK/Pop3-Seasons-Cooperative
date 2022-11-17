@@ -73,14 +73,14 @@ function OnFrame()
 	if _OnFrame ~= nil then _OnFrame(w,h,guiW) end
 
 	-- tab shows/hides humans info
+	PopSetFont(3);
+	local box = 16;
 	for i = 0, #G_HUMANS do
 		if _gnsi.PlayerNum == i then
 			if L_SHOW_POPS then
-				PopSetFont(3);
-				local box = 16--math.floor(w/32)
 				for k,v in ipairs(G_HUMANS) do
 					local clr = 4 if v == 1 then clr = 2 elseif v == 2 then clr = 5 elseif v == 3 then clr = 3 end
-					local str = "" .. get_player_name(v,false) .. ": " .. tostring(GetPop(v)) --change to true for online(?)
+					local str = "" .. get_player_name(v,false) .. ":  " .. tostring(GetPop(v)) --change to true for online(?)
 					LbDraw_Text(w - 4 - (string_width(str)), h - (24*k), str, 0);
 					DrawBox(w - 8 - box - (string_width(str)), h - (24*k),box,box,clr)
 				end
