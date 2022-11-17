@@ -5,6 +5,18 @@ function AI_Initialize(pn)
   computer_init_player(getPlayer(pn));
 end
 
+function AI_EnableBuckets(pn)
+  SET_BUCKET_USAGE(pn, 1);
+end
+
+function AI_DisableBuckets(pn)
+  SET_BUCKET_USAGE(pn, 0);
+end
+
+function AI_SpellBucketCost(pn, a, b)
+  SET_BUCKET_COUNT_FOR_SPELL(pn, a, b);
+end
+
 function AI_SetAways(pn, a, b, c, d, e)
   WRITE_CP_ATTRIB(pn, ATTR_AWAY_BRAVE, a);
   WRITE_CP_ATTRIB(pn, ATTR_AWAY_WARRIOR, b);

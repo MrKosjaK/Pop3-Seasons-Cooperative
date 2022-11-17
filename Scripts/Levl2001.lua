@@ -39,6 +39,17 @@ function _OnLevelInit(level_id)
   AI_SetSpyParams(TRIBE_GREEN, false, 0, 100, 128, 1);
   AI_SetPopulatingParams(TRIBE_GREEN, false, true);
 
+  AI_EnableBuckets(TRIBE_GREEN);
+  AI_SpellBucketCost(TRIBE_GREEN, M_SPELL_BLAST, 1);
+  AI_SpellBucketCost(TRIBE_GREEN, M_SPELL_CONVERT_WILD, 1);
+  AI_SpellBucketCost(TRIBE_GREEN, M_SPELL_INSECT_PLAGUE, 5);
+  AI_SpellBucketCost(TRIBE_GREEN, M_SPELL_INVISIBILITY, 4);
+  AI_SpellBucketCost(TRIBE_GREEN, M_SPELL_LIGHTNING_BOLT, 7);
+  AI_SpellBucketCost(TRIBE_GREEN, M_SPELL_HYPNOTISM, 8);
+  AI_SpellBucketCost(TRIBE_GREEN, M_SPELL_EARTHQUAKE, 20);
+  AI_SpellBucketCost(TRIBE_GREEN, M_SPELL_WHIRLWIND, 10);
+  AI_SpellBucketCost(TRIBE_GREEN, M_SPELL_GHOST_ARMY, 3);
+
   -- Cyan stuff
   AI_Initialize(TRIBE_CYAN);
 
@@ -74,6 +85,17 @@ function _OnLevelInit(level_id)
   AI_SetSpyParams(TRIBE_CYAN, false, 0, 100, 128, 1);
   AI_SetPopulatingParams(TRIBE_CYAN, false, true);
 
+  AI_EnableBuckets(TRIBE_CYAN);
+  AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_BLAST, 1);
+  AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_CONVERT_WILD, 1);
+  AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_INSECT_PLAGUE, 5);
+  AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_INVISIBILITY, 4);
+  AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_LIGHTNING_BOLT, 7);
+  AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_HYPNOTISM, 8);
+  AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_EARTHQUAKE, 20);
+  AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_WHIRLWIND, 10);
+  AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_GHOST_ARMY, 3);
+
   -- Pink stuff
   AI_Initialize(TRIBE_PINK);
 
@@ -108,6 +130,17 @@ function _OnLevelInit(level_id)
   AI_SetDefensiveParams(TRIBE_PINK, true, true, true, true, 3, 1, 1);
   AI_SetSpyParams(TRIBE_PINK, false, 0, 100, 128, 1);
   AI_SetPopulatingParams(TRIBE_PINK, false, true);
+
+  AI_EnableBuckets(TRIBE_PINK);
+  AI_SpellBucketCost(TRIBE_PINK, M_SPELL_BLAST, 1);
+  AI_SpellBucketCost(TRIBE_PINK, M_SPELL_CONVERT_WILD, 1);
+  AI_SpellBucketCost(TRIBE_PINK, M_SPELL_INSECT_PLAGUE, 5);
+  AI_SpellBucketCost(TRIBE_PINK, M_SPELL_INVISIBILITY, 4);
+  AI_SpellBucketCost(TRIBE_PINK, M_SPELL_LIGHTNING_BOLT, 7);
+  AI_SpellBucketCost(TRIBE_PINK, M_SPELL_HYPNOTISM, 8);
+  AI_SpellBucketCost(TRIBE_PINK, M_SPELL_EARTHQUAKE, 20);
+  AI_SpellBucketCost(TRIBE_PINK, M_SPELL_WHIRLWIND, 10);
+  AI_SpellBucketCost(TRIBE_PINK, M_SPELL_GHOST_ARMY, 3);
 end
 
 function _OnTurn(turn)
