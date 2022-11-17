@@ -16,48 +16,46 @@ local L_SHOW_POPS = false;
 -- OnLevelInit executed only once at start of the game (level start not lobby)
 function OnLevelInit(level_id)
 	if _OnLevelInit ~= nil then _OnLevelInit(level_id); end
+
+	-- Ally players at beginning (to ensure they didn't forget in setup) ; unally from AIs
+	-- be sure to manually ally any AI's that should have an alliance with eachother
+	for i = 0,7 do
+		for j = 0,7 do
+			if i ~= j then
+				if (GetPop(i) > 0) and (GetPop(j) > 0) then
+					if isHuman(i) and isHuman(j) then
+						set_players_allied(i,j);
+						set_players_allied(j,i);
+					else
+						set_players_enemies(i,j);
+						set_players_enemies(j,i);
+					end
+				end
+			end
+		end
+	end
+	-- put players and AIs on their tables
+	for i = 0,7 do
+		if GetPop(i) > 0 then
+			if isHuman(i) then
+				table.insert(G_HUMANS,i);
+				table.insert(G_HUMANS_ALIVE,i);
+			else
+				table.insert(G_AI_ALIVE,i);
+			end
+		end
+	end
+	-- check if enough humans to play the level
+	if G_NUM_OF_HUMANS_FOR_THIS_LEVEL ~= #G_HUMANS_ALIVE then
+		LOSE()
+		log_msg(8,"The level can not be started. It requires " .. G_NUM_OF_HUMANS_FOR_THIS_LEVEL .. " humans cooperating.")
+	end
 end
 
 -- OnTurn executed every turn (12 turns per second)
 function OnTurn()
 	if _OnTurn ~= nil then _OnTurn(getTurn()) end
 	
-	-- STUFF AT START ONCE
-	if turn() == 0 then
-		-- Ally players at beginning (to ensure they didn't forget in setup) ; unally from AIs
-		-- be sure to manually ally any AI's that should have an alliance with eachother
-		for i = 0,7 do
-			for j = 0,7 do
-				if i ~= j then
-					if (GetPop(i) > 0) and (GetPop(j) > 0) then
-						if isHuman(i) and isHuman(j) then
-							set_players_allied(i,j);
-							set_players_allied(j,i);
-						else
-							set_players_enemies(i,j);
-							set_players_enemies(j,i);
-						end
-					end
-				end
-			end
-		end
-		-- put players and AIs on their tables
-		for i = 0,7 do
-			if GetPop(i) > 0 then
-				if isHuman(i) then
-					table.insert(G_HUMANS,i);
-					table.insert(G_HUMANS_ALIVE,i);
-				else
-					table.insert(G_AI_ALIVE,i);
-				end
-			end
-		end
-		-- check if enough humans to play the level
-		if G_NUM_OF_HUMANS_FOR_THIS_LEVEL ~= #G_HUMANS_ALIVE then
-			LOSE()
-			log_msg(8,"The level can not be started. It requires " .. G_NUM_OF_HUMANS_FOR_THIS_LEVEL .. " humans cooperating.")
-		end
-	end
 	--refresh pop table every 3s
 	if turn() % 36 == 0 then
 		table.sort(G_HUMANS, function(a, b) if GetPop(a) ~= GetPop(b) then return GetPop(a) < GetPop(b) else return a > b end end)
@@ -94,7 +92,7 @@ end
 -- OnPlayerDeath executed once upon player's death
 function OnPlayerDeath(pn)
 	if _OnPlayerDeath ~= nil then _OnPlayerDeath(pn) end
-	
+
 	removeFromTable(G_HUMANS_ALIVE,pn);
 	removeFromTable(G_AI_ALIVE,pn);
 end
