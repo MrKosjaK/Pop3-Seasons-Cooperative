@@ -127,7 +127,7 @@ set_player_name(2,"nici",false)
 set_player_name(3,"leaf",false)
 
 
-spell_const[M_SPELL_GHOST_ARMY].Active = SPAC_NORMAL;
-spell_const[M_SPELL_GHOST_ARMY].NetworkOnly = 0;
+G_SPELL_CONST[M_SPELL_GHOST_ARMY].Active = SPAC_NORMAL;
+G_SPELL_CONST[M_SPELL_GHOST_ARMY].NetworkOnly = 0;
 --set_player_can_cast(M_SPELL_GHOST_ARMY, player_tribe);
 --set_correct_gui_menu();
