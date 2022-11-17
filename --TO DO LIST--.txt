@@ -31,3 +31,4 @@ Level 134 - TBD
 =====ISSUES=====
 Beta specific issues:
 -- Language replacement does not work with /mod command unless you put it inside "Language" folder outside of Mods folder, which isn't how it supposed to work.
+-- Computer player does not clear it's script from memory, causing the code to persist in case other level doesn't have a valid script file
