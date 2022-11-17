@@ -9,8 +9,6 @@ enable_feature(F_WILD_NO_RESPAWN); -- disable wild respawning, oh boy.
 -- Local variables (per human)
 local L_SHOW_POPS = false;
 
-
-
 -- Main hooks
 
 -- OnLevelInit executed only once at start of the game (level start not lobby)
@@ -120,8 +118,16 @@ function OnKeyUp(k)
 end
 
 
---remove after
+
+
+-- REMOVE LATER
 set_player_name(0,"mrkosjak",false)
 set_player_name(1,"map_pepe",false)
 set_player_name(2,"nici",false)
 set_player_name(3,"leaf",false)
+
+
+spell_const[M_SPELL_GHOST_ARMY].Active = SPAC_NORMAL;
+spell_const[M_SPELL_GHOST_ARMY].NetworkOnly = 0;
+--set_player_can_cast(M_SPELL_GHOST_ARMY, player_tribe);
+--set_correct_gui_menu();
