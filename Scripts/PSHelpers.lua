@@ -5,6 +5,39 @@ function AI_Initialize(pn)
   computer_init_player(getPlayer(pn));
 end
 
+function AI_ConvertAt(pn, mk)
+  CONVERT_AT_MARKER(pn, mk);
+end
+
+function AI_GetUnitCount(pn, unit)
+  return PLAYERS_PEOPLE_OF_TYPE(pn, unit);
+end
+
+function AI_EntryAvailable(pn)
+  return (FREE_ENTRIES(pn) > 0);
+end
+
+function AI_GetPopCount(pn)
+  return GET_NUM_PEOPLE(pn);
+end
+
+function AI_GetBldgCount(pn, model)
+  return PLAYERS_BUILDING_OF_TYPE(pn, model);
+end
+
+function AI_GetHutsCount(pn)
+  local huts = PLAYERS_BUILDING_OF_TYPE(pn, M_BUILDING_TEPEE);
+  huts = huts + PLAYERS_BUILDING_OF_TYPE(pn, M_BUILDING_HUT);
+  huts = huts + PLAYERS_BUILDING_OF_TYPE(pn, M_BUILDING_FARM);
+  return huts;
+end
+
+function AI_SetTargetParams(pn, opponent, a, b)
+  TARGET_PLAYER_DT_AND_S(pn, opponent);
+  if (a) then TARGET_DRUM_TOWERS(pn); else DONT_TARGET_DRUM_TOWERS(pn); end
+  if (b) then TARGET_S_WARRIORS(pn); else DONT_TARGET_S_WARRIORS(pn); end
+end
+
 function AI_EnableBuckets(pn)
   SET_BUCKET_USAGE(pn, 1);
 end

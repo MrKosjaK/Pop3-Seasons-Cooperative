@@ -1,7 +1,66 @@
 -- Includes
 include("Common.lua");
 
+Clocks = {};
+
+Clock = {};
+Clock.__index = Clock;
+
+function Clock:NewClock(_ticks, _randomness)
+  local self = setmetatable({}, Clock);
+
+  self.Randomness = _randomness;
+  self.BaseTicks = _ticks;
+  self.Ticks = self.BaseTicks - (G_RANDOM(_randomness));
+  self.Count = 0;
+
+  return self;
+end
+
+function Clock:Tick()
+  self.Ticks = self.Ticks - 1;
+
+  if (self.Ticks <= 0) then
+    self.Ticks = self.BaseTicks - (G_RANDOM(self.Randomness));
+    self.Count = self.Count + 1;
+    return true;
+  end
+
+  return false;
+end
+
+function CreateClock(_name, _ticks, _randomness)
+  if (Clocks[_name] == nil) then
+    Clocks[_name] = Clock:NewClock(_ticks, _randomness);
+  end
+end
+
+function TickClock(_name)
+  if (Clocks[_name] ~= nil) then
+    return Clocks[_name]:Tick();
+  end
+
+  return false;
+end
+
+CreateClock("C_BldgMain", 384, 96);
+CreateClock("C_Convert", 212, 84);
+CreateClock("C_Towers", 1024, 256);
+CreateClock("C_Patrol", 740, 112);
+
 G_NUM_OF_HUMANS_FOR_THIS_LEVEL = 3;
+local ai_convert_markers =
+{
+  [TRIBE_CYAN] = { 10, 11, 12, 13, 14 },
+  [TRIBE_GREEN] = { 1 },
+  [TRIBE_PINK] = { 1 }
+};
+local ai_tower_placements =
+{
+  [TRIBE_CYAN] = { 1, 2, 3, 4, 5, 6 },
+  [TRIBE_GREEN] = { 1 },
+  [TRIBE_PINK] = { 1 }
+};
 
 function _OnLevelInit(level_id)
   -- Green stuff
@@ -27,6 +86,7 @@ function _OnLevelInit(level_id)
   AI_SetShamanParams(TRIBE_GREEN, 0, 0, false, 0, 12);
   AI_SetMainDrumTower(TRIBE_GREEN, false, 0, 0);
   AI_SetConvertingParams(TRIBE_GREEN, true, true, 12);
+  AI_SetTargetParams(TRIBE_GREEN, TRIBE_RED, true, true);
 
   AI_SetBuildingParams(TRIBE_GREEN, true, 60, 4);
   AI_SetTrainingHuts(TRIBE_GREEN, 0, 0, 0, 0);
@@ -70,11 +130,12 @@ function _OnLevelInit(level_id)
 
   AI_SetAways(TRIBE_CYAN, 1, 0, 0, 0, 0);
   AI_SetShamanAway(TRIBE_CYAN, false);
-  AI_SetShamanParams(TRIBE_CYAN, 0, 0, false, 0, 12);
-  AI_SetMainDrumTower(TRIBE_CYAN, false, 0, 0);
-  AI_SetConvertingParams(TRIBE_CYAN, true, true, 12);
+  AI_SetShamanParams(TRIBE_CYAN, 138, 128, true, 16, 12);
+  AI_SetMainDrumTower(TRIBE_CYAN, true, 138, 128);
+  AI_SetConvertingParams(TRIBE_CYAN, false, true, 12);
+  AI_SetTargetParams(TRIBE_CYAN, TRIBE_BLUE, true, true);
 
-  AI_SetBuildingParams(TRIBE_CYAN, true, 60, 4);
+  AI_SetBuildingParams(TRIBE_CYAN, true, 9, 3);
   AI_SetTrainingHuts(TRIBE_CYAN, 0, 0, 0, 0);
   AI_SetTrainingPeople(TRIBE_CYAN, false, 0, 0, 0, 0, 0);
   AI_SetVehicleParams(TRIBE_CYAN, false, 0, 0, 0, 0);
@@ -119,6 +180,7 @@ function _OnLevelInit(level_id)
   AI_SetShamanParams(TRIBE_PINK, 0, 0, false, 0, 12);
   AI_SetMainDrumTower(TRIBE_PINK, false, 0, 0);
   AI_SetConvertingParams(TRIBE_PINK, true, true, 12);
+  AI_SetTargetParams(TRIBE_PINK, TRIBE_YELLOW, true, true);
 
   AI_SetBuildingParams(TRIBE_PINK, true, 60, 4);
   AI_SetTrainingHuts(TRIBE_PINK, 0, 0, 0, 0);
@@ -144,6 +206,76 @@ function _OnLevelInit(level_id)
 end
 
 function _OnTurn(turn)
+  if (TickClock("C_Towers")) then
+    -- for building towers we want to have at least 1 fw and some population
+    if (AI_GetPopCount(TRIBE_CYAN) > 30) then
+      if (AI_GetUnitCount(TRIBE_CYAN, M_PERSON_SUPER_WARRIOR) > 0) then
+        if (AI_EntryAvailable(TRIBE_CYAN)) then
+          -- now we safely check if marker is free from enemies and its not already occupied by tower
+          local mk = ai_tower_placements[TRIBE_CYAN][G_RANDOM(#ai_tower_placements[TRIBE_CYAN]) + 1];
+        end
+      end
+    end
+  end
+
+  if (TickClock("C_Convert")) then
+    -- check if we have a low pop count
+    if (AI_GetPopCount(TRIBE_CYAN) < 35) then
+      -- enable converting and convert at random markers
+      STATE_SET(TRIBE_CYAN, 1, CP_AT_TYPE_MED_MAN_GET_WILD_PEEPS);
+      WRITE_CP_ATTRIB(TRIBE_CYAN, ATTR_EXPANSION, 36);
+
+      local mk = ai_convert_markers[TRIBE_CYAN][G_RANDOM(#ai_convert_markers[TRIBE_CYAN]) + 1];
+      AI_ConvertAt(TRIBE_CYAN, mk);
+    else
+      -- disable converting
+      STATE_SET(TRIBE_CYAN, 0, CP_AT_TYPE_MED_MAN_GET_WILD_PEEPS);
+    end
+  end
+
+  if (TickClock("C_BldgMain")) then
+    -- let's see what we got here, we probably want to get FW hut after some huts.
+    if (AI_GetHutsCount(TRIBE_CYAN) >= 2 and AI_GetBldgCount(TRIBE_CYAN, M_BUILDING_SUPER_TRAIN) == 0) then
+      WRITE_CP_ATTRIB(TRIBE_CYAN, ATTR_PREF_SUPER_WARRIOR_TRAINS, 1);
+    end
+
+    -- we want to keep building huts now
+    if (AI_GetBldgCount(TRIBE_CYAN, M_BUILDING_SUPER_TRAIN) > 0) then
+      WRITE_CP_ATTRIB(TRIBE_CYAN, ATTR_HOUSE_PERCENTAGE, 30);
+    end
+
+    -- check if we got any training building, if so, enable training
+    if (AI_GetBldgCount(TRIBE_CYAN, M_BUILDING_SUPER_TRAIN) > 0 or
+        AI_GetBldgCount(TRIBE_CYAN, M_BUILDING_TEMPLE) > 0 or
+        AI_GetBldgCount(TRIBE_CYAN, M_BUILDING_WARRIOR_TRAIN) > 0) then
+          WRITE_CP_ATTRIB(TRIBE_CYAN, ATTR_MAX_TRAIN_AT_ONCE, 3);
+          STATE_SET(TRIBE_CYAN, TRUE, CP_AT_TYPE_TRAIN_PEOPLE);
+    end
+
+    -- once we get more huts, we can afford to train some fws
+    if (AI_GetHutsCount(TRIBE_CYAN) > 5 and AI_GetBldgCount(TRIBE_CYAN, M_BUILDING_SUPER_TRAIN) > 0) then
+      WRITE_CP_ATTRIB(TRIBE_CYAN, ATTR_PREF_SUPER_WARRIOR_PEOPLE, 10);
+    end
+
+    -- we got more huts, let's get priests up !
+    if (AI_GetHutsCount(TRIBE_CYAN) > 8 and AI_GetBldgCount(TRIBE_CYAN, M_BUILDING_TEMPLE) == 0) then
+      WRITE_CP_ATTRIB(TRIBE_CYAN, ATTR_PREF_RELIGIOUS_TRAINS, 1);
+      WRITE_CP_ATTRIB(TRIBE_CYAN, ATTR_PREF_RELIGIOUS_PEOPLE, 10);
+      WRITE_CP_ATTRIB(TRIBE_CYAN, ATTR_PREF_SUPER_WARRIOR_PEOPLE, 15);
+    end
+
+    -- let's keep expanding on our tribe once temple is up
+    if (AI_GetBldgCount(TRIBE_CYAN, M_BUILDING_TEMPLE) > 0) then
+      WRITE_CP_ATTRIB(TRIBE_CYAN, ATTR_HOUSE_PERCENTAGE, 60);
+    end
+
+    -- once we got big enough tribe, increase training %
+    if (AI_GetHutsCount(TRIBE_CYAN) > 11) then
+      WRITE_CP_ATTRIB(TRIBE_CYAN, ATTR_HOUSE_PERCENTAGE, 90);
+      WRITE_CP_ATTRIB(TRIBE_CYAN, ATTR_PREF_RELIGIOUS_PEOPLE, 15);
+      WRITE_CP_ATTRIB(TRIBE_CYAN, ATTR_PREF_SUPER_WARRIOR_PEOPLE, 21);
+    end
+  end
 end
 
 function _OnCreateThing(t)
