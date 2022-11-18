@@ -2,6 +2,11 @@
 include("Common.lua");
 include("LbClock.lua");
 include("AITower.lua");
+include("Spells\\TiledSwamp.lua");
+
+-- TiledSwamp parameters
+SwampTileEnabled = true; -- enables tiled swamps
+SwampTileSize = 4;
 
 -- Clocks
 CreateClock("C_BldgMain", 384, 96);
@@ -175,6 +180,7 @@ function _OnLevelInit(level_id)
 end
 
 function _OnTurn(turn)
+  ProcessTiledSwamps();
   if (TickClock("C_Towers")) then
     -- for building towers we want to have at least 1 fw and some population
     if (AI_GetPopCount(TRIBE_CYAN) > 30) then
@@ -253,6 +259,7 @@ function _OnTurn(turn)
 end
 
 function _OnCreateThing(t)
+  ProcessSwampCreate(t);
 end
 
 function _OnPlayerDeath(pn)
