@@ -1,5 +1,6 @@
 -- Includes
 include("Globals.lua");
+include("AI\\AIPlayer.lua")
 
 -- Features
 enable_feature(F_SUPER_WARRIOR_NO_AMENDMENT); -- fix fws not shooting
@@ -67,7 +68,10 @@ end
 -- OnTurn executed every turn (12 turns per second)
 function OnTurn()
 	if _OnTurn ~= nil then _OnTurn(getTurn()) end
-	
+
+	-- ai specials
+	ProcessSpecialAIs();
+
 	--refresh pop table every 3s
 	if turn() % 36 == 0 then
 		table.sort(G_EVERYONE_IN_GAME, function(a, b) if GetPop(a) ~= GetPop(b) then return GetPop(a) < GetPop(b) else return a > b end end) --change to G_HUMANS

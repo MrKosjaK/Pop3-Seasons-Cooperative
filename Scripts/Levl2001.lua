@@ -1,7 +1,6 @@
 -- Includes
 include("Common.lua");
 include("LbClock.lua");
-include("AITower.lua");
 include("Spells\\TiledSwamp.lua");
 
 -- TiledSwamp parameters
@@ -15,23 +14,17 @@ CreateClock("C_Towers", 1024, 256);
 CreateClock("C_Patrol", 740, 112);
 
 -- Towers
-CreateTower("Front1", TRIBE_CYAN, 124, 104, -1);
-CreateTower("Front2", TRIBE_CYAN, 146, 106, -1);
-CreateTower("Front3", TRIBE_CYAN, 126, 96, -1);
-CreateTower("MidHill1", TRIBE_CYAN, 130, 76, -1);
-CreateTower("MidHill2", TRIBE_CYAN, 148, 78, -1);
-CreateTower("MidHill3", TRIBE_CYAN, 138, 78, -1);
+-- CreateTower("Front1", TRIBE_CYAN, 124, 104, -1);
+-- CreateTower("Front2", TRIBE_CYAN, 146, 106, -1);
+-- CreateTower("Front3", TRIBE_CYAN, 126, 96, -1);
+-- CreateTower("MidHill1", TRIBE_CYAN, 130, 76, -1);
+-- CreateTower("MidHill2", TRIBE_CYAN, 148, 78, -1);
+-- CreateTower("MidHill3", TRIBE_CYAN, 138, 78, -1);
 
 G_NUM_OF_HUMANS_FOR_THIS_LEVEL = 3;
 local ai_convert_markers =
 {
   [TRIBE_CYAN] = { 10, 11, 12, 13, 14 },
-  [TRIBE_GREEN] = { 1 },
-  [TRIBE_PINK] = { 1 }
-};
-local ai_tower_placements =
-{
-  [TRIBE_CYAN] = { 1, 2, 3, 4, 5, 6 },
   [TRIBE_GREEN] = { 1 },
   [TRIBE_PINK] = { 1 }
 };
@@ -86,6 +79,8 @@ function _OnLevelInit(level_id)
 
   -- Cyan stuff
   AI_Initialize(TRIBE_CYAN);
+  Initialize_Special_AI("Cyan", TRIBE_CYAN);
+  GetAI("Cyan"):RegisterEvent("Test", 12, 1, function(player) log("Player : " .. player); end);
 
   set_player_can_cast(M_SPELL_BLAST, TRIBE_CYAN);
   set_player_can_cast(M_SPELL_CONVERT_WILD, TRIBE_CYAN);
