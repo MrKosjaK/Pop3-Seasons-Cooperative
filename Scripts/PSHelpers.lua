@@ -5,6 +5,61 @@ function AI_Initialize(pn)
   computer_init_player(getPlayer(pn));
 end
 
+function AI_AreaContainsEnemy(pn, x, z, radius)
+  local result = false;
+  SearchMapCells(CIRCULAR, 0, 0, radius, map_xz_to_map_idx(x, z), function(me)
+    if (not me.MapWhoList:isEmpty()) then
+      me.MapWhoList:processList(function(t)
+        if (t.Owner == TRIBE_HOSTBOT) then
+          return true;
+        end
+
+        if (are_players_allied(pn, t.Owner) == 0) then
+          result = true;
+          return false;
+        end
+        return true;
+      end);
+    end
+    if (result) then return false; end
+    return true;
+  end);
+
+  return result;
+end
+
+function AI_CanBuildTower(pn, x, z, radius)
+  local result = true;
+  SearchMapCells(CIRCULAR, 0, 0, radius, map_xz_to_map_idx(x, z), function(me)
+    -- first check if mapelement has a tower bldg/shape belonging to us
+    if (not me.ShapeOrBldgIdx:isNull()) then
+      local sob = me.ShapeOrBldgIdx:get();
+      if (sob.Owner == pn) then
+        if (sob.Type == T_SHAPE) then
+          if (sob.u.Shape.BldgModel == M_BUILDING_DRUM_TOWER) then
+            result = false;
+            return false;
+          end
+        end
+
+        if (sob.Type == T_BUILDING) then
+          if (sob.Model == M_BUILDING_DRUM_TOWER) then
+            result = false;
+            return false;
+          end
+        end
+      elseif (are_players_allied(pn, sob.Owner) == 0) then
+        result = false;
+        return false;
+      end
+    end
+
+    return true;
+  end);
+
+  return result;
+end
+
 function AI_ConvertAt(pn, mk)
   CONVERT_AT_MARKER(pn, mk);
 end

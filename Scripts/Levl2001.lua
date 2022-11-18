@@ -43,6 +43,12 @@ function TickClock(_name)
   return false;
 end
 
+function AdjustClock(_name, _ticks)
+  if (Clocks[_name] ~= nil) then
+    Clocks[_name].Ticks = _ticks;
+  end
+end
+
 CreateClock("C_BldgMain", 384, 96);
 CreateClock("C_Convert", 212, 84);
 CreateClock("C_Towers", 1024, 256);
