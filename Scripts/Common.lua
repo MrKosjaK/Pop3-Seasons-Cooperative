@@ -41,12 +41,22 @@ function OnLevelInit(level_id)
 			else
 				table.insert(G_AI_ALIVE,i);
 			end
+			table.insert(G_EVERYONE_IN_GAME,i);
 		end
 	end
 	-- check if enough humans to play the level
 	if G_NUM_OF_HUMANS_FOR_THIS_LEVEL ~= #G_HUMANS_ALIVE then
 		LOSE()
 		log_msg(8,"The level can not be started. It requires " .. G_NUM_OF_HUMANS_FOR_THIS_LEVEL .. " humans cooperating.")
+	end
+	-- REMOVE LATER
+	set_player_name(0,"mrkosjak",false)
+	set_player_name(1,"map_pepe",false)
+	for i = 2,3 do
+		if isHuman(i) then
+			local name = "nici" if i == 3 then name = "leaf" end
+			set_player_name(i,name,false)
+		end
 	end
 end
 
@@ -56,7 +66,7 @@ function OnTurn()
 	
 	--refresh pop table every 3s
 	if turn() % 36 == 0 then
-		table.sort(G_HUMANS, function(a, b) if GetPop(a) ~= GetPop(b) then return GetPop(a) < GetPop(b) else return a > b end end)
+		table.sort(G_EVERYONE_IN_GAME, function(a, b) if GetPop(a) ~= GetPop(b) then return GetPop(a) < GetPop(b) else return a > b end end) --change to G_HUMANS
 	end
 end
 
@@ -73,11 +83,12 @@ function OnFrame()
 	-- tab shows/hides humans info
 	PopSetFont(3);
 	local box = 16;
-	for i = 0, #G_HUMANS do
+	for i = 0, #G_EVERYONE_IN_GAME do --change to G_HUMANS
 		if _gnsi.PlayerNum == i then
 			if L_SHOW_POPS then
-				for k,v in ipairs(G_HUMANS) do
-					local clr = 4 if v == 1 then clr = 2 elseif v == 2 then clr = 5 elseif v == 3 then clr = 3 end
+				for k,v in ipairs(G_EVERYONE_IN_GAME) do --change to G_HUMANS
+					local clr = 4 if v == 1 then clr = 12 elseif v == 2 then clr = 5 elseif v == 3 then clr = 3 end
+					if v == 4 then clr = 7 elseif v == 5 then clr = 6 elseif v == 6 then clr = 1 elseif v == 7 then clr = 2 end -- remove later
 					local str = "" .. get_player_name(v,false) .. ":  " .. tostring(GetPop(v)) --change to true for online(?)
 					LbDraw_Text(w - 4 - (string_width(str)), h - (24*k), str, 0);
 					DrawBox(w - 8 - box - (string_width(str)), h - (24*k),box,box,clr)
@@ -120,11 +131,7 @@ end
 
 
 
--- REMOVE LATER
-set_player_name(0,"mrkosjak",false)
-set_player_name(1,"map_pepe",false)
-set_player_name(2,"nici",false)
-set_player_name(3,"leaf",false)
+
 
 
 G_SPELL_CONST[M_SPELL_GHOST_ARMY].Active = SPAC_NORMAL;

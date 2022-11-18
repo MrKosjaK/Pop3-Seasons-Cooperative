@@ -46,6 +46,7 @@ G_HUMANS = {};
 G_HUMANS_ALIVE = {};
 G_AI_ALIVE = {};
 G_NUM_OF_HUMANS_FOR_THIS_LEVEL = -1; -- edit at start of each level's script
+G_EVERYONE_IN_GAME = {};
 
 -- CONSTANT POINTERS
 G_SPELL_CONST = spells_type_info();
