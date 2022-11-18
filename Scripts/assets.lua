@@ -50,15 +50,6 @@ function everySeconds(a)
   end
 end
 
---return difficulty
-function difficulty()
-	return get_game_difficulty()
-end
---return difficulty shortcut
-function diff()
-	return get_game_difficulty()
-end
-
 --get turn
 function turn()
 	return gs.Counts.ProcessThings
@@ -76,19 +67,19 @@ end
 
 --update game stage
 function updateGameStage(early,medium,late,verylate)
-	if turn() % 32 == 0 then
+	--if everySeconds(5) then
 		if minutes() < early then
-			gameStage = 0
+			G_GAMESTAGE = 0
 		elseif minutes() < medium then
-			gameStage = 1
+			G_GAMESTAGE = 1
 		elseif minutes() < late then
-			gameStage = 2
+			G_GAMESTAGE = 2
 		elseif minutes() < verylate then
-			gameStage = 3
+			G_GAMESTAGE = 3
 		else
-			gameStage = 4
+			G_GAMESTAGE = 4
 		end
-	end
+	--end
 end
 
 --quick random
@@ -159,7 +150,7 @@ end
 
 --give up and sulk
 function Sulk(tribe,pop)
-	if gs.Counts.ProcessThings % 64 == 0 then
+	if minutes() > 5 and gs.Counts.ProcessThings % 64 == 0 then
 		if _gsi.Players[tribe].NumPeople < pop then
 			GIVE_UP_AND_SULK(tribe,TRUE)
 		end
@@ -261,13 +252,11 @@ function CountThingsOfTypeInArea(thingType,thingModel,thingOwner,X,Z,radius)
 	return count
 end
 
---zoom to thing
-function ZoomThing(thing,angle)
-	if thing ~= nil then
-		local pos = MapPosXZ.new()
-		pos.Pos = world_coord3d_to_map_idx(thing.Pos.D3)
-		ZOOM_TO(pos.XZ.X,pos.XZ.Z,angle)
-	end
+--update base priorities
+function updateBasePriorities(pn)
+	updateGameStage(5,10,15,20)
+	local s = G_GAMESTAGE
+	--WriteAiTrainTroops(pn,s*)
 end
 --------------------------------------------------------------------------------------------------------------------------------------------
 --read AI attacking troops (attr_away)
@@ -305,6 +294,22 @@ function PreachAtMarkers(pn,idxS,idxE)
 	for i = idxS,idxE do
 		PREACH_AT_MARKER(pn,i)
 	end
+end
+
+--count huts
+function countHuts(pn, includeDamaged)
+	if includeDamaged then 
+		return _gsi.Players[pn].NumBuiltOrPartBuiltBuildingsOfType[1]+_gsi.Players[pn].NumBuiltOrPartBuiltBuildingsOfType[2]+_gsi.Players[pn].NumBuiltOrPartBuiltBuildingsOfType[3]
+	end
+	return _gsi.Players[pn].NumBuildingsOfType[1]+_gsi.Players[pn].NumBuildingsOfType[2]+_gsi.Players[pn].NumBuildingsOfType[3]
+end
+
+--count towers
+function countTowers(pn, includeDamaged)
+	if includeDamaged then 
+		return _gsi.Players[pn].NumBuiltOrPartBuiltBuildingsOfType[4]
+	end
+	return _gsi.Players[pn].NumBuildingsOfType[4]
 end
 
 --fill towers (fills all tribe's towers prioritizing one unit type)
@@ -376,25 +381,25 @@ function useShield(seconds,tribe,x,z,radius)
 	end
 end
 
---troops train faster depending on difficulty
-function fasterTrain(tribe)
+--troops train faster
+function fasterTrain(tribe, amt)
 	ProcessGlobalSpecialList(tribe, BUILDINGLIST, function(t)
 			if (t.u.Bldg.ShapeThingIdx:isNull()) then
 				if (t.u.Bldg.TrainingManaCost > 0) then
-					t.u.Bldg.TrainingManaStored = t.u.Bldg.TrainingManaStored + (32*difficulty())
+					t.u.Bldg.TrainingManaStored = t.u.Bldg.TrainingManaStored + amt
 				end
 			end
 	return true end)
 end
---buildings faster green red bar if hard
-function fasterHutBars(tribe)
+--buildings faster green red bar
+function fasterHutBars(tribe, amt)
 	ProcessGlobalSpecialList(tribe, BUILDINGLIST, function(b)
 		if (b.Model <= 3) then
 			if (b.u.Bldg.UpgradeCount < 1850) then
-				b.u.Bldg.UpgradeCount = b.u.Bldg.UpgradeCount + (difficulty()*4)
+				b.u.Bldg.UpgradeCount = b.u.Bldg.UpgradeCount + amt
 			end
 			if (b.u.Bldg.SproggingCount < 1000) then
-				b.u.Bldg.SproggingCount = b.u.Bldg.SproggingCount + (difficulty()*4)
+				b.u.Bldg.SproggingCount = b.u.Bldg.SproggingCount + amt
 			end
 		end
 	return true end)

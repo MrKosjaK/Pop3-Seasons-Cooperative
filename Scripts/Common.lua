@@ -6,6 +6,10 @@ enable_feature(F_SUPER_WARRIOR_NO_AMENDMENT); -- fix fws not shooting
 enable_feature(F_MINIMAP_ENEMIES); -- who the hell plays with minimap off?
 enable_feature(F_WILD_NO_RESPAWN); -- disable wild respawning, oh boy.
 
+-- Ghost Army
+G_SPELL_CONST[M_SPELL_GHOST_ARMY].Active = SPAC_NORMAL;
+G_SPELL_CONST[M_SPELL_GHOST_ARMY].NetworkOnly = 0;
+
 -- Local variables (per human)
 local L_SHOW_POPS = false;
 
@@ -123,18 +127,14 @@ end
 function OnKeyUp(k)
 	if _OnKeyUp ~= nil then _OnKeyUp(k) end
 
+	--debuggo
 	if k == LB_KEY_1 then
-
+		for k,v in ipairs(G_AI_ALIVE) do
+			ReadAIAttackers(v)
+		end
+	elseif k == LB_KEY_2 then
+		for k,v in ipairs(G_AI_ALIVE) do
+			ReadAITroops(v)
+		end
 	end
 end
-
-
-
-
-
-
-
-G_SPELL_CONST[M_SPELL_GHOST_ARMY].Active = SPAC_NORMAL;
-G_SPELL_CONST[M_SPELL_GHOST_ARMY].NetworkOnly = 0;
---set_player_can_cast(M_SPELL_GHOST_ARMY, player_tribe);
---set_correct_gui_menu();
