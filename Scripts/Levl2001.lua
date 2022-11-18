@@ -80,7 +80,7 @@ function _OnLevelInit(level_id)
   -- Cyan stuff
   AI_Initialize(TRIBE_CYAN);
   Initialize_Special_AI("Cyan", TRIBE_CYAN);
-  GetAI("Cyan"):RegisterEvent("Test", 12, 1, function(player) log("Player : " .. player); end);
+  GetAI("Cyan"):RegisterEvent("Test", 12, 1, function(player) LOG(string.format("Player : %i", player)); end);
 
   set_player_can_cast(M_SPELL_BLAST, TRIBE_CYAN);
   set_player_can_cast(M_SPELL_CONVERT_WILD, TRIBE_CYAN);
@@ -182,12 +182,6 @@ function _OnTurn(turn)
       if (AI_GetUnitCount(TRIBE_CYAN, M_PERSON_SUPER_WARRIOR) > 0) then
         if (AI_EntryAvailable(TRIBE_CYAN)) then
           -- currently only testing
-          CheckTower("Front1");
-          CheckTower("Front2");
-          CheckTower("Front3");
-          CheckTower("MidHill1");
-          CheckTower("MidHill2");
-          CheckTower("MidHill3");
         end
       end
     end
