@@ -1,58 +1,21 @@
 -- Includes
 include("Common.lua");
+include("LbClock.lua");
+include("AITower.lua");
 
-Clocks = {};
-
-Clock = {};
-Clock.__index = Clock;
-
-function Clock:NewClock(_ticks, _randomness)
-  local self = setmetatable({}, Clock);
-
-  self.Randomness = _randomness;
-  self.BaseTicks = _ticks;
-  self.Ticks = self.BaseTicks - (G_RANDOM(_randomness));
-  self.Count = 0;
-
-  return self;
-end
-
-function Clock:Tick()
-  self.Ticks = self.Ticks - 1;
-
-  if (self.Ticks <= 0) then
-    self.Ticks = self.BaseTicks - (G_RANDOM(self.Randomness));
-    self.Count = self.Count + 1;
-    return true;
-  end
-
-  return false;
-end
-
-function CreateClock(_name, _ticks, _randomness)
-  if (Clocks[_name] == nil) then
-    Clocks[_name] = Clock:NewClock(_ticks, _randomness);
-  end
-end
-
-function TickClock(_name)
-  if (Clocks[_name] ~= nil) then
-    return Clocks[_name]:Tick();
-  end
-
-  return false;
-end
-
-function AdjustClock(_name, _ticks)
-  if (Clocks[_name] ~= nil) then
-    Clocks[_name].Ticks = _ticks;
-  end
-end
-
+-- Clocks
 CreateClock("C_BldgMain", 384, 96);
 CreateClock("C_Convert", 212, 84);
 CreateClock("C_Towers", 1024, 256);
 CreateClock("C_Patrol", 740, 112);
+
+-- Towers
+CreateTower("Front1", TRIBE_CYAN, 124, 104, -1);
+CreateTower("Front2", TRIBE_CYAN, 146, 106, -1);
+CreateTower("Front3", TRIBE_CYAN, 126, 96, -1);
+CreateTower("MidHill1", TRIBE_CYAN, 130, 76, -1);
+CreateTower("MidHill2", TRIBE_CYAN, 148, 78, -1);
+CreateTower("MidHill3", TRIBE_CYAN, 138, 78, -1);
 
 G_NUM_OF_HUMANS_FOR_THIS_LEVEL = 3;
 local ai_convert_markers =
@@ -103,7 +66,7 @@ function _OnLevelInit(level_id)
   AI_SetAttackingParams(TRIBE_GREEN, false, 0, 25);
   AI_SetDefensiveParams(TRIBE_GREEN, true, true, true, true, 3, 1, 1);
   AI_SetSpyParams(TRIBE_GREEN, false, 0, 100, 128, 1);
-  AI_SetPopulatingParams(TRIBE_GREEN, false, true);
+  AI_SetPopulatingParams(TRIBE_GREEN, true, true);
 
   AI_EnableBuckets(TRIBE_GREEN);
   AI_SpellBucketCost(TRIBE_GREEN, M_SPELL_BLAST, 1);
@@ -150,7 +113,7 @@ function _OnLevelInit(level_id)
   AI_SetAttackingParams(TRIBE_CYAN, false, 0, 25);
   AI_SetDefensiveParams(TRIBE_CYAN, true, true, true, true, 3, 1, 1);
   AI_SetSpyParams(TRIBE_CYAN, false, 0, 100, 128, 1);
-  AI_SetPopulatingParams(TRIBE_CYAN, false, true);
+  AI_SetPopulatingParams(TRIBE_CYAN, true, true);
 
   AI_EnableBuckets(TRIBE_CYAN);
   AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_BLAST, 1);
@@ -197,7 +160,7 @@ function _OnLevelInit(level_id)
   AI_SetAttackingParams(TRIBE_PINK, false, 0, 25);
   AI_SetDefensiveParams(TRIBE_PINK, true, true, true, true, 3, 1, 1);
   AI_SetSpyParams(TRIBE_PINK, false, 0, 100, 128, 1);
-  AI_SetPopulatingParams(TRIBE_PINK, false, true);
+  AI_SetPopulatingParams(TRIBE_PINK, true, true);
 
   AI_EnableBuckets(TRIBE_PINK);
   AI_SpellBucketCost(TRIBE_PINK, M_SPELL_BLAST, 1);
@@ -217,8 +180,13 @@ function _OnTurn(turn)
     if (AI_GetPopCount(TRIBE_CYAN) > 30) then
       if (AI_GetUnitCount(TRIBE_CYAN, M_PERSON_SUPER_WARRIOR) > 0) then
         if (AI_EntryAvailable(TRIBE_CYAN)) then
-          -- now we safely check if marker is free from enemies and its not already occupied by tower
-          local mk = ai_tower_placements[TRIBE_CYAN][G_RANDOM(#ai_tower_placements[TRIBE_CYAN]) + 1];
+          -- currently only testing
+          CheckTower("Front1");
+          CheckTower("Front2");
+          CheckTower("Front3");
+          CheckTower("MidHill1");
+          CheckTower("MidHill2");
+          CheckTower("MidHill3");
         end
       end
     end

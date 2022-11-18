@@ -18,6 +18,7 @@ import(Module_Person);
 import(Module_Players);
 import(Module_PopScript);
 import(Module_Sound);
+import(Module_Shapes);
 import(Module_Spells);
 import(Module_String);
 import(Module_System);
