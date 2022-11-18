@@ -30,7 +30,7 @@ function AITower:TryCreate()
     orient = self.Orient;
   end
 
-  if (is_shape_valid_at_map_pos(map_idx, M_BUILDING_DRUM_TOWER, orient, self.Owner) ~= 0) then
+  if (is_map_cell_bldg_markable(getPlayer(self.Owner), map_idx, 0, M_BUILDING_DRUM_TOWER, 0, 0) ~= 0) then
     -- place tower plan.
     process_shape_map_elements(map_idx, M_BUILDING_DRUM_TOWER, orient, self.Owner, SHME_MODE_SET_PERM);
 
