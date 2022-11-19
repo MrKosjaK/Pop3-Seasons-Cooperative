@@ -48,7 +48,7 @@ function AITower:TryBind()
   me.MapWhoList:processList(function(t)
     if (t.Type == T_BUILDING and t.Model == M_BUILDING_DRUM_TOWER and t.Owner == self.Owner) then
       self.Obj:set(t.ThingNum);
-      self.Stage = 0;
+      self.Stage = 2;
       return false;
     end
 
@@ -115,6 +115,18 @@ function AIPlayer:DestroyTower(_name)
   end
 end
 
+function AIPlayer:TowerIsBuilt(_name)
+  if (self.Towers[_name] ~= nil) then
+    if (not self.Towers[_name]:isNull()) then
+      if (self.Towers[_name].Stage == 2) then
+        return true;
+      end
+    end
+  end
+
+  return false;
+end
+
 function AIPlayer:CheckTower(_name)
   if (self.Towers[_name] ~= nil) then
     if (self.Towers[_name]:isNull()) then
@@ -122,6 +134,8 @@ function AIPlayer:CheckTower(_name)
         self.Towers[_name]:TryCreate();
       elseif (self.Towers[_name].Stage == 1) then
         self.Towers[_name]:TryBind();
+      elseif(self.Towers[_name].Stage == 2) then
+        self.Towers[_name].Stage = 0; -- rebuild.
       end
     end
   end

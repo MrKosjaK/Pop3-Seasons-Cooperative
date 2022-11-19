@@ -5,12 +5,24 @@ function AI_Initialize(pn)
   computer_init_player(getPlayer(pn));
 end
 
+function AI_SetVar(player, idx, value)
+  SET_USER_VARIABLE_VALUE(player, idx, value);
+end
+
+function AI_GetVar(player, idx)
+  return GET_USER_VARIABLE_VALUE(player, idx);
+end
+
 function AI_AreaContainsEnemy(pn, x, z, radius)
   local result = false;
   SearchMapCells(CIRCULAR, 0, 0, radius, map_xz_to_map_idx(x, z), function(me)
     if (not me.MapWhoList:isEmpty()) then
       me.MapWhoList:processList(function(t)
         if (t.Owner == TRIBE_HOSTBOT) then
+          return true;
+        end
+
+        if (t.Type ~= T_PERSON and t.Type ~= T_BUILDING) then
           return true;
         end
 
