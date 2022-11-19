@@ -34,6 +34,22 @@ function cyan_attacking(player)
     end
     AI_SetVar(player, 3, 2);
   elseif (AI_GetVar(player, 3) == 2) then
+    -- this one will have a bigger attack on player.
+    if (AI_GetUnitCount(player, M_PERSON_RELIGIOUS) > 2 and AI_GetUnitCount(player, M_PERSON_SUPER_WARRIOR) > 2) then
+      did_attack = true;
+
+      AI_SetAttackFlags(player, 0, 0, 0);
+      AI_SetAways(player, 10, 0, 50, 50, 0);
+      AI_SetShamanAway(player, false);
+      ATTACK(player, TRIBE_BLUE, 12, ATTACK_BUILDING, 0, 650, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
+
+      if (AI_ShamanFree(player) and MANA(player) > 150000) then
+        AI_SetShamanAway(player, true);
+        AI_SetAttackFlags(player, 3, 1, 0);
+        AI_SetAways(player, 0, 0, 0, 0, 0);
+        ATTACK(player, TRIBE_BLUE, 0, ATTACK_BUILDING, M_BUILDING_DRUM_TOWER, 36, M_SPELL_WHIRLWIND, M_SPELL_WHIRLWIND, M_SPELL_WHIRLWIND, ATTACK_NORMAL, 0, -1, -1, 0);
+      end
+    end
     AI_SetVar(player, 3, 3);
   elseif (AI_GetVar(player, 3) == 3) then
     AI_SetVar(player, 3, 0);
@@ -48,6 +64,14 @@ function cyan_attacking(player)
       AI_SetAways(player, 25, 0, 75, 0, 0);
       AI_SetShamanAway(player, false);
       ATTACK(player, TRIBE_BLUE, 5, ATTACK_MARKER, 6, 500, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
+    end
+
+    -- check if can support with shaman
+    if (AI_ShamanFree(player) and MANA(player) > 150000) then
+      AI_SetShamanAway(player, true);
+      AI_SetAttackFlags(player, 3, 1, 0);
+      AI_SetAways(player, 0, 0, 0, 0, 0);
+      ATTACK(player, TRIBE_BLUE, 0, ATTACK_MARKER, 6, 36, M_SPELL_INSECT_PLAGUE, M_SPELL_INSECT_PLAGUE, M_SPELL_WHIRLWIND, ATTACK_NORMAL, 0, -1, -1, 0);
       return;
     end
   end
