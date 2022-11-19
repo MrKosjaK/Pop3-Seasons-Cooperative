@@ -131,14 +131,21 @@ end
 function OnKeyUp(k)
 	if _OnKeyUp ~= nil then _OnKeyUp(k) end
 
+
 	--debuggo
 	if k == LB_KEY_1 then
+		readSomeGlobals()
+	elseif k == LB_KEY_2 then
 		for k,v in ipairs(G_AI_ALIVE) do
 			ReadAIAttackers(v)
 		end
-	elseif k == LB_KEY_2 then
+	elseif k == LB_KEY_3 then
 		for k,v in ipairs(G_AI_ALIVE) do
 			ReadAITroops(v)
+		end
+	elseif k == LB_KEY_4 then
+		for k,v in ipairs(G_AI_ALIVE) do
+			log_msg(v, "house percentage: " .. READ_CP_ATTRIB(v,ATTR_HOUSE_PERCENTAGE))
 		end
 	end
 end

@@ -128,7 +128,7 @@ function GetPop(pn)
 end
 
 --troops of a tribe
-function GetTroops(pn)
+function countTroops(pn)
 	local sh = 0 if getShaman(0) ~= nil then sh = 1 end
 	return (_gsi.Players[pn].NumPeople - _gsi.Players[pn].NumPeopleOfType[M_PERSON_BRAVE]) - sh
 end
@@ -255,8 +255,20 @@ end
 --update base priorities
 function updateBasePriorities(pn)
 	updateGameStage(5,10,15,20)
-	local s = G_GAMESTAGE
-	--WriteAiTrainTroops(pn,s*)
+	local s,h,b = G_GAMESTAGE, countHuts(pn,true), AI_GetUnitCount(pn, M_PERSON_BRAVE)
+	--local t,p = countTroops(pn), GetPop(pn)
+	WriteAiTrainTroops(pn, 1+(s*2)+15 ,1+(s*2)+15, 1+(s*2)+15, 1+(s*2)+15)
+	AI_SetBuildingParams(pn,true,40+s*15,3)
+	if b > 20+(s*5) and h > 6+s then
+		if AI_GetBldgCount(pn, M_BUILDING_BOAT_HUT_1) > 0 then
+			STATE_SET(pn, true, CP_AT_TYPE_BUILD_VEHICLE);
+			WRITE_CP_ATTRIB(pn, ATTR_PREF_BOAT_DRIVERS, 1+s+2);
+		end
+		if AI_GetBldgCount(pn, M_BUILDING_AIRSHIP_HUT_1) > 0 then
+			STATE_SET(pn, true, CP_AT_TYPE_BUILD_VEHICLE);
+			WRITE_CP_ATTRIB(pn, ATTR_PREF_BALLOON_DRIVERS, 1+s+2);
+		end
+	end
 end
 --------------------------------------------------------------------------------------------------------------------------------------------
 --read AI attacking troops (attr_away)
@@ -271,7 +283,13 @@ function ReadAITroops(pn)
 	log_msg(pn,"% TROOPS:   wars: " .. w .. ", preachers: " .. r .. ", fws: " .. fw .. ", spy: " .. spy)
 end
 
---write AI attacking troops(attr_away)
+--read some globals
+function readSomeGlobals()
+	local add1, add2 = -1,-1
+	log_msg(8,"turn: " .. turn() .. " | stage: " .. G_GAMESTAGE .. ", add1: " .. add1 .. ", add2: " .. add2)
+end		
+
+--write AI attacking troops(attr_away)	
 function WriteAiAttackers(pn,b,w,r,fw,spy,sh)
 	WRITE_CP_ATTRIB(pn, ATTR_AWAY_BRAVE, b)
 	WRITE_CP_ATTRIB(pn, ATTR_AWAY_WARRIOR, w)
@@ -491,14 +509,6 @@ end
 function LOSE()
 	gns.GameParams.Flags2 = gns.GameParams.Flags2 & ~GPF2_GAME_NO_WIN
 	gns.Flags = gns.Flags | GNS_LEVEL_FAILED
-end
-
---reset spells sprites
-function ResetSpellsSprites()
-	for i = 2,17 do
-		G_SPELL_CONST[i].AvailableSpriteIdx = 353+i
-	end
-	G_SPELL_CONST[19].AvailableSpriteIdx = 408
 end
 --------------------------------------------------------------------------------------------------------------------------------------------
 PThing = {}
