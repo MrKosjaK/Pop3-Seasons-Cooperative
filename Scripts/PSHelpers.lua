@@ -5,6 +5,10 @@ function AI_Initialize(pn)
   computer_init_player(getPlayer(pn));
 end
 
+function AI_ShamanFree(pn)
+  return (IS_SHAMAN_AVAILABLE_FOR_ATTACK(pn) ~= 0);
+end
+
 function AI_SetVar(player, idx, value)
   SET_USER_VARIABLE_VALUE(player, idx, value);
 end

@@ -10,7 +10,28 @@ function cyan_attacking(player)
   local did_attack = false;
   if (AI_GetVar(player, 3) == 0) then
     AI_SetVar(player, 3, 1); -- always set it to next.
+
+    -- first pattern attack consists of just fws i guess? crap attack
+    if (AI_GetUnitCount(player, M_PERSON_SUPER_WARRIOR) > 2) then
+      did_attack = true;
+
+      AI_SetAttackFlags(player, 0, 0, 0);
+      AI_SetAways(player, 20, 0, 0, 80, 0);
+      AI_SetShamanAway(player, false);
+      ATTACK(player, TRIBE_BLUE, 2, ATTACK_BUILDING, 0, 250, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
+    end
   elseif (AI_GetVar(player, 3) == 1) then
+    -- second pattern attack, we'll try to make invisible priests if we have them! hehe bOIII
+    if (AI_GetUnitCount(player, M_PERSON_RELIGIOUS) > 2) then
+      if (MANA(player) > 100000 and AI_ShamanFree(player)) then
+        did_attack = true;
+
+        AI_SetAttackFlags(player, 0, 0, 0);
+        AI_SetAways(player, 0, 0, 100, 0, 0);
+        AI_SetShamanAway(player, true);
+        ATTACK(player, TRIBE_BLUE, 6, ATTACK_BUILDING, 0, 250, M_SPELL_INVISIBILITY, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
+      end
+    end
     AI_SetVar(player, 3, 2);
   elseif (AI_GetVar(player, 3) == 2) then
     AI_SetVar(player, 3, 3);
