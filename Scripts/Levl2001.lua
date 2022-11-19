@@ -1,14 +1,8 @@
 -- Includes
 include("Common.lua");
-include("Spells\\TiledSwamp.lua");
 include("AI\\Scripts\\cyan_083.lua");
 
--- TiledSwamp parameters
-SwampTileEnabled = true; -- enables tiled swamps
-SwampTileSize = 4;
-
 Initialize_Special_AI("Cyan", TRIBE_CYAN);
-
 -- Events
 GetAI("Cyan"):RegisterEvent("Building", 256, 64, cyan_build);
 GetAI("Cyan"):RegisterEvent("Convert", 96, 16, cyan_convert);
@@ -170,11 +164,9 @@ function _OnLevelInit(level_id)
 end
 
 function _OnTurn(turn)
-  ProcessTiledSwamps();
 end
 
 function _OnCreateThing(t)
-  ProcessSwampCreate(t);
 end
 
 function _OnPlayerDeath(pn)
