@@ -133,7 +133,7 @@ function OnKeyUp(k)
 
 
 	--debuggo
-	if k == LB_KEY_1 then
+	if k == LB_KEY_0 then
 		readSomeGlobals()
 	elseif k == LB_KEY_2 then
 		for k,v in ipairs(G_AI_ALIVE) do
@@ -145,7 +145,11 @@ function OnKeyUp(k)
 		end
 	elseif k == LB_KEY_4 then
 		for k,v in ipairs(G_AI_ALIVE) do
-			log_msg(v, "house percentage: " .. READ_CP_ATTRIB(v,ATTR_HOUSE_PERCENTAGE))
+			ReadAITrainedTroops(v)
+		end		
+	elseif k == LB_KEY_1 then
+		for k,v in ipairs(G_AI_ALIVE) do
+			log_msg(v, "house percentage: " .. READ_CP_ATTRIB(v,ATTR_HOUSE_PERCENTAGE) .. " | huts amt (total): " .. countHuts(v,true) .. " | huts amt(only healthy): " .. countHuts(v,false))
 		end
 	end
 end

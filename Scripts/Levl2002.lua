@@ -1,5 +1,6 @@
 -- Includes
 include("Common.lua");
+include("snow.lua");
 
 G_NUM_OF_HUMANS_FOR_THIS_LEVEL = 2;
 
@@ -24,6 +25,15 @@ function _OnTurn(turn)
 			end
 		end
 	end
+	
+	if turn == 1000 or turn == 7000 then
+		--start snowing
+		createSnow(rndb(300,400)) --amt
+	elseif turn == 4000 or turn == 8000 then
+		--stop snowing
+		snow = 0
+		fastStopSnow = rndb(0,1) --0 for slow stopping, 1 for fast
+	end
 end
 
 function _OnCreateThing(t)
@@ -33,6 +43,7 @@ function _OnPlayerDeath(pn)
 end
 
 function _OnFrame(w,h,guiW)
+	snowFall(1,true) --intensity[1-3],process while paused
 end
 
 function _OnKeyUp(k)
@@ -46,7 +57,15 @@ end
 
 
 function trainingHutsPriorities(pn)
-	
+	local w = AI_GetBldgCount(pn, M_BUILDING_WARRIOR_TRAIN)
+	local fw = AI_GetBldgCount(pn, M_BUILDING_SUPER_TRAIN)
+	local t = AI_GetBldgCount(pn, M_BUILDING_TEMPLE)
+	local s = AI_GetBldgCount(pn, M_BUILDING_SPY_TRAIN)
+	if pn == TRIBE_CYAN then
+		
+	else -- black
+		
+	end
 end
 
 function _OnLevelInit(level_id)

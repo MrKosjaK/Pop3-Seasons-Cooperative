@@ -283,6 +283,12 @@ function ReadAITroops(pn)
 	log_msg(pn,"% TROOPS:   wars: " .. w .. ", preachers: " .. r .. ", fws: " .. fw .. ", spy: " .. spy)
 end
 
+--trained troops
+function ReadAITrainedTroops(pn)
+	local w,r,fw,spy = AI_GetUnitCount(pn,3),AI_GetUnitCount(pn,4),AI_GetUnitCount(pn,6),AI_GetUnitCount(pn,5)
+	log_msg(pn,"owned troops:   wars: " .. w .. ", preachers: " .. r .. ", fws: " .. fw .. ", spies: " .. spy)
+end
+
 --read some globals
 function readSomeGlobals()
 	local add1, add2 = -1,-1
