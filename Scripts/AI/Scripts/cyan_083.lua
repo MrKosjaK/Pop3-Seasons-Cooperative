@@ -2,7 +2,7 @@ local ai_convert_markers =
 {
   [TRIBE_CYAN] = { 10, 11, 12, 13, 14 },
   [TRIBE_GREEN] = { 1 },
-  [TRIBE_PINK] = { 1 }
+  [TRIBE_PINK] = { 15, 16, 17, 18 }
 };
 
 function cyan_attacking(player)
@@ -83,7 +83,7 @@ function cyan_towers(player)
     if (AI_GetBldgCount(player, M_BUILDING_SUPER_TRAIN) > 0) then
       if (AI_EntryAvailable(player)) then
         -- build our first row of defense once we built fw hut and got enough huts to support
-        if (AI_GetVar(player, 1) == 1) then
+        if (AI_GetVar(player, 4) == 1) then
           -- for middle hilled part we want to check if theres no enemy present.
           -- if there is, set user var to specific value to indicate they exist.
           AI_SetVar(player, 2, 0);
@@ -138,7 +138,7 @@ function cyan_convert(player)
     STATE_SET(player, 1, CP_AT_TYPE_MED_MAN_GET_WILD_PEEPS);
     WRITE_CP_ATTRIB(player, ATTR_EXPANSION, 36);
 
-    local mk = ai_convert_markers[player][G_RANDOM(#ai_convert_markers[TRIBE_CYAN]) + 1];
+    local mk = ai_convert_markers[player][G_RANDOM(#ai_convert_markers[player]) + 1];
     AI_ConvertAt(player, mk);
   else
     -- disable converting
@@ -156,8 +156,8 @@ function cyan_build(player)
   -- we want to keep building huts now
   if (AI_GetBldgCount(player, M_BUILDING_SUPER_TRAIN) > 0) then
     WRITE_CP_ATTRIB(player, ATTR_HOUSE_PERCENTAGE, 45);
-    if (AI_GetVar(player, 0) == 0) then
-      AI_SetVar(player, 0, 1);
+    if (AI_GetVar(player, 1) == 0) then
+      AI_SetVar(player, 1, 1);
       AI_SetMainDrumTower(TRIBE_CYAN, true, 138, 128);
     end
   end
@@ -173,7 +173,7 @@ function cyan_build(player)
   -- once we get more huts, we can afford to train some fws
   if (AI_GetHutsCount(player) > 6 and AI_GetBldgCount(player, M_BUILDING_SUPER_TRAIN) > 0) then
     WRITE_CP_ATTRIB(player, ATTR_PREF_SUPER_WARRIOR_PEOPLE, 10);
-    AI_SetVar(player, 1, 1);
+    AI_SetVar(player, 4, 1);
   end
 
   -- we got more huts, let's get priests up !

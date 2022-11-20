@@ -1,14 +1,20 @@
 -- Includes
 include("Common.lua");
 include("AI\\Scripts\\cyan_083.lua");
+include("AI\\Scripts\\green_083.lua");
+include("AI\\Scripts\\purple_083.lua");
 
 Initialize_Special_AI("Cyan", TRIBE_CYAN);
+Initialize_Special_AI("Green", TRIBE_GREEN);
+Initialize_Special_AI("Purple", TRIBE_PINK);
+
 -- Events
 GetAI("Cyan"):RegisterEvent("Building", 256, 64, cyan_build);
-GetAI("Cyan"):RegisterEvent("Convert", 96, 16, cyan_convert);
+GetAI("Cyan"):RegisterEvent("Convert", 128, 24, cyan_convert);
 GetAI("Cyan"):RegisterEvent("Towers", 128, 32, cyan_towers);
 GetAI("Cyan"):RegisterEvent("Patrol", 740, 112, function(player) end);
 GetAI("Cyan"):RegisterEvent("Attacking", 1536, 256, cyan_attacking);
+GetAI("Purple"):RegisterEvent("Convert", 122, 32, purple_convert);
 
 -- Towers
 GetAI("Cyan"):RegisterTower("Front1", 124, 104, -1);
@@ -137,10 +143,10 @@ function _OnLevelInit(level_id)
   AI_SetShamanAway(TRIBE_PINK, false);
   AI_SetShamanParams(TRIBE_PINK, 0, 0, false, 0, 12);
   AI_SetMainDrumTower(TRIBE_PINK, false, 0, 0);
-  AI_SetConvertingParams(TRIBE_PINK, true, true, 12);
+  AI_SetConvertingParams(TRIBE_PINK, false, true, 12);
   AI_SetTargetParams(TRIBE_PINK, TRIBE_YELLOW, true, true);
 
-  AI_SetBuildingParams(TRIBE_PINK, true, 60, 4);
+  AI_SetBuildingParams(TRIBE_PINK, false, 60, 4);
   AI_SetTrainingHuts(TRIBE_PINK, 0, 0, 0, 0);
   AI_SetTrainingPeople(TRIBE_PINK, false, 0, 0, 0, 0, 0);
   AI_SetVehicleParams(TRIBE_PINK, false, 0, 0, 0, 0);
