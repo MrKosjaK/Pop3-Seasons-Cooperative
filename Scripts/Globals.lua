@@ -27,6 +27,7 @@ import(Module_Table);
 -- Includes
 include("assets.lua"); -- Misc useful tools
 include("PSHelpers.lua"); -- PopScript helpers
+include("SearchUtils.lua"); -- Search stuff
 
 -- Global variables
 G_GAMESTAGE = 0; --game always starts in early-game stage

@@ -1,7 +1,10 @@
-function GetAreaInfo(x, z, rad, tabl)
+function GetPlayerAreaInfo(player, x, z, rad, tabl)
   if (tabl == nil or type(tabl) ~= "table") then
     return;
   end
+
+  tabl["People"] = {};
+  tabl["Bldgs"] = {};
 
   for i = 1, 8 do
     tabl["People"][i] = 0;
@@ -13,7 +16,7 @@ function GetAreaInfo(x, z, rad, tabl)
 
   SearchMapCells(SQUARE, 0, 0, rad, map_xz_to_map_idx(x, z), function(me)
     me.MapWhoList:processList(function(t)
-      if (t.Owner == TRIBE_HOSTBOT) then
+      if (t.Owner ~= player) then
         return true;
       end
 

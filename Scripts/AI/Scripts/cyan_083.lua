@@ -57,22 +57,43 @@ function cyan_attacking(player)
 
   if (not did_attack and AI_GetVar(player, 2) == 1) then
     -- let's check if we should try to take over midhill with anything we can think of.
-    -- first, do we have any priests?
-    if (AI_GetUnitCount(player, M_PERSON_RELIGIOUS) > 3) then
-      -- we got some priests, let's send them to attack the marker.
-      AI_SetAttackFlags(player, 3, 1, 0);
-      AI_SetAways(player, 25, 0, 75, 0, 0);
-      AI_SetShamanAway(player, false);
-      ATTACK(player, TRIBE_BLUE, 5, ATTACK_MARKER, 6, 500, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
+    local buff = {};
+    local include_shaman = false;
+    local include_troops = true;
+    local s = { M_SPELL_INSECT_PLAGUE, M_SPELL_INSECT_PLAGUE, M_SPELL_INSECT_PLAGUE};
+    GetPlayerAreaInfo(TRIBE_BLUE, 138, 78, 6, buff); -- get data on that area
+
+    if (buff["People"][M_PERSON_SUPER_WARRIOR] > 0 and buff["Bldgs"][M_BUILDING_DRUM_TOWER] > 0) then
+      -- assuming that hill has fws i ntowers
+      include_shaman = true;
+      include_troops = false;
     end
 
-    -- check if can support with shaman
-    if (AI_ShamanFree(player) and MANA(player) > 150000) then
-      AI_SetShamanAway(player, true);
-      AI_SetAttackFlags(player, 3, 1, 0);
-      AI_SetAways(player, 0, 0, 0, 0, 0);
-      ATTACK(player, TRIBE_BLUE, 0, ATTACK_MARKER, 6, 36, M_SPELL_INSECT_PLAGUE, M_SPELL_INSECT_PLAGUE, M_SPELL_WHIRLWIND, ATTACK_NORMAL, 0, -1, -1, 0);
-      return;
+    if (buff["People"][M_PERSON_MEDICINE_MAN] > 0) then
+      -- hill has shaman, enable shaman target.
+      TARGET_PLAYER_DT_AND_S(player, TRIBE_BLUE);
+      TARGET_SHAMAN(player);
+      include_shaman = true;
+    end
+
+    if (include_troops) then
+      -- see how many enemy has troops there
+      if (buff["People"][M_PERSON_SUPER_WARRIOR] <= AI_GetUnitCount(player, M_PERSON_RELIGIOUS)) then
+        -- we got some priests, let's send them to attack the marker.
+        AI_SetAttackFlags(player, 3, 1, 0);
+        AI_SetAways(player, 25, 0, 75, 0, 0);
+        AI_SetShamanAway(player, false);
+        ATTACK(player, TRIBE_BLUE, buff["People"][M_PERSON_SUPER_WARRIOR], ATTACK_MARKER, 6, 500, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
+      end
+    end
+
+    if (include_shaman) then
+      if (AI_ShamanFree(player) and MANA(player) >= 125000) then
+        AI_SetShamanAway(player, true);
+        AI_SetAttackFlags(player, 3, 1, 0);
+        AI_SetAways(player, 0, 0, 0, 0, 0);
+        ATTACK(player, TRIBE_BLUE, 0, ATTACK_MARKER, 6, 36, s[1], s[2], s[3], ATTACK_NORMAL, 0, -1, -1, 0);
+      end
     end
   end
 end
