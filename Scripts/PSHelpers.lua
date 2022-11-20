@@ -3,6 +3,7 @@
 
 function AI_Initialize(pn)
   computer_init_player(getPlayer(pn));
+  SET_ATTACK_VARIABLE(pn, 0); -- always make 0th variable as attack one.
 end
 
 function AI_ShamanFree(pn)
