@@ -1,8 +1,6 @@
-local ai_convert_markers =
+local convert_markers =
 {
-  [TRIBE_CYAN] = { 10, 11, 12, 13, 14 },
-  [TRIBE_GREEN] = { 1 },
-  [TRIBE_PINK] = { 15, 16, 17, 18 }
+  10, 11, 12, 13, 14
 };
 
 function cyan_attacking(player)
@@ -50,8 +48,6 @@ function cyan_attacking(player)
         ATTACK(player, TRIBE_BLUE, 0, ATTACK_BUILDING, M_BUILDING_DRUM_TOWER, 36, M_SPELL_WHIRLWIND, M_SPELL_WHIRLWIND, M_SPELL_WHIRLWIND, ATTACK_NORMAL, 0, -1, -1, 0);
       end
     end
-    AI_SetVar(player, 3, 3);
-  elseif (AI_GetVar(player, 3) == 3) then
     AI_SetVar(player, 3, 0);
   end
 
@@ -61,7 +57,7 @@ function cyan_attacking(player)
     local include_shaman = false;
     local include_troops = true;
     local s = { M_SPELL_INSECT_PLAGUE, M_SPELL_INSECT_PLAGUE, M_SPELL_INSECT_PLAGUE};
-    GetPlayerAreaInfo(TRIBE_BLUE, 138, 78, 6, buff); -- get data on that area
+    GetEnemyAreaInfo(player, 138, 78, 6, buff); -- get data on that area
 
     if (buff["People"][M_PERSON_SUPER_WARRIOR] > 0 and buff["Bldgs"][M_BUILDING_DRUM_TOWER] > 0) then
       -- assuming that hill has fws i ntowers
@@ -107,15 +103,10 @@ function cyan_towers(player)
         if (AI_GetVar(player, 4) == 1) then
           -- for middle hilled part we want to check if theres no enemy present.
           -- if there is, set user var to specific value to indicate they exist.
-          AI_SetVar(player, 2, 0);
-          if (AI_AreaContainsEnemy(player, 138, 78, 6)) then
-            AI_SetVar(player, 2, 1);
-          end
 
           -- check one by one
           if (not GetAI("Cyan"):TowerIsBuilt("Front1")) then
             GetAI("Cyan"):CheckTower("Front1");
-            return;
           end
 
           if (not GetAI("Cyan"):TowerIsBuilt("Front2")) then
@@ -128,13 +119,15 @@ function cyan_towers(player)
             return;
           end
 
-          if (AI_GetVar(player, 2) == 1) then
+          -- we don't bother with building on hill if there are enemies
+          AI_SetVar(player, 2, 0);
+          if (AI_AreaContainsEnemy(player, 138, 78, 6)) then
+            AI_SetVar(player, 2, 1);
             return;
           end
 
           if (not GetAI("Cyan"):TowerIsBuilt("MidHill1")) then
             GetAI("Cyan"):CheckTower("MidHill1");
-            return;
           end
 
           if (not GetAI("Cyan"):TowerIsBuilt("MidHill2")) then
@@ -144,7 +137,6 @@ function cyan_towers(player)
 
           if (not GetAI("Cyan"):TowerIsBuilt("MidHill3")) then
             GetAI("Cyan"):CheckTower("MidHill3");
-            return;
           end
         end
       end
@@ -154,12 +146,12 @@ end
 
 function cyan_convert(player)
   -- check if we have a low pop count
-  if (AI_GetPopCount(player) < 35) then
+  if (AI_GetPopCount(player) < 35 and AI_ShamanFree(player)) then
     -- enable converting and convert at random markers
     STATE_SET(player, 1, CP_AT_TYPE_MED_MAN_GET_WILD_PEEPS);
     WRITE_CP_ATTRIB(player, ATTR_EXPANSION, 36);
 
-    local mk = ai_convert_markers[player][G_RANDOM(#ai_convert_markers[player]) + 1];
+    local mk = convert_markers[G_RANDOM(#convert_markers) + 1];
     AI_ConvertAt(player, mk);
   else
     -- disable converting

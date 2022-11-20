@@ -15,6 +15,8 @@ GetAI("Cyan"):RegisterEvent("Towers", 128, 32, cyan_towers);
 GetAI("Cyan"):RegisterEvent("Patrol", 740, 112, function(player) end);
 GetAI("Cyan"):RegisterEvent("Attacking", 1536, 256, cyan_attacking);
 GetAI("Purple"):RegisterEvent("Convert", 122, 32, purple_convert);
+GetAI("Purple"):RegisterEvent("Building", 256, 96, purple_build);
+GetAI("Purple"):RegisterEvent("Towers", 140, 44, purple_towers);
 
 -- Towers
 GetAI("Cyan"):RegisterTower("Front1", 124, 104, -1);
@@ -23,6 +25,15 @@ GetAI("Cyan"):RegisterTower("Front3", 124, 96, -1);
 GetAI("Cyan"):RegisterTower("MidHill1", 130, 76, -1);
 GetAI("Cyan"):RegisterTower("MidHill2", 148, 78, -1);
 GetAI("Cyan"):RegisterTower("MidHill3", 138, 78, -1);
+GetAI("Purple"):RegisterTower("FrontDef1", 218, 118, -1);
+GetAI("Purple"):RegisterTower("FrontDef2", 230, 120, -1);
+GetAI("Purple"):RegisterTower("FrontDef3", 222, 108, -1);
+GetAI("Purple"):RegisterTower("FrontDef4", 204, 108, -1);
+GetAI("Purple"):RegisterTower("Mid1", 214, 80, 3);
+GetAI("Purple"):RegisterTower("Mid2", 220, 76, 2);
+GetAI("Purple"):RegisterTower("Mid3", 224, 76, 2);
+GetAI("Purple"):RegisterTower("Mid4", 228, 78, 1);
+
 
 G_NUM_OF_HUMANS_FOR_THIS_LEVEL = 3;
 
@@ -141,14 +152,14 @@ function _OnLevelInit(level_id)
 
   AI_SetAways(TRIBE_PINK, 1, 0, 0, 0, 0);
   AI_SetShamanAway(TRIBE_PINK, false);
-  AI_SetShamanParams(TRIBE_PINK, 0, 0, false, 0, 12);
-  AI_SetMainDrumTower(TRIBE_PINK, false, 0, 0);
-  AI_SetConvertingParams(TRIBE_PINK, false, true, 12);
+  AI_SetShamanParams(TRIBE_PINK, 222, 118, true, 16, 12);
+  AI_SetMainDrumTower(TRIBE_PINK, true, 216, 158);
+  AI_SetConvertingParams(TRIBE_PINK, true, true, 12);
   AI_SetTargetParams(TRIBE_PINK, TRIBE_YELLOW, true, true);
 
-  AI_SetBuildingParams(TRIBE_PINK, false, 60, 4);
+  AI_SetBuildingParams(TRIBE_PINK, true, 30, 2);
   AI_SetTrainingHuts(TRIBE_PINK, 0, 0, 0, 0);
-  AI_SetTrainingPeople(TRIBE_PINK, false, 0, 0, 0, 0, 0);
+  AI_SetTrainingPeople(TRIBE_PINK, true, 0, 0, 0, 0, 0);
   AI_SetVehicleParams(TRIBE_PINK, false, 0, 0, 0, 0);
   AI_SetFetchParams(TRIBE_PINK, false, false, false, false);
 
