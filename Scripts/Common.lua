@@ -73,7 +73,7 @@ function OnTurn()
 	ProcessSpecialAIs();
 
 	--refresh pop table every 3s
-	if turn() % 36 == 0 then
+	if everySeconds(3) then
 		table.sort(G_EVERYONE_IN_GAME, function(a, b) if GetPop(a) ~= GetPop(b) then return GetPop(a) < GetPop(b) else return a > b end end) --change to G_HUMANS
 	end
 end

@@ -48,6 +48,17 @@ G_HUMANS_ALIVE = {};
 G_AI_ALIVE = {};
 G_NUM_OF_HUMANS_FOR_THIS_LEVEL = -1; -- edit at start of each level's script
 G_EVERYONE_IN_GAME = {};
+G_AI_EXPANSION_TABLE = {				
+										--last time since expansion(secs)(set to -1 to not expand ever), -1 or c2d (shaman pos to lb from), -1 or c3d (shaman lb target ptr), isAboutToLB
+								[0] = 	{64,-1,-1,false},
+										{64,-1,-1,false},
+										{64,-1,-1,false},
+										{64,-1,-1,false},
+										{64,-1,-1,false},
+										{64,-1,-1,false},
+										{64,-1,-1,false},
+										{64,-1,-1,false}
+}
 
 -- CONSTANT POINTERS
 G_SPELL_CONST = spells_type_info();

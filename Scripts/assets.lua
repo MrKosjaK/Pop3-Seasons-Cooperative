@@ -208,6 +208,30 @@ function me2c3d(me)
 	return c3d
 end
 
+--shaman stuck
+function stuckS(pn)
+	if nilS(pn) then return getShaman(pn).State == S_PERSON_NAVIGATION_FAILED end
+end
+--thing stuck
+function stuckT(thing)
+	if nilT(thing) then return thing.State == S_PERSON_NAVIGATION_FAILED end
+end
+
+--unstuck shaman
+function unstuckS(pn)
+	if stuckS(pn) then 
+		getShaman(pn).State = S_PERSON_WILD_ROAM  
+		remove_all_persons_commands(getShaman(pn))
+	end
+end
+--unstuck thing
+function unstuckT(thing)
+	if stuckT(thing) then  
+		thing.State = S_PERSON_WILD_ROAM  
+		remove_all_persons_commands(thing)
+	end
+end
+
 --is thing in area
 function IsThingInArea(thingType,thingModel,thingOwner,X,Z,radius)
 	--thingOwner -1 for things of any tribe
@@ -257,7 +281,6 @@ function updateBasePriorities(pn)
 	updateGameStage(5,10,15,20)
 	local s,h,b = G_GAMESTAGE, countHuts(pn,true), AI_GetUnitCount(pn, M_PERSON_BRAVE)
 	--local t,p = countTroops(pn), GetPop(pn)
-	WriteAiTrainTroops(pn, 1+(s*2)+15 ,1+(s*2)+15, 1+(s*2)+15, 1+(s*2)+15)
 	AI_SetBuildingParams(pn,true,40+s*15,3)
 	if b > 20+(s*5) and h > 6+s then
 		if AI_GetBldgCount(pn, M_BUILDING_BOAT_HUT_1) > 0 then
@@ -427,6 +450,64 @@ function fasterHutBars(tribe, amt)
 			end
 		end
 	return true end)
+end
+
+--ai shaman go expand
+function LBexpand(pn,radius,cooldownSecondsIncrement,requiresLBmana)
+	local success = false
+	
+	if (requiresLBmana and MANA(pn) >= 70000) or (not requiresLBmana) then
+		if FREE_ENTRIES(pn) > 0 then
+			if nilS(pn) then
+				if AI_ShamanFree(pn) then
+					local c3d = getPlayer(pn).ReincarnSiteCoord
+					local c2d = Coord2D.new() ; coord3D_to_coord2D(c3d,c2d) 												--LOG(get_world_dist_xz(getShaman(pn).Pos.D2,c2d))
+					if get_world_dist_xz(getShaman(pn).Pos.D2,c2d) < 512*10 then
+						SearchMapCells(SQUARE, 0, 0, radius, world_coord2d_to_map_idx(getShaman(pn).Pos.D2), function(me)
+							if is_map_elem_coast(me) > 0 --[[and (is_map_elem_waitable_on(me) > 0)]] and me.Alt < 128 then
+								local meptr = MAP_ELEM_PTR_2_IDX(me)
+								local c2d = Coord2D.new() map_idx_to_world_coord2d(meptr,c2d)
+								G_AI_EXPANSION_TABLE[pn][2] = c2d
+								SearchMapCells(SQUARE, 0, 0, 6, world_coord2d_to_map_idx(G_AI_EXPANSION_TABLE[pn][2]), function(me)
+									if is_map_elem_coast(me) > 0 then
+										local meptr = MAP_ELEM_PTR_2_IDX(me)
+										local c2d = Coord2D.new() map_idx_to_world_coord2d(meptr,c2d)
+										SearchMapCells(SQUARE, 0, 0, 1, world_coord2d_to_map_idx(c2d), function(me)
+											if is_map_elem_all_sea(me) > 0 then
+												local meptr = MAP_ELEM_PTR_2_IDX(me)
+												local c3d = Coord3D.new() map_idx_to_world_coord3d(meptr,c3d)
+												G_AI_EXPANSION_TABLE[pn][3] = c3d
+												success = true
+												return false
+											end
+										return true end)
+									end
+								return true end)
+							end
+						return true end)
+					end
+				end
+			end
+		end
+	end
+	
+	--if not success try again in 30s; if success expand again after X
+	if not success then G_AI_EXPANSION_TABLE[pn][1] = 30 G_AI_EXPANSION_TABLE[pn][2] = -1 G_AI_EXPANSION_TABLE[pn][3] = -1 G_AI_EXPANSION_TABLE[pn][4] = false else G_AI_EXPANSION_TABLE[pn][1] = cooldownSecondsIncrement command_person_go_to_coord2d(getShaman(pn),G_AI_EXPANSION_TABLE[pn][2]) G_AI_EXPANSION_TABLE[pn][4] = true end
+	log_msg(pn,"will expand(success?): " .. btn(success))
+end
+function tryToLB(pn)
+	if G_AI_EXPANSION_TABLE[pn][4] then
+		if nilS(pn) then
+			SearchMapCells(SQUARE, 0, 0, 1, world_coord2d_to_map_idx(G_AI_EXPANSION_TABLE[pn][2]), function(me)
+				me.MapWhoList:processList( function (t)
+					if t.Type == T_PERSON and t.Model == M_PERSON_MEDICINE_MAN and t.Owner == pn then
+						createThing(T_SPELL,M_SPELL_LAND_BRIDGE,pn,G_AI_EXPANSION_TABLE[pn][3],false,false)
+						G_AI_EXPANSION_TABLE[pn][2] = -1 G_AI_EXPANSION_TABLE[pn][3] = -1 G_AI_EXPANSION_TABLE[pn][4] = false
+					end
+				return true end)
+			return true end)
+		end
+	end
 end
 --------------------------------------------------------------------------------------------------------------------------------------------
 --flags
@@ -645,6 +726,11 @@ function isCursorBetween(Xcurr,Ycurr,   Xmin,Xmax,Ymin,Ymax)
 		end
 	end
 	return false
+end
+
+--bool to number
+function btn(bool)
+  return bool and 1 or 0
 end
 --------------------------------------------------------------------------------------------------------------------------------------------
 --debug

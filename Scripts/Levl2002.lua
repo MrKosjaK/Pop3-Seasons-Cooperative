@@ -14,12 +14,13 @@ function _OnTurn(turn)
 		trainingHutsPriorities(v)
 		--small AI boosts lategame
 		if minutes() > 15 then
-			fasterTrain(v,32)
-			fasterHutBars(v,8)
+			fasterTrain(v,8+8*stage)
+			fasterHutBars(v,4+2*stage)
 		end
 		--priorities
 		if everySeconds(12) then
 			updateBasePriorities(v)
+			unstuckS(v)
 			if countHuts(v,false) > 1+stage+5 then
 				WRITE_CP_ATTRIB(v, ATTR_PREF_BOAT_HUTS, 1);
 			end
@@ -33,6 +34,17 @@ function _OnTurn(turn)
 		--stop snowing
 		snow = 0
 		fastStopSnow = rndb(0,1) --0 for slow stopping, 1 for fast
+	end
+	
+	--update lb expand tbl
+	if everySeconds(1) then
+		for k,v in ipairs(G_AI_ALIVE) do
+			if G_AI_EXPANSION_TABLE[v][1] > 0 then G_AI_EXPANSION_TABLE[v][1] = G_AI_EXPANSION_TABLE[v][1] - 1 end
+			if G_AI_EXPANSION_TABLE[v][1] == 0 and not G_AI_EXPANSION_TABLE[v][4] then
+				LBexpand(v,9,10,false) --pn,radius,cooldownSecondsIncrement,requiresLBmana
+			end
+			tryToLB(v)
+		end
 	end
 end
 
@@ -57,14 +69,19 @@ end
 
 
 function trainingHutsPriorities(pn)
-	local w = AI_GetBldgCount(pn, M_BUILDING_WARRIOR_TRAIN)
-	local fw = AI_GetBldgCount(pn, M_BUILDING_SUPER_TRAIN)
-	local t = AI_GetBldgCount(pn, M_BUILDING_TEMPLE)
-	local s = AI_GetBldgCount(pn, M_BUILDING_SPY_TRAIN)
+	local pop,huts,s = GetPop(pn),countHuts(pn,false),G_GAMESTAGE
+	
+	WRITE_CP_ATTRIB(pn, ATTR_PREF_WARRIOR_TRAINS, btn(huts > 4))
+	--WRITE_CP_ATTRIB(pn, ATTR_PREF_SUPER_WARRIOR_TRAINS, btn(huts > 4))
+	WRITE_CP_ATTRIB(pn, ATTR_PREF_RELIGIOUS_TRAINS, btn(huts > 8))
+	--WRITE_CP_ATTRIB(pn, ATTR_PREF_SPY_TRAINS, btn(huts > 4))
+	
+	--local w,t,fw,s = AI_GetBldgCount(pn, M_BUILDING_WARRIOR_TRAIN),AI_GetBldgCount(pn, M_BUILDING_TEMPLE), AI_GetBldgCount(pn, M_BUILDING_SUPER_TRAIN),AI_GetBldgCount(pn, M_BUILDING_SPY_TRAIN)
+	
 	if pn == TRIBE_CYAN then
-		
+		WriteAiTrainTroops(pn, 1+(s*2)+15 ,1+(s*2)+15, 0, 0) --w,pr,fw,s
 	else -- black
-		
+		WriteAiTrainTroops(pn, 1+(s*2)+15 , 0, 1+(s*2)+15, 0) --w,pr,fw,s
 	end
 end
 
@@ -109,7 +126,7 @@ function _OnLevelInit(level_id)
 	--AI_SetTargetParams(TRIBE_CYAN, TRIBE_BLUE, true, true);
 
 	AI_SetBuildingParams(TRIBE_CYAN, true, 50, 3);
-	AI_SetTrainingHuts(TRIBE_CYAN, 1, 0, 0, 0);
+	AI_SetTrainingHuts(TRIBE_CYAN, 0, 0, 0, 0);
 	AI_SetTrainingPeople(TRIBE_CYAN, true, 10, 0, 0, 0, 0);
 	AI_SetVehicleParams(TRIBE_CYAN, false, 0, 0, 0, 0);
 	AI_SetFetchParams(TRIBE_CYAN, true, true, true, true);
@@ -129,5 +146,6 @@ function afterInit()
 	for k,v in ipairs(G_HUMANS) do
 		set_player_can_cast(M_SPELL_GHOST_ARMY, v);
 		set_correct_gui_menu();
+		G_AI_EXPANSION_TABLE[v][1] = G_AI_EXPANSION_TABLE[v][1] + rndb(32,128)
 	end
 end
