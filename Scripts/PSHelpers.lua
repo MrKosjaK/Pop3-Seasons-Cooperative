@@ -20,7 +20,7 @@ end
 
 function AI_AreaContainsEnemy(pn, x, z, radius)
   local result = false;
-  SearchMapCells(CIRCULAR, 0, 0, radius, map_xz_to_map_idx(x, z), function(me)
+  SearchMapCells(SQUARE, 0, 0, radius, map_xz_to_map_idx(x, z), function(me)
     if (not me.MapWhoList:isEmpty()) then
       me.MapWhoList:processList(function(t)
         if (t.Owner == TRIBE_HOSTBOT) then
@@ -47,7 +47,7 @@ end
 
 function AI_CanBuildTower(pn, x, z, radius)
   local result = true;
-  SearchMapCells(CIRCULAR, 0, 0, radius, map_xz_to_map_idx(x, z), function(me)
+  SearchMapCells(SQUARE, 0, 0, radius, map_xz_to_map_idx(x, z), function(me)
     -- first check if mapelement has a tower bldg/shape belonging to us
     if (not me.ShapeOrBldgIdx:isNull()) then
       local sob = me.ShapeOrBldgIdx:get();
