@@ -29,6 +29,7 @@ function GetPlayerAreaInfo(player, x, z, rad, tabl)
         tabl["Bldgs"][t.Model] = tabl["Bldgs"][t.Model] + 1;
         return true;
       end
+      return true;
     end);
     return true;
   end);
