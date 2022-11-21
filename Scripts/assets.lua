@@ -84,11 +84,11 @@ end
 
 --quick random
 function rnd()
-	return math.random(100)
+	return G_RANDOM(100)
 end
 --quick random between
 function rndb(a,b)
-	return math.random(a,b)
+	return a + G_RANDOM(b-a) + 1
 end
 
 --random item from a table
