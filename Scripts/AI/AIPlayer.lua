@@ -103,7 +103,6 @@ function AIShaman:NewShaman(pn)
 
   self.Owner = pn;
   self.Proxy = ObjectProxy.new();
-  self.Proxy:set(getShaman(pn).ThingNum);
   self.LandBridgeSave = false;
   self.FallDamageSave = false;
   self.CustomSpellEntries = false;
@@ -118,47 +117,60 @@ function AIShaman:NewShaman(pn)
   return self;
 end
 
-function AIPlayer:Shaman_Process()
-  if (self.Shaman == nil) then
-    return;
-  end
-
-  if (self.Shaman.Proxy:isNull()) then
+function AIShaman:Process()
+  if (self.Proxy:isNull()) then
     -- try getting shaman back
     if (getShaman(self.Owner) ~= nil) then
-      self.Shaman.Proxy:set(getShaman(self.Owner).ThingNum);
+      self.Proxy:set(getShaman(self.Owner).ThingNum);
     end
   else
-    local s = self.Shaman.Proxy:get();
+    local s = self.Proxy:get();
 
-    if (self.Shaman.RetaliateWithSpell ~= M_SPELL_NONE) then
-      self.Shaman.RetaliateWait = self.Shaman.RetaliateWait - 1;
-      if (self.Shaman.RetaliateWait <= 0) then
-        createThing(T_SPELL, self.Shaman.RetaliateWithSpell, s.Owner, s.Pos.D3, false, false);
-        self.Shaman.RetaliateWithSpell = M_SPELL_NONE;
+    if (self.RetaliateWithSpell ~= M_SPELL_NONE) then
+      self.RetaliateWait = self.RetaliateWait - 1;
+      if (self.RetaliateWait <= 0) then
+        if (s.State ~= S_PERSON_SPELL_TRANCE) then
+          -- let's check if any enemy shaman is around, HEHEBOI
+          local found = false;
+          for i = 0, 7 do
+            local es = getShaman(i);
+            if (es ~= nil) then
+              if (are_players_allied(es.Owner, s.Owner) == 0) then
+                -- found evil, cleanse if nearby.
+                if (get_world_dist_xyz(es.Pos.D3, s.Pos.D3) <= 4096) then
+                  CREATE_THING_WITH_PARAMS4(T_SPELL, self.RetaliateWithSpell, s.Owner, es.Pos.D3, 10000, es.ThingNum, 0, 0);
+                  self.RetaliateWithSpell = M_SPELL_NONE;
+                  found = true;
+                  break;
+                end
+              end
+            end
+          end
+
+          if (not found) then
+            CREATE_THING_WITH_PARAMS4(T_SPELL, self.RetaliateWithSpell, s.Owner, s.Pos.D3, 10000, 0, 0, 0);
+            self.RetaliateWithSpell = M_SPELL_NONE;
+          end
+        end
       end
     end
   end
 end
 
-function AIPlayer:Shaman_WatchForDodges(t)
-  if (self.Shaman == nil) then
+function AIShaman:WatchForDodges(t)
+  if (self.Proxy:isNull()) then
     return;
   end
 
-  if (self.Shaman.Proxy:isNull()) then
-    return;
-  end
+  local s = self.Proxy:get();
 
-  local s = self.Shaman.Proxy:get();
-
-  if (self.Shaman.FallDamageSave == true) then
-    if (G_RANDOM(100) < self.Shaman.FallDamageChance) then
+  if (self.FallDamageSave == true) then
+    if (G_RANDOM(100) < self.FallDamageChance) then
       if (t.Type == T_EFFECT) then
         if (t.Model == M_EFFECT_SPELL_BLAST and are_players_allied(t.Owner, s.Owner) == 0) then
-          if (s.State ~= S_PERSON_SPELL_TRANCE) then
-            self.Shaman.RetaliateWait = 3;
-            self.Shaman.RetaliateWithSpell = M_SPELL_BLAST;
+          if (get_world_dist_xyz(t.Pos.D3, s.Pos.D3) <= 512) then
+            self.RetaliateWait = 2;
+            self.RetaliateWithSpell = M_SPELL_LIGHTNING_BOLT;
             return;
           end
         end
@@ -262,8 +274,20 @@ function Initialize_Special_AI(_name, player_num)
   end
 end
 
+function AIOnCreateCheck(t)
+  for i,AI in pairs(CompPlayers) do
+    if (AI.Shaman ~= nil) then
+      AI.Shaman:WatchForDodges(t);
+    end
+  end
+end
+
 function ProcessSpecialAIs()
   for i,AI in pairs(CompPlayers) do
     AI:ProcessEvents();
+
+    if (AI.Shaman ~= nil) then
+      AI.Shaman:Process();
+    end
   end
 end

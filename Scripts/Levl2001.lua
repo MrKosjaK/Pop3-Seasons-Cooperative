@@ -19,6 +19,9 @@ GetAI("Purple"):RegisterEvent("Building", 256, 96, purple_build);
 GetAI("Purple"):RegisterEvent("Towers", 140, 44, purple_towers);
 
 -- Shaman AI
+GetAI("Cyan"):ToggleShamanAI(true);
+GetAI("Cyan"):Shaman_ToggleFallDamageSave(true);
+GetAI("Cyan"):Shaman_ToggleLightningDodge(true);
 GetAI("Purple"):ToggleShamanAI(true);
 GetAI("Purple"):Shaman_ToggleFallDamageSave(true);
 GetAI("Purple"):Shaman_ToggleLightningDodge(true);
@@ -186,11 +189,9 @@ function _OnLevelInit(level_id)
 end
 
 function _OnTurn(turn)
-  GetAI("Purple"):Shaman_Process();
 end
 
 function _OnCreateThing(t)
-  GetAI("Purple"):Shaman_WatchForDodges(t);
 end
 
 function _OnPlayerDeath(pn)

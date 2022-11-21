@@ -81,6 +81,8 @@ end
 -- OnCreateThing executed on each thing creation
 function OnCreateThing(t)
 	if _OnCreateThing ~= nil then _OnCreateThing(t) end
+
+	AIOnCreateCheck(t);
 end
 
 -- OnFrame executed on every draw frame (60 times per second or 60FPS)
@@ -146,7 +148,7 @@ function OnKeyUp(k)
 	elseif k == LB_KEY_4 then
 		for k,v in ipairs(G_AI_ALIVE) do
 			ReadAITrainedTroops(v)
-		end		
+		end
 	elseif k == LB_KEY_1 then
 		for k,v in ipairs(G_AI_ALIVE) do
 			log_msg(v, "house percentage: " .. READ_CP_ATTRIB(v,ATTR_HOUSE_PERCENTAGE) .. " | huts amt (total): " .. countHuts(v,true) .. " | huts amt(only healthy): " .. countHuts(v,false))
