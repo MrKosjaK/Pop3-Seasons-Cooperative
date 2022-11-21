@@ -90,8 +90,72 @@ function AIPlayer:Init(owner)
   self.Owner = owner;
   self.Towers = {};
   self.Events = {};
+  self.Shaman = nil;
 
   return self;
+end
+
+AIShaman = {}
+AIShaman.__index = AIShaman;
+
+function AIShaman:NewShaman(pn)
+  local self = setmetatable({}, AIShaman);
+
+  self.Owner = pn;
+  self.Proxy = ObjectProxy.new();
+  self.LandBridgeSave = false;
+  self.FallDamageSave = false;
+  self.CustomSpellEntries = false;
+  self.LightningDodge = false;
+  self.RetaliateWithSpell = M_SPELL_NONE;
+  self.FallDamageChance = 100;
+  self.LightningDodgeChance = 100;
+  self.LandBridgeChance = 100;
+  self.SpellEntries = {};
+
+  return self;
+end
+
+function AIPlayer:Shaman_WatchForDodges(t)
+  if (self.Shaman == nil) then
+    return;
+  end
+
+  if (self.FallDamageSave == true or self.LightningDodge == true) then
+
+  end
+end
+
+function AIPlayer:ToggleShamanAI(bool)
+  if (self.Shaman == nil and bool) then
+    self.Shaman = AIShaman:NewShaman(self.Owner);
+  elseif (self.Shaman ~= nil and not bool) then
+    self.Shaman = nil;
+  end
+end
+
+function AIPlayer:Shaman_ToggleLBSave(bool)
+  if (self.Shaman ~= nil) then
+    self.Shaman.LandBridgeSave = bool;
+  end
+end
+
+function AIPlayer:Shaman_ToggleLightningDodge(bool)
+  if (self.Shaman ~= nil) then
+    self.Shaman.LightningDodge = bool;
+  end
+end
+
+function AIPlayer:Shaman_ToggleFallDamageSave(bool)
+  if (self.Shaman ~= nil) then
+    self.Shaman.FallDamageSave = bool;
+  end
+end
+
+function AIPlayer:Shaman_ToggleSpellEntries(bool)
+  if (self.Shaman ~= nil) then
+    self.Shaman.CustomSpellEntries = bool;
+  end
 end
 
 function AIPlayer:ProcessEvents()
