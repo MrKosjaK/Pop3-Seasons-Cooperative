@@ -22,6 +22,8 @@ GetAI("Purple"):RegisterEvent("Towers", 140, 44, purple_towers);
 GetAI("Cyan"):ToggleShamanAI(true);
 GetAI("Cyan"):Shaman_ToggleFallDamageSave(true);
 GetAI("Cyan"):Shaman_ToggleLightningDodge(true);
+GetAI("Cyan"):Shaman_ToggleSpellEntries(true);
+GetAI("Cyan"):Shaman_AddSpellEntry(M_SPELL_BLAST, T_PERSON, {M_PERSON_BRAVE, M_PERSON_WARRIOR}, 5000);
 GetAI("Purple"):ToggleShamanAI(true);
 GetAI("Purple"):Shaman_ToggleFallDamageSave(true);
 GetAI("Purple"):Shaman_ToggleLightningDodge(true);

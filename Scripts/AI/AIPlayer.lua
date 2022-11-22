@@ -95,7 +95,21 @@ function AIPlayer:Init(owner)
   return self;
 end
 
-AIShaman = {}
+AISpellEntry = {};
+AISpellEntry.__index = AISpellEntry;
+
+function AISpellEntry:NewEntry(spell, target_type, target_models, cost)
+  local self = setmetatable({}, AISpellEntry);
+
+  self.Spell = spell;
+  self.TargetType = target_type;
+  self.TargetModels = {table.unpack(target_models)};
+  self.Cost = cost;
+
+  return self;
+end
+
+AIShaman = {};
 AIShaman.__index = AIShaman;
 
 function AIShaman:NewShaman(pn)
@@ -112,6 +126,9 @@ function AIShaman:NewShaman(pn)
   self.FallDamageChance = 100;
   self.LightningDodgeChance = 100;
   self.LandBridgeChance = 100;
+  self.MaxRad = 0;
+  self.CurrRad = 0;
+  self.OffsetRad = 0;
   self.SpellEntries = {};
 
   return self;
@@ -126,34 +143,75 @@ function AIShaman:Process()
   else
     local s = self.Proxy:get();
 
+    if (s.State == S_PERSON_SPELL_TRANCE) then
+      return;
+    end
+
     if (self.RetaliateWithSpell ~= M_SPELL_NONE) then
       self.RetaliateWait = self.RetaliateWait - 1;
       if (self.RetaliateWait <= 0) then
-        if (s.State ~= S_PERSON_SPELL_TRANCE) then
-          -- let's check if any enemy shaman is around, HEHEBOI
-          local found = false;
-          for i = 0, 7 do
-            local es = getShaman(i);
-            if (es ~= nil) then
-              if (are_players_allied(es.Owner, s.Owner) == 0) then
-                -- found evil, cleanse if nearby.
-                if (get_world_dist_xyz(es.Pos.D3, s.Pos.D3) <= 4096) then
-                  CREATE_THING_WITH_PARAMS4(T_SPELL, self.RetaliateWithSpell, s.Owner, es.Pos.D3, 10000, es.ThingNum, 0, 0);
-                  self.RetaliateWithSpell = M_SPELL_NONE;
-                  found = true;
-                  break;
-                end
+        -- let's check if any enemy shaman is around, HEHEBOI
+        local found = false;
+        for i = 0, 7 do
+          local es = getShaman(i);
+          if (es ~= nil) then
+            if (are_players_allied(es.Owner, s.Owner) == 0) then
+              -- found evil, cleanse if nearby.
+              if (get_world_dist_xyz(es.Pos.D3, s.Pos.D3) <= 4096) then
+                CREATE_THING_WITH_PARAMS4(T_SPELL, self.RetaliateWithSpell, s.Owner, es.Pos.D3, 10000, es.ThingNum, 0, 0);
+                self.RetaliateWithSpell = M_SPELL_NONE;
+                found = true;
+                break;
+              end
+            end
+          end
+        end
+
+        if (not found) then
+          CREATE_THING_WITH_PARAMS4(T_SPELL, self.RetaliateWithSpell, s.Owner, s.Pos.D3, 10000, 0, 0, 0);
+          self.RetaliateWithSpell = M_SPELL_NONE;
+          return;
+        end
+      end
+    end
+
+    -- process custom entries.
+    local found_target = false;
+    SearchMapCells(CIRCULAR, 0, 0, 6, world_coord2d_to_map_idx(s.Pos.D2), function(me)
+      if (not me.MapWhoList:isEmpty()) then
+        me.MapWhoList:processList(function(t)
+          if (are_players_allied(s.Owner, t.Owner) == 1) then
+            return true;
+          end
+
+          if (t.Type == T_BUILDING) then
+            -- find entry that fits the bill
+            for i,Spell in ipairs(self.SpellEntries) do
+              if (Spell.TargetType == t.Type) then
+                return false;
               end
             end
           end
 
-          if (not found) then
-            CREATE_THING_WITH_PARAMS4(T_SPELL, self.RetaliateWithSpell, s.Owner, s.Pos.D3, 10000, 0, 0, 0);
-            self.RetaliateWithSpell = M_SPELL_NONE;
+          if (t.Type == T_PERSON) then
+            for i,SP in ipairs(self.SpellEntries) do
+              if (SP.TargetType == t.Type) then
+                -- now check if model fits
+                for j,Model in ipairs(SP.TargetModels) do
+                  if (Model == t.Model) then
+                    CREATE_THING_WITH_PARAMS4(T_SPELL, SP.Spell, s.Owner, t.Pos.D3, 10000, t.ThingNum, 0, 0);
+                    return false;
+                    --break;
+                  end
+                end
+              end
+            end
           end
-        end
+          return true;
+        end);
       end
-    end
+      if (found_target) then return false; else return true; end
+    end);
   end
 end
 
@@ -208,6 +266,12 @@ end
 function AIPlayer:Shaman_ToggleSpellEntries(bool)
   if (self.Shaman ~= nil) then
     self.Shaman.CustomSpellEntries = bool;
+  end
+end
+
+function AIPlayer:Shaman_AddSpellEntry(spell, target_type, target_models, cost);
+  if (self.Shaman ~= nil) then
+    self.Shaman.SpellEntries[#self.Shaman.SpellEntries + 1] = AISpellEntry:NewEntry(spell, target_type, target_models, cost);
   end
 end
 
