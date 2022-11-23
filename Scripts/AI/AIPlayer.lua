@@ -13,16 +13,20 @@ CompPlayer =
   }
 };
 
-local cp_mt = {}
-local pl_mt = {}
+local cp_mt = {};
+local ev_mt = {};
+ev_mt.__index = ev_mt;
+local tw_mt = {};
+tw_mt.__index = tw_mt;
+local pl_mt = {};
 pl_mt.__index = pl_mt;
 
 setmetatable(CompPlayer,
 {
   __call = function(t, key)
-    LOG(string.format("Accessing %i player data", key));
     return t.Data[key];
   end,
+
   __index = cp_mt
 });
 
@@ -38,12 +42,11 @@ function cp_mt:init(player_num)
     };
     setmetatable(tribe_info, pl_mt);
     self.Data[player_num] = tribe_info;
-    LOG(string.format("Player %i initialized", player_num));
   end
 end
 
 function cp_mt:process_ai()
-  for i = 0, #self.Data do
+  for i = 0, 7 do
     local ai = self.Data[i];
     if (ai ~= nil) then
       ai:process();
@@ -56,105 +59,113 @@ function pl_mt:process()
   for i = 1, #self.Events do
     local ev = self.Events[i];
     if (ev ~= nil) then
-
+      if (ev:is_triggered()) then
+        ev.Func(self.Owner);
+      end
     end
   end
 end
--- AITower = {};
--- AITower.__index = AITower;
---
--- function AITower:NewTower(owner, x, z, orient)
---   local self = setmetatable({}, AITower);
---
---   self.Owner = owner;
---   self.X = x;
---   self.Z = z;
---   self.Orient = orient or -1;
---   self.Obj = ObjectProxy.new();
---   self.Stage = 0;
---
---   return self;
--- end
---
--- function AITower:isNull()
---   return self.Obj:isNull();
--- end
---
--- function AITower:TryCreate()
---   -- will attempt to place a tower shape at given pos, then link its idx
---   local map_idx = map_xz_to_map_idx(self.X, self.Z);
---   local orient = 0;
---   if (self.Orient == -1) then
---     orient = G_RANDOM(4);
---   else
---     orient = self.Orient;
---   end
---
---   if (is_map_cell_bldg_markable(getPlayer(self.Owner), map_idx, 0, M_BUILDING_DRUM_TOWER, 0, 0) ~= 0) then
---     -- place tower plan.
---     process_shape_map_elements(map_idx, M_BUILDING_DRUM_TOWER, orient, self.Owner, SHME_MODE_SET_PERM);
---
---     -- bind thingidx
---     local me = MAP_ELEM_IDX_2_PTR(map_idx);
---     self.Obj:set(me.ShapeOrBldgIdx:getThingNum());
---     self.Stage = 1;
---   end
--- end
---
--- function AITower:TryBind()
---   local map_idx = map_xz_to_map_idx(self.X, self.Z);
---   local me = MAP_ELEM_IDX_2_PTR(map_idx);
---
---   me.MapWhoList:processList(function(t)
---     if (t.Type == T_BUILDING and t.Model == M_BUILDING_DRUM_TOWER and t.Owner == self.Owner) then
---       self.Obj:set(t.ThingNum);
---       self.Stage = 2;
---       return false;
---     end
---
---     return true;
---   end);
--- end
---
--- AIEvent = {};
--- AIEvent.__index = AIEvent;
---
--- function AIEvent:NewEvent(func, ticks, randomness)
---   local self = setmetatable({}, AIEvent);
---
---   self.BaseTicks = ticks;
---   self.Randomness = randomness;
---   self.Ticks = ticks - G_RANDOM(randomness);
---   self.Func = func;
---
---   return self;
--- end
---
--- function AIEvent:Tick()
---   self.Ticks = self.Ticks - 1;
---
---   if (self.Ticks <= 0) then
---     self.Ticks = self.BaseTicks - (G_RANDOM(self.Randomness));
---     return true;
---   end
---
---   return false;
--- end
---
--- AIPlayer = {};
--- AIPlayer.__index = AIPlayer;
---
--- function AIPlayer:Init(owner)
---   local self = setmetatable({}, AIPlayer);
---
---   self.Owner = owner;
---   self.Towers = {};
---   self.Events = {};
---   self.Shaman = nil;
---
---   return self;
--- end
---
+
+function pl_mt:create_tower(idx, x, z, orient)
+  if (self.Towers[idx] == nil) then
+    local tower =
+    {
+      Owner = self.Owner;
+      X = x;
+      Z = z;
+      Orient = orient or -1;
+      Obj = ObjectProxy.new();
+      Stage = 0;
+    };
+    setmetatable(tower, tw_mt);
+    self.Towers[idx] = tower;
+  end
+end
+
+function pl_mt:is_tower_constructed(idx)
+  return self.Towers[idx]:shape_or_bldg_done();
+end
+
+function pl_mt:construct_tower(idx)
+  self.Towers[idx]:check_for_creation();
+end
+
+function tw_mt:check_for_creation()
+  if (self.Stage == 0) then
+    if (self.Obj:isNull()) then
+      -- will attempt to place a tower shape at given pos, then link its idx
+      local map_idx = map_xz_to_map_idx(self.X, self.Z);
+      local orient = 0;
+      if (self.Orient == -1) then
+        orient = G_RANDOM(4);
+      else
+        orient = self.Orient;
+      end
+
+      if (is_map_cell_bldg_markable(getPlayer(self.Owner), map_idx, 0, M_BUILDING_DRUM_TOWER, 0, 0) ~= 0) then
+        -- place tower plan.
+        process_shape_map_elements(map_idx, M_BUILDING_DRUM_TOWER, orient, self.Owner, SHME_MODE_SET_PERM);
+
+        -- bind thingidx
+        local me = MAP_ELEM_IDX_2_PTR(map_idx);
+        self.Obj:set(me.ShapeOrBldgIdx:getThingNum());
+        self.Stage = 1;
+      end
+    end
+  elseif (self.Stage == 1) then
+    if (self.Obj:isNull()) then
+      local map_idx = map_xz_to_map_idx(self.X, self.Z);
+      local me = MAP_ELEM_IDX_2_PTR(map_idx);
+      local obj = me.ShapeOrBldgIdx:get();
+      if (obj ~= nil) then
+        if (obj.Type == T_BUILDING and obj.Model == M_BUILDING_DRUM_TOWER and obj.Owner == self.Owner) then
+          self.Stage = 2;
+          self.Obj:set(obj.ThingNum);
+          return;
+        end
+      else
+        self.Stage = 0;
+      end
+    end
+  else
+    self.Stage = 0;
+  end
+end
+
+function tw_mt:shape_or_bldg_done()
+  -- first check if our proxy is null or not
+  if (self.Obj:isNull()) then
+    return false;
+  end
+
+  return true;
+end
+
+function pl_mt:create_event(idx, ticks, randomness, func)
+  if (self.Events[idx] == nil) then
+    local event =
+    {
+      BaseTicks = ticks,
+      Randomness = randomness;
+      Ticks = ticks - G_RANDOM(randomness);
+      Func = func;
+    };
+    setmetatable(event, ev_mt);
+    self.Events[idx] = event;
+  end
+end
+
+function ev_mt:is_triggered()
+  self.Ticks = self.Ticks - 1;
+
+  if (self.Ticks <= 0) then
+    self.Ticks = self.BaseTicks - (G_RANDOM(self.Randomness));
+    return true;
+  end
+
+  return false;
+end
+
 -- AISpellEntry = {};
 -- AISpellEntry.__index = AISpellEntry;
 --
@@ -332,69 +343,6 @@ end
 -- function AIPlayer:Shaman_AddSpellEntry(spell, target_type, target_models, cost);
 --   if (self.Shaman ~= nil) then
 --     self.Shaman.SpellEntries[#self.Shaman.SpellEntries + 1] = AISpellEntry:NewEntry(spell, target_type, target_models, cost);
---   end
--- end
---
--- function AIPlayer:ProcessEvents()
---   for i,Event in pairs(self.Events) do
---     if (Event:Tick()) then
---       Event.Func(self.Owner);
---     end
---   end
--- end
---
--- function AIPlayer:RegisterEvent(_name, ticks, randomness, func)
---   if (self.Events[_name] == nil) then
---     self.Events[_name] = AIEvent:NewEvent(func, ticks, randomness);
---   end
--- end
---
--- -- does not destroy actually in-game, just in lua
--- function AIPlayer:DestroyTower(_name)
---   if (self.Towers[_name] ~= nil) then
---     self.Towers[_name] = nil;
---   end
--- end
---
--- function AIPlayer:TowerIsBuilt(_name)
---   if (self.Towers[_name] ~= nil) then
---     if (not self.Towers[_name]:isNull()) then
---       if (self.Towers[_name].Stage == 2) then
---         return true;
---       end
---     end
---   end
---
---   return false;
--- end
---
--- function AIPlayer:CheckTower(_name)
---   if (self.Towers[_name] ~= nil) then
---     if (self.Towers[_name]:isNull()) then
---       if (self.Towers[_name].Stage == 0) then
---         self.Towers[_name]:TryCreate();
---       elseif (self.Towers[_name].Stage == 1) then
---         self.Towers[_name]:TryBind();
---       elseif(self.Towers[_name].Stage == 2) then
---         self.Towers[_name].Stage = 0; -- rebuild.
---       end
---     end
---   end
--- end
---
--- function AIPlayer:RegisterTower(_name, x, z, orient)
---   if (self.Towers[_name] == nil) then
---     self.Towers[_name] = AITower:NewTower(self.Owner, x, z, orient);
---   end
--- end
---
--- function GetAI(_name)
---   return CompPlayers[_name];
--- end
---
--- function Initialize_Special_AI(_name, player_num)
---   if (CompPlayers[_name] == nil) then
---     CompPlayers[_name] = AIPlayer:Init(player_num);
 --   end
 -- end
 --

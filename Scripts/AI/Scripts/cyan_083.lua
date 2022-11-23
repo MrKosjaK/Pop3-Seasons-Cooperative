@@ -6,7 +6,15 @@ local convert_markers =
 CompPlayer:init(TRIBE_CYAN);
 local ai = CompPlayer(TRIBE_CYAN);
 
-function cyan_attacking(player)
+-- towers
+ai:create_tower(1, 124, 104, -1);
+ai:create_tower(2, 146, 106, -1);
+ai:create_tower(3, 124, 96, -1);
+ai:create_tower(4, 130, 76, -1);
+ai:create_tower(5, 148, 78, -1);
+ai:create_tower(6, 138, 78, -1);
+
+local function cyan_attacking(player)
   -- depends on what we want with attacking, let's actually make it patterned for now
   local did_attack = false;
   if (AI_GetVar(player, 3) == 0) then
@@ -97,7 +105,7 @@ function cyan_attacking(player)
   end
 end
 
-function cyan_towers(player)
+local function cyan_towers(player)
   -- for building towers we want to have at least 1 fw and some population
   if (AI_GetPopCount(player) > 14) then
     if (AI_GetBldgCount(player, M_BUILDING_SUPER_TRAIN) > 0) then
@@ -107,20 +115,20 @@ function cyan_towers(player)
           -- for middle hilled part we want to check if theres no enemy present.
           -- if there is, set user var to specific value to indicate they exist.
 
-          -- check one by one
-          -- if (not GetAI("Cyan"):TowerIsBuilt("Front1")) then
-          --   GetAI("Cyan"):CheckTower("Front1");
-          -- end
-          --
-          -- if (not GetAI("Cyan"):TowerIsBuilt("Front2")) then
-          --   GetAI("Cyan"):CheckTower("Front2");
-          --   return;
-          -- end
-          --
-          -- if (not GetAI("Cyan"):TowerIsBuilt("Front3")) then
-          --   GetAI("Cyan"):CheckTower("Front3");
-          --   return;
-          -- end
+          --check one by one
+          if (not ai:is_tower_constructed(1)) then
+            ai:construct_tower(1);
+          end
+
+          if (not ai:is_tower_constructed(2)) then
+            ai:construct_tower(2);
+            return;
+          end
+
+          if (not ai:is_tower_constructed(3)) then
+            ai:construct_tower(3);
+            return;
+          end
 
           -- we don't bother with building on hill if there are enemies
           AI_SetVar(player, 2, 0);
@@ -129,25 +137,25 @@ function cyan_towers(player)
             return;
           end
 
-          -- if (not GetAI("Cyan"):TowerIsBuilt("MidHill1")) then
-          --   GetAI("Cyan"):CheckTower("MidHill1");
-          -- end
-          --
-          -- if (not GetAI("Cyan"):TowerIsBuilt("MidHill2")) then
-          --   GetAI("Cyan"):CheckTower("MidHill2");
-          --   return;
-          -- end
-          --
-          -- if (not GetAI("Cyan"):TowerIsBuilt("MidHill3")) then
-          --   GetAI("Cyan"):CheckTower("MidHill3");
-          -- end
+          if (not ai:is_tower_constructed(4)) then
+            ai:construct_tower(4);
+          end
+
+          if (not ai:is_tower_constructed(5)) then
+            ai:construct_tower(5);
+            return;
+          end
+
+          if (not ai:is_tower_constructed(6)) then
+            ai:construct_tower(6);
+          end
         end
       end
     end
   end
 end
 
-function cyan_convert(player)
+local function cyan_convert(player)
   -- check if we have a low pop count
   if (AI_GetPopCount(player) < 35 and AI_ShamanFree(player)) then
     -- enable converting and convert at random markers
@@ -162,7 +170,7 @@ function cyan_convert(player)
   end
 end
 
-function cyan_build(player)
+local function cyan_build(player)
   -- let's see what we got here, we probably want to get FW hut after some huts.
   if (AI_GetHutsCount(player) >= 5 and AI_GetBldgCount(player, M_BUILDING_SUPER_TRAIN) == 0) then
     WRITE_CP_ATTRIB(player, ATTR_PREF_SUPER_WARRIOR_TRAINS, 1);
@@ -213,3 +221,10 @@ function cyan_build(player)
     WRITE_CP_ATTRIB(player, ATTR_MAX_BUILDINGS_ON_GO, 2); -- slowdown there
   end
 end
+
+-- events
+ai:create_event(1, 256, 64, cyan_build);
+ai:create_event(2, 128, 24, cyan_convert);
+ai:create_event(3, 128, 32, cyan_towers);
+ai:create_event(4, 740, 112, function(player) end);
+ai:create_event(5, 1536, 256, cyan_attacking);
