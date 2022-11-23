@@ -500,7 +500,7 @@ function LBexpand(pn,radius,cooldownSecondsIncrement,requiresLBmana)
 end
 function tryToLB(pn)
 	if G_AI_EXPANSION_TABLE[pn][4] then
-		if G_AI_EXPANSION_TABLE[pn][5] > 0 then G_AI_EXPANSION_TABLE[pn][5] = G_AI_EXPANSION_TABLE[pn][5] - 1 else G_AI_EXPANSION_TABLE[pn][1] = 30 G_AI_EXPANSION_TABLE[pn][2] = -1 G_AI_EXPANSION_TABLE[pn][3] = -1 G_AI_EXPANSION_TABLE[pn][4] = false end
+		if G_AI_EXPANSION_TABLE[pn][5] > 0 then G_AI_EXPANSION_TABLE[pn][5] = G_AI_EXPANSION_TABLE[pn][5] - 1 else G_AI_EXPANSION_TABLE[pn][1] = 30 G_AI_EXPANSION_TABLE[pn][2] = -1 G_AI_EXPANSION_TABLE[pn][3] = -1 G_AI_EXPANSION_TABLE[pn][4] = false return end
 		if nilS(pn) then
 			SearchMapCells(SQUARE, 0, 0, 1, world_coord2d_to_map_idx(G_AI_EXPANSION_TABLE[pn][2]), function(me)
 				me.MapWhoList:processList( function (t)

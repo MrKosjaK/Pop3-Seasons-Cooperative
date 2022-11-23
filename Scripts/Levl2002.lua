@@ -125,7 +125,7 @@ function _OnLevelInit(level_id)
 	set_player_can_build(M_BUILDING_TEPEE, TRIBE_CYAN);
 	set_player_can_build(M_BUILDING_DRUM_TOWER, TRIBE_CYAN);
 	set_player_can_build(M_BUILDING_WARRIOR_TRAIN, TRIBE_CYAN);
-	set_player_can_build(M_BUILDING_SUPER_TRAIN, TRIBE_CYAN);
+	--set_player_can_build(M_BUILDING_SUPER_TRAIN, TRIBE_CYAN);
 	set_player_can_build(M_BUILDING_TEMPLE, TRIBE_CYAN);
 
 	AI_SetAways(TRIBE_CYAN, 1, 0, 0, 0, 0);
@@ -133,13 +133,13 @@ function _OnLevelInit(level_id)
 	AI_SetShamanParams(TRIBE_CYAN, 180, 160, true, 16, 12);
 	AI_SetMainDrumTower(TRIBE_CYAN, true, 180, 160);
 	AI_SetConvertingParams(TRIBE_CYAN, false, false, 24);
-	--AI_SetTargetParams(TRIBE_CYAN, TRIBE_BLUE, true, true);
+	AI_SetTargetParams(TRIBE_CYAN, TRIBE_BLUE, true, true);
 
 	AI_SetBuildingParams(TRIBE_CYAN, true, 50, 3);
 	AI_SetTrainingHuts(TRIBE_CYAN, 0, 0, 0, 0);
 	AI_SetTrainingPeople(TRIBE_CYAN, true, 10, 0, 0, 0, 0);
 	AI_SetVehicleParams(TRIBE_CYAN, false, 0, 0, 0, 0);
-	AI_SetFetchParams(TRIBE_CYAN, true, true, true, true);
+	--AI_SetFetchParams(TRIBE_CYAN, true, true, true, true);
 
 	AI_SetAttackingParams(TRIBE_CYAN, true, 255, 10);
 	AI_SetDefensiveParams(TRIBE_CYAN, true, true, true, true, 3, 1, 1);
