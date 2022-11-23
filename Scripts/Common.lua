@@ -1,6 +1,5 @@
 -- Includes
 include("Globals.lua");
-include("AI\\AIPlayer.lua")
 
 -- Features
 enable_feature(F_SUPER_WARRIOR_NO_AMENDMENT); -- fix fws not shooting
