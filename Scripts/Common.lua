@@ -70,7 +70,7 @@ function OnTurn()
 	if _OnTurn ~= nil then _OnTurn(getTurn()) end
 
 	-- ai specials
-	ProcessSpecialAIs();
+	--ProcessSpecialAIs();
 
 	--refresh pop table every 3s
 	if everySeconds(3) then
@@ -82,7 +82,7 @@ end
 function OnCreateThing(t)
 	if _OnCreateThing ~= nil then _OnCreateThing(t) end
 
-	AIOnCreateCheck(t);
+	--AIOnCreateCheck(t);
 end
 
 -- OnFrame executed on every draw frame (60 times per second or 60FPS)

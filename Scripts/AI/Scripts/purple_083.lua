@@ -7,23 +7,23 @@ function purple_towers(player)
   -- first row of defense.
   if (AI_GetPopCount(player) > 20) then
     -- don't need to have fws for those.
-    if (not GetAI("Purple"):TowerIsBuilt("FrontDef1")) then
-      GetAI("Purple"):CheckTower("FrontDef1");
-    end
-
-    if (not GetAI("Purple"):TowerIsBuilt("FrontDef2")) then
-      GetAI("Purple"):CheckTower("FrontDef2");
-      return;
-    end
-
-    if (not GetAI("Purple"):TowerIsBuilt("FrontDef3")) then
-      GetAI("Purple"):CheckTower("FrontDef3");
-    end
-
-    if (not GetAI("Purple"):TowerIsBuilt("FrontDef4")) then
-      GetAI("Purple"):CheckTower("FrontDef4");
-      return;
-    end
+    -- if (not GetAI("Purple"):TowerIsBuilt("FrontDef1")) then
+    --   GetAI("Purple"):CheckTower("FrontDef1");
+    -- end
+    --
+    -- if (not GetAI("Purple"):TowerIsBuilt("FrontDef2")) then
+    --   GetAI("Purple"):CheckTower("FrontDef2");
+    --   return;
+    -- end
+    --
+    -- if (not GetAI("Purple"):TowerIsBuilt("FrontDef3")) then
+    --   GetAI("Purple"):CheckTower("FrontDef3");
+    -- end
+    --
+    -- if (not GetAI("Purple"):TowerIsBuilt("FrontDef4")) then
+    --   GetAI("Purple"):CheckTower("FrontDef4");
+    --   return;
+    -- end
 
     -- and now we check if we have fws and actually mid is enemy free!!
     if (AI_GetVar(player, 3) > 0) then
@@ -34,22 +34,22 @@ function purple_towers(player)
         return;
       end
 
-      if (not GetAI("Purple"):TowerIsBuilt("Mid1")) then
-        GetAI("Purple"):CheckTower("Mid1");
-      end
-
-      if (not GetAI("Purple"):TowerIsBuilt("Mid4")) then
-        GetAI("Purple"):CheckTower("Mid4");
-        return;
-      end
-
-      if (not GetAI("Purple"):TowerIsBuilt("Mid2")) then
-        GetAI("Purple"):CheckTower("Mid2");
-      end
-
-      if (not GetAI("Purple"):TowerIsBuilt("Mid3")) then
-        GetAI("Purple"):CheckTower("Mid3");
-      end
+      -- if (not GetAI("Purple"):TowerIsBuilt("Mid1")) then
+      --   GetAI("Purple"):CheckTower("Mid1");
+      -- end
+      --
+      -- if (not GetAI("Purple"):TowerIsBuilt("Mid4")) then
+      --   GetAI("Purple"):CheckTower("Mid4");
+      --   return;
+      -- end
+      --
+      -- if (not GetAI("Purple"):TowerIsBuilt("Mid2")) then
+      --   GetAI("Purple"):CheckTower("Mid2");
+      -- end
+      --
+      -- if (not GetAI("Purple"):TowerIsBuilt("Mid3")) then
+      --   GetAI("Purple"):CheckTower("Mid3");
+      -- end
     end
   end
 end

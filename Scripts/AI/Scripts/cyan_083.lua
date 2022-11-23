@@ -105,19 +105,19 @@ function cyan_towers(player)
           -- if there is, set user var to specific value to indicate they exist.
 
           -- check one by one
-          if (not GetAI("Cyan"):TowerIsBuilt("Front1")) then
-            GetAI("Cyan"):CheckTower("Front1");
-          end
-
-          if (not GetAI("Cyan"):TowerIsBuilt("Front2")) then
-            GetAI("Cyan"):CheckTower("Front2");
-            return;
-          end
-
-          if (not GetAI("Cyan"):TowerIsBuilt("Front3")) then
-            GetAI("Cyan"):CheckTower("Front3");
-            return;
-          end
+          -- if (not GetAI("Cyan"):TowerIsBuilt("Front1")) then
+          --   GetAI("Cyan"):CheckTower("Front1");
+          -- end
+          --
+          -- if (not GetAI("Cyan"):TowerIsBuilt("Front2")) then
+          --   GetAI("Cyan"):CheckTower("Front2");
+          --   return;
+          -- end
+          --
+          -- if (not GetAI("Cyan"):TowerIsBuilt("Front3")) then
+          --   GetAI("Cyan"):CheckTower("Front3");
+          --   return;
+          -- end
 
           -- we don't bother with building on hill if there are enemies
           AI_SetVar(player, 2, 0);
@@ -126,18 +126,18 @@ function cyan_towers(player)
             return;
           end
 
-          if (not GetAI("Cyan"):TowerIsBuilt("MidHill1")) then
-            GetAI("Cyan"):CheckTower("MidHill1");
-          end
-
-          if (not GetAI("Cyan"):TowerIsBuilt("MidHill2")) then
-            GetAI("Cyan"):CheckTower("MidHill2");
-            return;
-          end
-
-          if (not GetAI("Cyan"):TowerIsBuilt("MidHill3")) then
-            GetAI("Cyan"):CheckTower("MidHill3");
-          end
+          -- if (not GetAI("Cyan"):TowerIsBuilt("MidHill1")) then
+          --   GetAI("Cyan"):CheckTower("MidHill1");
+          -- end
+          --
+          -- if (not GetAI("Cyan"):TowerIsBuilt("MidHill2")) then
+          --   GetAI("Cyan"):CheckTower("MidHill2");
+          --   return;
+          -- end
+          --
+          -- if (not GetAI("Cyan"):TowerIsBuilt("MidHill3")) then
+          --   GetAI("Cyan"):CheckTower("MidHill3");
+          -- end
         end
       end
     end

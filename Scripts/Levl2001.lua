@@ -4,45 +4,45 @@ include("AI\\Scripts\\cyan_083.lua");
 include("AI\\Scripts\\green_083.lua");
 include("AI\\Scripts\\purple_083.lua");
 
-Initialize_Special_AI("Cyan", TRIBE_CYAN);
-Initialize_Special_AI("Green", TRIBE_GREEN);
-Initialize_Special_AI("Purple", TRIBE_PINK);
+-- Initialize_Special_AI("Cyan", TRIBE_CYAN);
+-- Initialize_Special_AI("Green", TRIBE_GREEN);
+-- Initialize_Special_AI("Purple", TRIBE_PINK);
 
 -- Events
-GetAI("Cyan"):RegisterEvent("Building", 256, 64, cyan_build);
-GetAI("Cyan"):RegisterEvent("Convert", 128, 24, cyan_convert);
-GetAI("Cyan"):RegisterEvent("Towers", 128, 32, cyan_towers);
-GetAI("Cyan"):RegisterEvent("Patrol", 740, 112, function(player) end);
-GetAI("Cyan"):RegisterEvent("Attacking", 1536, 256, cyan_attacking);
-GetAI("Purple"):RegisterEvent("Convert", 122, 32, purple_convert);
-GetAI("Purple"):RegisterEvent("Building", 256, 96, purple_build);
-GetAI("Purple"):RegisterEvent("Towers", 140, 44, purple_towers);
+-- GetAI("Cyan"):RegisterEvent("Building", 256, 64, cyan_build);
+-- GetAI("Cyan"):RegisterEvent("Convert", 128, 24, cyan_convert);
+-- GetAI("Cyan"):RegisterEvent("Towers", 128, 32, cyan_towers);
+-- GetAI("Cyan"):RegisterEvent("Patrol", 740, 112, function(player) end);
+-- GetAI("Cyan"):RegisterEvent("Attacking", 1536, 256, cyan_attacking);
+-- GetAI("Purple"):RegisterEvent("Convert", 122, 32, purple_convert);
+-- GetAI("Purple"):RegisterEvent("Building", 256, 96, purple_build);
+-- GetAI("Purple"):RegisterEvent("Towers", 140, 44, purple_towers);
 
 -- Shaman AI
-GetAI("Cyan"):ToggleShamanAI(true);
-GetAI("Cyan"):Shaman_ToggleFallDamageSave(true);
-GetAI("Cyan"):Shaman_ToggleLightningDodge(true);
-GetAI("Cyan"):Shaman_ToggleSpellEntries(true);
-GetAI("Cyan"):Shaman_AddSpellEntry(M_SPELL_BLAST, T_PERSON, {M_PERSON_BRAVE, M_PERSON_WARRIOR}, 5000);
-GetAI("Purple"):ToggleShamanAI(true);
-GetAI("Purple"):Shaman_ToggleFallDamageSave(true);
-GetAI("Purple"):Shaman_ToggleLightningDodge(true);
+-- GetAI("Cyan"):ToggleShamanAI(true);
+-- GetAI("Cyan"):Shaman_ToggleFallDamageSave(true);
+-- GetAI("Cyan"):Shaman_ToggleLightningDodge(true);
+-- GetAI("Cyan"):Shaman_ToggleSpellEntries(true);
+-- GetAI("Cyan"):Shaman_AddSpellEntry(M_SPELL_BLAST, T_PERSON, {M_PERSON_BRAVE, M_PERSON_WARRIOR}, 5000);
+-- GetAI("Purple"):ToggleShamanAI(true);
+-- GetAI("Purple"):Shaman_ToggleFallDamageSave(true);
+-- GetAI("Purple"):Shaman_ToggleLightningDodge(true);
 
 -- Towers
-GetAI("Cyan"):RegisterTower("Front1", 124, 104, -1);
-GetAI("Cyan"):RegisterTower("Front2", 146, 106, -1);
-GetAI("Cyan"):RegisterTower("Front3", 124, 96, -1);
-GetAI("Cyan"):RegisterTower("MidHill1", 130, 76, -1);
-GetAI("Cyan"):RegisterTower("MidHill2", 148, 78, -1);
-GetAI("Cyan"):RegisterTower("MidHill3", 138, 78, -1);
-GetAI("Purple"):RegisterTower("FrontDef1", 218, 118, -1);
-GetAI("Purple"):RegisterTower("FrontDef2", 230, 120, -1);
-GetAI("Purple"):RegisterTower("FrontDef3", 222, 108, -1);
-GetAI("Purple"):RegisterTower("FrontDef4", 204, 108, -1);
-GetAI("Purple"):RegisterTower("Mid1", 214, 80, 3);
-GetAI("Purple"):RegisterTower("Mid2", 220, 76, 2);
-GetAI("Purple"):RegisterTower("Mid3", 224, 76, 2);
-GetAI("Purple"):RegisterTower("Mid4", 228, 78, 1);
+-- GetAI("Cyan"):RegisterTower("Front1", 124, 104, -1);
+-- GetAI("Cyan"):RegisterTower("Front2", 146, 106, -1);
+-- GetAI("Cyan"):RegisterTower("Front3", 124, 96, -1);
+-- GetAI("Cyan"):RegisterTower("MidHill1", 130, 76, -1);
+-- GetAI("Cyan"):RegisterTower("MidHill2", 148, 78, -1);
+-- GetAI("Cyan"):RegisterTower("MidHill3", 138, 78, -1);
+-- GetAI("Purple"):RegisterTower("FrontDef1", 218, 118, -1);
+-- GetAI("Purple"):RegisterTower("FrontDef2", 230, 120, -1);
+-- GetAI("Purple"):RegisterTower("FrontDef3", 222, 108, -1);
+-- GetAI("Purple"):RegisterTower("FrontDef4", 204, 108, -1);
+-- GetAI("Purple"):RegisterTower("Mid1", 214, 80, 3);
+-- GetAI("Purple"):RegisterTower("Mid2", 220, 76, 2);
+-- GetAI("Purple"):RegisterTower("Mid3", 224, 76, 2);
+-- GetAI("Purple"):RegisterTower("Mid4", 228, 78, 1);
 
 
 G_NUM_OF_HUMANS_FOR_THIS_LEVEL = 3;
