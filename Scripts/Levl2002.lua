@@ -40,7 +40,7 @@ function _OnTurn(turn)
 			if G_AI_EXPANSION_TABLE[v][1] > 0 then G_AI_EXPANSION_TABLE[v][1] = G_AI_EXPANSION_TABLE[v][1] - 1 end
 			if G_AI_EXPANSION_TABLE[v][1] == 0 and not G_AI_EXPANSION_TABLE[v][4] then
 				if v == TRIBE_CYAN then
-					LBexpand(v,11,rndb(120,240),true) --pn,radius,cooldownSecondsIncrement,requiresLBmana
+					LBexpand(v,9+stage,rndb(120,240),false) --pn,radius,cooldownSecondsIncrement,requiresLBmana
 				end
 			end
 			tryToLB(v)
@@ -63,10 +63,15 @@ function _OnKeyUp(k)
 end
 
 function _OnKeyDown(k) 
-	if k == LB_KEY_A then 
-		LOG(getShaman(4).State)
+	--[[if k == LB_KEY_A then 
+		--LOG(getShaman(4).State)
+		--G_AI_EXPANSION_TABLE[TRIBE_CYAN][1] = 5
 		log_msg(4,"" .. G_AI_EXPANSION_TABLE[4][1] .. " | " .. btn(G_AI_EXPANSION_TABLE[4][4]))
-	end
+	elseif LB_KEY_D == k then
+		G_AI_EXPANSION_TABLE[TRIBE_CYAN][1] = 5
+	elseif LB_KEY_Z == k then
+		LOG(G_AI_EXPANSION_TABLE[4][2]) LOG(G_AI_EXPANSION_TABLE[4][3]) LOG(btn(G_AI_EXPANSION_TABLE[4][4])) LOG(G_AI_EXPANSION_TABLE[4][5])
+	end]]
 end
 
 
@@ -127,7 +132,7 @@ function _OnLevelInit(level_id)
 	AI_SetShamanAway(TRIBE_CYAN, true);
 	AI_SetShamanParams(TRIBE_CYAN, 180, 160, true, 16, 12);
 	AI_SetMainDrumTower(TRIBE_CYAN, true, 180, 160);
-	AI_SetConvertingParams(TRIBE_CYAN, true, true, 24);
+	AI_SetConvertingParams(TRIBE_CYAN, false, false, 24);
 	--AI_SetTargetParams(TRIBE_CYAN, TRIBE_BLUE, true, true);
 
 	AI_SetBuildingParams(TRIBE_CYAN, true, 50, 3);

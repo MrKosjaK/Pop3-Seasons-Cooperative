@@ -469,10 +469,6 @@ function LBexpand(pn,radius,cooldownSecondsIncrement,requiresLBmana)
 								local c2d = Coord2D.new() map_idx_to_world_coord2d(meptr,c2d)
 								G_AI_EXPANSION_TABLE[pn][2] = c2d
 								SearchMapCells(SQUARE, 0, 0, 6, world_coord2d_to_map_idx(G_AI_EXPANSION_TABLE[pn][2]), function(_me)
-									
-									local idx = MAP_ELEM_PTR_2_IDX(_me) local c3d = Coord3D.new() map_idx_to_world_coord3d_centre(idx,c3d)
-									local m = createThing(T_EFFECT,10,8,c3d,false,false) m.u.Effect.Duration = 12*6 m.DrawInfo.Alpha = 1
-									
 									if is_map_elem_coast(_me) > 0 and not success then
 										local meptr = MAP_ELEM_PTR_2_IDX(_me)
 										local c2d = Coord2D.new() map_idx_to_world_coord2d(meptr,c2d)
@@ -481,9 +477,9 @@ function LBexpand(pn,radius,cooldownSecondsIncrement,requiresLBmana)
 												local meptr = MAP_ELEM_PTR_2_IDX(__me)
 												local c3d = Coord3D.new() map_idx_to_world_coord3d(meptr,c3d)
 												local c2d = Coord2D.new() ; coord3D_to_coord2D(c3d,c2d)
-												LOG(get_world_dist_xz(G_AI_EXPANSION_TABLE[pn][2],c2d))
 												if get_world_dist_xz(G_AI_EXPANSION_TABLE[pn][2],c2d) > 512*3 then
 													G_AI_EXPANSION_TABLE[pn][3] = c3d
+													G_AI_EXPANSION_TABLE[pn][5] = 20
 													success = true
 													return false
 												end
@@ -504,12 +500,14 @@ function LBexpand(pn,radius,cooldownSecondsIncrement,requiresLBmana)
 end
 function tryToLB(pn)
 	if G_AI_EXPANSION_TABLE[pn][4] then
+		if G_AI_EXPANSION_TABLE[pn][5] > 0 then G_AI_EXPANSION_TABLE[pn][5] = G_AI_EXPANSION_TABLE[pn][5] - 1 else G_AI_EXPANSION_TABLE[pn][1] = 30 G_AI_EXPANSION_TABLE[pn][2] = -1 G_AI_EXPANSION_TABLE[pn][3] = -1 G_AI_EXPANSION_TABLE[pn][4] = false end
 		if nilS(pn) then
 			SearchMapCells(SQUARE, 0, 0, 1, world_coord2d_to_map_idx(G_AI_EXPANSION_TABLE[pn][2]), function(me)
 				me.MapWhoList:processList( function (t)
 					if t.Type == T_PERSON and t.Model == M_PERSON_MEDICINE_MAN and t.Owner == pn then
 						createThing(T_SPELL,M_SPELL_LAND_BRIDGE,pn,G_AI_EXPANSION_TABLE[pn][3],false,false)
 						G_AI_EXPANSION_TABLE[pn][2] = -1 G_AI_EXPANSION_TABLE[pn][3] = -1 G_AI_EXPANSION_TABLE[pn][4] = false
+						G_AI_EXPANSION_TABLE[pn][5] = 0
 					end
 				return true end)
 			return true end)
