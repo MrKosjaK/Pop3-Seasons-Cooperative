@@ -97,8 +97,8 @@ function randomItemFromTable(t)
     return nil
   end
 
-  local idx = math.random(1, #t)
-  return t[idx], idx
+  local idx = rndb(1, #t)
+  return t[idx]
 end
 
 --remove index from table
@@ -168,8 +168,8 @@ end
 
 --move c3d offset
 function MoveC3d(c3d,offset,heightOffset)
-	c3d.Xpos = c3d.Xpos + math.random(-offset,offset) c3d.Zpos = c3d.Zpos + math.random(-offset,offset)
-	if heightOffset then c3d.Ypos = c3d.Ypos + math.random(-offset,offset) end
+	c3d.Xpos = c3d.Xpos + rndb(-offset,offset) c3d.Zpos = c3d.Zpos + rndb(-offset,offset)
+	if heightOffset then c3d.Ypos = c3d.Ypos + rndb(-offset,offset) end
 	--if thing ~= nil then move_thing_within_mapwho(thing, c3d) end
 	return c3d
 end
@@ -683,7 +683,7 @@ end
 function Plant(IdxS,IdxE,drawnum) -- pick -1 for random plants, or specify
 	for i = IdxS,IdxE do
 		local plants = createThing(T_SCENERY,M_SCENERY_PLANT_2,8,marker_to_coord3d(i),false,false) centre_coord3d_on_block(plants.Pos.D3)
-		if drawnum == -1 then plants.DrawInfo.DrawNum = math.random(1808,1817) else plants.DrawInfo.DrawNum = drawnum end --still need to add plant types to HFX
+		if drawnum == -1 then plants.DrawInfo.DrawNum = rndb(1808,1817) else plants.DrawInfo.DrawNum = drawnum end --still need to add plant types to HFX
 		plants.DrawInfo.Alpha = -16 plants.DrawInfo.Flags = EnableFlag(plants.DrawInfo.Flags, DF_USE_ENGINE_SHADOW)
 	end
 end

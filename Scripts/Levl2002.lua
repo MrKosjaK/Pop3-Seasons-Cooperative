@@ -28,10 +28,13 @@ function _OnTurn(turn)
 	end
 	
 	--snowing 3 times during level
-	if turn == 1000 or turn == 7000 or turn == 13000 then
-		createSnow(rndb(300,400)) --amt
-	elseif turn == 4000 or turn == 8000 or turn == 16000 then
-		snow = 0 ; fastStopSnow = rndb(0,1) --0 for slow stopping, 1 for fast
+	--snowAmtTarget, CreationAmtPerSecCreation, speed, (durationSeconds, internTimer), fadeSeconds
+	if turn == 1000 then
+		createSnow(2000, 50, 48, 60*3, 60*3, 12)
+	elseif turn == 7000 then
+		createSnow(800, 100, 32, 60*1, 60*1, 3)
+	elseif turn == 13000 then
+		createSnow(1300, 50, 78, 60*2, 60*2, 24)
 	end
 	
 	--update lb expand tbl
@@ -46,8 +49,6 @@ function _OnTurn(turn)
 			tryToLB(v)
 		end
 	end
-	
-	snowFall(2,true) --intensity[1-3],process while paused
 end
 
 function _OnCreateThing(t)

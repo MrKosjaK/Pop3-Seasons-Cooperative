@@ -67,6 +67,7 @@ end
 -- OnTurn executed every turn (12 turns per second)
 function OnTurn()
 	if _OnTurn ~= nil then _OnTurn(getTurn()) end
+	if _SnowOnTurn ~= nil then _SnowOnTurn(getTurn()) end
 
 	-- ai specials
 	CompPlayer:process_ai();
