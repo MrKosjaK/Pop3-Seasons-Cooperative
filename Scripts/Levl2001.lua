@@ -4,16 +4,6 @@ include("AI\\Scripts\\cyan_083.lua");
 include("AI\\Scripts\\green_083.lua");
 include("AI\\Scripts\\purple_083.lua");
 
-
--- Initialize_Special_AI("Cyan", TRIBE_CYAN);
--- Initialize_Special_AI("Green", TRIBE_GREEN);
--- Initialize_Special_AI("Purple", TRIBE_PINK);
-
--- Events
--- GetAI("Purple"):RegisterEvent("Convert", 122, 32, purple_convert);
--- GetAI("Purple"):RegisterEvent("Building", 256, 96, purple_build);
--- GetAI("Purple"):RegisterEvent("Towers", 140, 44, purple_towers);
-
 -- Shaman AI
 -- GetAI("Cyan"):ToggleShamanAI(true);
 -- GetAI("Cyan"):Shaman_ToggleFallDamageSave(true);
