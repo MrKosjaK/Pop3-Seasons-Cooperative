@@ -4,6 +4,7 @@ include("AI\\Scripts\\cyan_083.lua");
 include("AI\\Scripts\\green_083.lua");
 include("AI\\Scripts\\purple_083.lua");
 
+
 -- Initialize_Special_AI("Cyan", TRIBE_CYAN);
 -- Initialize_Special_AI("Green", TRIBE_GREEN);
 -- Initialize_Special_AI("Purple", TRIBE_PINK);
@@ -43,6 +44,7 @@ include("AI\\Scripts\\purple_083.lua");
 -- GetAI("Purple"):RegisterTower("Mid2", 220, 76, 2);
 -- GetAI("Purple"):RegisterTower("Mid3", 224, 76, 2);
 -- GetAI("Purple"):RegisterTower("Mid4", 228, 78, 1);
+
 
 
 G_NUM_OF_HUMANS_FOR_THIS_LEVEL = 3;

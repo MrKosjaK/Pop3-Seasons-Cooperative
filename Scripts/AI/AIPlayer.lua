@@ -13,25 +13,18 @@ CompPlayer =
   }
 };
 
-local cp_mt, pl_mt = {}, {}
+local cp_mt = {}
+local pl_mt = {}
+pl_mt.__index = pl_mt;
 
 setmetatable(CompPlayer,
 {
   __call = function(t, key)
-    return Data[key];
+    LOG(string.format("Accessing %i player data", key));
+    return t.Data[key];
   end,
   __index = cp_mt
 });
-
-function pl_mt:process()
-  -- events processing
-  for i = 1, #self.Events do
-    local ev = self.Events[i];
-    if (ev ~= nil) then
-
-    end
-  end
-end
 
 -- preallocate 12 towers & 8 events.
 function cp_mt:init(player_num)
@@ -45,9 +38,28 @@ function cp_mt:init(player_num)
     };
     setmetatable(tribe_info, pl_mt);
     self.Data[player_num] = tribe_info;
+    LOG(string.format("Player %i initialized", player_num));
   end
 end
 
+function cp_mt:process_ai()
+  for i = 0, #self.Data do
+    local ai = self.Data[i];
+    if (ai ~= nil) then
+      ai:process();
+    end
+  end
+end
+
+function pl_mt:process()
+  -- events processing
+  for i = 1, #self.Events do
+    local ev = self.Events[i];
+    if (ev ~= nil) then
+
+    end
+  end
+end
 -- AITower = {};
 -- AITower.__index = AITower;
 --
@@ -394,12 +406,3 @@ end
 --   end
 -- end
 --
--- function ProcessSpecialAIs()
---   for i,AI in pairs(CompPlayers) do
---     AI:ProcessEvents();
---
---     if (AI.Shaman ~= nil) then
---       AI.Shaman:Process();
---     end
---   end
--- end

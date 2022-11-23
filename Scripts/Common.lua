@@ -69,7 +69,7 @@ function OnTurn()
 	if _OnTurn ~= nil then _OnTurn(getTurn()) end
 
 	-- ai specials
-	--ProcessSpecialAIs();
+	CompPlayer:process_ai();
 
 	--refresh pop table every 3s
 	if everySeconds(3) then

@@ -3,6 +3,9 @@ local convert_markers =
   10, 11, 12, 13, 14
 };
 
+CompPlayer:init(TRIBE_CYAN);
+local ai = CompPlayer(TRIBE_CYAN);
+
 function cyan_attacking(player)
   -- depends on what we want with attacking, let's actually make it patterned for now
   local did_attack = false;
