@@ -111,17 +111,17 @@ end
 
 function sh_mt:toggle_land_bridge_save(bool, chance)
   self.LandBridgeSave = bool;
-  self.LandBridgeChance = math.max(chance, 100);
+  self.LandBridgeChance = math.min(chance, 100);
 end
 
 function sh_mt:toggle_fall_damage_save(bool, chance)
   self.FallDamageSave = bool;
-  self.FallDamageChance = math.max(chance, 100);
+  self.FallDamageChance = math.min(chance, 100);
 end
 
 function sh_mt:toggle_lightning_dodge(bool, chance)
   self.LightningDodge = bool;
-  self.LightningDodgeChance = math.max(chance, 100);
+  self.LightningDodgeChance = math.min(chance, 100);
 end
 
 function sh_mt:toggle_spell_check(bool)
@@ -137,7 +137,7 @@ function sh_mt:watch_for_dodges(t)
     if (G_RANDOM(100) < self.FallDamageChance) then
       if (t.Type == T_EFFECT) then
         if (t.Model == M_EFFECT_SPELL_BLAST and are_players_allied(t.Owner, s.Owner) == 0) then
-          if (get_world_dist_xyz(t.Pos.D3, s.Pos.D3) <= 512) then
+          if (get_world_dist_xyz(t.Pos.D3, s.Pos.D3) <= 5120) then
             CREATE_THING_WITH_PARAMS4(T_SPELL, M_SPELL_BLAST, s.Owner, s.Pos.D3, 10000, 0, 0, 0);
             return;
           end
