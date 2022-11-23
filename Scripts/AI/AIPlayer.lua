@@ -83,7 +83,7 @@ function pl_mt:create_tower(idx, x, z, orient)
 end
 
 function pl_mt:is_tower_constructed(idx)
-  return self.Towers[idx]:shape_or_bldg_done();
+  return self.Towers[idx]:is_finished();
 end
 
 function pl_mt:construct_tower(idx)
@@ -132,13 +132,16 @@ function tw_mt:check_for_creation()
   end
 end
 
-function tw_mt:shape_or_bldg_done()
+function tw_mt:is_finished()
   -- first check if our proxy is null or not
-  if (self.Obj:isNull()) then
-    return false;
+  local t = self.Obj:get();
+  if (t ~= nil) then
+    if (t.Type == T_BUILDING and t.State == S_BUILDING_STAND) then
+      return true;
+    end
   end
 
-  return true;
+  return false;
 end
 
 function pl_mt:create_event(idx, ticks, randomness, func)
