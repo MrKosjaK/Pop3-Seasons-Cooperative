@@ -81,7 +81,7 @@ end
 function OnCreateThing(t)
 	if _OnCreateThing ~= nil then _OnCreateThing(t) end
 
-	--AIOnCreateCheck(t);
+	CompPlayer:process_on_create_ais(t);
 end
 
 -- OnFrame executed on every draw frame (60 times per second or 60FPS)

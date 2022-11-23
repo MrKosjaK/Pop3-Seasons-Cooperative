@@ -6,6 +6,15 @@ local convert_markers =
 CompPlayer:init(TRIBE_CYAN);
 local ai = CompPlayer(TRIBE_CYAN);
 
+-- shaman ai options
+ai:toggle_shaman_ai(true); -- enable it first u dummy
+
+local sham = ai:get_shaman_ai(); -- get pointer to it as local, so it's fasto
+sham:toggle_spell_check(true); -- spell entries
+sham:toggle_fall_damage_save(true, 50);
+sham:toggle_land_bridge_save(true, 25);
+sham:toggle_lightning_dodge(true, 90);
+
 -- towers
 ai:create_tower(1, 124, 104, -1);
 ai:create_tower(2, 146, 106, -1);

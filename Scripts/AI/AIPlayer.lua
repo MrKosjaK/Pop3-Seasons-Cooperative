@@ -18,6 +18,8 @@ local ev_mt = {};
 ev_mt.__index = ev_mt;
 local tw_mt = {};
 tw_mt.__index = tw_mt;
+local sh_mt = {};
+sh_mt.__index = sh_mt;
 local pl_mt = {};
 pl_mt.__index = pl_mt;
 
@@ -38,7 +40,21 @@ function cp_mt:init(player_num)
       Owner = player_num,
       Towers = {nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil},
       Events = {nil, nil, nil, nil, nil, nil, nil, nil},
-      Shaman = nil
+      Shaman = setmetatable({
+        Owner = player_num,
+        Enabled = false,
+        Proxy = ObjectProxy.new(),
+        LandBridgeSave = false,
+        LandBridgeChance = 0,
+        FallDamageSave = false,
+        FallDamageChance = 0,
+        LightningDodge = false,
+        LightningDodgeChance = 0,
+        SpellCheck = false,
+        SpellCheckMax = 0,
+        SpellCheckCurr = 0,
+        SpellEntries = {nil, nil, nil, nil, nil, nil, nil, nil}
+      }, sh_mt);
     };
     setmetatable(tribe_info, pl_mt);
     self.Data[player_num] = tribe_info;
@@ -54,6 +70,17 @@ function cp_mt:process_ai()
   end
 end
 
+function cp_mt:process_on_create_ais(t)
+  for i = 0, 7 do
+    local ai = self.Data[i];
+    if (ai ~= nil) then
+      if (ai.Shaman.Enabled) then
+        ai.Shaman:watch_for_dodges(t);
+      end
+    end
+  end
+end
+
 function pl_mt:process()
   -- events processing
   for i = 1, #self.Events do
@@ -61,6 +88,60 @@ function pl_mt:process()
     if (ev ~= nil) then
       if (ev:is_triggered()) then
         ev.Func(self.Owner);
+      end
+    end
+  end
+
+  -- shaman binding
+  if (self.Shaman.Enabled) then
+    local s = getShaman(self.Owner);
+    if (s ~= nil) then
+      self.Shaman.Proxy:set(s.ThingNum);
+    end
+  end
+end
+
+function pl_mt:toggle_shaman_ai(bool)
+  self.Shaman.Enabled = bool;
+end
+
+function pl_mt:get_shaman_ai()
+  return self.Shaman;
+end
+
+function sh_mt:toggle_land_bridge_save(bool, chance)
+  self.LandBridgeSave = bool;
+  self.LandBridgeChance = math.max(chance, 100);
+end
+
+function sh_mt:toggle_fall_damage_save(bool, chance)
+  self.FallDamageSave = bool;
+  self.FallDamageChance = math.max(chance, 100);
+end
+
+function sh_mt:toggle_lightning_dodge(bool, chance)
+  self.LightningDodge = bool;
+  self.LightningDodgeChance = math.max(chance, 100);
+end
+
+function sh_mt:toggle_spell_check(bool)
+  self.SpellCheck = bool;
+end
+
+function sh_mt:watch_for_dodges(t)
+  local s = self.Proxy:get();
+
+  if (s == nil) then return; end
+
+  if (self.FallDamageSave == true) then
+    if (G_RANDOM(100) < self.FallDamageChance) then
+      if (t.Type == T_EFFECT) then
+        if (t.Model == M_EFFECT_SPELL_BLAST and are_players_allied(t.Owner, s.Owner) == 0) then
+          if (get_world_dist_xyz(t.Pos.D3, s.Pos.D3) <= 512) then
+            CREATE_THING_WITH_PARAMS4(T_SPELL, M_SPELL_BLAST, s.Owner, s.Pos.D3, 10000, 0, 0, 0);
+            return;
+          end
+        end
       end
     end
   end
@@ -290,25 +371,25 @@ end
 -- end
 --
 -- function AIShaman:WatchForDodges(t)
---   if (self.Proxy:isNull()) then
---     return;
---   end
---
---   local s = self.Proxy:get();
---
---   if (self.FallDamageSave == true) then
---     if (G_RANDOM(100) < self.FallDamageChance) then
---       if (t.Type == T_EFFECT) then
---         if (t.Model == M_EFFECT_SPELL_BLAST and are_players_allied(t.Owner, s.Owner) == 0) then
---           if (get_world_dist_xyz(t.Pos.D3, s.Pos.D3) <= 512) then
---             self.RetaliateWait = 2;
---             self.RetaliateWithSpell = M_SPELL_LIGHTNING_BOLT;
---             return;
---           end
---         end
---       end
---     end
---   end
+  -- if (self.Proxy:isNull()) then
+  --   return;
+  -- end
+  --
+  -- local s = self.Proxy:get();
+  --
+  -- if (self.FallDamageSave == true) then
+  --   if (G_RANDOM(100) < self.FallDamageChance) then
+  --     if (t.Type == T_EFFECT) then
+  --       if (t.Model == M_EFFECT_SPELL_BLAST and are_players_allied(t.Owner, s.Owner) == 0) then
+  --         if (get_world_dist_xyz(t.Pos.D3, s.Pos.D3) <= 512) then
+  --           self.RetaliateWait = 2;
+  --           self.RetaliateWithSpell = M_SPELL_LIGHTNING_BOLT;
+  --           return;
+  --         end
+  --       end
+  --     end
+  --   end
+  -- end
 -- end
 --
 -- function AIPlayer:ToggleShamanAI(bool)
