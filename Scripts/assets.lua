@@ -461,24 +461,32 @@ function LBexpand(pn,radius,cooldownSecondsIncrement,requiresLBmana)
 			if nilS(pn) then
 				if AI_ShamanFree(pn) then
 					local c3d = getPlayer(pn).ReincarnSiteCoord
-					local c2d = Coord2D.new() ; coord3D_to_coord2D(c3d,c2d) 												--LOG(get_world_dist_xz(getShaman(pn).Pos.D2,c2d))
-					if get_world_dist_xz(getShaman(pn).Pos.D2,c2d) < 512*10 then
+					local c2d = Coord2D.new() ; coord3D_to_coord2D(c3d,c2d)
+					if get_world_dist_xz(getShaman(pn).Pos.D2,c2d) < 512*16 then
 						SearchMapCells(SQUARE, 0, 0, radius, world_coord2d_to_map_idx(getShaman(pn).Pos.D2), function(me)
-							if is_map_elem_coast(me) > 0 --[[and (is_map_elem_waitable_on(me) > 0)]] and me.Alt < 128 then
+							if is_map_elem_coast(me) > 0 and me.Alt < 128 and rnd() < 33 and not success then
 								local meptr = MAP_ELEM_PTR_2_IDX(me)
 								local c2d = Coord2D.new() map_idx_to_world_coord2d(meptr,c2d)
 								G_AI_EXPANSION_TABLE[pn][2] = c2d
-								SearchMapCells(SQUARE, 0, 0, 6, world_coord2d_to_map_idx(G_AI_EXPANSION_TABLE[pn][2]), function(me)
-									if is_map_elem_coast(me) > 0 then
-										local meptr = MAP_ELEM_PTR_2_IDX(me)
+								SearchMapCells(SQUARE, 0, 0, 6, world_coord2d_to_map_idx(G_AI_EXPANSION_TABLE[pn][2]), function(_me)
+									
+									local idx = MAP_ELEM_PTR_2_IDX(_me) local c3d = Coord3D.new() map_idx_to_world_coord3d_centre(idx,c3d)
+									local m = createThing(T_EFFECT,10,8,c3d,false,false) m.u.Effect.Duration = 12*6 m.DrawInfo.Alpha = 1
+									
+									if is_map_elem_coast(_me) > 0 and not success then
+										local meptr = MAP_ELEM_PTR_2_IDX(_me)
 										local c2d = Coord2D.new() map_idx_to_world_coord2d(meptr,c2d)
-										SearchMapCells(SQUARE, 0, 0, 1, world_coord2d_to_map_idx(c2d), function(me)
-											if is_map_elem_all_sea(me) > 0 then
-												local meptr = MAP_ELEM_PTR_2_IDX(me)
+										SearchMapCells(SQUARE, 0, 0, 1, world_coord2d_to_map_idx(c2d), function(__me)
+											if is_map_elem_all_sea(__me) > 0 then
+												local meptr = MAP_ELEM_PTR_2_IDX(__me)
 												local c3d = Coord3D.new() map_idx_to_world_coord3d(meptr,c3d)
-												G_AI_EXPANSION_TABLE[pn][3] = c3d
-												success = true
-												return false
+												local c2d = Coord2D.new() ; coord3D_to_coord2D(c3d,c2d)
+												LOG(get_world_dist_xz(G_AI_EXPANSION_TABLE[pn][2],c2d))
+												if get_world_dist_xz(G_AI_EXPANSION_TABLE[pn][2],c2d) > 512*3 then
+													G_AI_EXPANSION_TABLE[pn][3] = c3d
+													success = true
+													return false
+												end
 											end
 										return true end)
 									end
@@ -493,7 +501,6 @@ function LBexpand(pn,radius,cooldownSecondsIncrement,requiresLBmana)
 	
 	--if not success try again in 30s; if success expand again after X
 	if not success then G_AI_EXPANSION_TABLE[pn][1] = 30 G_AI_EXPANSION_TABLE[pn][2] = -1 G_AI_EXPANSION_TABLE[pn][3] = -1 G_AI_EXPANSION_TABLE[pn][4] = false else G_AI_EXPANSION_TABLE[pn][1] = cooldownSecondsIncrement command_person_go_to_coord2d(getShaman(pn),G_AI_EXPANSION_TABLE[pn][2]) G_AI_EXPANSION_TABLE[pn][4] = true end
-	log_msg(pn,"will expand(success?): " .. btn(success))
 end
 function tryToLB(pn)
 	if G_AI_EXPANSION_TABLE[pn][4] then

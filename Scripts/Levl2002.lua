@@ -39,7 +39,9 @@ function _OnTurn(turn)
 		for k,v in ipairs(G_AI_ALIVE) do
 			if G_AI_EXPANSION_TABLE[v][1] > 0 then G_AI_EXPANSION_TABLE[v][1] = G_AI_EXPANSION_TABLE[v][1] - 1 end
 			if G_AI_EXPANSION_TABLE[v][1] == 0 and not G_AI_EXPANSION_TABLE[v][4] then
-				LBexpand(v,9,10,false) --pn,radius,cooldownSecondsIncrement,requiresLBmana
+				if v == TRIBE_CYAN then
+					LBexpand(v,11,rndb(120,240),true) --pn,radius,cooldownSecondsIncrement,requiresLBmana
+				end
 			end
 			tryToLB(v)
 		end
@@ -60,7 +62,11 @@ end
 function _OnKeyUp(k)
 end
 
-function _OnKeyDown(k)
+function _OnKeyDown(k) 
+	if k == LB_KEY_A then 
+		LOG(getShaman(4).State)
+		log_msg(4,"" .. G_AI_EXPANSION_TABLE[4][1] .. " | " .. btn(G_AI_EXPANSION_TABLE[4][4]))
+	end
 end
 
 
@@ -145,6 +151,6 @@ function afterInit()
 	for k,v in ipairs(G_HUMANS) do
 		set_player_can_cast(M_SPELL_GHOST_ARMY, v);
 		set_correct_gui_menu();
-		G_AI_EXPANSION_TABLE[v][1] = G_AI_EXPANSION_TABLE[v][1] + rndb(32,128)
 	end
+	G_AI_EXPANSION_TABLE[v][TRIBE_CYAN] = G_AI_EXPANSION_TABLE[v][1] + rndb(60,120)
 end

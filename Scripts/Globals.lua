@@ -53,12 +53,12 @@ G_AI_EXPANSION_TABLE = {
 										--last time since expansion(secs)(set to -1 to not expand ever), -1 or c2d (shaman pos to lb from), -1 or c3d (shaman lb target ptr), isAboutToLB
 								[0] = 	{64,-1,-1,false},
 										{64,-1,-1,false},
-										{64,-1,-1,false},
-										{64,-1,-1,false},
-										{64,-1,-1,false},
-										{64,-1,-1,false},
-										{64,-1,-1,false},
-										{64,-1,-1,false}
+										{rndb(32,64),-1,-1,false},
+										{rndb(32,64),-1,-1,false},
+										{rndb(32,64),-1,-1,false},
+										{rndb(32,64),-1,-1,false},
+										{rndb(32,64),-1,-1,false},
+										{rndb(32,64),-1,-1,false}
 }
 
 -- CONSTANT POINTERS
