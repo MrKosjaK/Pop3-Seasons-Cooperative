@@ -152,5 +152,5 @@ function afterInit()
 		set_player_can_cast(M_SPELL_GHOST_ARMY, v);
 		set_correct_gui_menu();
 	end
-	G_AI_EXPANSION_TABLE[v][TRIBE_CYAN] = G_AI_EXPANSION_TABLE[v][1] + rndb(60,120)
+	G_AI_EXPANSION_TABLE[TRIBE_CYAN][1] = G_AI_EXPANSION_TABLE[TRIBE_CYAN][1] + rndb(60,120)
 end
