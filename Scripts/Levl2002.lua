@@ -66,6 +66,9 @@ function _OnTurn(turn)
 	
 	if everySeconds(15) then
 		updateVehiclesBuild()
+		updateConvertParams()
+		updateSpellBuckets(stage)
+		updateAtkSpells(stage) --use this b4 ttack
 	end
 	
 	------------------------------------------------------------------------------------------------------------------------
@@ -81,6 +84,10 @@ function _OnTurn(turn)
 	elseif turn == 13000 then
 		createSnow(1200, 50, 78, 60*2, 60*2, 24)
 	end
+	
+	--debug
+	--local f,a,b,c = #AI_CYAN_ATK_SPELLS,AI_CYAN_ATK_SPELLS[1],AI_CYAN_ATK_SPELLS[2],AI_CYAN_ATK_SPELLS[3]
+	--LOG(string.format("atk spells num: %s     %s|%s|%s",f, a,b,c))
 end
 
 function _OnCreateThing(t)
@@ -98,7 +105,62 @@ end
 function _OnKeyDown(k)
 end
 
+------------------------------------------------------------------------------------------------------------------------
 
+function updateAtkSpells(s)
+	AI_CYAN_ATK_SPELLS = {}
+	
+	--
+	local spellList = {}
+	local function SpellPicker(possibilitiesTbl,aiTbl)
+		for i = 1,3 do
+			local k = rndb(0,#possibilitiesTbl)
+			table.insert(aiTbl,possibilitiesTbl[k])
+			table.remove(possibilitiesTbl,k)
+		end		
+	end
+	if s == 0 then
+		spellList = {M_SPELL_INSECT_PLAGUE,M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND}
+	elseif s == 1 then
+		spellList = {M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM}
+	elseif s == 2 then
+		spellList = {M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWINDM_SPELL_HYPNOTISM,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE}
+	elseif s == 3 then
+		spellList = {M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM,M_SPELL_FIRESTORM}
+	else
+		spellList = {M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_FIRESTORM}
+	end
+	SpellPicker(spellList,AI_CYAN_ATK_SPELLS)
+	--feel the need to use SHIELD/INVI?
+	if s > 1 then
+		local chance = 20+s*10 --40-60% chance
+		if rnd() < chance then
+			AI_CYAN_ATK_SPELLS[1] = M_SPELL_INVISIBILITY
+		end
+	end
+end
+
+function updateSpellBuckets(s)
+	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_BLAST, 1);
+	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_CONVERT_WILD, 2);
+	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_INSECT_PLAGUE, 6-s);
+	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_INVISIBILITY, 13-s);
+	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_LIGHTNING_BOLT, 11-s);
+	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_HYPNOTISM, 16-s);
+	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_EARTHQUAKE, 32-s);
+	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_FIRESTORM, 48-s);
+	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_WHIRLWIND, 18-s);
+	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_GHOST_ARMY, 8-s);
+	--
+	
+end
+
+function updateConvertParams()
+	local pn = TRIBE_CYAN
+	local cv = btn(GetPop(pn)>20+20*G_GAMESTAGE)
+	STATE_SET(pn, cv, CP_AT_TYPE_MED_MAN_GET_WILD_PEEPS)
+	WRITE_CP_ATTRIB(pn, ATTR_EXPANSION, 15+10*G_GAMESTAGE)
+end
 
 function updateVehiclesBuild()
 	local pn = TRIBE_CYAN
@@ -124,33 +186,48 @@ function trainingHutsPriorities(pn)
 	end
 end
 
+------------------------------------------------------------------------------------------------------------------------
+
+AI_CYAN_SPELLS = {
+M_SPELL_BLAST,M_SPELL_CONVERT_WILD,
+M_SPELL_GHOST_ARMY,
+M_SPELL_LIGHTNING_BOLT,
+M_SPELL_WHIRLWIND,
+M_SPELL_INSECT_PLAGUE,
+M_SPELL_INVISIBILITY,
+M_SPELL_HYPNOTISM,
+M_SPELL_EARTHQUAKE,
+M_SPELL_FIRESTORM
+}
+
+AI_CYAN_ATK_SPELLS = {M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND}
+
+
+
+
+
+
 function _OnLevelInit(level_id)
+	--scenery
 	for i = 5,55 do Plant(i,i,-1) end
 
 	--stuff for AI
 	AI_Initialize(TRIBE_CYAN);
 
-	set_player_can_cast(M_SPELL_BLAST, TRIBE_CYAN);
-	set_player_can_cast(M_SPELL_CONVERT_WILD, TRIBE_CYAN);
-	set_player_can_cast(M_SPELL_LIGHTNING_BOLT, TRIBE_CYAN);
-	set_player_can_cast(M_SPELL_WHIRLWIND, TRIBE_CYAN);
-	set_player_can_cast(M_SPELL_INSECT_PLAGUE, TRIBE_CYAN);
-	set_player_can_cast(M_SPELL_INVISIBILITY, TRIBE_CYAN);
-	set_player_can_cast(M_SPELL_HYPNOTISM, TRIBE_CYAN);
-	set_player_can_cast(M_SPELL_GHOST_ARMY, TRIBE_CYAN);
-	set_player_can_cast(M_SPELL_EARTHQUAKE, TRIBE_CYAN);
-	set_player_can_cast(M_SPELL_FIRESTORM, TRIBE_CYAN);
+	for k,v in ipairs(AI_CYAN_SPELLS) do
+		set_player_can_cast(v, TRIBE_CYAN);
+	end
 	AI_EnableBuckets(TRIBE_CYAN);
 	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_BLAST, 1);
-	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_CONVERT_WILD, 1);
-	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_INSECT_PLAGUE, 5);
-	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_INVISIBILITY, 4);
-	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_LIGHTNING_BOLT, 7);
-	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_HYPNOTISM, 8);
-	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_EARTHQUAKE, 20);
-	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_FIRESTORM, 30);
-	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_WHIRLWIND, 10);
-	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_GHOST_ARMY, 3);
+	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_CONVERT_WILD, 2);
+	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_INSECT_PLAGUE, 6);
+	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_INVISIBILITY, 13);
+	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_LIGHTNING_BOLT, 11);
+	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_HYPNOTISM, 16);
+	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_EARTHQUAKE, 32);
+	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_FIRESTORM, 48);
+	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_WHIRLWIND, 18);
+	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_GHOST_ARMY, 8);
 	
 	set_player_can_build(M_BUILDING_TEPEE, TRIBE_CYAN);
 	set_player_can_build(M_BUILDING_DRUM_TOWER, TRIBE_CYAN);
@@ -195,5 +272,12 @@ function afterInit()
 		set_player_can_cast(M_SPELL_GHOST_ARMY, v);
 		set_correct_gui_menu();
 	end
+	--stuff for AI
 	G_AI_EXPANSION_TABLE[TRIBE_CYAN][1] = G_AI_EXPANSION_TABLE[TRIBE_CYAN][1] + rndb(60,120)
 end
+
+
+--to do:
+--attacks
+--patrols
+--black tribe
