@@ -16,6 +16,7 @@ include("AI\\Scripts\\purple_083.lua");
 
 
 G_NUM_OF_HUMANS_FOR_THIS_LEVEL = 3;
+G_CONST.ComputerManaAdjustFactor = 256;
 
 function _OnLevelInit(level_id)
   -- Green stuff
@@ -38,8 +39,8 @@ function _OnLevelInit(level_id)
 
   AI_SetAways(TRIBE_GREEN, 1, 0, 0, 0, 0);
   AI_SetShamanAway(TRIBE_GREEN, false);
-  AI_SetShamanParams(TRIBE_GREEN, 0, 0, false, 0, 12);
-  AI_SetMainDrumTower(TRIBE_GREEN, false, 0, 0);
+  AI_SetShamanParams(TRIBE_GREEN, 54, 126, true, 16, 12);
+  AI_SetMainDrumTower(TRIBE_GREEN, true, 62, 142);
   AI_SetConvertingParams(TRIBE_GREEN, true, true, 12);
   AI_SetTargetParams(TRIBE_GREEN, TRIBE_RED, true, true);
 

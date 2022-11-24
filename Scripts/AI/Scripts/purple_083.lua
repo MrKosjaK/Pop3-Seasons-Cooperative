@@ -16,9 +16,39 @@ ai:create_tower(6, 220, 76, 2);
 ai:create_tower(7, 224, 76, 2);
 ai:create_tower(8, 228, 78, 1);
 
+local function purple_troop_attack(player)
+  local idx = AI_GetVar(player, 7);
+  
+  if (not AI_EntryAvailable(player)) then
+    return;
+  end
+  
+  if (idx == 0) then
+    if (AI_GetUnitCount(player, M_PERSON_WARRIOR) > 1) then
+	  AI_SetAttackFlags(player, 3, 1, 0);
+	  AI_SetAways(player, 0, 100, 0, 0, 0);
+	  AI_SetShamanAway(player, false);
+	  ATTACK(player, TRIBE_YELLOW, 2, ATTACK_BUILDING, 0, 120, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
+	end
+    AI_SetVar(player, 7, 1);
+  elseif (idx == 1) then
+    if (AI_GetUnitCount(player, M_PERSON_WARRIOR) > 5 and AI_GetUnitCount(player, M_PERSON_SUPER_WARRIOR) > 5) then
+	  AI_SetAttackFlags(player, 0, 0, 0);
+	  AI_SetAways(player, 1, 50, 0, 50, 0);
+	  AI_SetShamanAway(player, false);
+	  ATTACK(player, TRIBE_YELLOW, 12, ATTACK_BUILDING, 0, 650, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
+	end
+    AI_SetVar(player, 7, 0);
+  end
+end
+
 local function purple_shaman_attack(player)
   local idx = AI_GetVar(player, 6);
-  log('attack');
+  
+  if (not AI_EntryAvailable(player)) then
+    return;
+  end
+  
   if (idx == 0) then
     -- shaman crap attack
 	if (AI_ShamanFree(player) and MANA(player) > 95000) then
@@ -181,3 +211,4 @@ ai:create_event(1, 122, 32, purple_convert);
 ai:create_event(2, 256, 96, purple_build);
 ai:create_event(3, 140, 44, purple_towers);
 ai:create_event(4, 1440, 256, purple_shaman_attack);
+ai:create_event(5, 940, 120, purple_troop_attack);
