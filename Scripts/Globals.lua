@@ -62,6 +62,7 @@ G_AI_EXPANSION_TABLE = {
 }
 
 -- CONSTANT POINTERS
+G_CONST = constants();
 G_SPELL_CONST = spells_type_info();
 G_BLDG_CONST = building_type_info();
 G_ENCY = encyclopedia_info();
