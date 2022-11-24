@@ -153,5 +153,9 @@ function OnKeyUp(k)
 		for k,v in ipairs(G_AI_ALIVE) do
 			log_msg(v, "house percentage: " .. READ_CP_ATTRIB(v,ATTR_HOUSE_PERCENTAGE) .. " | huts amt (total): " .. countHuts(v,true) .. " | huts amt(only healthy): " .. countHuts(v,false))
 		end
+	elseif k == LB_KEY_5 then
+		for k,v in ipairs(G_AI_ALIVE) do
+			log_msg(v, "mana: " .. getPlayer(v).Mana)
+		end
 	end
 end
