@@ -383,9 +383,9 @@ end
 
 --occasionally burn trees near X coordinate (usually blue's base)
 function burnTrees(seconds,tribe,x,z,radius)
-	local ShInArea = CountThingsOfTypeInArea(T_PERSON,M_PERSON_MEDICINE_MAN,tribe,x,z,radius)
-	if getShaman(tribe) ~= nil then
-		if everySeconds(seconds) then
+	if everySeconds(seconds) then
+		if getShaman(tribe) ~= nil then
+		local ShInArea = CountThingsOfTypeInArea(T_PERSON,M_PERSON_MEDICINE_MAN,tribe,x,z,radius)
 			if ShInArea == 1 and (getShaman(tribe).Flags2 & TF2_THING_IS_A_GHOST_PERSON == 0) then
 				SearchMapCells(SQUARE, 0, 0 , 5, world_coord3d_to_map_idx(getShaman(tribe).Pos.D3), function(me)
 					me.MapWhoList:processList(function (t)
@@ -393,8 +393,7 @@ function burnTrees(seconds,tribe,x,z,radius)
 							if t.State == 1 then
 								local Sstate = getShaman(tribe).State
 								if Sstate == 10 or Sstate == 17 or Sstate == 18 or Sstate == 19 then
-									createThing(T_SPELL,M_SPELL_BLAST,tribe,t.Pos.D3,false,false)
-									GIVE_MANA_TO_PLAYER(tribe,-10000)
+									CREATE_THING_WITH_PARAMS4(T_SPELL, M_SPELL_BLAST, tribe, t.Pos.D3, 10000, 0, 0, 0)
 								end
 							end
 						end

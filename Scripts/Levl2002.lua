@@ -8,7 +8,37 @@ function _OnTurn(turn)
 	if turn == 1 then afterInit() end
 	
 	local stage = G_GAMESTAGE
+	
+	------------------------------------------------------------------------------------------------------------------------
+	-- AI STUFF
+	------------------------------------------------------------------------------------------------------------------------
+	
+	if stage > 0 then
+		--build towers
+		if everySeconds(180-stage*20) then
+			local ct = countTowers(TRIBE_CYAN,true)
+			if ct < 2 then
+				BUILD_DRUM_TOWER(TRIBE_CYAN,rndb(136,216),rndb(138,186))
+			end
+			local bt = countTowers(TRIBE_BLACK,true)
+			if ct < 6 then
+				BUILD_DRUM_TOWER(TRIBE_BLACK,rndb(20,46),rndb(18,62))
+			end
+		end
+	end
+	if stage > 1 then
+		--burn trees
+		local cdr = 40-stage*3
+		if rnd() > 50 then
+			burnTrees(cdr,TRIBE_CYAN,42,124,12)
+			burnTrees(cdr,TRIBE_BLACK,42,124,12)
+		else
+			burnTrees(cdr,TRIBE_CYAN,88,6,12)
+			burnTrees(cdr,TRIBE_BLACK,88,6,12)
+		end
+	end
 
+	--Process AIs on turn
 	for k,v in ipairs(G_AI_ALIVE) do
 		Sulk(v,stage+3)
 		--small AI boosts lategame
@@ -22,7 +52,21 @@ function _OnTurn(turn)
 			unstuckS(v)
 			trainingHutsPriorities(v)
 		end
+		--update lb expand tbl
+		if everySeconds(1) then
+			if G_AI_EXPANSION_TABLE[v][1] > 0 then G_AI_EXPANSION_TABLE[v][1] = G_AI_EXPANSION_TABLE[v][1] - 1 end
+			if G_AI_EXPANSION_TABLE[v][1] == 0 and not G_AI_EXPANSION_TABLE[v][4] then
+				if v == TRIBE_CYAN then
+					LBexpand(v,9+stage,rndb(120,180),false) --pn,radius,cooldownSecondsIncrement,requiresLBmana
+				end
+			end
+			tryToLB(v)
+		end
 	end
+	
+	------------------------------------------------------------------------------------------------------------------------
+	-- NON-AI STUFF
+	------------------------------------------------------------------------------------------------------------------------
 	
 	--snowing 3 times during level
 	--snowAmtTarget, CreationAmtPerSecCreation, speed, (durationSeconds, internTimer), fadeSeconds
@@ -32,19 +76,6 @@ function _OnTurn(turn)
 		createSnow(700, 100, 32, 60*1, 60*1, 3)
 	elseif turn == 13000 then
 		createSnow(1200, 50, 78, 60*2, 60*2, 24)
-	end
-	
-	--update lb expand tbl
-	if everySeconds(1) then
-		for k,v in ipairs(G_AI_ALIVE) do
-			if G_AI_EXPANSION_TABLE[v][1] > 0 then G_AI_EXPANSION_TABLE[v][1] = G_AI_EXPANSION_TABLE[v][1] - 1 end
-			if G_AI_EXPANSION_TABLE[v][1] == 0 and not G_AI_EXPANSION_TABLE[v][4] then
-				if v == TRIBE_CYAN then
-					LBexpand(v,9+stage,rndb(120,180),false) --pn,radius,cooldownSecondsIncrement,requiresLBmana
-				end
-			end
-			tryToLB(v)
-		end
 	end
 end
 
