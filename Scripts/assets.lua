@@ -284,12 +284,18 @@ function updateBasePriorities(pn)
 	AI_SetBuildingParams(pn,true,40+s*15,3)
 	if b > 20+(s*5) and h > 6+s then
 		if AI_GetBldgCount(pn, M_BUILDING_BOAT_HUT_1) > 0 then
-			STATE_SET(pn, true, CP_AT_TYPE_BUILD_VEHICLE);
 			WRITE_CP_ATTRIB(pn, ATTR_PREF_BOAT_DRIVERS, 1+s+2);
+			WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BOAT, 1+s+2);
+		else
+			WRITE_CP_ATTRIB(pn, ATTR_PREF_BOAT_DRIVERS, 0);
+			WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BOAT, 0);
 		end
 		if AI_GetBldgCount(pn, M_BUILDING_AIRSHIP_HUT_1) > 0 then
-			STATE_SET(pn, true, CP_AT_TYPE_BUILD_VEHICLE);
 			WRITE_CP_ATTRIB(pn, ATTR_PREF_BALLOON_DRIVERS, 1+s+2);
+			WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BALLOON, 1+s+2);
+		else
+			WRITE_CP_ATTRIB(pn, ATTR_PREF_BALLOON_DRIVERS, 0);
+			WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BALLOON, 0);
 		end
 	end
 end

@@ -64,6 +64,10 @@ function _OnTurn(turn)
 		end
 	end
 	
+	if everySeconds(15) then
+		updateVehiclesBuild()
+	end
+	
 	------------------------------------------------------------------------------------------------------------------------
 	-- NON-AI STUFF
 	------------------------------------------------------------------------------------------------------------------------
@@ -91,21 +95,15 @@ end
 function _OnKeyUp(k)
 end
 
-function _OnKeyDown(k) 
-	--[[if k == LB_KEY_A then 
-		--LOG(getShaman(4).State)
-		--G_AI_EXPANSION_TABLE[TRIBE_CYAN][1] = 5
-		log_msg(4,"" .. G_AI_EXPANSION_TABLE[4][1] .. " | " .. btn(G_AI_EXPANSION_TABLE[4][4]))
-	elseif LB_KEY_D == k then
-		G_AI_EXPANSION_TABLE[TRIBE_CYAN][1] = 5
-	elseif LB_KEY_Z == k then
-		LOG(G_AI_EXPANSION_TABLE[4][2]) LOG(G_AI_EXPANSION_TABLE[4][3]) LOG(btn(G_AI_EXPANSION_TABLE[4][4])) LOG(G_AI_EXPANSION_TABLE[4][5])
-	end]]
+function _OnKeyDown(k)
 end
 
 
 
-
+function updateVehiclesBuild()
+	local pn = TRIBE_CYAN
+	WRITE_CP_ATTRIB(pn, CP_AT_TYPE_BUILD_VEHICLE, btn(_gsi.Players[pn].NumVehiclesOfType[M_VEHICLE_BOAT_1] > 3))
+end
 
 function trainingHutsPriorities(pn)
 	local pop,huts,s = GetPop(pn),countHuts(pn,false),G_GAMESTAGE
@@ -127,7 +125,7 @@ function trainingHutsPriorities(pn)
 end
 
 function _OnLevelInit(level_id)
-	for i = 5,55 do Plant(i,i,-1) LOG(i) end
+	for i = 5,55 do Plant(i,i,-1) end
 
 	--stuff for AI
 	AI_Initialize(TRIBE_CYAN);
@@ -159,6 +157,8 @@ function _OnLevelInit(level_id)
 	set_player_can_build(M_BUILDING_WARRIOR_TRAIN, TRIBE_CYAN);
 	--set_player_can_build(M_BUILDING_SUPER_TRAIN, TRIBE_CYAN);
 	set_player_can_build(M_BUILDING_TEMPLE, TRIBE_CYAN);
+	set_player_can_build(M_BUILDING_BOAT_HUT_1, TRIBE_CYAN);
+	--set_player_can_build(M_BUILDING_AIRSHIP_HUT_1, TRIBE_CYAN);
 
 	AI_SetAways(TRIBE_CYAN, 1, 0, 0, 0, 0);
 	AI_SetShamanAway(TRIBE_CYAN, true);
@@ -185,6 +185,12 @@ end
 
 function afterInit()
 	--stuff for humans
+	set_player_can_cast(M_SPELL_LAND_BRIDGE, TRIBE_BLUE);
+	set_player_can_cast(M_SPELL_LIGHTNING_BOLT, TRIBE_RED);
+	set_player_cannot_cast(M_SPELL_INVISIBILITY, TRIBE_RED);
+	set_player_cannot_cast(M_SPELL_FIRESTORM, TRIBE_RED);
+	set_player_cannot_cast(M_SPELL_HYPNOTISM, TRIBE_RED);
+	set_player_cannot_cast(M_SPELL_EARTHQUAKE, TRIBE_RED);
 	for k,v in ipairs(G_HUMANS) do
 		set_player_can_cast(M_SPELL_GHOST_ARMY, v);
 		set_correct_gui_menu();
