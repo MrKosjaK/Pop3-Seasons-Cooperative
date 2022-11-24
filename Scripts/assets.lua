@@ -261,7 +261,7 @@ function CountThingsOfTypeInArea(thingType,thingModel,thingOwner,X,Z,radius)
 	local count = 0
 	SearchMapCells(SQUARE ,0, 0, radius, pos.Pos, function(me)
 		me.MapWhoList:processList( function (t)
-			if t.Type == thingType and t.Model == thingModel then
+			if t.Type == thingType and t.Model == thingModel and not isGhost(thing) then
 				if thingOwner == -1 then
 					count = count + 1
 				else
@@ -682,7 +682,7 @@ end
 function Plant(IdxS,IdxE,drawnum) -- pick -1 for random plants, or specify
 	for i = IdxS,IdxE do
 		local plants = createThing(T_SCENERY,M_SCENERY_PLANT_2,8,marker_to_coord3d(i),false,false) centre_coord3d_on_block(plants.Pos.D3)
-		if drawnum == -1 then plants.DrawInfo.DrawNum = rndb(1808,1817) else plants.DrawInfo.DrawNum = drawnum end --still need to add plant types to HFX
+		if drawnum == -1 then plants.DrawInfo.DrawNum = rndb(1775,1784) else plants.DrawInfo.DrawNum = drawnum end --still need to add plant types to HFX
 		plants.DrawInfo.Alpha = -16 plants.DrawInfo.Flags = EnableFlag(plants.DrawInfo.Flags, DF_USE_ENGINE_SHADOW)
 	end
 end

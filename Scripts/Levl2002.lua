@@ -127,6 +127,7 @@ function trainingHutsPriorities(pn)
 end
 
 function _OnLevelInit(level_id)
+	for i = 5,55 do Plant(i,i,-1) LOG(i) end
 
 	--stuff for AI
 	AI_Initialize(TRIBE_CYAN);
