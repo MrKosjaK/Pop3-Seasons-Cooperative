@@ -62,6 +62,12 @@ function cp_mt:init(player_num)
   end
 end
 
+function cp_mt:deinit(player_num)
+  if (self.Data[player_num] ~= nil) then
+    self.Data[player_num] = nil;
+  end
+end
+
 function cp_mt:process_ai()
   for i = 0, 7 do
     local ai = self.Data[i];
