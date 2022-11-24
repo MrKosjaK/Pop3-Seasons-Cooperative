@@ -4,17 +4,6 @@ include("AI\\Scripts\\cyan_083.lua");
 include("AI\\Scripts\\green_083.lua");
 include("AI\\Scripts\\purple_083.lua");
 
--- Shaman AI
--- GetAI("Cyan"):ToggleShamanAI(true);
--- GetAI("Cyan"):Shaman_ToggleFallDamageSave(true);
--- GetAI("Cyan"):Shaman_ToggleLightningDodge(true);
--- GetAI("Cyan"):Shaman_ToggleSpellEntries(true);
--- GetAI("Cyan"):Shaman_AddSpellEntry(M_SPELL_BLAST, T_PERSON, {M_PERSON_BRAVE, M_PERSON_WARRIOR}, 5000);
--- GetAI("Purple"):ToggleShamanAI(true);
--- GetAI("Purple"):Shaman_ToggleFallDamageSave(true);
--- GetAI("Purple"):Shaman_ToggleLightningDodge(true);
-
-
 G_NUM_OF_HUMANS_FOR_THIS_LEVEL = 3;
 G_CONST.ComputerManaAdjustFactor = 256;
 
@@ -50,7 +39,7 @@ function _OnLevelInit(level_id)
   AI_SetVehicleParams(TRIBE_GREEN, false, 0, 0, 0, 0);
   AI_SetFetchParams(TRIBE_GREEN, false, false, false, false);
 
-  AI_SetAttackingParams(TRIBE_GREEN, false, 0, 25);
+  AI_SetAttackingParams(TRIBE_GREEN, true, 3, 25);
   AI_SetDefensiveParams(TRIBE_GREEN, true, true, true, true, 3, 1, 1);
   AI_SetSpyParams(TRIBE_GREEN, false, 0, 100, 128, 1);
   AI_SetPopulatingParams(TRIBE_GREEN, true, true);
@@ -97,7 +86,7 @@ function _OnLevelInit(level_id)
   AI_SetVehicleParams(TRIBE_CYAN, false, 0, 0, 0, 0);
   AI_SetFetchParams(TRIBE_CYAN, false, false, false, false);
 
-  AI_SetAttackingParams(TRIBE_CYAN, true, 4, 25);
+  AI_SetAttackingParams(TRIBE_CYAN, true, 3, 25);
   AI_SetDefensiveParams(TRIBE_CYAN, true, true, true, true, 3, 1, 1);
   AI_SetSpyParams(TRIBE_CYAN, false, 0, 100, 128, 1);
   AI_SetPopulatingParams(TRIBE_CYAN, true, true);
