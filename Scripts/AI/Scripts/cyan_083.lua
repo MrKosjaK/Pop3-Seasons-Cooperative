@@ -187,6 +187,7 @@ local function cyan_convert(player)
   -- check if we have a low pop count
   if (AI_GetPopCount(player) < 35 and AI_ShamanFree(player)) then
     -- enable converting and convert at random markers
+	sham:toggle_converting(true);
     STATE_SET(player, 1, CP_AT_TYPE_MED_MAN_GET_WILD_PEEPS);
     WRITE_CP_ATTRIB(player, ATTR_EXPANSION, 36);
 
@@ -194,6 +195,7 @@ local function cyan_convert(player)
     AI_ConvertAt(player, mk);
   else
     -- disable converting
+	sham:toggle_converting(false);
     STATE_SET(player, 0, CP_AT_TYPE_MED_MAN_GET_WILD_PEEPS);
   end
 end

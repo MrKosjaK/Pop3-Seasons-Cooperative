@@ -6,6 +6,9 @@ local convert_markers =
 CompPlayer:init(TRIBE_PINK);
 local ai = CompPlayer(TRIBE_PINK);
 
+ai:toggle_shaman_ai(true);
+local sham = ai:get_shaman_ai();
+
 -- towers
 ai:create_tower(1, 218, 118, -1);
 ai:create_tower(2, 230, 120, -1);
@@ -189,6 +192,7 @@ local function purple_convert(player)
     -- enable converting and convert at random markers
     STATE_SET(player, 1, CP_AT_TYPE_MED_MAN_GET_WILD_PEEPS);
     WRITE_CP_ATTRIB(player, ATTR_EXPANSION, 36);
+	sham:toggle_converting(true);
 
     -- ordered converting
     local idx = AI_GetVar(player, 1);
@@ -202,6 +206,7 @@ local function purple_convert(player)
     AI_SetVar(player, 1, idx + 1);
   else
     -- disable converting
+	sham:toggle_converting(false);
     STATE_SET(player, 0, CP_AT_TYPE_MED_MAN_GET_WILD_PEEPS);
   end
 end

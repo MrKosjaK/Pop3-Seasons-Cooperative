@@ -44,6 +44,7 @@ function cp_mt:init(player_num)
         Owner = player_num,
         Enabled = false,
         Proxy = ObjectProxy.new(),
+		ConvertWild = false,
         LandBridgeSave = false,
         LandBridgeChance = 0,
         FallDamageSave = false,
@@ -94,10 +95,7 @@ function pl_mt:process()
 
   -- shaman binding
   if (self.Shaman.Enabled) then
-    local s = getShaman(self.Owner);
-    if (s ~= nil) then
-      self.Shaman.Proxy:set(s.ThingNum);
-    end
+    self.Shaman:process();
   end
 end
 
@@ -107,6 +105,51 @@ end
 
 function pl_mt:get_shaman_ai()
   return self.Shaman;
+end
+
+function sh_mt:process()
+  if (self.Proxy:isNull()) then
+    local s = getShaman(self.Owner);
+	if (s ~= nil) then
+	  self.Proxy:set(s.ThingNum);
+	end
+  else
+    local s = self.Proxy:get();
+	
+	if (s.State == S_PERSON_SPELL_TRANCE) then
+	  return;
+	end
+	
+	if (self.ConvertWild) then
+	  -- converting wild is pog
+	  local radius = G_SPELL_CONST[M_SPELL_CONVERT_WILD].WorldCoordRange >> 9;
+	  if (self.SpellCheckMax < radius) then self.SpellCheckMax = radius; end
+	  
+	  SearchMapCells(CIRCULAR, 0, self.SpellCheckCurr, self.SpellCheckCurr, world_coord3d_to_map_idx(s.Pos.D3), function(me)
+	    if (not me.PlayerMapWho[TRIBE_HOSTBOT]:isEmpty()) then
+		  me.PlayerMapWho[TRIBE_HOSTBOT]:processList(function(t)
+		    if (t.Type == T_PERSON) then
+			  CREATE_THING_WITH_PARAMS4(T_SPELL, M_SPELL_CONVERT_WILD, s.Owner, t.Pos.D3, 10000, 0, 0, 0);
+			  return false;
+			end
+		    return true;
+		  end);
+		end
+		local idx = map_xz_to_map_idx(me.X, me.Y);
+		local c3d_c = Coord3D.new();
+		map_idx_to_world_coord3d_centre(idx, c3d_c);
+		createThing(T_EFFECT, 4, 8, c3d_c, false, false);
+		return true;
+	  end);
+	  self.SpellCheckCurr = self.SpellCheckCurr + 1;
+	  if (self.SpellCheckCurr > radius) then self.SpellCheckCurr = 0; end
+	  return;
+	end
+  end
+end
+
+function sh_mt:toggle_converting(bool)
+  self.ConvertWild = bool;
 end
 
 function sh_mt:toggle_land_bridge_save(bool, chance)
