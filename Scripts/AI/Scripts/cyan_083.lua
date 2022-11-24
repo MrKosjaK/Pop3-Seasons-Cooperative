@@ -210,7 +210,7 @@ local function cyan_build(player)
     WRITE_CP_ATTRIB(player, ATTR_HOUSE_PERCENTAGE, 45);
     if (AI_GetVar(player, 1) == 0) then
       AI_SetVar(player, 1, 1);
-      AI_SetMainDrumTower(TRIBE_CYAN, true, 138, 128);
+      AI_SetMainDrumTower(player, true, 138, 128);
     end
   end
 

@@ -7,6 +7,54 @@ CompPlayer:init(TRIBE_GREEN);
 local ai = CompPlayer(TRIBE_GREEN);
 
 local function green_build(player)
+  AI_SetVar(player, 2, 0);
+  local huts = AI_GetHutsCount(player);
+  local war_train = AI_GetBldgCount(player, M_BUILDING_WARRIOR_TRAIN);
+  local fw_train = AI_GetBldgCount(player, M_BUILDING_SUPER_TRAIN);
+  
+  if (war_train > 0 or fw_train > 0) then
+    WRITE_CP_ATTRIB(player, ATTR_MAX_TRAIN_AT_ONCE, 3);
+    STATE_SET(player, TRUE, CP_AT_TYPE_TRAIN_PEOPLE);
+  end
+  
+  if (huts < 5) then
+    WRITE_CP_ATTRIB(player, ATTR_HOUSE_PERCENTAGE, 24);
+    WRITE_CP_ATTRIB(player, ATTR_MAX_BUILDINGS_ON_GO, 4);
+    WRITE_CP_ATTRIB(player, ATTR_PREF_SUPER_WARRIOR_PEOPLE, 0);
+    WRITE_CP_ATTRIB(player, ATTR_PREF_SUPER_WARRIOR_TRAINS, 0);
+    WRITE_CP_ATTRIB(player, ATTR_PREF_WARRIOR_TRAINS, 0);
+    WRITE_CP_ATTRIB(player, ATTR_PREF_WARRIOR_PEOPLE, 0);
+  end
+  
+  if (huts >= 5 and war_train == 0) then
+    -- build warrior hut firsto.
+	WRITE_CP_ATTRIB(player, ATTR_PREF_WARRIOR_TRAINS, 1);
+	WRITE_CP_ATTRIB(player, ATTR_HOUSE_PERCENTAGE, 30);
+	WRITE_CP_ATTRIB(player, ATTR_MAX_BUILDINGS_ON_GO, 2);
+  end
+  
+  if (huts >= 6 and war_train > 0) then
+    WRITE_CP_ATTRIB(player, ATTR_PREF_WARRIOR_PEOPLE, 12);
+	WRITE_CP_ATTRIB(player, ATTR_HOUSE_PERCENTAGE, 60);
+	WRITE_CP_ATTRIB(player, ATTR_MAX_BUILDINGS_ON_GO, 3);
+	if (AI_GetVar(player, 1) == 0) then
+      AI_SetVar(player, 1, 1);
+      AI_SetMainDrumTower(player, true, 62, 142);
+    end
+  end
+  
+  if (huts >= 8 and fw_train == 0) then
+    WRITE_CP_ATTRIB(player, ATTR_PREF_SUPER_WARRIOR_TRAINS, 1);
+	WRITE_CP_ATTRIB(player, ATTR_HOUSE_PERCENTAGE, 70);
+  end
+  
+  if (huts >= 8 and fw_train > 0) then
+    AI_SetVar(player, 2, 1); -- fws!!!!
+    WRITE_CP_ATTRIB(player, ATTR_MAX_BUILDINGS_ON_GO, 1);
+    WRITE_CP_ATTRIB(player, ATTR_HOUSE_PERCENTAGE, 90);
+	WRITE_CP_ATTRIB(player, ATTR_PREF_SUPER_WARRIOR_PEOPLE, 12);
+	WRITE_CP_ATTRIB(player, ATTR_PREF_WARRIOR_PEOPLE, 16);
+  end
 end
 
 local function green_towers(player)
