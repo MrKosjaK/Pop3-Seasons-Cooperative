@@ -21,6 +21,7 @@ end
 
 function EndSnow()
 	snowing = 0
+	snowDroplets = {}
 	snowStuff = {0,0,0,0,0,0}
 end
 

@@ -11,7 +11,6 @@ function _OnTurn(turn)
 
 	for k,v in ipairs(G_AI_ALIVE) do
 		Sulk(v,stage+3)
-		trainingHutsPriorities(v)
 		--small AI boosts lategame
 		if minutes() > 15 then
 			fasterTrain(v,8+8*stage)
@@ -21,20 +20,18 @@ function _OnTurn(turn)
 		if everySeconds(12) then
 			updateBasePriorities(v)
 			unstuckS(v)
-			if countHuts(v,false) > 1+stage+5 then
-				WRITE_CP_ATTRIB(v, ATTR_PREF_BOAT_HUTS, 1);
-			end
+			trainingHutsPriorities(v)
 		end
 	end
 	
 	--snowing 3 times during level
 	--snowAmtTarget, CreationAmtPerSecCreation, speed, (durationSeconds, internTimer), fadeSeconds
 	if turn == 1000 then
-		createSnow(2000, 50, 48, 60*3, 60*3, 12)
+		createSnow(1700, 50, 48, 60*3, 60*3, 12)
 	elseif turn == 7000 then
-		createSnow(800, 100, 32, 60*1, 60*1, 3)
+		createSnow(700, 100, 32, 60*1, 60*1, 3)
 	elseif turn == 13000 then
-		createSnow(1300, 50, 78, 60*2, 60*2, 24)
+		createSnow(1200, 50, 78, 60*2, 60*2, 24)
 	end
 	
 	--update lb expand tbl
@@ -43,7 +40,7 @@ function _OnTurn(turn)
 			if G_AI_EXPANSION_TABLE[v][1] > 0 then G_AI_EXPANSION_TABLE[v][1] = G_AI_EXPANSION_TABLE[v][1] - 1 end
 			if G_AI_EXPANSION_TABLE[v][1] == 0 and not G_AI_EXPANSION_TABLE[v][4] then
 				if v == TRIBE_CYAN then
-					LBexpand(v,9+stage,rndb(120,240),false) --pn,radius,cooldownSecondsIncrement,requiresLBmana
+					LBexpand(v,9+stage,rndb(120,180),false) --pn,radius,cooldownSecondsIncrement,requiresLBmana
 				end
 			end
 			tryToLB(v)
@@ -82,10 +79,12 @@ end
 function trainingHutsPriorities(pn)
 	local pop,huts,s = GetPop(pn),countHuts(pn,false),G_GAMESTAGE
 	
-	WRITE_CP_ATTRIB(pn, ATTR_PREF_WARRIOR_TRAINS, btn(huts > 4))
+	WRITE_CP_ATTRIB(pn, ATTR_PREF_WARRIOR_TRAINS, btn(huts > 2))
 	--WRITE_CP_ATTRIB(pn, ATTR_PREF_SUPER_WARRIOR_TRAINS, btn(huts > 4))
-	WRITE_CP_ATTRIB(pn, ATTR_PREF_RELIGIOUS_TRAINS, btn(huts > 8))
+	WRITE_CP_ATTRIB(pn, ATTR_PREF_RELIGIOUS_TRAINS, btn(huts > 6))
 	--WRITE_CP_ATTRIB(pn, ATTR_PREF_SPY_TRAINS, btn(huts > 4))
+	WRITE_CP_ATTRIB(pn, ATTR_PREF_BOAT_HUTS, btn(countHuts(pn,false) > 1+s+4))
+	--WRITE_CP_ATTRIB(pn, ATTR_PREF_BALLOON_HUTS, btn(countHuts(pn,false) > 1+stage+7))
 	
 	--local w,t,fw,s = AI_GetBldgCount(pn, M_BUILDING_WARRIOR_TRAIN),AI_GetBldgCount(pn, M_BUILDING_TEMPLE), AI_GetBldgCount(pn, M_BUILDING_SUPER_TRAIN),AI_GetBldgCount(pn, M_BUILDING_SPY_TRAIN)
 	
