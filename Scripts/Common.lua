@@ -50,7 +50,7 @@ function OnLevelInit(level_id)
 	end
 	-- check if enough humans to play the level
 	if G_NUM_OF_HUMANS_FOR_THIS_LEVEL ~= #G_HUMANS_ALIVE then
-		LOSE()
+		--LOSE()
 		log_msg(8,"The level can not be started. It requires " .. G_NUM_OF_HUMANS_FOR_THIS_LEVEL .. " humans cooperating.")
 	end
 	-- REMOVE LATER
@@ -80,6 +80,10 @@ end
 
 -- OnCreateThing executed on each thing creation
 function OnCreateThing(t)
+	if (t.Flags3 & TF3_LOCAL ~= 0) then
+	  return;
+	end
+	
 	if _OnCreateThing ~= nil then _OnCreateThing(t) end
 
 	CompPlayer:process_on_create_ais(t);
@@ -114,11 +118,6 @@ function OnPlayerDeath(pn)
 
 	removeFromTable(G_HUMANS_ALIVE,pn);
 	removeFromTable(G_AI_ALIVE,pn);
-end
-
--- OnMouseButton executed on each mouse click
-function OnMouseButton(_key, _down, _x, _y)
-	if _OnMouseButton ~= nil then _OnMouseButton(_key, _down, _x, _y) end
 end
 
 -- OnKeyDown executed on keyboard press/hold
