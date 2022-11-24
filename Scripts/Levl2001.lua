@@ -168,6 +168,7 @@ function _OnCreateThing(t)
 end
 
 function _OnPlayerDeath(pn)
+  CompPlayer:deinit(pn);
 end
 
 function _OnFrame(w,h,guiW)
