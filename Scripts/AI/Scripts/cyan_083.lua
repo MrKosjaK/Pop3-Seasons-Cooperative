@@ -36,7 +36,7 @@ local function cyan_attacking(player)
       AI_SetAttackFlags(player, 0, 0, 0);
       AI_SetAways(player, 20, 0, 0, 80, 0);
       AI_SetShamanAway(player, false);
-      ATTACK(player, TRIBE_BLUE, 2, ATTACK_BUILDING, 0, 250, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
+      ATTACK(player, TRIBE_BLUE, 2, ATTACK_BUILDING, 0, 250, 0, 0, 0, ATTACK_NORMAL, 0, 30, -1, 0);
     end
   elseif (AI_GetVar(player, 3) == 1) then
     -- second pattern attack, we'll try to make invisible priests if we have them! hehe bOIII
@@ -47,7 +47,7 @@ local function cyan_attacking(player)
         AI_SetAttackFlags(player, 0, 0, 0);
         AI_SetAways(player, 0, 0, 100, 0, 0);
         AI_SetShamanAway(player, true);
-        ATTACK(player, TRIBE_BLUE, 6, ATTACK_BUILDING, 0, 250, M_SPELL_INVISIBILITY, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
+        ATTACK(player, TRIBE_BLUE, 6, ATTACK_BUILDING, 0, 250, M_SPELL_INVISIBILITY, 0, 0, ATTACK_NORMAL, 0, 30, -1, 0);
       end
     end
     AI_SetVar(player, 3, 2);
@@ -59,16 +59,35 @@ local function cyan_attacking(player)
       AI_SetAttackFlags(player, 0, 0, 0);
       AI_SetAways(player, 10, 0, 50, 50, 0);
       AI_SetShamanAway(player, false);
-      ATTACK(player, TRIBE_BLUE, 12, ATTACK_BUILDING, 0, 650, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
+      ATTACK(player, TRIBE_BLUE, 12, ATTACK_BUILDING, 0, 650, 0, 0, 0, ATTACK_NORMAL, 0, 30, -1, 0);
 
       if (AI_ShamanFree(player) and MANA(player) > 150000) then
         AI_SetShamanAway(player, true);
         AI_SetAttackFlags(player, 3, 1, 0);
         AI_SetAways(player, 0, 0, 0, 0, 0);
-        ATTACK(player, TRIBE_BLUE, 0, ATTACK_BUILDING, M_BUILDING_DRUM_TOWER, 36, M_SPELL_WHIRLWIND, M_SPELL_WHIRLWIND, M_SPELL_WHIRLWIND, ATTACK_NORMAL, 0, -1, -1, 0);
+        ATTACK(player, TRIBE_BLUE, 0, ATTACK_BUILDING, M_BUILDING_DRUM_TOWER, 36, M_SPELL_WHIRLWIND, M_SPELL_WHIRLWIND, M_SPELL_WHIRLWIND, ATTACK_NORMAL, 0, 30, -1, 0);
       end
     end
-    AI_SetVar(player, 3, 0);
+    AI_SetVar(player, 3, 3);
+  elseif (AI_GetVar(player, 3) == 3) then
+	if (AI_ShamanFree(player) and MANA(player) > 200000) then
+	  did_attack = true;
+	  
+	  AI_SetAttackFlags(player, 0, 0, 0);
+	  AI_SetAways(player, 0, 0, 0, 0, 0);
+	  AI_SetShamanAway(player, true);
+	  ATTACK(player, TRIBE_BLUE, 0, ATTACK_BUILDING, 0, 999, M_SPELL_EARTHQUAKE, M_SPELL_EARTHQUAKE, M_SPELL_WHIRLWIND, ATTACK_NORMAL, 0, 30, -1, 0);
+	end
+	
+	if (AI_GetUnitCount(player, M_PERSON_SUPER_WARRIOR) > 5 and AI_GetUnitCount(player, M_PERSON_RELIGIOUS) > 5) then
+	  did_attack = true;
+	  
+	  AI_SetAttackFlags(player, 0, 0, 0);
+	  AI_SetAways(player, 1, 0, 50, 50, 0);
+	  AI_SetShamanAway(player, false);
+	  ATTACK(player, TRIBE_BLUE, 18, ATTACK_BUILDING, 0, 999, 0, 0, 0, ATTACK_NORMAL, 0, 30, -1, 0);
+	end
+	AI_SetVar(player, 3, 0);
   end
 
   if (not did_attack and AI_GetVar(player, 2) == 1) then

@@ -143,7 +143,7 @@ function _OnLevelInit(level_id)
   AI_SetVehicleParams(TRIBE_PINK, false, 0, 0, 0, 0);
   AI_SetFetchParams(TRIBE_PINK, false, false, false, false);
 
-  AI_SetAttackingParams(TRIBE_PINK, false, 0, 25);
+  AI_SetAttackingParams(TRIBE_PINK, true, 3, 25);
   AI_SetDefensiveParams(TRIBE_PINK, true, true, true, true, 3, 1, 1);
   AI_SetSpyParams(TRIBE_PINK, false, 0, 100, 128, 1);
   AI_SetPopulatingParams(TRIBE_PINK, true, true);

@@ -16,6 +16,45 @@ ai:create_tower(6, 220, 76, 2);
 ai:create_tower(7, 224, 76, 2);
 ai:create_tower(8, 228, 78, 1);
 
+local function purple_shaman_attack(player)
+  local idx = AI_GetVar(player, 6);
+  log('attack');
+  if (idx == 0) then
+    -- shaman crap attack
+	if (AI_ShamanFree(player) and MANA(player) > 95000) then
+	  AI_SetAttackFlags(player, 3, 1, 0);
+	  AI_SetAways(player, 0, 0, 0, 0, 0);
+	  AI_SetShamanAway(player, true);
+	  ATTACK(player, TRIBE_YELLOW, 0, ATTACK_BUILDING, M_BUILDING_DRUM_TOWER, 36, M_SPELL_WHIRLWIND, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, ATTACK_NORMAL, 0, -1, -1, 0);
+	end
+	AI_SetVar(player, 6, 1);
+  elseif (idx == 1) then
+	if (AI_ShamanFree(player) and MANA(player) > 145000) then
+	  AI_SetAttackFlags(player, 3, 1, 0);
+	  AI_SetAways(player, 0, 0, 0, 0, 0);
+	  AI_SetShamanAway(player, true);
+	  ATTACK(player, TRIBE_YELLOW, 0, ATTACK_BUILDING, M_BUILDING_DRUM_TOWER, 36, M_SPELL_WHIRLWIND, M_SPELL_WHIRLWIND, M_SPELL_WHIRLWIND, ATTACK_NORMAL, 0, -1, -1, 0);
+	end
+	AI_SetVar(player, 6, 2);
+  elseif (idx == 2) then
+	if (AI_ShamanFree(player) and MANA(player) > 245000) then
+	  AI_SetAttackFlags(player, 3, 1, 0);
+	  AI_SetAways(player, 0, 0, 0, 0, 0);
+	  AI_SetShamanAway(player, true);
+	  ATTACK(player, TRIBE_YELLOW, 0, ATTACK_BUILDING, M_BUILDING_TEMPLE, 36, M_SPELL_EARTHQUAKE, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, ATTACK_NORMAL, 0, -1, -1, 0);
+	end
+	AI_SetVar(player, 6, 3);
+  elseif (idx == 3) then
+	if (AI_ShamanFree(player) and MANA(player) > 102000) then
+	  AI_SetAttackFlags(player, 3, 1, 0);
+	  AI_SetAways(player, 0, 0, 0, 0, 0);
+	  AI_SetShamanAway(player, true);
+	  ATTACK(player, TRIBE_YELLOW, 0, ATTACK_BUILDING, 0, 36, M_SPELL_WHIRLWIND, M_SPELL_EARTHQUAKE, M_SPELL_WHIRLWIND, ATTACK_NORMAL, 0, -1, -1, 0);
+	end
+	AI_SetVar(player, 6, 0);
+  end
+end
+
 local function purple_towers(player)
   -- first row of defense.
   if (AI_GetPopCount(player) > 20) then
@@ -141,3 +180,4 @@ end
 ai:create_event(1, 122, 32, purple_convert);
 ai:create_event(2, 256, 96, purple_build);
 ai:create_event(3, 140, 44, purple_towers);
+ai:create_event(4, 1440, 256, purple_shaman_attack);
