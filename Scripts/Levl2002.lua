@@ -21,7 +21,7 @@ function _OnTurn(turn)
 				BUILD_DRUM_TOWER(TRIBE_CYAN,rndb(136,216),rndb(138,186))
 			end
 			local bt = countTowers(TRIBE_BLACK,true)
-			if ct < 6 then
+			if bt < 6 then
 				BUILD_DRUM_TOWER(TRIBE_BLACK,rndb(20,46),rndb(18,62))
 			end
 		end
@@ -64,13 +64,22 @@ function _OnTurn(turn)
 		end
 	end
 	
+	if everySeconds(8) then
+		FillRndEmptyTower(TRIBE_CYAN,2)
+	end
 	if everySeconds(15) then
 		updateVehiclesBuild()
 		updateConvertParams()
 		updateSpellBuckets(stage)
 		updateAtkSpells(stage) --use this b4 ttack
 	end
-	
+	if everySeconds(30-stage) then
+		DefensivePreachMarkers()
+		DefendStoneHead(68)
+	end
+	if everySeconds(180-stage*10) then
+		OffensivePreachMarkers()
+	end	
 	------------------------------------------------------------------------------------------------------------------------
 	-- NON-AI STUFF
 	------------------------------------------------------------------------------------------------------------------------
@@ -78,16 +87,12 @@ function _OnTurn(turn)
 	--snowing 3 times during level
 	--snowAmtTarget, CreationAmtPerSecCreation, speed, (durationSeconds, internTimer), fadeSeconds
 	if turn == 1000 then
-		createSnow(1700, 50, 48, 60*3, 60*3, 12)
+		createSnow(1700, 50, 32, 60*3, 60*3, 12)
 	elseif turn == 7000 then
-		createSnow(700, 100, 32, 60*1, 60*1, 3)
+		createSnow(700, 100, 24, 60*1, 60*1, 3)
 	elseif turn == 13000 then
-		createSnow(1200, 50, 78, 60*2, 60*2, 24)
+		createSnow(1200, 50, 42, 60*2, 60*2, 24)
 	end
-	
-	--debug
-	--local f,a,b,c = #AI_CYAN_ATK_SPELLS,AI_CYAN_ATK_SPELLS[1],AI_CYAN_ATK_SPELLS[2],AI_CYAN_ATK_SPELLS[3]
-	--LOG(string.format("atk spells num: %s     %s|%s|%s",f, a,b,c))
 end
 
 function _OnCreateThing(t)
@@ -103,6 +108,11 @@ function _OnKeyUp(k)
 end
 
 function _OnKeyDown(k)
+	if k == LB_KEY_A then
+		
+	elseif k == LB_KEY_B then
+		
+	end
 end
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -140,17 +150,56 @@ function updateAtkSpells(s)
 	end
 end
 
+function DefensivePreachMarkers()
+	local tribe = TRIBE_CYAN
+	local markers = {} for i = 56,60 do table.insert(markers,i) end
+	if _gsi.Players[tribe].NumPeopleOfType[M_PERSON_RELIGIOUS] > 3 then
+		for k,v in ipairs(markers) do
+			PREACH_AT_MARKER(tribe,v)
+		end
+	end
+end
+
+function OffensivePreachMarkers()
+	if G_GAMESTAGE > 1 then
+		local tribe = TRIBE_CYAN
+		local markers = {}
+		if GetPop(1) > 0 then for i = 61,63 do table.insert(markers,i) end else for i = 64,67 do table.insert(markers,i) end end
+		if _gsi.Players[tribe].NumPeopleOfType[M_PERSON_RELIGIOUS] > 3 then
+			for k,v in ipairs(markers) do
+				PREACH_AT_MARKER(tribe,v)
+			end
+		end
+	end
+end
+
+function DefendStoneHead(mk)
+	--stone heads defending by cyan
+	if countBoats(TRIBE_CYAN) > 0 then
+		if countPeopleInArea(TRIBE_BLUE,mk,0) > 0 or countPeopleInArea(TRIBE_RED,mk,0) > 0 then
+			PREACH_AT_MARKER(TRIBE_CYAN,mk)
+			if rnd() < 40 and AI_ShamanFree(TRIBE_CYAN) then
+				local spellsTbl = {M_SPELL_BLAST,M_SPELL_LIGHTNING_BOLT,M_SPELL_INSECT_PLAGUE,M_SPELL_SWAMP}
+				local s = randomItemFromTable(spellsTbl)
+				GIVE_ONE_SHOT(s,TRIBE_CYAN)
+				SPELL_ATTACK(TRIBE_CYAN,s,mk,mk)
+			end
+		end
+	end
+end
+
 function updateSpellBuckets(s)
-	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_BLAST, 1);
-	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_CONVERT_WILD, 2);
-	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_INSECT_PLAGUE, 6-s);
-	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_INVISIBILITY, 13-s);
-	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_LIGHTNING_BOLT, 11-s);
-	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_HYPNOTISM, 16-s);
-	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_EARTHQUAKE, 32-s);
-	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_FIRESTORM, 48-s);
-	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_WHIRLWIND, 18-s);
-	AI_SpellBucketCost(TRIBE_CYAN, M_SPELL_GHOST_ARMY, 8-s);
+	local tribe = TRIBE_CYAN
+	AI_SpellBucketCost(tribe, M_SPELL_BLAST, 1);
+	AI_SpellBucketCost(tribe, M_SPELL_CONVERT_WILD, 2);
+	AI_SpellBucketCost(tribe, M_SPELL_INSECT_PLAGUE, 6-s);
+	AI_SpellBucketCost(tribe, M_SPELL_INVISIBILITY, 13-s);
+	AI_SpellBucketCost(tribe, M_SPELL_LIGHTNING_BOLT, 11-s);
+	AI_SpellBucketCost(tribe, M_SPELL_HYPNOTISM, 16-s);
+	AI_SpellBucketCost(tribe, M_SPELL_EARTHQUAKE, 32-s);
+	AI_SpellBucketCost(tribe, M_SPELL_FIRESTORM, 48-s);
+	AI_SpellBucketCost(tribe, M_SPELL_WHIRLWIND, 18-s);
+	AI_SpellBucketCost(tribe, M_SPELL_GHOST_ARMY, 8-s);
 	--
 	
 end
@@ -164,7 +213,9 @@ end
 
 function updateVehiclesBuild()
 	local pn = TRIBE_CYAN
-	WRITE_CP_ATTRIB(pn, CP_AT_TYPE_BUILD_VEHICLE, btn(_gsi.Players[pn].NumVehiclesOfType[M_VEHICLE_BOAT_1] > 3))
+	STATE_SET(pn, btn(countBoats(pn) < 3), CP_AT_TYPE_BUILD_VEHICLE)
+	STATE_SET(pn, btn(countBoats(pn) > 0), CP_AT_TYPE_FETCH_LOST_VEHICLE)
+	STATE_SET(pn, btn(countBoats(pn) > 0), CP_AT_TYPE_FETCH_FAR_VEHICLE)
 end
 
 function trainingHutsPriorities(pn)

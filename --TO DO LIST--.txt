@@ -23,10 +23,14 @@ Level 131 - TBD
 Level 133 - TBD
 Level 134 - TBD
 
+=====QUICK TO DO=====
+-- AI give less mana on kill(common)
+
 =====TO DO=====
 -- make sure all textures are alpha-converted to 8p
 -- create custom bushes or similar stuff
 -- scenery stuff season-specific
+-- season-specific spells: blizzard, something, wildfire, meteor
 -- smarter shaman ai, including them lightning enemy shamans around, swarming towers with fws, tornading bldgs, eqing and fsing etc.
 -- smarter shaman ai, including them dodging enemy lightnings, blast tricking and saving from drowning using lbs.
 
@@ -34,3 +38,6 @@ Level 134 - TBD
 Beta specific issues:
 -- Language replacement does not work with /mod command unless you put it inside "Language" folder outside of Mods folder, which isn't how it supposed to work.
 -- Computer player does not clear it's script from memory, causing the code to persist in case other level doesn't have a valid script file
+
+=====EASTER EGGS=====
+-- 1 mouse message on some object per level

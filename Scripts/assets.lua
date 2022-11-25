@@ -133,6 +133,15 @@ function countTroops(pn)
 	return (_gsi.Players[pn].NumPeople - _gsi.Players[pn].NumPeopleOfType[M_PERSON_BRAVE]) - sh
 end
 
+--boats of a tribe
+function countBoats(pn)
+	return _gsi.Players[pn].NumVehiclesOfType[M_VEHICLE_BOAT_1]
+end
+--balloons of a tribe
+function countBalloons(pn)
+	return _gsi.Players[pn].NumVehiclesOfType[M_VEHICLE_AIRSHIP_1]
+end
+
 --who has most pop
 function GetPopLeader()
 	local highestPop = 0
@@ -254,7 +263,7 @@ function IsThingInArea(thingType,thingModel,thingOwner,X,Z,radius)
 	return exists
 end
 
---count things of type in area
+--count things of type in area (without ghosts)
 function CountThingsOfTypeInArea(thingType,thingModel,thingOwner,X,Z,radius)
 	--thingOwner -1 for things of any tribe
 	local pos = MapPosXZ.new() ; pos.XZ.X = X ; pos.XZ.Z = Z
@@ -276,12 +285,36 @@ function CountThingsOfTypeInArea(thingType,thingModel,thingOwner,X,Z,radius)
 	return count
 end
 
+--count people in area (without ghosts)
+function countPeopleInArea(tribe,marker,radius)
+	local count = 0
+	SearchMapCells(SQUARE, 0, 0 , radius, world_coord3d_to_map_idx(marker_to_coord3d(marker)), function(me)
+		me.MapWhoList:processList(function (t)
+			if t.Type == T_PERSON then
+				if t.Model >= 2 and t.Model <= 7 then
+					if not isGhost(t) then
+						if tribe == -1 then
+							count = count + 1
+						else
+							if t.Owner == tribe then
+								count = count + 1
+							end
+						end
+					end
+				end
+			end
+		return true end)
+	return true end)
+	
+	return count
+end
+
 --update base priorities
 function updateBasePriorities(pn)
 	updateGameStage(5,10,15,20)
 	local s,h,b = G_GAMESTAGE, countHuts(pn,true), AI_GetUnitCount(pn, M_PERSON_BRAVE)
 	--local t,p = countTroops(pn), GetPop(pn)
-	AI_SetBuildingParams(pn,true,40+s*15,3)
+	AI_SetBuildingParams(pn,true,60+s*15,3)
 	if b > 20+(s*5) and h > 6+s then
 		if AI_GetBldgCount(pn, M_BUILDING_BOAT_HUT_1) > 0 then
 			WRITE_CP_ATTRIB(pn, ATTR_PREF_BOAT_DRIVERS, 1+s+2);
@@ -365,13 +398,15 @@ function countTowers(pn, includeDamaged)
 	return _gsi.Players[pn].NumBuildingsOfType[4]
 end
 
---fill towers (fills all tribe's towers prioritizing one unit type)
-function FillTowers(pn,coord,unit) --1fw 2pre 3war 4spy 5brave
+--fill tower (fills one random empty tower with one unit)
+function FillRndEmptyTower(pn,unit) --1fw 2pre 3war 4spy 5brave
 	local unitType = M_PERSON_SUPER_WARRIOR
 	if unit == 2 then unitType = M_PERSON_RELIGIOUS elseif unit == 3 then unitType = M_PERSON_WARRIOR elseif unit == 4 then unitType = M_PERSON_SPY elseif unit == 5 then unitType = M_PERSON_BRAVE end
 	ProcessGlobalSpecialList(pn, BUILDINGLIST, function(b)
 		if b.Model == M_BUILDING_DRUM_TOWER then
-			PUT_PERSON_IN_DT (pn, unitType,ThingX(b),ThingZ(b))
+			if (b.u.Bldg.NumDwellers == 0) then
+				PUT_PERSON_IN_DT (pn, unitType,ThingX(b),ThingZ(b))
+			end
 		end
 	return true end)
 end
@@ -420,7 +455,7 @@ function useShield(seconds,tribe,x,z,radius)
 				SearchMapCells(SQUARE, 0, 0 , 5, world_coord3d_to_map_idx(getShaman(tribe).Pos.D3), function(me)
 					me.MapWhoList:processList(function (t)
 						if t.Type == T_PERSON and t.Owner == tribe and t.Model > 2 and t.Model < 7 then
-							if isShielded(t) == 0 and isGhost(t) == 0 and r == 0 then
+							if not isShielded(t) and not isGhost(t) == 0 and r == 0 then
 								createThing(T_SPELL,M_SPELL_SHIELD,tribe,t.Pos.D3,false,false)
 								GIVE_MANA_TO_PLAYER(tribe,-30000)
 								r = 1
@@ -537,22 +572,22 @@ end
 --check if thing has X flag
 function isGhost(thing)
 	if thing ~= nil then
-		if thing.Flags2 & TF2_THING_IS_A_GHOST_PERSON == 0 then return 0 else return 1 end
+		if thing.Flags2 & TF2_THING_IS_A_GHOST_PERSON == 0 then return false else return true end
 	end
 end
 function isInvisible(thing)
 	if thing ~= nil then
-		if thing.Flags2 & TF2_THING_IS_AN_INVISIBLE_PERSON == 0 then return 0 else return 1 end
+		if thing.Flags2 & TF2_THING_IS_AN_INVISIBLE_PERSON == 0 then return false else return true end
 	end
 end
 function isBloodlusted(thing)
 	if thing ~= nil then
-		if thing.Flags3 & TF3_BLOODLUST_ACTIVE == 0 then return 0 else return 1 end
+		if thing.Flags3 & TF3_BLOODLUST_ACTIVE == 0 then return false else return true end
 	end
 end
 function isShielded(thing)
 	if thing ~= nil then
-		if thing.Flags3 & TF3_SHIELD_ACTIVE == 0 then return 0 else return 1 end
+		if thing.Flags3 & TF3_SHIELD_ACTIVE == 0 then return false else return true end
 	end
 end
 
@@ -606,6 +641,11 @@ end
 function LOSE()
 	gns.GameParams.Flags2 = gns.GameParams.Flags2 & ~GPF2_GAME_NO_WIN
 	gns.Flags = gns.Flags | GNS_LEVEL_FAILED
+end
+
+--is sp or mp
+function isOnline()
+	return gns.Flags & GNS_NETWORK
 end
 --------------------------------------------------------------------------------------------------------------------------------------------
 PThing = {}
@@ -741,6 +781,11 @@ end
 --bool to number
 function btn(bool)
   return bool and 1 or 0
+end
+--number to bool
+function ntb(num)
+	if num == 0 then return false end
+	return true
 end
 --------------------------------------------------------------------------------------------------------------------------------------------
 --debug

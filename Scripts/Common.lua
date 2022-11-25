@@ -54,12 +54,12 @@ function OnLevelInit(level_id)
 		log_msg(8,"The level can not be started. It requires " .. G_NUM_OF_HUMANS_FOR_THIS_LEVEL .. " humans cooperating.")
 	end
 	-- REMOVE LATER
-	set_player_name(0,"mrkosjak",false)
-	set_player_name(1,"map_pepe",false)
+	set_player_name(0,"mrkosjak",ntb(isOnline()))
+	set_player_name(1,"map_pepe",ntb(isOnline()))
 	for i = 2,3 do
 		if isHuman(i) then
 			local name = "nici" if i == 3 then name = "leaf" end
-			set_player_name(i,name,false)
+			set_player_name(i,name,ntb(isOnline()))
 		end
 	end
 end
@@ -103,7 +103,7 @@ function OnFrame()
 				for k,v in ipairs(G_EVERYONE_IN_GAME) do --change to G_HUMANS
 					local clr = 4 if v == 1 then clr = 12 elseif v == 2 then clr = 5 elseif v == 3 then clr = 3 end
 					if v == 4 then clr = 7 elseif v == 5 then clr = 6 elseif v == 6 then clr = 1 elseif v == 7 then clr = 2 end -- remove later
-					local str = "" .. get_player_name(v,false) .. ":  " .. tostring(GetPop(v)) --change to true for online(?)
+					local str = "" .. get_player_name(v,ntb(isOnline())) .. ":  " .. tostring(GetPop(v)) --change to true for online(?)
 					LbDraw_Text(w - 4 - (string_width(str)), h - (24*k), str, 0);
 					DrawBox(w - 8 - box - (string_width(str)), h - (24*k),box,box,clr)
 				end
