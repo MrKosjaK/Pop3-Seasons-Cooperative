@@ -62,6 +62,20 @@ function OnLevelInit(level_id)
 			set_player_name(i,name,ntb(isOnline()))
 		end
 	end
+	-- AI custom names
+	for i = 2,3 do
+		if not isHuman(i) then
+			if i == 2 then
+				set_player_name(i,"Chumara",ntb(isOnline()))
+			else
+				set_player_name(i,"Matak",ntb(isOnline()))
+			end
+		end
+	end
+	set_player_name(4,"Tiyao",ntb(isOnline()))
+	set_player_name(5,"Toktai",ntb(isOnline()))
+	set_player_name(6,"Sahel",ntb(isOnline()))
+	set_player_name(7,"Nomel",ntb(isOnline()))
 end
 
 -- OnTurn executed every turn (12 turns per second)
