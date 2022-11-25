@@ -7,6 +7,10 @@ include("AI\\Scripts\\purple_083.lua");
 G_NUM_OF_HUMANS_FOR_THIS_LEVEL = 3;
 G_CONST.ComputerManaAdjustFactor = 256;
 
+local duel_1_winner = -1;
+local duel_2_winner = -1;
+local duel_3_winner = -1;
+
 function _OnLevelInit(level_id)
   -- Green stuff
   AI_Initialize(TRIBE_GREEN);
@@ -160,7 +164,44 @@ function _OnCreateThing(t)
 end
 
 function _OnPlayerDeath(pn)
-  CompPlayer:deinit(pn);
+  if (G_PLR_PTR[pn].PlayerType == COMPUTER_PLAYER) then
+    CompPlayer:deinit(pn);
+  end
+  
+  -- now we figure who winnerino
+  
+  -- losing moment
+  if (pn == TRIBE_BLUE) then
+    duel_1_winner = TRIBE_CYAN;
+	TRIGGER_THING(42);
+  end
+  
+  if (pn == TRIBE_RED) then
+    duel_2_winner = TRIBE_GREEN;
+	TRIGGER_THING(46);
+  end
+  
+  if (pn == TRIBE_YELLOW) then
+    duel_3_winner = TRIBE_PINK;
+	TRIGGER_THING(44);
+  end
+  
+  -- winning moment
+   if (pn == TRIBE_CYAN) then
+    duel_1_winner = TRIBE_BLUE;
+	TRIGGER_THING(41);
+  end
+  
+  if (pn == TRIBE_GREEN) then
+    duel_2_winner = TRIBE_RED;
+	TRIGGER_THING(45);
+  end
+  
+  if (pn == TRIBE_PINK) then
+    duel_3_winner = TRIBE_YELLOW;
+	TRIGGER_THING(43);
+  end
+  -- veru lazy to do array
 end
 
 function _OnFrame(w,h,guiW)
