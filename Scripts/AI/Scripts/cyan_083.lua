@@ -61,19 +61,18 @@ local function cyan_early_towers(player)
 end
 
 local function cyan_convert(player)
-  -- check if we have a low pop count
-  if (AI_GetPopCount(player) < 35 and AI_ShamanFree(player)) then
-    -- enable converting and convert at random markers
-    STATE_SET(player, 1, CP_AT_TYPE_MED_MAN_GET_WILD_PEEPS);
-    WRITE_CP_ATTRIB(player, ATTR_EXPANSION, 36);
-	sham:toggle_converting(true);
-
-    local mk = convert_markers[G_RANDOM(#convert_markers) + 1];
-    AI_ConvertAt(player, mk);
-  else
-    -- disable converting
-    STATE_SET(player, 0, CP_AT_TYPE_MED_MAN_GET_WILD_PEEPS);
-	sham:toggle_converting(false);
+  -- we'll be converting till 1 minute passes
+  if (AI_GetVar(player, 9) == 0) then
+	local turn = getTurn();
+	  
+	if (turn < 720) then
+      sham:toggle_converting(true);
+	  SHAMAN_DEFEND(player, 138, 78, TRUE);
+	else
+      AI_SetVar(player, 9, 1);
+	  SHAMAN_DEFEND(player, 138, 128, TRUE);
+      sham:toggle_converting(false);
+    end
   end
 end
 

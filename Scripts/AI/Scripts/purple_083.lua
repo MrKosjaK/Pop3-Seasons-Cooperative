@@ -191,27 +191,17 @@ local function purple_build(player)
 end
 
 local function purple_convert(player)
-  -- check if we have a low pop count
-  if (AI_GetPopCount(player) < 32 and AI_ShamanFree(player)) then
-    -- enable converting and convert at random markers
-    STATE_SET(player, 1, CP_AT_TYPE_MED_MAN_GET_WILD_PEEPS);
-    WRITE_CP_ATTRIB(player, ATTR_EXPANSION, 36);
-	sham:toggle_converting(true);
-
-    -- ordered converting
-    local idx = AI_GetVar(player, 1);
-
-    if (idx > #convert_markers or idx == 0) then
-      idx = 1;
+  if (AI_GetVar(player, 8) == 0) then
+	local turn = getTurn();
+	  
+	if (turn < 720) then
+      sham:toggle_converting(true);
+	  SHAMAN_DEFEND(player, 222, 82, TRUE);
+	else
+      AI_SetVar(player, 8, 1);
+	  SHAMAN_DEFEND(player, 222, 118, TRUE);
+      sham:toggle_converting(false);
     end
-
-    local mk = convert_markers[idx];
-    AI_ConvertAt(player, mk);
-    AI_SetVar(player, 1, idx + 1);
-  else
-    -- disable converting
-    STATE_SET(player, 0, CP_AT_TYPE_MED_MAN_GET_WILD_PEEPS);
-	sham:toggle_converting(false);
   end
 end
 

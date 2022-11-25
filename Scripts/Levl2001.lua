@@ -30,7 +30,7 @@ function _OnLevelInit(level_id)
   AI_SetShamanAway(TRIBE_GREEN, false);
   AI_SetShamanParams(TRIBE_GREEN, 54, 126, true, 16, 12);
   AI_SetMainDrumTower(TRIBE_GREEN, false, 62, 142);
-  AI_SetConvertingParams(TRIBE_GREEN, true, true, 12);
+  AI_SetConvertingParams(TRIBE_GREEN, false, true, 12);
   AI_SetTargetParams(TRIBE_GREEN, TRIBE_RED, true, true);
 
   AI_SetBuildingParams(TRIBE_GREEN, true, 60, 4);
@@ -124,7 +124,7 @@ function _OnLevelInit(level_id)
   AI_SetShamanAway(TRIBE_PINK, false);
   AI_SetShamanParams(TRIBE_PINK, 222, 118, true, 16, 12);
   AI_SetMainDrumTower(TRIBE_PINK, true, 216, 158);
-  AI_SetConvertingParams(TRIBE_PINK, true, true, 12);
+  AI_SetConvertingParams(TRIBE_PINK, false, true, 12);
   AI_SetTargetParams(TRIBE_PINK, TRIBE_YELLOW, true, true);
 
   AI_SetBuildingParams(TRIBE_PINK, true, 30, 2);

@@ -169,7 +169,7 @@ function sh_mt:process()
 		    if (not me.PlayerMapWho[8]:isEmpty()) then
 			  me.PlayerMapWho[8]:processList(function(t)
 			    if (t.Type == T_PERSON) then
-				  self.CastDelay = 24;
+				  self.CastDelay = 32;
 				  CREATE_THING_WITH_PARAMS4(T_SPELL, M_SPELL_CONVERT_WILD, s.Owner, t.Pos.D3, 0, 0, 0, 0);
 				  stop_me_search = true;
 				  return false;

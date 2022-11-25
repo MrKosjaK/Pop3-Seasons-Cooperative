@@ -68,19 +68,17 @@ local function green_towers(player)
 end
 
 local function green_convert(player)
--- check if we have a low pop count
-  if (AI_GetPopCount(player) < 31 and AI_ShamanFree(player)) then
-    -- enable converting and convert at random markers
-    STATE_SET(player, 1, CP_AT_TYPE_MED_MAN_GET_WILD_PEEPS);
-    WRITE_CP_ATTRIB(player, ATTR_EXPANSION, 36);
-	sham:toggle_converting(true);
-
-    local mk = convert_markers[G_RANDOM(#convert_markers) + 1];
-    AI_ConvertAt(player, mk);
-  else
-    -- disable converting
-    STATE_SET(player, 0, CP_AT_TYPE_MED_MAN_GET_WILD_PEEPS);
-	sham:toggle_converting(false);
+  if (AI_GetVar(player, 3) == 0) then
+	local turn = getTurn();
+	  
+	if (turn < 720) then
+      sham:toggle_converting(true);
+	  SHAMAN_DEFEND(player, 58, 80, TRUE);
+	else
+      AI_SetVar(player, 3, 1);
+	  SHAMAN_DEFEND(player, 54, 126, TRUE);
+      sham:toggle_converting(false);
+    end
   end
 end
 
