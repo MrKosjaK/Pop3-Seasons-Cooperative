@@ -23,14 +23,13 @@ function _OnLevelInit(level_id)
   set_player_can_build(M_BUILDING_TEPEE, TRIBE_GREEN);
   set_player_can_build(M_BUILDING_DRUM_TOWER, TRIBE_GREEN);
   set_player_can_build(M_BUILDING_WARRIOR_TRAIN, TRIBE_GREEN);
-  set_player_can_build(M_BUILDING_SUPER_TRAIN, TRIBE_GREEN);
   set_player_can_build(M_BUILDING_TEMPLE, TRIBE_GREEN);
 
   AI_SetAways(TRIBE_GREEN, 1, 0, 0, 0, 0);
   AI_SetShamanAway(TRIBE_GREEN, false);
   AI_SetShamanParams(TRIBE_GREEN, 54, 126, true, 16, 12);
   AI_SetMainDrumTower(TRIBE_GREEN, false, 62, 142);
-  AI_SetConvertingParams(TRIBE_GREEN, false, true, 12);
+  AI_SetConvertingParams(TRIBE_GREEN, false, false, 12);
   AI_SetTargetParams(TRIBE_GREEN, TRIBE_RED, true, true);
 
   AI_SetBuildingParams(TRIBE_GREEN, true, 60, 4);
@@ -69,7 +68,6 @@ function _OnLevelInit(level_id)
   set_player_can_cast(M_SPELL_EARTHQUAKE, TRIBE_CYAN);
   set_player_can_build(M_BUILDING_TEPEE, TRIBE_CYAN);
   set_player_can_build(M_BUILDING_DRUM_TOWER, TRIBE_CYAN);
-  set_player_can_build(M_BUILDING_WARRIOR_TRAIN, TRIBE_CYAN);
   set_player_can_build(M_BUILDING_SUPER_TRAIN, TRIBE_CYAN);
   set_player_can_build(M_BUILDING_TEMPLE, TRIBE_CYAN);
 
@@ -77,7 +75,7 @@ function _OnLevelInit(level_id)
   AI_SetShamanAway(TRIBE_CYAN, false);
   AI_SetShamanParams(TRIBE_CYAN, 138, 128, true, 16, 12);
   AI_SetMainDrumTower(TRIBE_CYAN, false, 138, 128);
-  AI_SetConvertingParams(TRIBE_CYAN, false, true, 12);
+  AI_SetConvertingParams(TRIBE_CYAN, false, false, 12);
   AI_SetTargetParams(TRIBE_CYAN, TRIBE_BLUE, true, true);
 
   AI_SetBuildingParams(TRIBE_CYAN, true, 18, 3);
@@ -118,13 +116,12 @@ function _OnLevelInit(level_id)
   set_player_can_build(M_BUILDING_DRUM_TOWER, TRIBE_PINK);
   set_player_can_build(M_BUILDING_WARRIOR_TRAIN, TRIBE_PINK);
   set_player_can_build(M_BUILDING_SUPER_TRAIN, TRIBE_PINK);
-  set_player_can_build(M_BUILDING_TEMPLE, TRIBE_PINK);
 
   AI_SetAways(TRIBE_PINK, 1, 0, 0, 0, 0);
   AI_SetShamanAway(TRIBE_PINK, false);
   AI_SetShamanParams(TRIBE_PINK, 222, 118, true, 16, 12);
-  AI_SetMainDrumTower(TRIBE_PINK, true, 216, 158);
-  AI_SetConvertingParams(TRIBE_PINK, false, true, 12);
+  AI_SetMainDrumTower(TRIBE_PINK, false, 216, 158);
+  AI_SetConvertingParams(TRIBE_PINK, false, false, 12);
   AI_SetTargetParams(TRIBE_PINK, TRIBE_YELLOW, true, true);
 
   AI_SetBuildingParams(TRIBE_PINK, true, 30, 2);
@@ -148,9 +145,15 @@ function _OnLevelInit(level_id)
   AI_SpellBucketCost(TRIBE_PINK, M_SPELL_EARTHQUAKE, 20);
   AI_SpellBucketCost(TRIBE_PINK, M_SPELL_WHIRLWIND, 10);
   AI_SpellBucketCost(TRIBE_PINK, M_SPELL_GHOST_ARMY, 3);
+  
+  -- take away some of buildings from players, since it is yes. design choice
+  set_player_cannot_build(M_BUILDING_WARRIOR_TRAIN, TRIBE_BLUE);
+  set_player_cannot_build(M_BUILDING_SUPER_TRAIN, TRIBE_RED);
+  set_player_cannot_build(M_BUILDING_TEMPLE, TRIBE_YELLOW);
 end
 
 function _OnTurn(turn)
+
 end
 
 function _OnCreateThing(t)

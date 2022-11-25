@@ -1,8 +1,3 @@
-local convert_markers =
-{
-  10, 11, 12, 13, 14
-};
-
 CompPlayer:init(TRIBE_CYAN);
 local ai = CompPlayer(TRIBE_CYAN);
 
@@ -24,6 +19,62 @@ ai:create_tower(3, 124, 104, -1);
 ai:create_tower(4, 130, 76, -1);
 ai:create_tower(5, 148, 78, -1);
 ai:create_tower(6, 138, 78, -1);
+
+local cont = getPlayerContainer(TRIBE_CYAN);
+local construction_list = cont.PlayerLists[BUILDINGMARKERLIST];
+local people_list = cont.PlayerLists[PEOPLELIST];
+local shapes_without_workers = {};
+local cmd = Commands.new();
+local cti = CmdTargetInfo.new();
+
+local function cyan_look_for_buildings(player)
+  if (construction_list:isEmpty()) then
+    return;
+  end
+
+  shapes_without_workers = {};
+
+  -- store shapes in need of building
+  construction_list:processList(function(t)
+	if (t.u.Shape.NumWorkers == 0) then
+	  shapes_without_workers[#shapes_without_workers + 1] = t;
+	  return true;
+	end
+	  
+	return true;
+  end);
+  
+  local shape;
+  local peeps_per_shape = 2;
+  
+  people_list:processList(function(t)
+    if (#shapes_without_workers == 0) then
+	 return false;
+	end
+	
+    if (t.Model == M_PERSON_BRAVE) then
+	  if (t.State == S_PERSON_WAIT_AT_POINT) then
+	    local shape = shapes_without_workers[#shapes_without_workers];
+		
+		-- command brave here i guessorino
+		cti.TMIdxs.TargetIdx:set(shape.ThingNum);
+		cti.TMIdxs.MapIdx = world_coord2d_to_map_idx(shape.Pos.D2);
+		update_cmd_list_entry(cmd, CMD_BUILD_BUILDING, cti, 0);
+		
+		t.Flags = t.Flags | TF_RESET_STATE;
+		add_persons_command(t, cmd, 0);
+		
+		peeps_per_shape = peeps_per_shape - 1;
+		if (peeps_per_shape == 0) then
+		  peeps_per_shape = 2;
+		  shapes_without_workers[#shapes_without_workers] = nil;
+		end
+		return true;
+	  end
+	end
+	return true;
+  end);
+end
 
 local function cyan_attacking(player)
   -- depends on what we want with attacking, let's actually make it patterned for now
@@ -79,7 +130,7 @@ end
 local function cyan_build(player)
   -- we want fw hut built as soon as possible.
   AI_SetVar(player, 2, 0); -- fw building.
-  AI_SetVar(player, 3, 0); -- war building
+  AI_SetVar(player, 3, 0); -- temple building
   AI_SetVar(player, 4, 0); -- bigger troops counts.
   local fw_trains = AI_GetBldgCount(player, M_BUILDING_SUPER_TRAIN);
   local temples = AI_GetBldgCount(player, M_BUILDING_TEMPLE);
@@ -143,3 +194,4 @@ ai:create_event(2, 128, 24, cyan_convert);
 ai:create_event(3, 128, 32, cyan_early_towers);
 ai:create_event(4, 740, 112, function(player) end);
 ai:create_event(5, 1536, 256, cyan_attacking);
+ai:create_event(6, 512, 128, cyan_look_for_buildings);
