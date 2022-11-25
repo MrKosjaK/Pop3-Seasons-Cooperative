@@ -18,9 +18,9 @@ sham:toggle_spell_check(true);
 sham:set_spell_entry(1, M_SPELL_WHIRLWIND, {M_BUILDING_DRUM_TOWER, 1, 2, 3}, 3, 50000);
 
 -- towers
-ai:create_tower(1, 124, 104, -1);
+ai:create_tower(1, 138, 136, -1);
 ai:create_tower(2, 146, 106, -1);
-ai:create_tower(3, 124, 96, -1);
+ai:create_tower(3, 124, 104, -1);
 ai:create_tower(4, 130, 76, -1);
 ai:create_tower(5, 148, 78, -1);
 ai:create_tower(6, 138, 78, -1);
@@ -29,8 +29,35 @@ local function cyan_attacking(player)
   -- depends on what we want with attacking, let's actually make it patterned for now
 end
 
-local function cyan_towers(player)
-  -- for building towers we want to have at least 1 fw and some population
+local function cyan_early_towers(player)
+  -- quick expansion towards middle
+  local my_pop = AI_GetPopCount(player);
+  
+  if (my_pop >= 15) then
+    if (AI_GetVar(player, 5) == 0) then
+	  ai:construct_tower(1);
+	  AI_SetVar(player, 5, 1);
+	  return;
+	end
+	
+	if (AI_GetVar(player, 6) == 0) then
+	  ai:construct_tower(2);
+	  AI_SetVar(player, 6, 1);
+	  return;
+	end
+	
+	if (AI_GetVar(player, 7) == 0) then
+	  ai:construct_tower(3);
+	  AI_SetVar(player, 7, 1);
+	  return;
+	end
+	
+	if (AI_GetVar(player, 8) == 0) then
+	  ai:construct_tower(6);
+	  AI_SetVar(player, 8, 1);
+	  return;
+	end
+  end
 end
 
 local function cyan_convert(player)
@@ -64,11 +91,11 @@ local function cyan_build(player)
     STATE_SET(player, TRUE, CP_AT_TYPE_TRAIN_PEOPLE);
   end
   
-  if (huts < 8) then
+  if (huts < 7) then
     WRITE_CP_ATTRIB(player, ATTR_HOUSE_PERCENTAGE, 45);
 	WRITE_CP_ATTRIB(player, ATTR_MAX_BUILDINGS_ON_GO, 6);
 	AI_SetVar(player, 2, 1);
-  elseif (huts < 15) then
+  elseif (huts < 16) then
     WRITE_CP_ATTRIB(player, ATTR_HOUSE_PERCENTAGE, 90);
 	WRITE_CP_ATTRIB(player, ATTR_MAX_BUILDINGS_ON_GO, 3);
 	AI_SetVar(player, 2, 1);
@@ -77,7 +104,7 @@ local function cyan_build(player)
       AI_SetVar(player, 1, 1);
       AI_SetMainDrumTower(player, true, 138, 128);
     end
-  elseif (huts < 21) then
+  else
     WRITE_CP_ATTRIB(player, ATTR_HOUSE_PERCENTAGE, 121);
 	WRITE_CP_ATTRIB(player, ATTR_MAX_BUILDINGS_ON_GO, 1);
 	AI_SetVar(player, 2, 1);
@@ -114,6 +141,6 @@ end
 -- events
 ai:create_event(1, 256, 64, cyan_build);
 ai:create_event(2, 128, 24, cyan_convert);
-ai:create_event(3, 128, 32, cyan_towers);
+ai:create_event(3, 128, 32, cyan_early_towers);
 ai:create_event(4, 740, 112, function(player) end);
 ai:create_event(5, 1536, 256, cyan_attacking);
