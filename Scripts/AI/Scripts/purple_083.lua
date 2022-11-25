@@ -8,6 +8,10 @@ local ai = CompPlayer(TRIBE_PINK);
 
 ai:toggle_shaman_ai(true);
 local sham = ai:get_shaman_ai();
+sham:toggle_fall_damage_save(true, 50);
+sham:toggle_land_bridge_save(true, 25);
+sham:toggle_lightning_dodge(true, 90);
+sham:toggle_spell_check(true);
 
 -- towers
 ai:create_tower(1, 218, 118, -1);
@@ -206,8 +210,8 @@ local function purple_convert(player)
     AI_SetVar(player, 1, idx + 1);
   else
     -- disable converting
-	sham:toggle_converting(false);
     STATE_SET(player, 0, CP_AT_TYPE_MED_MAN_GET_WILD_PEEPS);
+	sham:toggle_converting(false);
   end
 end
 
