@@ -137,7 +137,7 @@ local function cyan_main_attack(player)
 		  AI_SetAways(player, 0, 0, 100, 0, 0);
 		  AI_SetShamanAway(player, false);
 		  
-		  ATTACK(player, TRIBE_BLUE, math.max(12, my_priests), ATTACK_BUILDING, M_BUILDING_TEMPLE, 400, M_SPELL_INVISIBILITY, M_SPELL_INVISIBILITY, M_SPELL_INVISIBILITY, ATTACK_NORMAL, 0, 3, -1, 0);
+		  ATTACK(player, TRIBE_BLUE, math.min(12, my_priests), ATTACK_BUILDING, M_BUILDING_TEMPLE, 400, M_SPELL_INVISIBILITY, M_SPELL_INVISIBILITY, M_SPELL_INVISIBILITY, ATTACK_NORMAL, 0, 3, -1, 0);
 		end
 	  end
 	  AI_SetVar(player, 12, 1);
@@ -151,7 +151,7 @@ local function cyan_main_attack(player)
 		AI_SetAways(player, 5, 0, 50, 50, 0);
 		AI_SetShamanAway(player, false);
 		
-		ATTACK(player, TRIBE_BLUE, math.max(20, (my_priests + my_fws) >> 1), ATTACK_BUILDING, M_BUILDING_SUPER_TRAIN, 500, 0, 0, 0, ATTACK_NORMAL, 0, 3, -1, 0);
+		ATTACK(player, TRIBE_BLUE, math.min(20, (my_priests + my_fws) >> 1), ATTACK_BUILDING, M_BUILDING_SUPER_TRAIN, 500, 0, 0, 0, ATTACK_NORMAL, 0, 3, -1, 0);
 	  end
 	  
 	  AI_SetVar(player, 12, 0);
