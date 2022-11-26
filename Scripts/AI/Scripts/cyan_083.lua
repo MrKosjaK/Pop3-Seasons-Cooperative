@@ -99,9 +99,9 @@ local function cyan_anti_rush(player)
 		  AI_SetShamanAway(player, true);
 		  
 		  if (player_can_cast(M_SPELL_BLAST, player) ~= 3) then
-		    set_player_can_cast_temp(M_SPELL_BLAST, player);
-		    set_player_can_cast_temp(M_SPELL_BLAST, player);
-		    set_player_can_cast_temp(M_SPELL_BLAST, player);
+		    set_player_can_cast_temp(M_SPELL_BLAST, player, 1);
+		    set_player_can_cast_temp(M_SPELL_BLAST, player, 1);
+		    set_player_can_cast_temp(M_SPELL_BLAST, player, 1);
 		  end
 		  
 		  SET_SPELL_ENTRY(player, 2, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 1, 1);
