@@ -117,6 +117,57 @@ local function cyan_anti_rush(player)
   end
 end
 
+local function cyan_main_attack(player)
+  -- this one will perform full navigation check before attacking
+  if (AI_GetVar(player, 9) == 0 or AI_GetVar(player, 11) == 1) then
+    return;
+  end
+  
+  local result = NAV_CHECK(player, TRIBE_BLUE, ATTACK_BUILDING, 0, FALSE);
+  local idx = AI_GetVar(player, 12);
+  
+  if (result == 1) then
+    -- our enemy is accessible.
+	if (idx == 0) then
+	  -- let's check if we can attack with just invisible priests
+	  local my_priests = AI_GetUnitCount(player, M_PERSON_RELIGIOUS);
+	  if (my_priests >= 5) then
+	    if (MANA(player) >= SPELL_COST(M_SPELL_INVISIBILITY) << 1) then
+		  AI_SetAttackFlags(player, 0, 0, 0);
+		  AI_SetAways(player, 0, 0, 100, 0, 0);
+		  AI_SetShamanAway(player, false);
+		  
+		  ATTACK(player, TRIBE_BLUE, math.max(12, my_priests), ATTACK_BUILDING, M_BUILDING_TEMPLE, 400, M_SPELL_INVISIBILITY, M_SPELL_INVISIBILITY, M_SPELL_INVISIBILITY, ATTACK_NORMAL, 0, 3, -1, 0);
+		end
+	  end
+	  AI_SetVar(player, 12, 1);
+	elseif (idx == 1) then
+	  -- mixed attack, fws + priests.
+	  local my_priests = AI_GetUnitCount(player, M_PERSON_RELIGIOUS);
+	  local my_fws = AI_GetUnitCount(player, M_PERSON_SUPER_WARRIOR);
+	  
+	  if (my_priests >= 3 and my_fws >= 3) then
+	    AI_SetAttackFlags(player, 0, 0, 0);
+		AI_SetAways(player, 5, 0, 50, 50, 0);
+		AI_SetShamanAway(player, false);
+		
+		ATTACK(player, TRIBE_BLUE, math.max(20, (my_priests + my_fws) >> 1), ATTACK_BUILDING, M_BUILDING_SUPER_TRAIN, 500, 0, 0, 0, ATTACK_NORMAL, 0, 3, -1, 0);
+	  end
+	  
+	  AI_SetVar(player, 12, 0);
+	end
+	
+	-- now for shaman only attacks.
+	-- check if shes free
+	if (AI_ShamanFree(player)) then
+	  -- now make sure mid is either taken by us or is clear
+	  if (AI_GetVar(player, 10) == 0) then
+	    
+	  end
+	end
+  end
+end
+
 local function cyan_mid_attack(player)
   AI_SetVar(player, 10, 0);
   -- attacking momentos
@@ -132,6 +183,8 @@ local function cyan_mid_attack(player)
 	local my_priests = AI_GetUnitCount(player, M_PERSON_RELIGIOUS);
 	local e_priests = Area:get_person_count(M_PERSON_RELIGIOUS);
 	local e_fws = Area:get_person_count(M_PERSON_SUPER_WARRIOR);
+	local e_braves = Area:get_person_count(M_PERSON_BRAVE);
+	
 	if (e_fws > 0 and e_priests == 0) then
 	  AI_SetVar(player, 10, 1); -- indicate that mid has enemies.
 	  -- so there are fws, then we should send our shaman, don't want to waste any priests or fws.
@@ -178,6 +231,17 @@ local function cyan_mid_attack(player)
 	    ATTACK(player, TRIBE_BLUE, 0, ATTACK_MARKER, 6, 300, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, ATTACK_NORMAL, 0, -1, -1, 0);
 	    return;
 	  end
+	end
+	
+	if (e_braves > 4 and my_priests > 0) then
+	  -- do not even set danger variable.
+	  -- has braves only, maybe could sneak in priests?
+	  AI_SetAttackFlags(player, 3, 1, 0);
+	  AI_SetAways(player, 0, 0, 100, 0, 0);
+	  AI_SetShamanAway(player, false);
+	  
+	  ATTACK(player, TRIBE_BLUE, math.min(e_braves >> 2, 5), ATTACK_MARKER, 6, 250, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
+	  return;
 	end
   end
 end
@@ -316,3 +380,4 @@ ai:create_event(4, 380, 44, cyan_anti_rush);
 ai:create_event(5, 1536, 256, cyan_mid_attack);
 ai:create_event(6, 512, 96, cyan_look_for_buildings);
 ai:create_event(7, 640, 144, cyan_check_towers);
+ai:create_event(8, 2048, 256, cyan_main_attack);
