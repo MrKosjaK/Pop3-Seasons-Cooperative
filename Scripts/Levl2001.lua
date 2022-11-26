@@ -81,6 +81,8 @@ function _OnLevelInit(level_id)
   AI_SetMainDrumTower(TRIBE_CYAN, false, 138, 128);
   AI_SetConvertingParams(TRIBE_CYAN, false, false, 12);
   AI_SetTargetParams(TRIBE_CYAN, TRIBE_BLUE, true, true);
+  SET_SPELL_ENTRY(TRIBE_CYAN, 0, M_SPELL_BLAST, SPELL_COST(M_SPELL_BLAST) >> 2, 32, 1, 1);
+  SET_SPELL_ENTRY(TRIBE_CYAN, 1, M_SPELL_BLAST, SPELL_COST(M_SPELL_BLAST) >> 2, 32, 1, 0);
 
   AI_SetBuildingParams(TRIBE_CYAN, true, 18, 3);
   AI_SetTrainingHuts(TRIBE_CYAN, 0, 0, 0, 0);

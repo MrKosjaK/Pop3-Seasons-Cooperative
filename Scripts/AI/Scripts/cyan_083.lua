@@ -26,6 +26,7 @@ local people_list = cont.PlayerLists[PEOPLELIST];
 local shapes_without_workers = {};
 local cmd = Commands.new();
 local cti = CmdTargetInfo.new();
+local Area = CreateAreaInfo();
 
 local function cyan_look_for_buildings(player)
   if (construction_list:isEmpty()) then
@@ -77,7 +78,36 @@ local function cyan_look_for_buildings(player)
 end
 
 local function cyan_attacking(player)
-  -- depends on what we want with attacking, let's actually make it patterned for now
+  -- attacking momentos
+  if (AI_GetVar(player, 9) == 0) then
+    return;
+  end
+  
+  -- get info on our midhill first
+  GetEnemyAreaInfo(player, 138, 78, 5, Area);
+  
+  if (Area:contains_people()) then
+	-- it has em people. see if there are any fws.
+	AI_SetVar(player, 10, 1); -- indicate that mid has enemies.
+	
+	if (Area:get_person_count(M_PERSON_SUPER_WARRIOR) > 0) then
+	  -- so there are fws, then we should send our shaman first.
+	  if (AI_ShamanFree(player)) then
+	    if (player_can_cast(M_SPELL_LIGHTNING_BOLT, player) ~= 3) then
+	      set_player_can_cast_temp(M_SPELL_INSECT_PLAGUE, player, 1);
+		  set_player_can_cast_temp(M_SPELL_INSECT_PLAGUE, player, 1);
+		  set_player_can_cast_temp(M_SPELL_INSECT_PLAGUE, player, 1);
+	    end
+	    AI_SetAttackFlags(player, 3, 1, 0);
+	    AI_SetAways(player, 0, 0, 0, 0, 0);
+	    AI_SetShamanAway(player, true);
+	    SET_SPELL_ENTRY(player, 2, M_SPELL_HYPNOTISM, SPELL_COST(M_SPELL_HYPNOTISM) >> 2, 32, 2, 0);
+	    SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 4, 0);
+	  
+	    ATTACK(player, TRIBE_BLUE, 0, ATTACK_MARKER, 6, 300, M_SPELL_INSECT_PLAGUE, M_SPELL_INSECT_PLAGUE, M_SPELL_INSECT_PLAGUE, ATTACK_NORMAL, 0, -1, -1, 0);
+	  end
+	end
+  end
 end
 
 local function cyan_early_towers(player)
