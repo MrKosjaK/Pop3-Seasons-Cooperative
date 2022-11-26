@@ -77,9 +77,48 @@ local function cyan_look_for_buildings(player)
   end);
 end
 
+local function cyan_anti_rush(player)
+  AI_SetVar(player, 11, 0);
+  
+  if (AI_GetVar(player, 12) == 0) then
+    local turn = getTurn();
+	
+	if (turn < 3600) then
+	  GetEnemyAreaInfo(player, 138, 136, 12, Area);
+	  
+	  -- check if we're being attacked by priests.
+	  if (Area:contains_people()) then
+	    local e_priests = Area:get_person_count(M_PERSON_RELIGIOUS);
+		local my_priests = AI_GetUnitCount(player, M_PERSON_RELIGIOUS);
+		
+		if (e_priests > 0 and AI_ShamanFree(player)) then
+		  AI_SetVar(player, 11, 1);
+		  -- murder.
+		  AI_SetAttackFlags(player, 3, 1, 0);
+		  AI_SetAways(player, 0, 0, 100, 0, 0);
+		  AI_SetShamanAway(player, true);
+		  
+		  set_player_can_cast_temp(M_SPELL_BLAST, player);
+		  set_player_can_cast_temp(M_SPELL_BLAST, player);
+		  set_player_can_cast_temp(M_SPELL_BLAST, player);
+		  
+		  SET_SPELL_ENTRY(player, 2, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 1, 1);
+		  SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 1, 1);
+		
+		  ATTACK(player, TRIBE_BLUE, math.max(0, my_priests), ATTACK_MARKER, 39, 998, M_SPELL_BLAST, M_SPELL_BLAST, M_SPELL_BLAST, ATTACK_NORMAL, 0, -1, -1, 0);
+		end
+	  end
+	else
+	  AI_SetVar(player, 11, 0);
+	  AI_SetVar(player, 12, 1);
+	end
+  end
+end
+
 local function cyan_attacking(player)
+  AI_SetVar(player, 10, 0);
   -- attacking momentos
-  if (AI_GetVar(player, 9) == 0) then
+  if (AI_GetVar(player, 9) == 0 or AI_GetVar(player, 11) == 1) then
     return;
   end
   
@@ -88,10 +127,12 @@ local function cyan_attacking(player)
   
   if (Area:contains_people()) then
 	-- it has em people. see if there are any fws.
-	AI_SetVar(player, 10, 1); -- indicate that mid has enemies.
-	
-	if (Area:get_person_count(M_PERSON_SUPER_WARRIOR) > 0) then
-	  -- so there are fws, then we should send our shaman first.
+	local my_priests = AI_GetUnitCount(player, M_PERSON_RELIGIOUS);
+	local e_priests = Area:get_person_count(M_PERSON_RELIGIOUS);
+	local e_fws = Area:get_person_count(M_PERSON_SUPER_WARRIOR);
+	if (e_fws > 0 and e_priests == 0) then
+	  AI_SetVar(player, 10, 1); -- indicate that mid has enemies.
+	  -- so there are fws, then we should send our shaman, don't want to waste any priests or fws.
 	  if (AI_ShamanFree(player)) then
 	    if (player_can_cast(M_SPELL_LIGHTNING_BOLT, player) ~= 3) then
 	      set_player_can_cast_temp(M_SPELL_INSECT_PLAGUE, player, 1);
@@ -101,10 +142,39 @@ local function cyan_attacking(player)
 	    AI_SetAttackFlags(player, 3, 1, 0);
 	    AI_SetAways(player, 0, 0, 0, 0, 0);
 	    AI_SetShamanAway(player, true);
-	    SET_SPELL_ENTRY(player, 2, M_SPELL_HYPNOTISM, SPELL_COST(M_SPELL_HYPNOTISM) >> 2, 32, 2, 0);
-	    SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 4, 0);
+	    SET_SPELL_ENTRY(player, 2, M_SPELL_GHOST_ARMY, SPELL_COST(M_SPELL_GHOST_ARMY) >> 2, 32, 1, 0);
+	    SET_SPELL_ENTRY(player, 3, M_SPELL_HYPNOTISM, SPELL_COST(M_SPELL_HYPNOTISM) >> 2, 32, 4, 0);
 	  
 	    ATTACK(player, TRIBE_BLUE, 0, ATTACK_MARKER, 6, 300, M_SPELL_INSECT_PLAGUE, M_SPELL_INSECT_PLAGUE, M_SPELL_INSECT_PLAGUE, ATTACK_NORMAL, 0, -1, -1, 0);
+	    return;
+	  end
+	end
+	
+	if (e_priests > 0 and e_fws == 0) then
+	  AI_SetVar(player, 10, 1);
+	  -- has priests, can we afford to kill them?
+	  if (my_priests >= e_priests) then
+	    -- we have more or enough priests to beat em up.
+		AI_SetAttackFlags(player, 0, 0, 0);
+		AI_SetAways(player, 0, 0, 100, 0, 0);
+		AI_SetShamanAway(player, false);
+		ATTACK(player, TRIBE_BLUE, math.min(e_priests, my_priests), ATTACK_MARKER, 6, 800, 0, 0, 0, ATTACK_NORMAL, 0, 31, -1, 0);
+	    return;
+	  elseif (AI_ShamanFree(player)) then
+	    -- cannot afford priests, try with shaman then!
+		if (player_can_cast(M_SPELL_HYPNOTISM, player) ~= 3) then
+		  set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
+		  set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
+		  set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
+		end
+		AI_SetAttackFlags(player, 3, 1, 0);
+		AI_SetAways(player, 0, 0, 0, 0, 0);
+		AI_SetShamanAway(player, true);
+		SET_SPELL_ENTRY(player, 2, M_SPELL_GHOST_ARMY, SPELL_COST(M_SPELL_GHOST_ARMY) >> 2, 32, 1, 0);
+	    SET_SPELL_ENTRY(player, 3, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 2, 0);
+	  
+	    ATTACK(player, TRIBE_BLUE, 0, ATTACK_MARKER, 6, 300, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, ATTACK_NORMAL, 0, -1, -1, 0);
+	    return;
 	  end
 	end
   end
@@ -222,6 +292,6 @@ end
 ai:create_event(1, 256, 64, cyan_build);
 ai:create_event(2, 128, 24, cyan_convert);
 ai:create_event(3, 128, 32, cyan_early_towers);
-ai:create_event(4, 740, 112, function(player) end);
+ai:create_event(4, 340, 44, cyan_anti_rush);
 ai:create_event(5, 1536, 256, cyan_attacking);
 ai:create_event(6, 512, 128, cyan_look_for_buildings);
