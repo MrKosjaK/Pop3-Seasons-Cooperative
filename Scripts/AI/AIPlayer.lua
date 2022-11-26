@@ -312,6 +312,17 @@ function tw_mt:check_for_creation()
         self.Obj:set(me.ShapeOrBldgIdx:getThingNum());
         self.Stage = 1;
       end
+	  
+	  -- just in case, check if theres actually already a tower existing.
+	  local me = MAP_ELEM_IDX_2_PTR(map_idx);
+	  local obj = me.ShapeOrBldgIdx:get();
+	  if (obj ~= nil) then
+        if (obj.Type == T_BUILDING and obj.Model == M_BUILDING_DRUM_TOWER and obj.Owner == self.Owner) then
+          self.Stage = 1;
+          self.Obj:set(obj.ThingNum);
+          return;
+        end
+      end
     end
   elseif (self.Stage == 1) then
     if (self.Obj:isNull()) then

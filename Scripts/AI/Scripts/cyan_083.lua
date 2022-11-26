@@ -98,9 +98,11 @@ local function cyan_anti_rush(player)
 		  AI_SetAways(player, 0, 0, 100, 0, 0);
 		  AI_SetShamanAway(player, true);
 		  
-		  set_player_can_cast_temp(M_SPELL_BLAST, player);
-		  set_player_can_cast_temp(M_SPELL_BLAST, player);
-		  set_player_can_cast_temp(M_SPELL_BLAST, player);
+		  if (player_can_cast(M_SPELL_BLAST, player) ~= 3) then
+		    set_player_can_cast_temp(M_SPELL_BLAST, player);
+		    set_player_can_cast_temp(M_SPELL_BLAST, player);
+		    set_player_can_cast_temp(M_SPELL_BLAST, player);
+		  end
 		  
 		  SET_SPELL_ENTRY(player, 2, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 1, 1);
 		  SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 1, 1);
@@ -115,7 +117,7 @@ local function cyan_anti_rush(player)
   end
 end
 
-local function cyan_attacking(player)
+local function cyan_mid_attack(player)
   AI_SetVar(player, 10, 0);
   -- attacking momentos
   if (AI_GetVar(player, 9) == 0 or AI_GetVar(player, 11) == 1) then
@@ -176,6 +178,24 @@ local function cyan_attacking(player)
 	    ATTACK(player, TRIBE_BLUE, 0, ATTACK_MARKER, 6, 300, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, ATTACK_NORMAL, 0, -1, -1, 0);
 	    return;
 	  end
+	end
+  end
+end
+
+local function cyan_check_towers(player)
+  if (AI_GetVar(player, 9) == 0 or AI_GetVar(player, 10) == 1 or AI_GetVar(player, 11) == 1) then
+	return;
+  end
+  
+  local my_pop = AI_GetPopCount(player);
+  
+  if (my_pop >= 30) then
+    -- only bother with said pop or above
+	for i = 1, 6 do
+	  if (not ai:is_tower_constructed(i)) then
+	    ai:construct_tower(i);
+		break;
+      end
 	end
   end
 end
@@ -291,7 +311,8 @@ end
 -- events
 ai:create_event(1, 256, 64, cyan_build);
 ai:create_event(2, 128, 24, cyan_convert);
-ai:create_event(3, 128, 32, cyan_early_towers);
-ai:create_event(4, 340, 44, cyan_anti_rush);
-ai:create_event(5, 1536, 256, cyan_attacking);
-ai:create_event(6, 512, 128, cyan_look_for_buildings);
+ai:create_event(3, 132, 32, cyan_early_towers);
+ai:create_event(4, 380, 44, cyan_anti_rush);
+ai:create_event(5, 1536, 256, cyan_mid_attack);
+ai:create_event(6, 512, 96, cyan_look_for_buildings);
+ai:create_event(7, 640, 144, cyan_check_towers);
