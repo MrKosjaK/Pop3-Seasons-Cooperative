@@ -89,6 +89,7 @@ function _OnTurn(turn)
 	if everySeconds(8) then
 		FillRndEmptyTower(TRIBE_CYAN,2)
 		updateSpellEntries()
+		updateMarkerPatrols()
 	end
 	if everySeconds(15) then
 		updateVehiclesBuild()
@@ -140,63 +141,27 @@ function _OnKeyDown(k)
 	end
 end
 ------------------------------------------------------------------------------------------------------------------------
-stalagtites = {0,true,{},false} --cdr in seconds,active,things,falling
-function ProcessIslandStalagtites()
-	if stalagtites[1] > 0 then
-		stalagtites[1] = stalagtites[1] - 3
-	else
-		if not stalagtites[2] then
-			stalagtites[2] = true
-			createStalagtites(68,3)
-		else
-			if countPeopleInArea(0,68,0) > 2 or countPeopleInArea(1,68,0) > 2 then
-				stalagtites[1] = 80 --seconds
-				stalagtites[2] = false
-				stalagtites[4] = true
-			end
-		end
-	end
+function updateMarkerPatrols()
+	local pn = TRIBE_CYAN
+	SET_MARKER_ENTRY(pn, 0, 69, 70, 0, 1, 0, 1)
+	MARKER_ENTRIES(pn, 0,-1,-1,-1)
+	--VEHICLE_PATROL(pn, 3, 71,72,73,74, M_VEHICLE_BOAT_1) --gl with that lol
 end
-function createStalagtites(marker,radius)
-	stalagtites = {0,true,{},false}
-	SearchMapCells(SQUARE, 0, 0 , radius, world_coord3d_to_map_idx(marker_to_coord3d(marker)), function(me)
-		if rnd() < 30 then
-			local stalag = createThing(T_EFFECT,60,8,me2c3d(me),false,false) stalag.u.Effect.Duration = -1 stalag.Pos.D3.Ypos = rndb(800,1300)
-			stalag.DrawInfo.Alpha = -16 set_thing_draw_info(stalag,TDI_SPRITE_F1_D1, rndb(1785,1787)) stalag.DrawInfo.Flags = EnableFlag(stalag.DrawInfo.Flags, DF_USE_ENGINE_SHADOW)
-			table.insert(stalagtites[3],stalag)
-		end
-	return true end)
-end
-function StalagtitesFalling()
-	if stalagtites[4] then
-		for k,v in ipairs(stalagtites[3]) do
-			if v.Pos.D3.Ypos > 2 then
-				v.Pos.D3.Ypos = v.Pos.D3.Ypos - rndb(86,96)
-			else
-				local boom = createThing(T_EFFECT,M_EFFECT_SPHERE_EXPLODE_1 ,8,v.Pos.D3,false,false)
-				queue_sound_event(boom,SND_EVENT_BEAMDOWN, 0)
-				SearchMapCells(SQUARE, 0, 0 , 1, world_coord3d_to_map_idx(boom.Pos.D3), function(me)
-					me.MapWhoList:processList( function (t)
-						if t.Type == T_PERSON then
-							t.u.Pers.Life = rndb(1,200) if rnd() < 60 then t.u.Pers.Life = 0 end
-						end
-					return true end)
-				return true end)
-				table.remove(stalagtites[3],k)
-				delete_thing_type(v)
-			end
-		end
-	end
-end
-createStalagtites(68,3)
-------------------------------------------------------------------------------------------------------------------------
+
 function ProcessDefensiveShaman()
-	GetRidOfNearbyEnemies(TRIBE_CYAN,1)
-	TargetNearbyShamans(TRIBE_CYAN,9+G_GAMESTAGE,30+G_GAMESTAGE*10)
+	local pn = TRIBE_CYAN
+	if isShamanHome(pn,0,24) then --pn,mk,rad
+		GetRidOfNearbyEnemies(pn,1)
+		TargetNearbyShamans(pn,9+G_GAMESTAGE,30+G_GAMESTAGE*10)
+	end
 end
 
 function ProcessAgressiveShaman()
-	
+	local pn = TRIBE_CYAN
+	if not isShamanHome(pn,0,24) then --pn,mk,rad
+		GetRidOfNearbyEnemies(pn,1)
+		TargetNearbyShamans(pn,9+G_GAMESTAGE,20+G_GAMESTAGE*15)
+	end	
 end
 
 function updateSpellEntries(marker,radius)
@@ -439,7 +404,7 @@ function _OnLevelInit(level_id)
 	AI_SetFetchParams(TRIBE_CYAN, true, true, true, true);
 
 	AI_SetAttackingParams(TRIBE_CYAN, true, 255, 10);
-	AI_SetDefensiveParams(TRIBE_CYAN, true, true, true, true, 3, 1, 1);
+	AI_SetDefensiveParams(TRIBE_CYAN, true, true, true, true, 3, 2, 1);
 	AI_SetSpyParams(TRIBE_CYAN, false, 0, 100, 128, 1);
 	AI_SetPopulatingParams(TRIBE_CYAN, true, true);
 	
@@ -465,6 +430,61 @@ function _OnPostLevelInit(level_id)
 	SET_DEFENCE_RADIUS(TRIBE_CYAN,9)
 	SET_DEFENCE_RADIUS(TRIBE_BLACK,7)
 end
+
+------------------------------------------------------------------------------------------------------------------------
+stalagtites = {0,true,{},false} --cdr in seconds,active,things,falling
+function ProcessIslandStalagtites()
+	if stalagtites[1] > 0 then
+		stalagtites[1] = stalagtites[1] - 3
+	else
+		if not stalagtites[2] then
+			stalagtites[2] = true
+			createStalagtites(68,3)
+		else
+			if countPeopleInArea(0,68,0) > 2 or countPeopleInArea(1,68,0) > 2 then
+				stalagtites[1] = 80 --seconds
+				stalagtites[2] = false
+				stalagtites[4] = true
+			end
+		end
+	end
+end
+function createStalagtites(marker,radius)
+	stalagtites = {0,true,{},false}
+	SearchMapCells(SQUARE, 0, 0 , radius, world_coord3d_to_map_idx(marker_to_coord3d(marker)), function(me)
+		if rnd() < 30 then
+			local stalag = createThing(T_EFFECT,60,8,me2c3d(me),false,false) stalag.u.Effect.Duration = -1 stalag.Pos.D3.Ypos = rndb(800,1300)
+			stalag.DrawInfo.Alpha = -16 set_thing_draw_info(stalag,TDI_SPRITE_F1_D1, rndb(1785,1787)) stalag.DrawInfo.Flags = EnableFlag(stalag.DrawInfo.Flags, DF_USE_ENGINE_SHADOW)
+			table.insert(stalagtites[3],{stalag,rnd(2,16)})
+		end
+	return true end)
+end
+function StalagtitesFalling()
+	if stalagtites[4] then
+		for k,v in ipairs(stalagtites[3]) do
+			if v[2] > 0 then v[2] = v[2] - 1
+				move_thing_within_mapwho(v[1], MoveC3d(v[1].Pos.D3,16,false))
+			else
+				if v[1].Pos.D3.Ypos > 2 then
+					v[1].Pos.D3.Ypos = v[1].Pos.D3.Ypos - rndb(86,96)
+				else
+					local boom = createThing(T_EFFECT,M_EFFECT_SPHERE_EXPLODE_1 ,8,v[1].Pos.D3,false,false)
+					queue_sound_event(boom,SND_EVENT_BEAMDOWN, 0)
+					SearchMapCells(SQUARE, 0, 0 , 1, world_coord3d_to_map_idx(boom.Pos.D3), function(me)
+						me.MapWhoList:processList( function (t)
+							if t.Type == T_PERSON then
+								t.u.Pers.Life = rndb(1,200) if rnd() < 60 then t.u.Pers.Life = 0 end
+							end
+						return true end)
+					return true end)
+					table.remove(stalagtites[3],k)
+					delete_thing_type(v[1])
+				end
+			end
+		end
+	end
+end
+createStalagtites(68,3)
 
 
 --to do:

@@ -250,6 +250,11 @@ function unstuckT(thing)
 	end
 end
 
+--is shaman is their base area
+function isShamanHome(pn,marker,radius)
+	return ntb(IS_SHAMAN_IN_AREA(pn,marker,radius) == 1)
+end
+
 --is thing in area
 function IsThingInArea(thingType,thingModel,thingOwner,X,Z,radius)
 	--thingOwner -1 for things of any tribe
