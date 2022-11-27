@@ -13,7 +13,15 @@ function cmd_mt:clear_persons_commands(t)
 end
 
 function cmd_mt:get_person_idx(t)
-  self.Idx = t.u.Pers.CurrCmd;
+  -- check the amount of commands person has
+  local cmds = 0;
+  for i = 0, 7 do
+    if (t.u.Pers.CmdIdxs[i] ~= nil) then
+	  cmds = cmds + 1;
+    end
+  end
+  
+  self.Idx = cmds;
 end
 
 function cmd_mt:attack_person(t, victim_idx)
