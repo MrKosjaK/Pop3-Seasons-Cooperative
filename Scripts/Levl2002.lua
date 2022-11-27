@@ -118,19 +118,6 @@ function _OnTurn(turn)
 	end
 	--process stalagtites
 	StalagtitesFalling()
-	
-	
-	
-	--test shit
-	--LOG(getShaman(0).u.Pers.CmdIdxs[0])
-	local targ = getShaman(0)
-	local cmd = get_thing_curr_cmd_list_ptr(targ)
-	if (cmd ~= nil) then
-		--LOG(cmd.CommandType)
-		if cmd.CommandType == CMD_ATTACK_TARGET then
-			LOG(cmd.TargetIdx:get())
-		end
-	end
 end
 
 function _OnCreateThing(t)
@@ -205,7 +192,7 @@ createStalagtites(68,3)
 ------------------------------------------------------------------------------------------------------------------------
 function ProcessDefensiveShaman()
 	GetRidOfNearbyEnemies(TRIBE_CYAN,1)
-	TargetNearbyShamans(TRIBE_CYAN,8+G_GAMESTAGE,30+G_GAMESTAGE*10)
+	TargetNearbyShamans(TRIBE_CYAN,9+G_GAMESTAGE,30+G_GAMESTAGE*10)
 end
 
 function ProcessAgressiveShaman()

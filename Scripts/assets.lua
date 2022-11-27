@@ -343,25 +343,52 @@ function TargetNearbyShamans(pn,radius,successChance)
 	
 	if rnd() < successChance then
 		if nilS(pn) then
-			if t.State ~= S_PERSON_SPELL_TRANCE then
+			if getShaman(pn).State ~= S_PERSON_SPELL_TRANCE and (getShaman(pn).Flags2 & TF2_THING_IN_AIR == 0) then
 				gns.ThisLevelHeader.Markers[254] = world_coord3d_to_map_idx(getShaman(pn).Pos.D3)
 				for k,v in ipairs(G_HUMANS_ALIVE) do
 					if IS_SHAMAN_IN_AREA(v,254,radius) == 1 then --baited by ghost shamans gg
-						if nilS(v) then
-							local targ = getShaman(v)
-							local dist = get_world_dist_xz(getShaman(pn).Pos.D2,targ.Pos.D2)
-							if dist < 512*13 then
-								GIVE_ONE_SHOT(spell,pn)
+						local caster,targ = getShaman(pn),getShaman(v)
+						local dist = get_world_dist_xz(getShaman(pn).Pos.D2,targ.Pos.D2)
+						if dist < 512*14 then
+							GIVE_ONE_SHOT(spell,pn)
+							if dist < 512*6 then
 								local s = createThing(T_SPELL,spell,pn,targ.Pos.D3,false,false)
-								if dist < 512*6 then
-									s.u.Spell.TargetThingIdx:set(1) LOG("s click")
-								else
-									s.u.Spell.TargetThingIdx:set(0) 
-									if getShaman(pn).State ~= S_PERSON_NAVIGATION_FAILED then LOG("aim click")
-										
+								s.u.Spell.TargetThingIdx:set(1)
+							else
+								if getShaman(pn).State ~= S_PERSON_NAVIGATION_FAILED then
+									local cmd = get_thing_curr_cmd_list_ptr(targ)
+									if (cmd ~= nil) then
+										local function mathsAndCast(targetsTargetD2)
+											local z = (targetsTargetD2.Zpos - targ.Pos.D2.Zpos)
+											local x = (targetsTargetD2.Xpos - targ.Pos.D2.Xpos)
+											local ax = math.abs(x)
+											local az = math.abs(z)
+											local angle = math.atan(z, x) * 180 / math.pi
+											angle = math.ceil(angle)
+											if (angle<0) then
+												angle=angle+360
+											end
+											local rotation = (angle * math.pi) / 180
+											local distOffset = 512+8*math.floor(dist/256)
+											local spawnC3d = Coord3D.new()
+											spawnC3d.Xpos = math.ceil(targ.Pos.D3.Xpos + (math.cos(rotation) * distOffset))
+											spawnC3d.Zpos = math.ceil(targ.Pos.D3.Zpos + (math.sin(rotation) * distOffset))
+											spawnC3d.Ypos = targ.Pos.D3.Ypos
+											local s = createThing(T_SPELL,spell,pn,spawnC3d,false,false)
+										end
+										if cmd.CommandType == CMD_ATTACK_TARGET --[[or cmd.CommandType == CMD_ATTACK_AREA_2]] then
+											if nilT(cmd.u.TargetIdx:get()) then
+												local t = cmd.u.TargetIdx:get()
+												local c2d = t.Pos.D2
+												mathsAndCast(c2d) break
+											end
+										elseif cmd.CommandType == CMD_GOTO_POINT then
+											if cmd.u.TargetCoord ~= nil then
+												mathsAndCast(cmd.u.TargetCoord) break
+											end
+										end
 									end
 								end
-								break
 							end
 						end
 					end
