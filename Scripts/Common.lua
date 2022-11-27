@@ -17,6 +17,8 @@ local L_SHOW_POPS = false;
 
 -- OnLevelInit executed only once at start of the game (level start not lobby)
 function OnLevelInit(level_id)
+	if _OnLevelInit ~= nil then _OnLevelInit(level_id); end
+
 	-- Ally players at beginning (to ensure they didn't forget in setup) ; unally from AIs
 	-- be sure to manually ally any AI's that should have an alliance with eachother
 	for i = 0,7 do
@@ -74,8 +76,6 @@ function OnLevelInit(level_id)
 	set_player_name(5,"Toktai",ntb(isOnline()))
 	set_player_name(6,"Sahel",ntb(isOnline()))
 	set_player_name(7,"Nomel",ntb(isOnline()))
-	
-  if _OnLevelInit ~= nil then _OnLevelInit(level_id); end
 end
 
 -- OnTurn executed every turn (12 turns per second)
