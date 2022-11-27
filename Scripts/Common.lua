@@ -76,6 +76,8 @@ function OnLevelInit(level_id)
 	set_player_name(5,"Toktai",ntb(isOnline()))
 	set_player_name(6,"Sahel",ntb(isOnline()))
 	set_player_name(7,"Nomel",ntb(isOnline()))
+	
+	if _OnPostLevelInit ~= nil then _OnPostLevelInit(level_id); end
 end
 
 -- OnTurn executed every turn (12 turns per second)

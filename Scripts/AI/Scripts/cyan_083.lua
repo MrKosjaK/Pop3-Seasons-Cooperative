@@ -79,7 +79,6 @@ end
 
 local function cyan_anti_rush(player)
   AI_SetVar(player, 11, 0);
-  LOG("anti_rush");
   
   if (AI_GetVar(player, 12) == 0) then
     local turn = getTurn();
@@ -97,7 +96,6 @@ local function cyan_anti_rush(player)
 		  
 		  AI_SetVar(player, 11, 1);
 		  if (AI_ShamanFree(player)) then
-		    LOG("yes, murder!!!");
 		    -- target fucking shaman and murder her to death.
 			AI_SetAttackFlags(player, 3, 1, 0);
 		    AI_SetAways(player, 0, 0, 0, 0, 0);
@@ -109,7 +107,6 @@ local function cyan_anti_rush(player)
 		      set_player_can_cast_temp(M_SPELL_LIGHTNING_BOLT, player, 1);
 		    end
 			
-			LOG("about to murder heheboiz");
 			-- tear her apart.
 			ATTACK(player, TRIBE_BLUE, 0, ATTACK_PERSON, M_PERSON_MEDICINE_MAN, 998, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, ATTACK_NORMAL, 0, -1, -1, 0);
 		  end
@@ -134,7 +131,6 @@ local function cyan_anti_rush(player)
 		    SET_SPELL_ENTRY(player, 2, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 1, 1);
 		    SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 1, 1);
 		  end
-		  LOG("priest murder");
 		  ATTACK(player, TRIBE_BLUE, my_priests, ATTACK_MARKER, 39, 998, M_SPELL_BLAST, M_SPELL_BLAST, M_SPELL_BLAST, ATTACK_NORMAL, 0, -1, -1, 0);
 		end
 	  end

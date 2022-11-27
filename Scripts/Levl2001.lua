@@ -11,6 +11,15 @@ local duel_1_winner = -1;
 local duel_2_winner = -1;
 local duel_3_winner = -1;
 
+function _OnPostLevelInit(level_id)
+  -- Ally ais
+  for i = 1, #G_AI_ALIVE do
+    for j = 1, #G_AI_ALIVE do
+	  set_players_allied(G_AI_ALIVE[i], G_AI_ALIVE[j]);
+	end
+  end
+end
+
 function _OnLevelInit(level_id)
   -- Green stuff
   AI_Initialize(TRIBE_GREEN);
@@ -37,7 +46,7 @@ function _OnLevelInit(level_id)
   AI_SetTargetParams(TRIBE_GREEN, TRIBE_RED, true, true);
 
   AI_SetBuildingParams(TRIBE_GREEN, true, 60, 4);
-  AI_SetTrainingHuts(TRIBE_GREEN, 0, 0, 0, 0);
+  AI_SetTrainingHuts(TRIBE_GREEN, 0, 1, 0, 0);
   AI_SetTrainingPeople(TRIBE_GREEN, false, 0, 0, 0, 0, 0);
   AI_SetVehicleParams(TRIBE_GREEN, false, 0, 0, 0, 0);
   AI_SetFetchParams(TRIBE_GREEN, false, false, false, false);
@@ -131,7 +140,7 @@ function _OnLevelInit(level_id)
   AI_SetTargetParams(TRIBE_PINK, TRIBE_YELLOW, true, true);
 
   AI_SetBuildingParams(TRIBE_PINK, true, 30, 2);
-  AI_SetTrainingHuts(TRIBE_PINK, 0, 0, 0, 0);
+  AI_SetTrainingHuts(TRIBE_PINK, 0, 0, 1, 0);
   AI_SetTrainingPeople(TRIBE_PINK, true, 0, 0, 0, 0, 0);
   AI_SetVehicleParams(TRIBE_PINK, false, 0, 0, 0, 0);
   AI_SetFetchParams(TRIBE_PINK, false, false, false, false);
