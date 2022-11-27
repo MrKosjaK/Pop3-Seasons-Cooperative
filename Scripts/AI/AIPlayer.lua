@@ -138,14 +138,12 @@ function sh_mt:process_mana()
   
   for i = 1, se_size do
     entry = se[i];
-    entry.ManaStored = entry.ManaStored + curr_mana_amt;
+	if (entry.UsageCount > 0) then
+      entry.ManaStored = entry.ManaStored + curr_mana_amt;
 	
-	if (entry.ManaStored >= entry.ManaCost) then
-	  if (entry.UsageCount > 0) then
+	  if (entry.ManaStored >= entry.ManaCost) then
 	    entry.UsageCount = entry.UsageCount - 1;
 		entry.ManaStored = 0;
-	  else
-	    entry.ManaStored = entry.ManaCost;
 	  end
 	end
   end
@@ -168,7 +166,7 @@ function sh_mt:process()
 	  return;
 	end
 	
-	if (s.State == S_PERSON_SPELL_TRANCE) then
+	if (s.State == S_PERSON_SPELL_TRANCE or (s.Flags & TF_DROWNING ~= 0) or (s.Flags & TF_LOST_CONTROL ~= 0) or (s.Flags & TF2_THING_IN_AIR ~= 0)) then
 	  return;
 	end
 	
