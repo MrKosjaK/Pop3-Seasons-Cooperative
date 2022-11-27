@@ -324,9 +324,13 @@ local function cyan_convert(player)
   if (AI_GetVar(player, 9) == 0) then
 	local turn = getTurn();
 	  
-	if (turn < 840) then
-      sham:toggle_converting(true);
-	  SHAMAN_DEFEND(player, 136, 44, TRUE);
+	if (turn < 1440) then
+	  sham:toggle_converting(true);
+	  if (turn < 840) then
+	    SHAMAN_DEFEND(player, 136, 44, TRUE);
+	  else
+	    SHAMAN_DEFEND(player, 138, 138, TRUE);
+	  end
 	else
       AI_SetVar(player, 9, 1);
 	  SHAMAN_DEFEND(player, 138, 128, TRUE);
