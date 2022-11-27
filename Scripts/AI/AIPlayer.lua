@@ -55,7 +55,9 @@ function cp_mt:init(player_num)
         SpellCheck = false,
         SpellCheckMax = 0,
         SpellCheckCurr = 0,
-        SpellEntries = {nil, nil, nil, nil, nil, nil, nil, nil}
+        SpellEntries = {nil, nil, nil, nil, nil, nil, nil, nil},
+		CheckedCooldown = 0,
+		CheckedBldgs = {}
       }, sh_mt);
     };
     setmetatable(tribe_info, pl_mt);
@@ -114,16 +116,39 @@ function pl_mt:get_shaman_ai()
   return self.Shaman;
 end
 
-function sh_mt:set_spell_entry(idx, spell, t_models, used_count, cost)
+function sh_mt:set_spell_entry(idx, spell, t_models, used_count, max_count, cost)
   local spell_entry =
   {
     Spell = spell,
 	Models = t_models,
+	MaxUsage = max_count,
 	UsageCount = math.max(0, used_count),
 	ManaStored = 0,
 	ManaCost = math.max(100, cost);
   }
   self.SpellEntries[idx] = spell_entry;
+end
+
+function sh_mt:process_mana()
+  local curr_mana_amt = G_PLR_PTR[self.Owner].LastManaIncr >> 4;
+  
+  local se_size = #self.SpellEntries;
+  local se = self.SpellEntries;
+  local entry;
+  
+  for i = 1, se_size do
+    entry = se[i];
+    entry.ManaStored = entry.ManaStored + curr_mana_amt;
+	
+	if (entry.ManaStored >= entry.ManaCost) then
+	  if (entry.UsageCount > 0) then
+	    entry.UsageCount = entry.UsageCount - 1;
+		entry.ManaStored = 0;
+	  else
+	    entry.ManaStored = entry.ManaCost;
+	  end
+	end
+  end
 end
 
 function sh_mt:process()
@@ -134,6 +159,7 @@ function sh_mt:process()
 	end
   else
     local s = self.Proxy:get();
+	self:process_mana();
 	
 	--log(string.format("Mana Gen Rate: %i", G_PLR_PTR[s.Owner].LastManaIncr));
 	
@@ -147,6 +173,14 @@ function sh_mt:process()
 	end
 	
 	if (self.SpellCheck) then
+	  if (#self.CheckedBldgs) then
+	    self.CheckedCooldown = self.CheckedCooldown - 1;
+		
+		if (self.CheckedCooldown <= 0) then
+		  self.CheckedBldgs = {};
+		end
+	  end
+	
 	  if (self.ConvertWild) then
 	    self.SpellCheckMax = G_SPELL_CONST[M_SPELL_CONVERT_WILD].WorldCoordRange >> 9;
 	  else
@@ -161,7 +195,9 @@ function sh_mt:process()
 	  local stop_me_search = false;
 	  local s_target;
 	  local se_size = #self.SpellEntries;
+	  local se = self.SpellEntries;
 	  local shape_or_bldg;
+	  local break2 = false;
 
 	  SearchMapCells(CIRCULAR, 0, self.SpellCheckCurr, self.SpellCheckCurr, world_coord3d_to_map_idx(s.Pos.D3), function(me)
 	    if (self.ConvertWild) then
@@ -185,8 +221,25 @@ function sh_mt:process()
 	    shape_or_bldg = me.ShapeOrBldgIdx:get();
 	    if (shape_or_bldg ~= nil) then
 		  if (shape_or_bldg.Type == T_BUILDING) then
-		    if (are_players_allied(s.Owner, shape_or_bldg.Owner) == 0) then
-			
+		    if (not isItemInTable(self.CheckedBldgs, shape_or_bldg.ThingNum) and shape_or_bldg.State == S_BUILDING_STAND) then
+		      if (are_players_allied(s.Owner, shape_or_bldg.Owner) == 0) then
+			    for m = 1, se_size do
+			      for k = 1, #se[m].Models do
+				    if (se[m].Models[k] == shape_or_bldg.Model and se[m].UsageCount < se[m].MaxUsage) then
+				      self.CastDelay = 12;
+					  se[m].UsageCount = se[m].UsageCount + 1;
+				      CREATE_THING_WITH_PARAMS4(T_SPELL, se[m].Spell, s.Owner, shape_or_bldg.Pos.D3, 0, 0, 0, 0);
+				      stop_me_search = true;
+				      break2 = true;
+				      self.CheckedBldgs[#self.CheckedBldgs + 1] = shape_or_bldg.ThingNum;
+				      self.CheckedCooldown = 240;
+				      break;
+					end
+				  end
+				
+				  if (break2) then break; end
+				end
+			  end
 		    end
 		  end
 	    end
