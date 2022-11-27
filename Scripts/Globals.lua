@@ -28,7 +28,8 @@ import(Module_Table);
 include("assets.lua"); -- Misc useful tools
 include("PSHelpers.lua"); -- PopScript helpers
 include("SearchUtils.lua"); -- Search stuff
-include("AI\\AIPlayer.lua") -- AIPlayer class
+include("AI\\AIPlayer.lua"); -- AIPlayer class
+include("Libs\\LbCommands.lua"); -- Commands class
 
 -- Global variables
 G_GAMESTAGE = 0; --game always starts in early-game stage
