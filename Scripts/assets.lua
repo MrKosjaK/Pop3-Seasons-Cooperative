@@ -88,6 +88,7 @@ function rnd()
 end
 --quick random between
 function rndb(a,b)
+	if a == b then return a end
 	return a + G_RANDOM(b-a) + 1
 end
 
@@ -111,6 +112,14 @@ function removeFromTable(tbl, value)
 			end
 		end
 	end
+end
+
+--is item in table
+function isItemInTable(tbl,item)
+	for k,v in ipairs(tbl) do
+		if v == item then return true end
+	end
+	return false
 end
 --------------------------------------------------------------------------------------------------------------------------------------------
 --quick shaman nil
@@ -229,14 +238,14 @@ end
 --unstuck shaman
 function unstuckS(pn)
 	if stuckS(pn) then 
-		getShaman(pn).State = S_PERSON_WILD_ROAM  
+		getShaman(pn).State = S_PERSON_SCATTER
 		remove_all_persons_commands(getShaman(pn))
 	end
 end
 --unstuck thing
 function unstuckT(thing)
 	if stuckT(thing) then  
-		thing.State = S_PERSON_WILD_ROAM  
+		thing.State = S_PERSON_SCATTER  
 		remove_all_persons_commands(thing)
 	end
 end
@@ -309,26 +318,55 @@ function countPeopleInArea(tribe,marker,radius)
 	return count
 end
 
---update base priorities
-function updateBasePriorities(pn)
-	updateGameStage(5,10,15,20)
-	local s,h,b = G_GAMESTAGE, countHuts(pn,true), AI_GetUnitCount(pn, M_PERSON_BRAVE)
-	--local t,p = countTroops(pn), GetPop(pn)
-	AI_SetBuildingParams(pn,true,60+s*15,3)
-	if b > 20+(s*5) and h > 6+s then
-		if AI_GetBldgCount(pn, M_BUILDING_BOAT_HUT_1) > 0 then
-			WRITE_CP_ATTRIB(pn, ATTR_PREF_BOAT_DRIVERS, 1+s+2);
-			WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BOAT, 1+s+2);
-		else
-			WRITE_CP_ATTRIB(pn, ATTR_PREF_BOAT_DRIVERS, 0);
-			WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BOAT, 0);
-		end
-		if AI_GetBldgCount(pn, M_BUILDING_AIRSHIP_HUT_1) > 0 then
-			WRITE_CP_ATTRIB(pn, ATTR_PREF_BALLOON_DRIVERS, 1+s+2);
-			WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BALLOON, 1+s+2);
-		else
-			WRITE_CP_ATTRIB(pn, ATTR_PREF_BALLOON_DRIVERS, 0);
-			WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BALLOON, 0);
+--blast, swarm, or hypno enemies near a shaman
+function GetRidOfNearbyEnemies(pn,radius)
+	local casted = false
+	if G_GAMESTAGE >= 3 then radius = radius + 1 end
+	local spell = M_SPELL_BLAST if G_GAMESTAGE >= 2 then if rnd() < 20 then spell = M_SPELL_INSECT_PLAGUE end if G_GAMESTAGE >= 3 then if rnd() < 15 then spell = M_SPELL_HYPNOTISM end end end
+	if nilS(pn) then
+		SearchMapCells(SQUARE, 0, 0 , radius, world_coord3d_to_map_idx(getShaman(pn).Pos.D3), function(me)
+			me.MapWhoList:processList(function (t)
+				if isItemInTable(G_HUMANS_ALIVE,t.Owner) and not casted then
+					GIVE_ONE_SHOT(spell,pn)
+					local s = createThing(T_SPELL,spell,pn,t.Pos.D3,false,false)
+					s.u.Spell.TargetThingIdx:set(1)
+					casted = true
+				end
+			return true end)
+		return true end)
+	end
+end
+
+--light enemies near shaman
+function TargetNearbyShamans(pn,radius,successChance)
+	local spell = M_SPELL_LIGHTNING_BOLT
+	
+	if rnd() < successChance then
+		if nilS(pn) then
+			if t.State ~= S_PERSON_SPELL_TRANCE then
+				gns.ThisLevelHeader.Markers[254] = world_coord3d_to_map_idx(getShaman(pn).Pos.D3)
+				for k,v in ipairs(G_HUMANS_ALIVE) do
+					if IS_SHAMAN_IN_AREA(v,254,radius) == 1 then --baited by ghost shamans gg
+						if nilS(v) then
+							local targ = getShaman(v)
+							local dist = get_world_dist_xz(getShaman(pn).Pos.D2,targ.Pos.D2)
+							if dist < 512*13 then
+								GIVE_ONE_SHOT(spell,pn)
+								local s = createThing(T_SPELL,spell,pn,targ.Pos.D3,false,false)
+								if dist < 512*6 then
+									s.u.Spell.TargetThingIdx:set(1) LOG("s click")
+								else
+									s.u.Spell.TargetThingIdx:set(0) 
+									if getShaman(pn).State ~= S_PERSON_NAVIGATION_FAILED then LOG("aim click")
+										
+									end
+								end
+								break
+							end
+						end
+					end
+				end
+			end
 		end
 	end
 end
@@ -694,6 +732,64 @@ function get_me_a_random_person(tribe)
 	return randomItemFromTable(things)
 end
 
+--get me a random unit of type of tribe, bool idle
+function randomUnit(pn,model,idleBool)
+	if _gsi.Players[pn].NumPeople < 1 then return nil end
+	local things = {}
+	ProcessGlobalSpecialList(pn, PEOPLELIST, function(t)
+		if t.Model == model then
+			if idleBool then
+				if t.State == S_PERSON_WAIT_AT_POINT or t.State == S_PERSON_GOTO_BASE_AND_WAIT then
+					table.insert(things,t)
+				end
+			else
+				table.insert(things,t)
+			end
+		end
+	return true end)
+
+	return randomItemFromTable(things)
+end
+
+--give atk command to unit (follow person)
+unitAtkunitTbl = {} --to process hands up people and unstuck them
+function unitAtkunit(tribe,enemy,model,enemyModel,attackerMustBeIdleBool)
+	local atkerModel,enemyModel = model,enemyModel
+	local rndAtker,rndTarg = randomUnit(tribe,atkerModel,attackerMustBeIdleBool),randomUnit(enemy,enemyModel,false)
+	if nilT(rndAtker) and nilT(rndTarg) then
+		Cmds:get_person_idx(rndAtker)
+		Cmds:attack_person(rndAtker, rndTarg.ThingNum)
+		table.insert(unitAtkunitTbl,rndAtker)
+	end
+end
+
+--unit nav check(doesnt work instantly, gotta have a table and process after) (send units to c3d, if can nav, else it removes hands up)
+unitNavTbl = {}
+function unitNavAndMoveC3d(thing,dest)
+	if nilT(thing) then
+		local c2d = Coord2D.new() ; coord3D_to_coord2D(dest,c2d)
+		command_person_go_to_coord2d(thing,c2d)
+		table.insert(unitNavTbl,{thing,c2d})
+		
+		return success
+	end
+end
+function ProcessUnitMoveTbl()
+	for k,v in ipairs(unitNavTbl) do
+		if nilT(v[1]) then
+			local success = (v[1].State ~= S_PERSON_NAVIGATION_FAILED)
+			if not success then v[1].State = S_PERSON_SCATTER remove_all_persons_commands(v[1]) end
+		end
+	end
+	unitNavTbl = {}
+end
+
+function NavCheck(tribe,enemy,c3d)
+	gns.ThisLevelHeader.Markers[254] = world_coord3d_to_map_idx(c3d)
+	
+	return NAV_CHECK(tribe, enemy, ATTACK_MARKER, 254, FALSE)
+end
+
 --get me a random building
 function get_me_a_random_building(tribe,onlyHuts,includeDamaged)
 	local things = {}
@@ -731,6 +827,39 @@ function Plant(IdxS,IdxE,drawnum) -- pick -1 for random plants, or specify
 		if drawnum == -1 then plants.DrawInfo.DrawNum = rndb(1775,1784) else plants.DrawInfo.DrawNum = drawnum end --still need to add plant types to HFX
 		plants.DrawInfo.Alpha = -16 plants.DrawInfo.Flags = EnableFlag(plants.DrawInfo.Flags, DF_USE_ENGINE_SHADOW)
 	end
+end
+
+--mimic land
+function LandMimic(pointc3d,targetc3d,radius,copySceneryBool)
+	local mimicTbl = {}
+	SearchMapCells(SQUARE ,0, 0, radius, world_coord3d_to_map_idx(pointc3d), function(me)
+		if copySceneryBool then
+			local tree = -1
+			me.MapWhoList:processList( function (t)
+				if t.Type == T_SCENERY and t.Model < 7 then
+					tree = {t.Model,t.u.Scenery.ResourceRemaining,t.u.ObjectInfo.Scale}
+				end
+			return true end)
+			table.insert(mimicTbl,{me.Alt,tree})
+		else
+			table.insert(mimicTbl,me.Alt)
+		end
+	return true end)
+	--copy it to destination
+	SearchMapCells(SQUARE ,0, 0, radius, world_coord3d_to_map_idx(targetc3d), function(me)
+		if copySceneryBool then
+			me.Alt = mimicTbl[1][1]
+			if mimicTbl[1][2] ~= -1 then
+				local tree = createThing(T_SCENERY,mimicTbl[1][2][1],radius+1,me2c3d(me),false,false)
+				tree.u.Scenery.ResourceRemaining = mimicTbl[1][2][2] tree.u.ObjectInfo.Scale = mimicTbl[1][2][3]
+			end
+			set_square_map_params(world_coord3d_to_map_idx(targetc3d),radius+1,TRUE)
+			table.remove(mimicTbl,1)
+		else
+			me.Alt = mimicTbl[1] table.remove(mimicTbl,1)
+			set_square_map_params(world_coord3d_to_map_idx(targetc3d),radius+1,TRUE)
+		end
+	return true end)
 end
 --------------------------------------------------------------------------------------------------------------------------------------------
 --timer to h/m/s

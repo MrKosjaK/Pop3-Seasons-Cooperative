@@ -5,13 +5,26 @@ include("snow.lua");
 G_NUM_OF_HUMANS_FOR_THIS_LEVEL = 2;
 
 function _OnTurn(turn)
-	if turn == 1 then afterInit() end
-	
+
 	local stage = G_GAMESTAGE
 	
 	------------------------------------------------------------------------------------------------------------------------
 	-- AI STUFF
 	------------------------------------------------------------------------------------------------------------------------
+	
+	--early warrior/maybe preachers boat attacks
+	if turn < 5001 and turn % 1000 == 0 then
+		if countBoats(TRIBE_CYAN) > 1 then
+			local target = TRIBE_RED
+			if rnd() > 70 then target = TRIBE_BLUE end
+			local warriors,preachers = 100,0 if rnd() > 80 then preachers = 50 warriors = 50 end
+			WriteAiAttackers(TRIBE_CYAN,warriors,100,preachers,0,0,0)
+			AI_SetAttackFlags(TRIBE_CYAN,3,1,0)
+			local targetType = ATTACK_PERSON
+			if countHuts(TRIBE_CYAN,true) > 0 then targetType = ATTACK_BUILDING end
+			ATTACK(TRIBE_CYAN,TRIBE_BLUE,5,targetType,0,999,0,0,0,ATTACK_BY_BOAT,TRUE,-1,-1,-1)
+		end
+	end
 	
 	if stage > 0 then
 		--build towers
@@ -64,8 +77,18 @@ function _OnTurn(turn)
 		end
 	end
 	
+	if everySeconds(6-stage) then
+		ProcessDefensiveShaman()
+	end
+	if everySeconds(3) then
+		ProcessAgressiveShaman()
+		ProcessUnitMoveTbl()
+		ProcessIslandStalagtites()
+		for i = #unitAtkunitTbl,1,-1 do unstuckT(unitAtkunitTbl[i]) table.remove(unitAtkunitTbl,i) end
+	end
 	if everySeconds(8) then
 		FillRndEmptyTower(TRIBE_CYAN,2)
+		updateSpellEntries()
 	end
 	if everySeconds(15) then
 		updateVehiclesBuild()
@@ -93,6 +116,21 @@ function _OnTurn(turn)
 	elseif turn == 13000 then
 		createSnow(1200, 50, 42, 60*2, 60*2, 24)
 	end
+	--process stalagtites
+	StalagtitesFalling()
+	
+	
+	
+	--test shit
+	--LOG(getShaman(0).u.Pers.CmdIdxs[0])
+	local targ = getShaman(0)
+	local cmd = get_thing_curr_cmd_list_ptr(targ)
+	if (cmd ~= nil) then
+		--LOG(cmd.CommandType)
+		if cmd.CommandType == CMD_ATTACK_TARGET then
+			LOG(cmd.TargetIdx:get())
+		end
+	end
 end
 
 function _OnCreateThing(t)
@@ -114,8 +152,95 @@ function _OnKeyDown(k)
 		
 	end
 end
-
 ------------------------------------------------------------------------------------------------------------------------
+stalagtites = {0,true,{},false} --cdr in seconds,active,things,falling
+function ProcessIslandStalagtites()
+	if stalagtites[1] > 0 then
+		stalagtites[1] = stalagtites[1] - 3
+	else
+		if not stalagtites[2] then
+			stalagtites[2] = true
+			createStalagtites(68,3)
+		else
+			if countPeopleInArea(0,68,0) > 2 or countPeopleInArea(1,68,0) > 2 then
+				stalagtites[1] = 80 --seconds
+				stalagtites[2] = false
+				stalagtites[4] = true
+			end
+		end
+	end
+end
+function createStalagtites(marker,radius)
+	stalagtites = {0,true,{},false}
+	SearchMapCells(SQUARE, 0, 0 , radius, world_coord3d_to_map_idx(marker_to_coord3d(marker)), function(me)
+		if rnd() < 30 then
+			local stalag = createThing(T_EFFECT,60,8,me2c3d(me),false,false) stalag.u.Effect.Duration = -1 stalag.Pos.D3.Ypos = rndb(800,1300)
+			stalag.DrawInfo.Alpha = -16 set_thing_draw_info(stalag,TDI_SPRITE_F1_D1, rndb(1785,1787)) stalag.DrawInfo.Flags = EnableFlag(stalag.DrawInfo.Flags, DF_USE_ENGINE_SHADOW)
+			table.insert(stalagtites[3],stalag)
+		end
+	return true end)
+end
+function StalagtitesFalling()
+	if stalagtites[4] then
+		for k,v in ipairs(stalagtites[3]) do
+			if v.Pos.D3.Ypos > 2 then
+				v.Pos.D3.Ypos = v.Pos.D3.Ypos - rndb(86,96)
+			else
+				local boom = createThing(T_EFFECT,M_EFFECT_SPHERE_EXPLODE_1 ,8,v.Pos.D3,false,false)
+				queue_sound_event(boom,SND_EVENT_BEAMDOWN, 0)
+				SearchMapCells(SQUARE, 0, 0 , 1, world_coord3d_to_map_idx(boom.Pos.D3), function(me)
+					me.MapWhoList:processList( function (t)
+						if t.Type == T_PERSON then
+							t.u.Pers.Life = rndb(1,200) if rnd() < 60 then t.u.Pers.Life = 0 end
+						end
+					return true end)
+				return true end)
+				table.remove(stalagtites[3],k)
+				delete_thing_type(v)
+			end
+		end
+	end
+end
+createStalagtites(68,3)
+------------------------------------------------------------------------------------------------------------------------
+function ProcessDefensiveShaman()
+	GetRidOfNearbyEnemies(TRIBE_CYAN,1)
+	TargetNearbyShamans(TRIBE_CYAN,8+G_GAMESTAGE,30+G_GAMESTAGE*10)
+end
+
+function ProcessAgressiveShaman()
+	
+end
+
+function updateSpellEntries(marker,radius)
+	local s = G_GAMESTAGE
+	local pn,marker,radius = TRIBE_CYAN,0,24
+	if IS_SHAMAN_IN_AREA(pn,marker,radius) then
+		SET_SPELL_ENTRY(pn, 0, M_SPELL_BLAST, SPELL_COST(M_SPELL_BLAST) >> (1+s), 128, 1, 1)
+		SET_SPELL_ENTRY(pn, 1, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> (1+s), 128, 5-s, 1)
+		SET_SPELL_ENTRY(pn, 2, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> (1+s), 128, 5, 1)
+		if s > 1 then
+			SET_SPELL_ENTRY(pn, 3, M_SPELL_HYPNOTISM, SPELL_COST(M_SPELL_HYPNOTISM) >> (1+s), 128, 16-(s*2), 1)
+		end
+	else
+		SET_SPELL_ENTRY(pn, 0, M_SPELL_BLAST, SPELL_COST(M_SPELL_BLAST) >> (1+s), 128, 1, 0)
+		SET_SPELL_ENTRY(pn, 1, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_BLAST) >> (1+s), 128, 2, 0)
+		SET_SPELL_ENTRY(pn, 2, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> (1+s), 128, 7, 0)
+		if s > 0 then
+			SET_SPELL_ENTRY(pn, 3, M_SPELL_GHOST_ARMY, 5000, 128, 6-s, 0)
+		end
+		if s > 1 then
+			SET_SPELL_ENTRY(pn, 4, M_SPELL_HYPNOTISM, SPELL_COST(M_SPELL_HYPNOTISM) >> (1+s), 128, 12-s, 0)
+		end
+		if s > 2 then
+			SET_SPELL_ENTRY(pn, 5, M_SPELL_FIRESTORM, 150000, 128, 24-s, 0)
+		end
+	end
+	local pn = TRIBE_BLACK,1,16
+	
+end
+
+
 
 function updateAtkSpells(s)
 	AI_CYAN_ATK_SPELLS = {}
@@ -237,11 +362,36 @@ function trainingHutsPriorities(pn)
 	end
 end
 
+--update base priorities
+function updateBasePriorities(pn)
+	updateGameStage(5,10,15,20)
+	local s,h,b = G_GAMESTAGE, countHuts(pn,true), AI_GetUnitCount(pn, M_PERSON_BRAVE)
+	--local t,p = countTroops(pn), GetPop(pn)
+	AI_SetBuildingParams(pn,true,60+s*15,3)
+	if b > 20+(s*5) and h > 6+s then
+		if AI_GetBldgCount(pn, M_BUILDING_BOAT_HUT_1) > 0 then
+			WRITE_CP_ATTRIB(pn, ATTR_PREF_BOAT_DRIVERS, 1+s+2);
+			WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BOAT, 1+s+2);
+		else
+			WRITE_CP_ATTRIB(pn, ATTR_PREF_BOAT_DRIVERS, 0);
+			WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BOAT, 0);
+		end
+		if AI_GetBldgCount(pn, M_BUILDING_AIRSHIP_HUT_1) > 0 then
+			WRITE_CP_ATTRIB(pn, ATTR_PREF_BALLOON_DRIVERS, 1+s+2);
+			WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BALLOON, 1+s+2);
+		else
+			WRITE_CP_ATTRIB(pn, ATTR_PREF_BALLOON_DRIVERS, 0);
+			WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BALLOON, 0);
+		end
+	end
+end
 ------------------------------------------------------------------------------------------------------------------------
 
 AI_CYAN_SPELLS = {
-M_SPELL_BLAST,M_SPELL_CONVERT_WILD,
+M_SPELL_BLAST,
+M_SPELL_CONVERT_WILD,
 M_SPELL_GHOST_ARMY,
+M_SPELL_LAND_BRIDGE,
 M_SPELL_LIGHTNING_BOLT,
 M_SPELL_WHIRLWIND,
 M_SPELL_INSECT_PLAGUE,
@@ -299,7 +449,7 @@ function _OnLevelInit(level_id)
 	AI_SetTrainingHuts(TRIBE_CYAN, 0, 0, 0, 0);
 	AI_SetTrainingPeople(TRIBE_CYAN, true, 10, 0, 0, 0, 0);
 	AI_SetVehicleParams(TRIBE_CYAN, false, 0, 0, 0, 0);
-	--AI_SetFetchParams(TRIBE_CYAN, true, true, true, true);
+	AI_SetFetchParams(TRIBE_CYAN, true, true, true, true);
 
 	AI_SetAttackingParams(TRIBE_CYAN, true, 255, 10);
 	AI_SetDefensiveParams(TRIBE_CYAN, true, true, true, true, 3, 1, 1);
@@ -311,7 +461,7 @@ function _OnLevelInit(level_id)
 	AI_Initialize(TRIBE_BLACK)
 end
 
-function afterInit()
+function _OnPostLevelInit(level_id)
 	--stuff for humans
 	set_player_can_cast(M_SPELL_LAND_BRIDGE, TRIBE_BLUE);
 	set_player_can_cast(M_SPELL_LIGHTNING_BOLT, TRIBE_RED);
@@ -325,6 +475,8 @@ function afterInit()
 	end
 	--stuff for AI
 	G_AI_EXPANSION_TABLE[TRIBE_CYAN][1] = G_AI_EXPANSION_TABLE[TRIBE_CYAN][1] + rndb(60,120)
+	SET_DEFENCE_RADIUS(TRIBE_CYAN,9)
+	SET_DEFENCE_RADIUS(TRIBE_BLACK,7)
 end
 
 
