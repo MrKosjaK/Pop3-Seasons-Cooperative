@@ -124,7 +124,7 @@ local function green_convert(player)
 	  
 	if (turn < 720) then
       sham:toggle_converting(true);
-	  SHAMAN_DEFEND(player, 58, 80, TRUE);
+	  SHAMAN_DEFEND(player, 64, 58, TRUE);
 	else
       AI_SetVar(player, 3, 1);
 	  SHAMAN_DEFEND(player, 54, 126, TRUE);

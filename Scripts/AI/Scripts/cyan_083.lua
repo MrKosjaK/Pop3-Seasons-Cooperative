@@ -79,35 +79,63 @@ end
 
 local function cyan_anti_rush(player)
   AI_SetVar(player, 11, 0);
+  LOG("anti_rush");
   
   if (AI_GetVar(player, 12) == 0) then
     local turn = getTurn();
 	
-	if (turn < 3600) then
+	if (turn < 5760) then
 	  GetEnemyAreaInfo(player, 138, 136, 12, Area);
 	  
 	  -- check if we're being attacked by priests.
 	  if (Area:contains_people()) then
 	    local e_priests = Area:get_person_count(M_PERSON_RELIGIOUS);
 		local my_priests = AI_GetUnitCount(player, M_PERSON_RELIGIOUS);
+		local e_shamans = Area:get_person_count(M_PERSON_MEDICINE_MAN);
 		
-		if (e_priests > 0 and AI_ShamanFree(player)) then
+		if (e_shamans > 0) then
+		  
+		  AI_SetVar(player, 11, 1);
+		  if (AI_ShamanFree(player)) then
+		    LOG("yes, murder!!!");
+		    -- target fucking shaman and murder her to death.
+			AI_SetAttackFlags(player, 3, 1, 0);
+		    AI_SetAways(player, 0, 0, 0, 0, 0);
+		    AI_SetShamanAway(player, true);
+			
+			if (player_can_cast(M_SPELL_LIGHTNING_BOLT, player) ~= 3) then
+		      set_player_can_cast_temp(M_SPELL_LIGHTNING_BOLT, player, 1);
+		      set_player_can_cast_temp(M_SPELL_LIGHTNING_BOLT, player, 1);
+		      set_player_can_cast_temp(M_SPELL_LIGHTNING_BOLT, player, 1);
+		    end
+			
+			LOG("about to murder heheboiz");
+			-- tear her apart.
+			ATTACK(player, TRIBE_BLUE, 0, ATTACK_PERSON, M_PERSON_MEDICINE_MAN, 998, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, ATTACK_NORMAL, 0, -1, -1, 0);
+		  end
+		end
+		
+		if (e_priests > 0) then
 		  AI_SetVar(player, 11, 1);
 		  -- murder.
 		  AI_SetAttackFlags(player, 3, 1, 0);
 		  AI_SetAways(player, 0, 0, 100, 0, 0);
-		  AI_SetShamanAway(player, true);
+		  AI_SetShamanAway(player, false);
 		  
-		  if (player_can_cast(M_SPELL_BLAST, player) ~= 3) then
-		    set_player_can_cast_temp(M_SPELL_BLAST, player, 1);
-		    set_player_can_cast_temp(M_SPELL_BLAST, player, 1);
-		    set_player_can_cast_temp(M_SPELL_BLAST, player, 1);
+		  if (AI_ShamanFree(player) and (my_priests <= e_priests)) then
+		    AI_SetShamanAway(player, true);
+		  
+		    if (player_can_cast(M_SPELL_BLAST, player) ~= 3) then
+		      set_player_can_cast_temp(M_SPELL_BLAST, player, 1);
+		      set_player_can_cast_temp(M_SPELL_BLAST, player, 1);
+		      set_player_can_cast_temp(M_SPELL_BLAST, player, 1);
+		    end
+		  
+		    SET_SPELL_ENTRY(player, 2, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 1, 1);
+		    SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 1, 1);
 		  end
-		  
-		  SET_SPELL_ENTRY(player, 2, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 1, 1);
-		  SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 1, 1);
-		
-		  ATTACK(player, TRIBE_BLUE, math.max(0, my_priests), ATTACK_MARKER, 39, 998, M_SPELL_BLAST, M_SPELL_BLAST, M_SPELL_BLAST, ATTACK_NORMAL, 0, -1, -1, 0);
+		  LOG("priest murder");
+		  ATTACK(player, TRIBE_BLUE, my_priests, ATTACK_MARKER, 39, 998, M_SPELL_BLAST, M_SPELL_BLAST, M_SPELL_BLAST, ATTACK_NORMAL, 0, -1, -1, 0);
 		end
 	  end
 	else
@@ -300,9 +328,9 @@ local function cyan_convert(player)
   if (AI_GetVar(player, 9) == 0) then
 	local turn = getTurn();
 	  
-	if (turn < 720) then
+	if (turn < 840) then
       sham:toggle_converting(true);
-	  SHAMAN_DEFEND(player, 138, 78, TRUE);
+	  SHAMAN_DEFEND(player, 136, 44, TRUE);
 	else
       AI_SetVar(player, 9, 1);
 	  SHAMAN_DEFEND(player, 138, 128, TRUE);
@@ -347,20 +375,20 @@ local function cyan_build(player)
   end
   
   if (AI_GetVar(player, 2) == 1) then
-    if (fw_trains == 0) then
-	  WRITE_CP_ATTRIB(player, ATTR_PREF_SUPER_WARRIOR_TRAINS, 1);
-	  WRITE_CP_ATTRIB(player, ATTR_PREF_SUPER_WARRIOR_PEOPLE, 0);
-	else
-	  WRITE_CP_ATTRIB(player, ATTR_PREF_SUPER_WARRIOR_PEOPLE, 12);
-	end
-  end
-  
-  if (AI_GetVar(player, 3) == 1) then
     if (temples == 0) then
 	  WRITE_CP_ATTRIB(player, ATTR_PREF_RELIGIOUS_TRAINS, 1);
 	  WRITE_CP_ATTRIB(player, ATTR_PREF_RELIGIOUS_PEOPLE, 0);
 	else
-	  WRITE_CP_ATTRIB(player, ATTR_PREF_RELIGIOUS_PEOPLE, 12);
+	  WRITE_CP_ATTRIB(player, ATTR_PREF_RELIGIOUS_PEOPLE, 10);
+	end
+  end
+  
+  if (AI_GetVar(player, 3) == 1) then
+	if (fw_trains == 0) then
+	  WRITE_CP_ATTRIB(player, ATTR_PREF_SUPER_WARRIOR_TRAINS, 1);
+	  WRITE_CP_ATTRIB(player, ATTR_PREF_SUPER_WARRIOR_PEOPLE, 0);
+	else
+	  WRITE_CP_ATTRIB(player, ATTR_PREF_SUPER_WARRIOR_PEOPLE, 12);
 	end
   end
   
@@ -373,11 +401,11 @@ local function cyan_build(player)
 end
 
 -- events
-ai:create_event(1, 256, 64, cyan_build);
-ai:create_event(2, 128, 24, cyan_convert);
+ai:create_event(1, 174, 46, cyan_build);
+ai:create_event(2, 90, 24, cyan_convert);
 ai:create_event(3, 132, 32, cyan_early_towers);
-ai:create_event(4, 380, 44, cyan_anti_rush);
-ai:create_event(5, 1536, 256, cyan_mid_attack);
-ai:create_event(6, 512, 96, cyan_look_for_buildings);
-ai:create_event(7, 640, 144, cyan_check_towers);
-ai:create_event(8, 2048, 256, cyan_main_attack);
+ai:create_event(4, 214, 88, cyan_anti_rush);
+ai:create_event(5, 1236, 256, cyan_mid_attack);
+ai:create_event(6, 480, 96, cyan_look_for_buildings);
+ai:create_event(7, 422, 104, cyan_check_towers);
+ai:create_event(8, 1884, 256, cyan_main_attack);

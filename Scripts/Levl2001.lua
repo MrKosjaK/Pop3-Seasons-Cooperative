@@ -85,7 +85,7 @@ function _OnLevelInit(level_id)
   SET_SPELL_ENTRY(TRIBE_CYAN, 1, M_SPELL_BLAST, SPELL_COST(M_SPELL_BLAST) >> 2, 32, 1, 0);
 
   AI_SetBuildingParams(TRIBE_CYAN, true, 18, 3);
-  AI_SetTrainingHuts(TRIBE_CYAN, 0, 0, 0, 0);
+  AI_SetTrainingHuts(TRIBE_CYAN, 0, 1, 0, 0);
   AI_SetTrainingPeople(TRIBE_CYAN, false, 0, 0, 0, 0, 0);
   AI_SetVehicleParams(TRIBE_CYAN, false, 0, 0, 0, 0);
   AI_SetFetchParams(TRIBE_CYAN, false, false, false, false);

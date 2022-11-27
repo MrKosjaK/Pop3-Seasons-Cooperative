@@ -188,7 +188,7 @@ local function purple_convert(player)
 	  
 	if (turn < 720) then
       sham:toggle_converting(true);
-	  SHAMAN_DEFEND(player, 222, 82, TRUE);
+	  SHAMAN_DEFEND(player, 226, 54, TRUE);
 	else
       AI_SetVar(player, 1, 1);
 	  SHAMAN_DEFEND(player, 222, 118, TRUE);
