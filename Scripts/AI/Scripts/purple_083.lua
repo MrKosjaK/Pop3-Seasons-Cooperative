@@ -7,9 +7,9 @@ sham:toggle_fall_damage_save(true, 50);
 sham:toggle_land_bridge_save(true, 25);
 sham:toggle_lightning_dodge(true, 90);
 sham:toggle_spell_check(true);
-sham:set_spell_entry(1, M_SPELL_LIGHTNING_BOLT, {M_BUILDING_DRUM_TOWER}, 4, 4, 40000);
-sham:set_spell_entry(2, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 5, 6, 7, 8}, 3, 3, 80000);
-sham:set_spell_entry(3, M_SPELL_EARTHQUAKE, {1, 2, 3, 5, 6, 7, 8}, 2, 2, 125000);
+sham:set_spell_entry(1, M_SPELL_LIGHTNING_BOLT, {4, 5, 6, 7, 8}, 4, 4, 35000);
+sham:set_spell_entry(2, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 5, 6, 7, 8}, 3, 3, 90000);
+sham:set_spell_entry(3, M_SPELL_EARTHQUAKE, {1, 2, 3, 5, 6, 7, 8}, 2, 2, 115000);
 
 -- towers
 ai:create_tower(1, 218, 118, -1);
