@@ -11,7 +11,7 @@ sham:toggle_lightning_dodge(true, 90);
 sham:toggle_spell_check(true);
 sham:set_spell_entry(1, M_SPELL_LIGHTNING_BOLT, {M_BUILDING_DRUM_TOWER}, 4, 4, 40000);
 sham:set_spell_entry(2, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 5, 6, 7, 8}, 3, 3, 80000);
-sham:set_spell_entry(3, M_SPELL_EARTHQUAKE, {2, 3, 5, 6, 7, 8}, 2, 2, 125000);
+sham:set_spell_entry(3, M_SPELL_EARTHQUAKE, {1, 2, 3, 5, 6, 7, 8}, 2, 2, 125000);
 
 -- towers
 ai:create_tower(1, 138, 136, -1);
@@ -184,10 +184,20 @@ local function cyan_main_attack(player)
 	
 	-- now for shaman only attacks.
 	-- check if shes free
-	if (AI_ShamanFree(player)) then
+	if (AI_ShamanFree(player) and (sham:can_cast_spell_from_entry(3) or sham:can_cast_spell_from_entry(2))) then
 	  -- now make sure mid is either taken by us or is clear
 	  if (AI_GetVar(player, 10) == 0) then
-	    
+	    AI_SetAttackFlags(player, 2, 1, 0);
+		AI_SetAways(player, 0, 0, 0, 0, 0);
+		AI_SetShamanAway(player, true);
+		
+		if (player_can_cast(M_SPELL_HYPNOTISM, player) ~= 3) then
+	      set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
+		  set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
+		  set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
+	    end
+		
+		ATTACK(player, TRIBE_BLUE, 0, ATTACK_BUILDING, 0, 600, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, ATTACK_NORMAL, 0, 3, -1, 0);
 	  end
 	end
   end
@@ -214,7 +224,7 @@ local function cyan_mid_attack(player)
 	  AI_SetVar(player, 10, 1); -- indicate that mid has enemies.
 	  -- so there are fws, then we should send our shaman, don't want to waste any priests or fws.
 	  if (AI_ShamanFree(player)) then
-	    if (player_can_cast(M_SPELL_LIGHTNING_BOLT, player) ~= 3) then
+	    if (player_can_cast(M_SPELL_INSECT_PLAGUE, player) ~= 3) then
 	      set_player_can_cast_temp(M_SPELL_INSECT_PLAGUE, player, 1);
 		  set_player_can_cast_temp(M_SPELL_INSECT_PLAGUE, player, 1);
 		  set_player_can_cast_temp(M_SPELL_INSECT_PLAGUE, player, 1);

@@ -7,6 +7,9 @@ sham:toggle_fall_damage_save(true, 50);
 sham:toggle_land_bridge_save(true, 25);
 sham:toggle_lightning_dodge(true, 90);
 sham:toggle_spell_check(true);
+sham:set_spell_entry(1, M_SPELL_LIGHTNING_BOLT, {M_BUILDING_DRUM_TOWER}, 4, 4, 40000);
+sham:set_spell_entry(2, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 5, 6, 7, 8}, 3, 3, 80000);
+sham:set_spell_entry(3, M_SPELL_EARTHQUAKE, {1, 2, 3, 5, 6, 7, 8}, 2, 2, 125000);
 
 -- towers
 ai:create_tower(1, 218, 118, -1);
@@ -83,7 +86,6 @@ local function purple_shaman_attack(player)
 end
 
 local function purple_early_towers(player)
-  
   local my_pop = AI_GetPopCount(player);
   
   if (my_pop >= 10) then
@@ -201,10 +203,29 @@ local function purple_convert(player)
   end
 end
 
+local function purple_check_towers(player)
+  --if (AI_GetVar(player, 9) == 0 or AI_GetVar(player, 10) == 1 or AI_GetVar(player, 11) == 1) then
+	--return;
+  --end
+  
+  local my_pop = AI_GetPopCount(player);
+  
+  if (my_pop >= 30) then
+    -- only bother with said pop or above
+	for i = 1, 8 do
+	  if (not ai:is_tower_constructed(i)) then
+	    ai:construct_tower(i);
+		break;
+      end
+	end
+  end
+end
+
 -- events
-ai:create_event(1, 122, 32, purple_convert);
-ai:create_event(2, 256, 96, purple_build);
+ai:create_event(1, 92, 34, purple_convert);
+ai:create_event(2, 188, 74, purple_build);
 ai:create_event(3, 140, 44, purple_early_towers);
 ai:create_event(4, 1440, 256, purple_shaman_attack);
 ai:create_event(5, 940, 120, purple_troop_attack);
-ai:create_event(6, 512, 128, purple_look_for_buildings);
+ai:create_event(6, 480, 96, purple_look_for_buildings);
+ai:create_event(7, 384, 96, purple_check_towers);

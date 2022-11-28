@@ -129,6 +129,10 @@ function sh_mt:set_spell_entry(idx, spell, t_models, used_count, max_count, cost
   self.SpellEntries[idx] = spell_entry;
 end
 
+function sh_mt:can_cast_spell_from_entry(idx)
+  return (self.SpellEntries[idx].UsageCount < self.SpellEntries[idx].MaxUsage);
+end
+
 function sh_mt:process_mana()
   local curr_mana_amt = G_PLR_PTR[self.Owner].LastManaIncr >> 4;
   

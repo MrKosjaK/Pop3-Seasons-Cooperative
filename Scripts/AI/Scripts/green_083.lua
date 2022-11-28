@@ -7,6 +7,17 @@ sham:toggle_fall_damage_save(true, 50);
 sham:toggle_land_bridge_save(true, 25);
 sham:toggle_lightning_dodge(true, 90);
 sham:toggle_spell_check(true);
+sham:set_spell_entry(1, M_SPELL_LIGHTNING_BOLT, {M_BUILDING_DRUM_TOWER}, 4, 4, 40000);
+sham:set_spell_entry(2, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 5, 6, 7, 8}, 3, 3, 80000);
+sham:set_spell_entry(3, M_SPELL_EARTHQUAKE, {1, 2, 3, 5, 6, 7, 8}, 2, 2, 125000);
+
+-- towers
+ai:create_tower(1, 54, 136, -1);
+ai:create_tower(2, 40, 116, -1);
+ai:create_tower(3, 66, 112, -1);
+ai:create_tower(4, 46, 80, -1);
+ai:create_tower(5, 68, 80, 3);
+ai:create_tower(6, 56, 78, 2);
 
 local cont = getPlayerContainer(TRIBE_GREEN);
 local construction_list = cont.PlayerLists[BUILDINGMARKERLIST];
@@ -66,63 +77,108 @@ end
 
 local function green_build(player)
   AI_SetVar(player, 2, 0);
+  AI_SetVar(player, 3, 0);
+  AI_SetVar(player, 4, 0);
   local huts = AI_GetHutsCount(player);
-  local war_train = AI_GetBldgCount(player, M_BUILDING_WARRIOR_TRAIN);
+  local war_trains = AI_GetBldgCount(player, M_BUILDING_WARRIOR_TRAIN);
   local temples = AI_GetBldgCount(player, M_BUILDING_TEMPLE);
   
-  if (war_train > 0 or temples > 0) then
+  if (temples > 0 or war_trains > 0) then
     WRITE_CP_ATTRIB(player, ATTR_MAX_TRAIN_AT_ONCE, 3);
     STATE_SET(player, TRUE, CP_AT_TYPE_TRAIN_PEOPLE);
   end
   
-  if (huts < 5) then
-    WRITE_CP_ATTRIB(player, ATTR_HOUSE_PERCENTAGE, 24);
-    WRITE_CP_ATTRIB(player, ATTR_MAX_BUILDINGS_ON_GO, 4);
-    WRITE_CP_ATTRIB(player, ATTR_PREF_RELIGIOUS_PEOPLE, 0);
-    WRITE_CP_ATTRIB(player, ATTR_PREF_RELIGIOUS_TRAINS, 0);
-    WRITE_CP_ATTRIB(player, ATTR_PREF_WARRIOR_TRAINS, 0);
-    WRITE_CP_ATTRIB(player, ATTR_PREF_WARRIOR_PEOPLE, 0);
-  end
-  
-  if (huts >= 5 and war_train == 0) then
-    -- build warrior hut firsto.
-	WRITE_CP_ATTRIB(player, ATTR_PREF_WARRIOR_TRAINS, 1);
-	WRITE_CP_ATTRIB(player, ATTR_HOUSE_PERCENTAGE, 30);
-	WRITE_CP_ATTRIB(player, ATTR_MAX_BUILDINGS_ON_GO, 2);
-  end
-  
-  if (huts >= 6 and war_train > 0) then
-    WRITE_CP_ATTRIB(player, ATTR_PREF_WARRIOR_PEOPLE, 12);
-	WRITE_CP_ATTRIB(player, ATTR_HOUSE_PERCENTAGE, 60);
-	WRITE_CP_ATTRIB(player, ATTR_MAX_BUILDINGS_ON_GO, 3);
-	if (AI_GetVar(player, 1) == 0) then
-      AI_SetVar(player, 1, 1);
-      AI_SetMainDrumTower(player, true, 62, 142);
-    end
-  end
-  
-  if (huts >= 8 and temples == 0) then
-    WRITE_CP_ATTRIB(player, ATTR_PREF_RELIGIOUS_TRAINS, 1);
-	WRITE_CP_ATTRIB(player, ATTR_HOUSE_PERCENTAGE, 70);
-  end
-  
-  if (huts >= 8 and temples > 0) then
-    AI_SetVar(player, 2, 1); -- fws!!!!
-    WRITE_CP_ATTRIB(player, ATTR_MAX_BUILDINGS_ON_GO, 1);
+  if (huts < 7) then
+    WRITE_CP_ATTRIB(player, ATTR_HOUSE_PERCENTAGE, 45);
+	WRITE_CP_ATTRIB(player, ATTR_MAX_BUILDINGS_ON_GO, 4);
+	AI_SetVar(player, 2, 1);
+  elseif (huts < 16) then
     WRITE_CP_ATTRIB(player, ATTR_HOUSE_PERCENTAGE, 90);
-	WRITE_CP_ATTRIB(player, ATTR_PREF_RELIGIOUS_PEOPLE, 12);
-	WRITE_CP_ATTRIB(player, ATTR_PREF_WARRIOR_PEOPLE, 16);
+	WRITE_CP_ATTRIB(player, ATTR_MAX_BUILDINGS_ON_GO, 3);
+	AI_SetVar(player, 2, 1);
+	AI_SetVar(player, 3, 1);
+	if (AI_GetVar(player, 10) == 0) then
+      AI_SetVar(player, 10, 1);
+      AI_SetMainDrumTower(player, true, 54, 126);
+    end
+  else
+    WRITE_CP_ATTRIB(player, ATTR_HOUSE_PERCENTAGE, 121);
+	WRITE_CP_ATTRIB(player, ATTR_MAX_BUILDINGS_ON_GO, 3);
+	AI_SetVar(player, 2, 1);
+	AI_SetVar(player, 3, 1);
+	AI_SetVar(player, 4, 1);
+  end
+  
+  if (AI_GetVar(player, 2) == 1) then
+    if (temples == 0) then
+	  WRITE_CP_ATTRIB(player, ATTR_PREF_RELIGIOUS_TRAINS, 1);
+	  WRITE_CP_ATTRIB(player, ATTR_PREF_RELIGIOUS_PEOPLE, 0);
+	else
+	  WRITE_CP_ATTRIB(player, ATTR_PREF_RELIGIOUS_PEOPLE, 14);
+	end
+  end
+  
+  if (AI_GetVar(player, 3) == 1) then
+    if (war_trains == 0) then
+	  WRITE_CP_ATTRIB(player, ATTR_PREF_WARRIOR_TRAINS, 1);
+	  WRITE_CP_ATTRIB(player, ATTR_PREF_WARRIOR_PEOPLE, 0);
+	else
+	  WRITE_CP_ATTRIB(player, ATTR_PREF_WARRIOR_PEOPLE, 10);
+	end
+  end
+  
+  if (AI_GetVar(player, 4) == 1) then
+    if (temples > 0 and war_trains > 0) then
+	  WRITE_CP_ATTRIB(player, ATTR_PREF_WARRIOR_PEOPLE, 16);
+	  WRITE_CP_ATTRIB(player, ATTR_PREF_RELIGIOUS_PEOPLE, 20);
+	end
   end
 end
 
-local function green_towers(player)
+local function green_check_towers(player)
+end
+
+local function green_early_towers(player)
+  local my_pop = AI_GetPopCount(player);
+  
+  if (my_pop >= 10) then
+    if (AI_GetVar(player, 5) == 0) then
+	  ai:construct_tower(1);
+	  AI_SetVar(player, 5, 1);
+	  return;
+	end
+	
+	if (AI_GetVar(player, 6) == 0) then
+	  ai:construct_tower(2);
+	  AI_SetVar(player, 6, 1);
+	  return;
+	end
+	
+	if (AI_GetVar(player, 7) == 0) then
+	  ai:construct_tower(3);
+	  AI_SetVar(player, 7, 1);
+	  return;
+	end
+	
+	if (AI_GetVar(player, 8) == 0) then
+	  ai:construct_tower(4);
+	  AI_SetVar(player, 8, 1);
+	  return;
+	end
+	
+	if (AI_GetVar(player, 9) == 0) then
+	  ai:construct_tower(5);
+	  AI_SetVar(player, 9, 1);
+	  return;
+	end
+  end
 end
 
 local function green_convert(player)
   if (AI_GetVar(player, 3) == 0) then
 	local turn = getTurn();
 	  
-	if (turn < 720) then
+	if (turn < 960) then
       sham:toggle_converting(true);
 	  SHAMAN_DEFEND(player, 64, 58, TRUE);
 	else
@@ -133,7 +189,8 @@ local function green_convert(player)
   end
 end
 
-ai:create_event(1, 128, 32, green_convert);
-ai:create_event(2, 256, 96, green_build);
-ai:create_event(3, 340, 150, green_towers);
-ai:create_event(4, 512, 128, green_look_for_buildings);
+ai:create_event(1, 114, 24, green_convert);
+ai:create_event(2, 192, 84, green_build);
+ai:create_event(3, 372, 90, green_check_towers);
+ai:create_event(4, 140, 44, green_early_towers);
+ai:create_event(5, 480, 96, green_look_for_buildings);
