@@ -100,6 +100,7 @@ function _OnTurn(turn)
 	if everySeconds(30-stage) then
 		DefensivePreachMarkers()
 		DefendStoneHead(68)
+		updateTroopsAndAtkParams()
 	end
 	if everySeconds(180-stage*10) then
 		OffensivePreachMarkers()
@@ -109,16 +110,19 @@ function _OnTurn(turn)
 	------------------------------------------------------------------------------------------------------------------------
 	
 	--snowing 3 times during level
-	--snowAmtTarget, CreationAmtPerSecCreation, speed, (durationSeconds, internTimer), fadeSeconds
+	--snowAmtTarget, AmtPerSecCreation, speed, (durationSeconds, internTimer), fadeSeconds
 	if turn == 1000 then
-		createSnow(1700, 50, 32, 60*3, 60*3, 12)
+		createSnow(1700, 50, 32, 60*3, 12)
 	elseif turn == 7000 then
-		createSnow(700, 100, 24, 60*1, 60*1, 3)
+		createSnow(700, 100, 20, 60*1, 3)
 	elseif turn == 13000 then
-		createSnow(1200, 50, 42, 60*2, 60*2, 24)
+		createSnow(1200, 50, 42, 60*2, 24)
 	end
 	--process stalagtites
 	StalagtitesFalling()
+	
+	LOG(getShaman(0))
+	
 end
 
 function _OnCreateThing(t)
@@ -141,11 +145,67 @@ function _OnKeyDown(k)
 	end
 end
 ------------------------------------------------------------------------------------------------------------------------
+function attack(attacker)
+	if #G_HUMANS_ALIVE > 0 then --wont bother to continue level(attack) if only AIs exist
+		if AI_EntryAvailable(attacker) then
+			local stage = G_GAMESTAGE
+			local target = -1
+			if attacker == TRIBE_CYAN then target = iipp(TRIBE_BLUE,TRIBE_RED,20,80) else target = iipp(TRIBE_BLUE,TRIBE_RED,40,60) end --**
+			if #G_HUMANS_ALIVE == 1 then target = randomItemFromTable(G_HUMANS_ALIVE) end
+			if attacker == TRIBE_CYAN then WRITE_CP_ATTRIB(attacker, ATTR_FIGHT_STOP_DISTANCE, 24+G_RANDOM(8)) else WRITE_CP_ATTRIB(attacker, ATTR_FIGHT_STOP_DISTANCE, 16+G_RANDOM(4)) end --**
+			local troops = countTroops(attacker)
+			if troops > 4 + stage*2 then
+				local numTroops = 2 + stage*2 --**
+				if IS_SHAMAN_AVAILABLE_FOR_ATTACK(attacker) == 0 then WRITE_CP_ATTRIB(attacker, ATTR_AWAY_MEDICINE_MAN, 0) else WRITE_CP_ATTRIB(attacker, ATTR_AWAY_MEDICINE_MAN, btn(rnd() < 80+10*stage)) end
+				local atkType = ATTACK_NORMAL
+				local boats,balloons = countBoats(attacker),countBalloons(attacker)
+				if (boats > 0 or balloons > 0) and READ_CP_ATTRIB(attacker,ATTR_DONT_USE_BOATS) == 0 then
+					atkType = iipp(ATTACK_NORMAL,-1,60,40) --**
+					if atkType == -1 then
+						if (boats > 0 and balloons > 0) then
+							atkType = iipp(ATTACK_BY_BOAT,ATTACK_BY_BALLOON,50,50) --**
+						else
+							if boats > 0 then atkType = ATTACK_BY_BOAT else atkType = ATTACK_BY_BALLOON end
+						end
+					end
+				end
+				if attacker == TRIBE_CYAN then atkType = ATTACK_BY_BOAT end --X
+				if stage < 2 then
+					WRITE_CP_ATTRIB(attacker, ATTR_BASE_UNDER_ATTACK_RETREAT, 1) WRITE_CP_ATTRIB(attacker, ATTR_RETREAT_VALUE, rndb(0,12))
+				else
+					WRITE_CP_ATTRIB(attacker, ATTR_BASE_UNDER_ATTACK_RETREAT, 0) WRITE_CP_ATTRIB(attacker, ATTR_RETREAT_VALUE, 0)
+				end
+				
+				
+				
+				
+				
+				
+				local spell1,spell2,spell3 = 0,0,0
+				if attacker == TRIBE_CYAN then spell1,spell2,spell3 = AI_CYAN_ATK_SPELLS[1],AI_CYAN_ATK_SPELLS[2],AI_CYAN_ATK_SPELLS[3] else spell1,spell2,spell3 = AI_BLACK_ATK_SPELLS[1],AI_BLACK_ATK_SPELLS[2],AI_BLACK_ATK_SPELLS[3] end --**
+				if spell1 == M_SPELL_INVISIBILITY or spell1 == M_SPELL_SHIELD then
+					
+				end
+				
+				
+				
+				
+				
+				
+				
+				local mk1,mk2 = -1,-1
+			end
+		end
+	end
+end
+
 function updateMarkerPatrols()
 	local pn = TRIBE_CYAN
 	SET_MARKER_ENTRY(pn, 0, 69, 70, 0, 1, 0, 1)
 	MARKER_ENTRIES(pn, 0,-1,-1,-1)
 	--VEHICLE_PATROL(pn, 3, 71,72,73,74, M_VEHICLE_BOAT_1) --gl with that lol
+	local pn = TRIBE_BLACK
+	
 end
 
 function ProcessDefensiveShaman()
@@ -162,6 +222,28 @@ function ProcessAgressiveShaman()
 		GetRidOfNearbyEnemies(pn,1)
 		TargetNearbyShamans(pn,9+G_GAMESTAGE,20+G_GAMESTAGE*15)
 	end	
+end
+
+function updateTroopsAndAtkParams()
+	local stage = G_GAMESTAGE
+	local pn = TRIBE_CYAN
+	--update attack percentage
+	local atkp = 100 + stage*5
+	if atkp > 140 then atkp = 140 end
+	WRITE_CP_ATTRIB(pn, ATTR_ATTACK_PERCENTAGE, atkp)
+	--auto train units occasionally
+	if rnd() < 50 then --50% chance for main code executte
+		local braves = _gsi.Players[pn].NumPeopleOfType[M_PERSON_BRAVE]
+		local troopAmmount = countTroops(pn)
+		if troopAmmount < math.floor(braves/3) then
+			local troopsType = {{M_PERSON_WARRIOR,4+stage*2},{M_PERSON_RELIGIOUS,4+stage*2}--[[,{M_PERSON_SUPER_WARRIOR,4+stage*2},{M_PERSON_SPY,4+stage*2}]]}
+			for k,v in ipairs(troopsType) do
+				if AI_EntryAvailable(pn) then
+					if AI_GetUnitCount(pn,v[1]) < v[2] then TRAIN_PEOPLE_NOW(pn,1,v[1]) end
+				end
+			end
+		end
+	end
 end
 
 function updateSpellEntries(marker,radius)
@@ -489,5 +571,4 @@ createStalagtites(68,3)
 
 --to do:
 --attacks
---patrols
 --black tribe

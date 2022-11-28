@@ -121,6 +121,12 @@ function isItemInTable(tbl,item)
 	end
 	return false
 end
+
+--pick an item of 2 items, with chances
+function iipp(item1,item2,percentage1,percentage2)
+	if rnd() < percentage1 then return item1 end
+	return item2
+end
 --------------------------------------------------------------------------------------------------------------------------------------------
 --quick shaman nil
 function nilS(tribe)
