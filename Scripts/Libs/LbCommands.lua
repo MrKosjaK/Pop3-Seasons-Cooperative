@@ -58,8 +58,8 @@ end
 function cmd_mt:construct_building(t, target_thing)
   if (self.Idx < 8) then
     self.CTI.TargetIdx:set(0);
-    self.CTI.TMIdxs.TargetIdx:set(target_idx);
-	self.CTI.MapIdx = world_coord2d_to_map_idx(target_thing.Pos.D2);
+    self.CTI.TMIdxs.TargetIdx:set(target_thing.ThingNum);
+	self.CTI.TMIdxs.MapIdx = world_coord2d_to_map_idx(target_thing.Pos.D2);
 	
 	update_cmd_list_entry(self.Command, CMD_BUILD_BUILDING, self.CTI, 0);
 	
