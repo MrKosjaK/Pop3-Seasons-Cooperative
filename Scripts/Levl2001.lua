@@ -170,7 +170,7 @@ end
 
 function _OnTurn(turn)
   if ((turn % 4096) == 0) then
-    createSnow(1000, 10, 16, 180, 1, 12);
+    createSnow(1000, 10, 16, 180, 12);
   end
 end
 
