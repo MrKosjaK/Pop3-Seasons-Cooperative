@@ -1,5 +1,6 @@
 -- Includes
 include("Common.lua");
+include("Snow.lua");
 include("AI\\Scripts\\cyan_083.lua");
 include("AI\\Scripts\\green_083.lua");
 include("AI\\Scripts\\purple_083.lua");
@@ -168,7 +169,9 @@ function _OnLevelInit(level_id)
 end
 
 function _OnTurn(turn)
-
+  if ((turn % 4096) == 0) then
+    createSnow(1000, 10, 16, 180, 1, 12);
+  end
 end
 
 function _OnCreateThing(t)
