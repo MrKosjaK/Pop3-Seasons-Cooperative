@@ -328,7 +328,7 @@ end
 ai:create_event(1, 92, 34, purple_convert);
 ai:create_event(2, 188, 74, purple_build);
 ai:create_event(3, 140, 44, purple_early_towers);
-ai:create_event(4, 1336, 262, purple_mid_attack);
-ai:create_event(5, 2011, 316, purple_main_attack);
+ai:create_event(4, 1436, 262, purple_mid_attack);
+ai:create_event(5, 2311, 316, purple_main_attack);
 ai:create_event(6, 480, 96, purple_look_for_buildings);
 ai:create_event(7, 384, 96, purple_check_towers);
