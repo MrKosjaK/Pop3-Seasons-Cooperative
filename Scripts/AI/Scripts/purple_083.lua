@@ -58,12 +58,8 @@ local function purple_look_for_buildings(player)
 	    local shape = shapes_without_workers[#shapes_without_workers];
 		
 		-- command brave here i guessorino
-		cti.TMIdxs.TargetIdx:set(shape.ThingNum);
-		cti.TMIdxs.MapIdx = world_coord2d_to_map_idx(shape.Pos.D2);
-		update_cmd_list_entry(cmd, CMD_BUILD_BUILDING, cti, 0);
-		
-		t.Flags = t.Flags | TF_RESET_STATE;
-		add_persons_command(t, cmd, 0);
+		Cmds:clear_person_commands(t);
+		Cmds:construct_building(t, shape);
 		
 		peeps_per_shape = peeps_per_shape - 1;
 		if (peeps_per_shape == 0) then
