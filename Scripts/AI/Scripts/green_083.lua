@@ -23,8 +23,6 @@ local cont = getPlayerContainer(TRIBE_GREEN);
 local construction_list = cont.PlayerLists[BUILDINGMARKERLIST];
 local people_list = cont.PlayerLists[PEOPLELIST];
 local shapes_without_workers = {};
-local cmd = Commands.new();
-local cti = CmdTargetInfo.new();
 
 local function green_look_for_buildings(player)
   if (construction_list:isEmpty()) then

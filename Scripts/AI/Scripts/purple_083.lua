@@ -25,8 +25,7 @@ local cont = getPlayerContainer(TRIBE_PINK);
 local construction_list = cont.PlayerLists[BUILDINGMARKERLIST];
 local people_list = cont.PlayerLists[PEOPLELIST];
 local shapes_without_workers = {};
-local cmd = Commands.new();
-local cti = CmdTargetInfo.new();
+local Area = CreateAreaInfo();
 
 local function purple_look_for_buildings(player)
   if (construction_list:isEmpty()) then
@@ -73,12 +72,120 @@ local function purple_look_for_buildings(player)
   end);
 end
 
-local function purple_troop_attack(player)
-
+local function purple_main_attack(player)
+  if (AI_GetVar(player, 1) == 0 and AI_GetVar(player, 11) == 1) then
+    return;
+  end
+  
+  local result = NAV_CHECK(player, TRIBE_YELLOW, ATTACK_BUILDING, 0, FALSE);
+  local idx = AI_GetVar(player, 12);
+  
+  if (result == 1) then
+    if (idx == 0) then
+	  local my_wars = AI_GetUnitCount(player, M_PERSON_WARRIOR);
+	  if (my_wars >= 2) then
+	    if (MANA(player) >= SPELL_COST(M_SPELL_INVISIBILITY)) then
+		  AI_SetAttackFlags(player, 0, 0, 0);
+		  AI_SetAways(player, 0, 100, 0, 0, 0);
+		  AI_SetShamanAway(player, false);
+		  
+		  ATTACK(player, TRIBE_YELLOW, math.min(8, my_wars), ATTACK_BUILDING, M_BUILDING_WARRIOR_TRAIN, 400, M_SPELL_INVISIBILITY, M_SPELL_INVISIBILITY, M_SPELL_INVISIBILITY, ATTACK_NORMAL, 0, 20, -1, 0);
+		end
+	  end
+	  AI_SetVar(player, 12, 1);
+	elseif (idx == 1) then
+	  local my_wars = AI_GetUnitCount(player, M_PERSON_WARRIOR);
+	  if (my_wars >= 8) then
+	    if (MANA(player) >= SPELL_COST(M_SPELL_INVISIBILITY) << 1) then
+		  AI_SetAttackFlags(player, 0, 0, 0);
+		  AI_SetAways(player, 0, 50, 0, 50, 0);
+		  AI_SetShamanAway(player, false);
+		  
+		  ATTACK(player, TRIBE_YELLOW, math.min(18, my_wars), ATTACK_BUILDING, M_BUILDING_SUPER_TRAIN, 700, M_SPELL_INVISIBILITY, M_SPELL_INVISIBILITY, M_SPELL_INVISIBILITY, ATTACK_NORMAL, 0, 20, -1, 0);
+		end
+	  else
+	    -- still attack with what ever we have.
+		AI_SetAttackFlags(player, 0, 1, 0);
+		AI_SetAways(player, 0, 50, 0, 50, 0);
+		AI_SetShamanAway(player, false);
+		  
+		ATTACK(player, TRIBE_YELLOW, math.min(6, my_wars), ATTACK_BUILDING, M_BUILDING_SUPER_TRAIN, 500, 0, 0, 0, ATTACK_NORMAL, 0, 20, -1, 0);
+	  end
+	  AI_SetVar(player, 12, 0);
+	end
+	
+	if (AI_ShamanFree(player)) then
+	  if (sham:can_cast_spell_from_entry(2) or sham:can_cast_spell_from_entry(3)) then
+	    if (AI_GetVar(player, 11) == 0) then
+	      AI_SetAttackFlags(player, 2, 1, 0);
+		  AI_SetAways(player, 0, 0, 0, 0, 0);
+		  AI_SetShamanAway(player, true);
+		
+		  if (player_can_cast(M_SPELL_HYPNOTISM, player) ~= 3) then
+	        set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
+		    set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
+		    set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
+	      end
+		
+		  SET_SPELL_ENTRY(player, 2, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 2, 0);
+		  SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 1, 0);
+		  ATTACK(player, TRIBE_YELLOW, 0, ATTACK_BUILDING, 0, 600, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, ATTACK_NORMAL, 0, 20, -1, 0);
+	    end
+	  end
+	end
+  end
 end
 
-local function purple_shaman_attack(player)
-
+local function purple_mid_attack(player)
+  AI_SetVar(player, 11, 0);
+  
+  if (AI_GetVar(player, 1) == 0) then
+    return;
+  end
+  
+  -- get info on our midhill first
+  GetEnemyAreaInfo(player, 222, 82, 5, Area);
+  
+  if (Area:contains_people()) then
+    local my_wars = AI_GetUnitCount(player, M_PERSON_WARRIOR);
+	local e_wars = Area:get_person_count(M_PERSON_WARRIOR);
+	local e_fws = Area:get_person_count(M_PERSON_SUPER_WARRIOR);
+	local e_braves = Area:get_person_count(M_PERSON_BRAVE);
+	
+	if ((e_fws > 0 or e_braves > 0) and e_wars == 0) then
+	  AI_SetVar(player, 11, 1);
+	  if (my_wars > 0) then
+	    -- only fws/braves on hill, can try sending wars.
+	    AI_SetAttackFlags(player, 3, 0, 0);
+	    AI_SetAways(player, 0, 100, 0, 0, 0);
+	    AI_SetShamanAway(player, false);
+	  
+	    ATTACK(player, TRIBE_YELLOW, math.min(12, my_wars), ATTACK_MARKER, 29, 500, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
+	  end
+	  return;
+	end
+	
+	if (e_fws > 0 and e_wars > 0) then
+	  AI_SetVar(player, 11, 1);
+	  -- send shaman and hypno/swarm them.
+	  if (AI_ShamanFree(player)) then
+	    if (player_can_cast(M_SPELL_HYPNOTISM, player) ~= 3) then
+	      set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
+		  set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
+		  set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
+	    end
+		
+		AI_SetAttackFlags(player, 3, 1, 0);
+	    AI_SetAways(player, 0, 0, 0, 0, 0);
+	    AI_SetShamanAway(player, true);
+	    SET_SPELL_ENTRY(player, 2, M_SPELL_GHOST_ARMY, SPELL_COST(M_SPELL_GHOST_ARMY) >> 2, 32, 1, 0);
+	    SET_SPELL_ENTRY(player, 3, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 2, 0);
+	  
+		ATTACK(player, TRIBE_YELLOW, 0, ATTACK_MARKER, 29, 400, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, ATTACK_NORMAL, 0, -1, -1, 0);
+		return;
+	  end
+	end
+  end
 end
 
 local function purple_early_towers(player)
@@ -221,7 +328,7 @@ end
 ai:create_event(1, 92, 34, purple_convert);
 ai:create_event(2, 188, 74, purple_build);
 ai:create_event(3, 140, 44, purple_early_towers);
-ai:create_event(4, 1440, 256, purple_shaman_attack);
-ai:create_event(5, 940, 120, purple_troop_attack);
+ai:create_event(4, 1336, 262, purple_mid_attack);
+ai:create_event(5, 2011, 316, purple_main_attack);
 ai:create_event(6, 480, 96, purple_look_for_buildings);
 ai:create_event(7, 384, 96, purple_check_towers);

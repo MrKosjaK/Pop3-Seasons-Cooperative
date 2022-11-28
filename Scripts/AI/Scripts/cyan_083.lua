@@ -25,8 +25,6 @@ local cont = getPlayerContainer(TRIBE_CYAN);
 local construction_list = cont.PlayerLists[BUILDINGMARKERLIST];
 local people_list = cont.PlayerLists[PEOPLELIST];
 local shapes_without_workers = {};
-local cmd = Commands.new();
-local cti = CmdTargetInfo.new();
 local Area = CreateAreaInfo();
 
 local function cyan_look_for_buildings(player)
