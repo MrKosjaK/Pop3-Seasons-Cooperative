@@ -237,6 +237,61 @@ local function green_mid_attack(player)
   end
 end
 
+local function green_main_attack(player)
+  if (AI_GetVar(player, 3) == 0 or AI_GetVar(player, 10) == 1) then
+    return;
+  end
+  
+  local result = NAV_CHECK(player, TRIBE_RED, ATTACK_BUILDING, 0, FALSE);
+  local idx = AI_GetVar(player, 11);
+  
+  if (result == 1) then
+    if (idx == 0) then
+	  local my_priests = AI_GetUnitCount(player, M_PERSON_RELIGIOUS);
+	  if (my_priests >= 5) then
+	    if (MANA(player) >= SPELL_COST(M_SPELL_INVISIBILITY) << 1) then
+		  AI_SetAttackFlags(player, 0, 0, 0);
+		  AI_SetAways(player, 0, 0, 100, 0, 0);
+		  AI_SetShamanAway(player, false);
+		  
+		  ATTACK(player, TRIBE_RED, math.min(10, my_priests), ATTACK_BUILDING, M_BUILDING_TEMPLE, 400, M_SPELL_INVISIBILITY, M_SPELL_INVISIBILITY, M_SPELL_INVISIBILITY, ATTACK_NORMAL, 0, 32, -1, 0);
+		end
+	  end
+      AI_SetVar(player, 11, 1);
+	elseif (idx == 1) then
+	  local my_priests = AI_GetUnitCount(player, M_PERSON_RELIGIOUS);
+	  local my_wars = AI_GetUnitCount(player, M_PERSON_WARRIOR);
+	  
+	  if (my_priests >= 3 and my_wars >= 3) then
+	    AI_SetAttackFlags(player, 0, 0, 0);
+		AI_SetAways(player, 5, 50, 50, 0, 0);
+		AI_SetShamanAway(player, false);
+		
+		ATTACK(player, TRIBE_RED, math.min(16, (my_priests + my_wars) >> 1), ATTACK_BUILDING, M_BUILDING_WARRIOR_TRAIN, 500, 0, 0, 0, ATTACK_NORMAL, 0, 32, -1, 0);
+	  end
+	  AI_SetVar(player, 11, 0);
+	end
+	
+	if (AI_ShamanFree(player)) then
+	  if (sham:can_cast_spell_from_entry(3) and AI_GetVar(player, 10) == 1) then
+	    AI_SetAttackFlags(player, 2, 1, 0);
+		AI_SetAways(player, 0, 0, 0, 0, 0);
+		AI_SetShamanAway(player, true);
+		
+		if (player_can_cast(M_SPELL_HYPNOTISM, player) ~= 3) then
+	      set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
+		  set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
+		  set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
+	    end
+		
+		SET_SPELL_ENTRY(player, 2, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 0);
+		SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 2, 0);
+		ATTACK(player, TRIBE_RED, 0, ATTACK_BUILDING, 0, 600, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, ATTACK_NORMAL, 0, 32, -1, 0);
+	  end
+	end
+  end
+end
+
 local function green_convert(player)
   if (AI_GetVar(player, 3) == 0) then
 	local turn = getTurn();
@@ -258,3 +313,4 @@ ai:create_event(3, 372, 90, green_check_towers);
 ai:create_event(4, 140, 44, green_early_towers);
 ai:create_event(5, 480, 96, green_look_for_buildings);
 ai:create_event(6, 1736, 362, green_mid_attack);
+ai:create_event(7, 2542, 586, green_main_attack);
