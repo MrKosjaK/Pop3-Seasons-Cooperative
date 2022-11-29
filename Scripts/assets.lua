@@ -891,13 +891,13 @@ function LandMimic(pointc3d,targetc3d,radius,copySceneryBool)
 				local tree = createThing(T_SCENERY,mimicTbl[1][2][1],radius+1,me2c3d(me),false,false)
 				tree.u.Scenery.ResourceRemaining = mimicTbl[1][2][2] tree.u.ObjectInfo.Scale = mimicTbl[1][2][3]
 			end
-			set_square_map_params(world_coord3d_to_map_idx(targetc3d),radius+1,TRUE)
 			table.remove(mimicTbl,1)
 		else
 			me.Alt = mimicTbl[1] table.remove(mimicTbl,1)
-			set_square_map_params(world_coord3d_to_map_idx(targetc3d),radius+1,TRUE)
 		end
 	return true end)
+	
+	set_square_map_params(world_coord3d_to_map_idx(targetc3d),radius+1,TRUE)
 end
 --------------------------------------------------------------------------------------------------------------------------------------------
 --timer to h/m/s
