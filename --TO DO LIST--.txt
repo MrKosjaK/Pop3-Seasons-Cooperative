@@ -25,6 +25,7 @@ Level 134 - TBD
 
 =====QUICK TO DO=====
 -- AI give less mana on kill(common)
+-- Check code for set player name (online case i guess, its the one bugging)
 
 =====TO DO=====
 -- make sure all textures are alpha-converted to 8p
