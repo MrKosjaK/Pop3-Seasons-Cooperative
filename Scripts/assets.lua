@@ -329,6 +329,34 @@ function countPeopleInArea(tribe,marker,radius)
 	return count
 end
 
+--is bldg near
+function isBuildingNear(model,pn,c3d,radius)
+	local result = 0
+	SearchMapCells(SQUARE, 0, 0 , radius, world_coord3d_to_map_idx(c3d), function(me)
+		me.MapWhoList:processList(function (t)
+			if t.Type == T_BUILDING then
+				if model == -1 then
+					if pn == -1 then
+						result = 1 return false
+					else
+						if t.Owner == pn then result = 1 return false end
+					end
+				else
+					if t.Model == model then
+						if pn == -1 then
+							result = 1 return false
+						else
+							if t.Owner == pn then result = 1 return false end
+						end
+					end
+				end
+			end
+		return true end)
+	return true end)
+	
+	return ntb(result) --!includes damaged buildings!
+end
+
 --blast, swarm, or hypno enemies near a shaman
 function GetRidOfNearbyEnemies(pn,radius)
 	local casted = false
@@ -458,6 +486,11 @@ function PreachAtMarkers(pn,idxS,idxE)
 	end
 end
 
+--count buildings
+function countBuildings(pn)
+	return _gsi.Players[pn].NumBuildings
+end
+
 --count huts
 function countHuts(pn, includeDamaged)
 	if includeDamaged then 
@@ -472,6 +505,20 @@ function countTowers(pn, includeDamaged)
 		return _gsi.Players[pn].NumBuiltOrPartBuiltBuildingsOfType[4]
 	end
 	return _gsi.Players[pn].NumBuildingsOfType[4]
+end
+
+--is all pop on vehicles
+function allPopOnVehicles(pn)
+	local vehicled = 0
+	ProcessGlobalSpecialList(pn, PEOPLELIST, function(t)
+		if t.Model ~= M_PERSON_ANGEL then
+			if is_person_in_any_vehicle(t) == 1 then
+				vehicled = vehicled + 1
+			end
+		end
+	return true end)
+	
+	return vehicled == GetPop(pn)
 end
 
 --fill tower (fills one random empty tower with one unit)
@@ -594,10 +641,12 @@ function LBexpand(pn,radius,cooldownSecondsIncrement,requiresLBmana)
 												local c3d = Coord3D.new() map_idx_to_world_coord3d(meptr,c3d)
 												local c2d = Coord2D.new() ; coord3D_to_coord2D(c3d,c2d)
 												if get_world_dist_xz(G_AI_EXPANSION_TABLE[pn][2],c2d) > 512*3 then
-													G_AI_EXPANSION_TABLE[pn][3] = c3d
-													G_AI_EXPANSION_TABLE[pn][5] = 20
-													success = true
-													return false
+													if not isBuildingNear(M_BUILDING_BOAT_HUT_1,-1,G_AI_EXPANSION_TABLE[pn][2],4) and not isBuildingNear(M_BUILDING_BOAT_HUT_1,-1,c3d,4) then
+														G_AI_EXPANSION_TABLE[pn][3] = c3d
+														G_AI_EXPANSION_TABLE[pn][5] = 20
+														success = true
+														return false
+													end
 												end
 											end
 										return true end)
