@@ -641,7 +641,8 @@ function LBexpand(pn,radius,cooldownSecondsIncrement,requiresLBmana)
 												local c3d = Coord3D.new() map_idx_to_world_coord3d(meptr,c3d)
 												local c2d = Coord2D.new() ; coord3D_to_coord2D(c3d,c2d)
 												if get_world_dist_xz(G_AI_EXPANSION_TABLE[pn][2],c2d) > 512*3 then
-													if not isBuildingNear(M_BUILDING_BOAT_HUT_1,-1,G_AI_EXPANSION_TABLE[pn][2],4) and not isBuildingNear(M_BUILDING_BOAT_HUT_1,-1,c3d,4) then
+													local c3d2 = Coord3D.new() ; coord2D_to_coord3D(G_AI_EXPANSION_TABLE[pn][2],c3d2)
+													if not isBuildingNear(M_BUILDING_BOAT_HUT_1,-1,c3d2,4) and not isBuildingNear(M_BUILDING_BOAT_HUT_1,-1,c3d,4) then
 														G_AI_EXPANSION_TABLE[pn][3] = c3d
 														G_AI_EXPANSION_TABLE[pn][5] = 20
 														success = true

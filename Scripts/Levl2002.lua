@@ -161,7 +161,7 @@ function attack(attacker)
 			if #G_HUMANS_ALIVE == 1 then target = randomItemFromTable(G_HUMANS_ALIVE) end
 			local troops = countTroops(attacker)
 			if troops > 4 + stage*2 then
-				local numTroops = 2 + stage*2 --**
+				local numTroops = 4 + stage*2 --**
 				if IS_SHAMAN_AVAILABLE_FOR_ATTACK(attacker) == 0 then WRITE_CP_ATTRIB(attacker, ATTR_AWAY_MEDICINE_MAN, 0) else WRITE_CP_ATTRIB(attacker, ATTR_AWAY_MEDICINE_MAN, btn(rnd() < 80+10*stage)) end
 				local atkType = ATTACK_NORMAL
 				local boats,balloons = countBoats(attacker),countBalloons(attacker)
