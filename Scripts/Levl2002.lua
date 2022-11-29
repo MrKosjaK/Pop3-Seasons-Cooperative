@@ -4,7 +4,7 @@ include("snow.lua");
 
 G_NUM_OF_HUMANS_FOR_THIS_LEVEL = 2;
 local CYANatk = 2500 + (rndb(0,500))
-local BLACKatk = 66--2000 + (rndb(0,500))
+local BLACKatk = 2000 + (rndb(0,500))
 
 function _OnTurn(turn)
 
@@ -187,7 +187,6 @@ function attack(attacker)
 					if attacker == TRIBE_CYAN then for i = 60,70 do table.insert(mksTbl,i) end else for i = 60,70 do table.insert(mksTbl,i) end end --**
 					local mk1,mk2 = randomItemFromTable(mksTbl),-1
 					local spell1,spell2,spell3 = 0,0,0
-					GIVE_ONE_SHOT(spell1,attacker) GIVE_ONE_SHOT(spell2,attacker) GIVE_ONE_SHOT(spell3,attacker)
 					if attacker == TRIBE_CYAN then spell1,spell2,spell3 = AI_CYAN_ATK_SPELLS[1],AI_CYAN_ATK_SPELLS[2],AI_CYAN_ATK_SPELLS[3] else spell1,spell2,spell3 = AI_BLACK_ATK_SPELLS[1],AI_BLACK_ATK_SPELLS[2],AI_BLACK_ATK_SPELLS[3] end --**
 					if spell1 == M_SPELL_INVISIBILITY or spell1 == M_SPELL_SHIELD then mk2 = mk1 end
 					--[[
@@ -214,6 +213,7 @@ function attack(attacker)
 					end
 					if targType ~= false then
 						if targType == ATTACK_PERSON and allPopOnVehicles(target) then spell1,spell2,spell3 = M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_INSECT_PLAGUE end
+						GIVE_ONE_SHOT(spell1,attacker) GIVE_ONE_SHOT(spell2,attacker) GIVE_ONE_SHOT(spell3,attacker)
 						local bbv = iipp(0,1,30,70) --**
 						if atkType == ATTACK_NORMAL then bbv = 0 end
 						ATTACK(attacker, target, numTroops, targType, 0, 969+(stage*10), spell1, spell2, spell3, atkType, bbv, mk1, mk2, 0)
