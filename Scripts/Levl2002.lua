@@ -248,16 +248,16 @@ end
 function ProcessDefensiveShaman()
 	local pn = TRIBE_CYAN
 	if isShamanHome(pn,0,24) then --pn,mk,rad
-		GetRidOfNearbyEnemies(pn,1)
-		TargetNearbyShamans(pn,9+G_GAMESTAGE,30+G_GAMESTAGE*10)
+		GetRidOfNearbyEnemies(pn,1,30+G_GAMESTAGE*10)
+		TargetNearbyShamans(pn,9+G_GAMESTAGE,10+G_GAMESTAGE*8)
 	end
 end
 
 function ProcessAgressiveShaman()
 	local pn = TRIBE_CYAN
 	if not isShamanHome(pn,0,24) then --pn,mk,rad
-		GetRidOfNearbyEnemies(pn,1)
-		TargetNearbyShamans(pn,9+G_GAMESTAGE,20+G_GAMESTAGE*15)
+		GetRidOfNearbyEnemies(pn,1,30+G_GAMESTAGE*10)
+		TargetNearbyShamans(pn,9+G_GAMESTAGE,10+G_GAMESTAGE*10)
 	end	
 end
 
@@ -288,7 +288,7 @@ function updateSpellEntries(marker,radius)
 	local pn,marker,radius = TRIBE_CYAN,0,24
 	if IS_SHAMAN_IN_AREA(pn,marker,radius) then
 		SET_SPELL_ENTRY(pn, 0, M_SPELL_BLAST, SPELL_COST(M_SPELL_BLAST) >> (1+s), 128, 1, 1)
-		SET_SPELL_ENTRY(pn, 1, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> (1+s), 128, 5-s, 1)
+		SET_SPELL_ENTRY(pn, 1, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> (1+s), 128, 6-s, 1)
 		SET_SPELL_ENTRY(pn, 2, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> (1+s), 128, 5, 1)
 		if s > 1 then
 			SET_SPELL_ENTRY(pn, 3, M_SPELL_HYPNOTISM, SPELL_COST(M_SPELL_HYPNOTISM) >> (1+s), 128, 16-(s*2), 1)
@@ -310,8 +310,6 @@ function updateSpellEntries(marker,radius)
 	local pn = TRIBE_BLACK,1,16
 	
 end
-
-
 
 function updateAtkSpells(s)
 	AI_CYAN_ATK_SPELLS = {}

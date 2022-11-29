@@ -358,21 +358,23 @@ function isBuildingNear(model,pn,c3d,radius)
 end
 
 --blast, swarm, or hypno enemies near a shaman
-function GetRidOfNearbyEnemies(pn,radius)
-	local casted = false
-	if G_GAMESTAGE >= 3 then radius = radius + 1 end
-	local spell = M_SPELL_BLAST if G_GAMESTAGE >= 2 then if rnd() < 20 then spell = M_SPELL_INSECT_PLAGUE end if G_GAMESTAGE >= 3 then if rnd() < 15 then spell = M_SPELL_HYPNOTISM end end end
-	if nilS(pn) then
-		SearchMapCells(SQUARE, 0, 0 , radius, world_coord3d_to_map_idx(getShaman(pn).Pos.D3), function(me)
-			me.MapWhoList:processList(function (t)
-				if isItemInTable(G_HUMANS_ALIVE,t.Owner) and not casted then
-					GIVE_ONE_SHOT(spell,pn)
-					local s = createThing(T_SPELL,spell,pn,t.Pos.D3,false,false)
-					s.u.Spell.TargetThingIdx:set(1)
-					casted = true
-				end
+function GetRidOfNearbyEnemies(pn,radius,successChance)
+	if rnd() < successChance then
+		local casted = false
+		if G_GAMESTAGE >= 3 then radius = radius + 1 end
+		local spell = M_SPELL_BLAST if G_GAMESTAGE >= 2 then if rnd() < 20 then spell = M_SPELL_INSECT_PLAGUE end if G_GAMESTAGE >= 3 then if rnd() < 15 then spell = M_SPELL_HYPNOTISM end end end
+		if nilS(pn) then
+			SearchMapCells(SQUARE, 0, 0 , radius, world_coord3d_to_map_idx(getShaman(pn).Pos.D3), function(me)
+				me.MapWhoList:processList(function (t)
+					if isItemInTable(G_HUMANS_ALIVE,t.Owner) and not casted then
+						GIVE_ONE_SHOT(spell,pn)
+						local s = createThing(T_SPELL,spell,pn,t.Pos.D3,false,false)
+						s.u.Spell.TargetThingIdx:set(1)
+						casted = true
+					end
+				return true end)
 			return true end)
-		return true end)
+		end
 	end
 end
 
