@@ -151,7 +151,7 @@ local function cyan_main_attack(player)
 	if (idx == 0) then
 	  -- let's check if we can attack with just invisible priests
 	  local my_priests = AI_GetUnitCount(player, M_PERSON_RELIGIOUS);
-	  if (my_priests >= 5) then
+	  if (my_priests >= 4) then
 	    if (MANA(player) >= SPELL_COST(M_SPELL_INVISIBILITY) << 1) then
 		  AI_SetAttackFlags(player, 0, 0, 0);
 		  AI_SetAways(player, 0, 0, 100, 0, 0);
@@ -416,4 +416,4 @@ ai:create_event(4, 214, 88, cyan_anti_rush);
 ai:create_event(5, 1436, 216, cyan_mid_attack);
 ai:create_event(6, 480, 96, cyan_look_for_buildings);
 ai:create_event(7, 422, 104, cyan_check_towers);
-ai:create_event(8, 2184, 256, cyan_main_attack);
+ai:create_event(8, 2384, 256, cyan_main_attack);

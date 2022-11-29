@@ -248,7 +248,7 @@ local function green_main_attack(player)
   if (result == 1) then
     if (idx == 0) then
 	  local my_priests = AI_GetUnitCount(player, M_PERSON_RELIGIOUS);
-	  if (my_priests >= 5) then
+	  if (my_priests >= 4) then
 	    if (MANA(player) >= SPELL_COST(M_SPELL_INVISIBILITY) << 1) then
 		  AI_SetAttackFlags(player, 0, 0, 0);
 		  AI_SetAways(player, 0, 0, 100, 0, 0);
@@ -273,7 +273,7 @@ local function green_main_attack(player)
 	end
 	
 	if (AI_ShamanFree(player)) then
-	  if (sham:can_cast_spell_from_entry(3) and AI_GetVar(player, 10) == 1) then
+	  if (sham:can_cast_spell_from_entry(3) and AI_GetVar(player, 10) == 0) then
 	    AI_SetAttackFlags(player, 2, 1, 0);
 		AI_SetAways(player, 0, 0, 0, 0, 0);
 		AI_SetShamanAway(player, true);
