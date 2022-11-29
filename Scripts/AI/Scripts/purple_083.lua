@@ -2,11 +2,13 @@ CompPlayer:init(TRIBE_PINK);
 local ai = CompPlayer(TRIBE_PINK);
 
 ai:toggle_shaman_ai(true);
+
 local sham = ai:get_shaman_ai();
-sham:toggle_fall_damage_save(true, 50);
-sham:toggle_land_bridge_save(true, 25);
-sham:toggle_lightning_dodge(true, 90);
+
+sham:toggle_fall_damage_save(true, 20 + G_RANDOM(50));
+sham:toggle_lightning_dodge(true, 40 + G_RANDOM(40));
 sham:toggle_spell_check(true);
+
 sham:set_spell_entry(1, M_SPELL_LIGHTNING_BOLT, {4, 5, 6, 7, 8}, 4, 4, 35000);
 sham:set_spell_entry(2, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 5, 6, 7, 8}, 3, 3, 90000);
 sham:set_spell_entry(3, M_SPELL_EARTHQUAKE, {1, 2, 3, 5, 6, 7, 8}, 2, 2, 115000);
@@ -127,8 +129,8 @@ local function purple_main_attack(player)
 		    set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
 	      end
 		
-		  SET_SPELL_ENTRY(player, 2, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 2, 0);
-		  SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 1, 0);
+		  SET_SPELL_ENTRY(player, 2, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 0);
+		  SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 2, 0);
 		  ATTACK(player, TRIBE_YELLOW, 0, ATTACK_BUILDING, 0, 600, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, ATTACK_NORMAL, 0, 20, -1, 0);
 	    end
 	  end
@@ -179,7 +181,7 @@ local function purple_mid_attack(player)
 	    AI_SetAways(player, 0, 0, 0, 0, 0);
 	    AI_SetShamanAway(player, true);
 	    SET_SPELL_ENTRY(player, 2, M_SPELL_GHOST_ARMY, SPELL_COST(M_SPELL_GHOST_ARMY) >> 2, 32, 1, 0);
-	    SET_SPELL_ENTRY(player, 3, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 2, 0);
+	    SET_SPELL_ENTRY(player, 3, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 0);
 	  
 		ATTACK(player, TRIBE_YELLOW, 0, ATTACK_MARKER, 29, 400, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, ATTACK_NORMAL, 0, -1, -1, 0);
 		return;
@@ -266,7 +268,7 @@ local function purple_build(player)
 	  WRITE_CP_ATTRIB(player, ATTR_PREF_SUPER_WARRIOR_TRAINS, 1);
 	  WRITE_CP_ATTRIB(player, ATTR_PREF_SUPER_WARRIOR_PEOPLE, 0);
 	else
-	  WRITE_CP_ATTRIB(player, ATTR_PREF_SUPER_WARRIOR_PEOPLE, 10);
+	  WRITE_CP_ATTRIB(player, ATTR_PREF_SUPER_WARRIOR_PEOPLE, 13);
 	end
   end
   
@@ -275,14 +277,14 @@ local function purple_build(player)
 	  WRITE_CP_ATTRIB(player, ATTR_PREF_WARRIOR_TRAINS, 1);
 	  WRITE_CP_ATTRIB(player, ATTR_PREF_WARRIOR_PEOPLE, 0);
 	else
-	  WRITE_CP_ATTRIB(player, ATTR_PREF_WARRIOR_PEOPLE, 14);
+	  WRITE_CP_ATTRIB(player, ATTR_PREF_WARRIOR_PEOPLE, 15);
 	end
   end
   
   if (AI_GetVar(player, 9) == 1) then
     if (fw_trains > 0 and war_trains > 0) then
-	  WRITE_CP_ATTRIB(player, ATTR_PREF_WARRIOR_PEOPLE, 20);
-	  WRITE_CP_ATTRIB(player, ATTR_PREF_SUPER_WARRIOR_PEOPLE, 15);
+	  WRITE_CP_ATTRIB(player, ATTR_PREF_WARRIOR_PEOPLE, 21);
+	  WRITE_CP_ATTRIB(player, ATTR_PREF_SUPER_WARRIOR_PEOPLE, 17);
 	end
   end
 end
@@ -307,9 +309,9 @@ local function purple_convert(player)
 end
 
 local function purple_check_towers(player)
-  --if (AI_GetVar(player, 9) == 0 or AI_GetVar(player, 10) == 1 or AI_GetVar(player, 11) == 1) then
-	--return;
-  --end
+  if (AI_GetVar(player, 1) == 0 or AI_GetVar(player, 11) == 1) then
+	return;
+  end
   
   local my_pop = AI_GetPopCount(player);
   

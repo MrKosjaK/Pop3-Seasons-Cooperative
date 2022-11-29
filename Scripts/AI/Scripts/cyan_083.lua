@@ -5,10 +5,11 @@ local ai = CompPlayer(TRIBE_CYAN);
 ai:toggle_shaman_ai(true); -- enable it first u dummy
 
 local sham = ai:get_shaman_ai(); -- get pointer to it as local, so it's fasto
-sham:toggle_fall_damage_save(true, 50);
-sham:toggle_land_bridge_save(true, 25);
-sham:toggle_lightning_dodge(true, 90);
+
+sham:toggle_fall_damage_save(true, 60 + G_RANDOM(40));
+sham:toggle_lightning_dodge(true, 60 + G_RANDOM(40));
 sham:toggle_spell_check(true);
+
 sham:set_spell_entry(1, M_SPELL_LIGHTNING_BOLT, {4, 5, 6, 7, 8}, 4, 4, 40000);
 sham:set_spell_entry(2, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 5, 6, 7, 8}, 3, 3, 75000);
 sham:set_spell_entry(3, M_SPELL_EARTHQUAKE, {1, 2, 3, 5, 6, 7, 8}, 2, 2, 120000);
@@ -123,8 +124,8 @@ local function cyan_anti_rush(player)
 		      set_player_can_cast_temp(M_SPELL_BLAST, player, 1);
 		    end
 		  
-		    SET_SPELL_ENTRY(player, 2, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 1, 1);
-		    SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 1, 1);
+		    SET_SPELL_ENTRY(player, 2, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 1);
+		    SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 2, 1);
 		  end
 		  ATTACK(player, TRIBE_BLUE, my_priests, ATTACK_MARKER, 39, 998, M_SPELL_BLAST, M_SPELL_BLAST, M_SPELL_BLAST, ATTACK_NORMAL, 0, -1, -1, 0);
 		end
@@ -191,8 +192,8 @@ local function cyan_main_attack(player)
 		  set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
 	    end
 		
-		SET_SPELL_ENTRY(player, 2, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 1, 0);
-		SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 1, 0);
+		SET_SPELL_ENTRY(player, 2, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 0);
+		SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 2, 0);
 		ATTACK(player, TRIBE_BLUE, 0, ATTACK_BUILDING, 0, 600, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, ATTACK_NORMAL, 0, 3, -1, 0);
 	  end
 	end
@@ -257,7 +258,7 @@ local function cyan_mid_attack(player)
 		AI_SetAways(player, 0, 0, 0, 0, 0);
 		AI_SetShamanAway(player, true);
 		SET_SPELL_ENTRY(player, 2, M_SPELL_GHOST_ARMY, SPELL_COST(M_SPELL_GHOST_ARMY) >> 2, 32, 1, 0);
-	    SET_SPELL_ENTRY(player, 3, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 2, 0);
+	    SET_SPELL_ENTRY(player, 3, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 0);
 	  
 	    ATTACK(player, TRIBE_BLUE, 0, ATTACK_MARKER, 6, 300, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, ATTACK_NORMAL, 0, -1, -1, 0);
 	    return;

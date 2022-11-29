@@ -2,11 +2,13 @@ CompPlayer:init(TRIBE_GREEN);
 local ai = CompPlayer(TRIBE_GREEN);
 
 ai:toggle_shaman_ai(true);
+
 local sham = ai:get_shaman_ai();
-sham:toggle_fall_damage_save(true, 50);
-sham:toggle_land_bridge_save(true, 25);
-sham:toggle_lightning_dodge(true, 90);
+
+sham:toggle_fall_damage_save(true, 20 + G_RANDOM(50));
+sham:toggle_lightning_dodge(true, 20 + G_RANDOM(50));
 sham:toggle_spell_check(true);
+
 sham:set_spell_entry(1, M_SPELL_LIGHTNING_BOLT, {4, 5, 6, 7, 8}, 4, 4, 35000);
 sham:set_spell_entry(2, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 5, 6, 7, 8}, 3, 3, 80000);
 sham:set_spell_entry(3, M_SPELL_EARTHQUAKE, {1, 2, 3, 5, 6, 7, 8}, 2, 2, 100000);
@@ -23,6 +25,7 @@ local cont = getPlayerContainer(TRIBE_GREEN);
 local construction_list = cont.PlayerLists[BUILDINGMARKERLIST];
 local people_list = cont.PlayerLists[PEOPLELIST];
 local shapes_without_workers = {};
+local Area = CreateAreaInfo();
 
 local function green_look_for_buildings(player)
   if (construction_list:isEmpty()) then
@@ -84,7 +87,7 @@ local function green_build(player)
   
   if (huts < 7) then
     WRITE_CP_ATTRIB(player, ATTR_HOUSE_PERCENTAGE, 45);
-	WRITE_CP_ATTRIB(player, ATTR_MAX_BUILDINGS_ON_GO, 4);
+	WRITE_CP_ATTRIB(player, ATTR_MAX_BUILDINGS_ON_GO, 6);
 	AI_SetVar(player, 2, 1);
   elseif (huts < 16) then
     WRITE_CP_ATTRIB(player, ATTR_HOUSE_PERCENTAGE, 90);
@@ -130,6 +133,21 @@ local function green_build(player)
 end
 
 local function green_check_towers(player)
+  if (AI_GetVar(player, 3) == 0) then
+	return;
+  end
+  
+  local my_pop = AI_GetPopCount(player);
+  
+  if (my_pop >= 30) then
+    -- only bother with said pop or above
+	for i = 1, 6 do
+	  if (not ai:is_tower_constructed(i)) then
+	    ai:construct_tower(i);
+		break;
+      end
+	end
+  end
 end
 
 local function green_early_towers(player)
@@ -168,11 +186,62 @@ local function green_early_towers(player)
   end
 end
 
+local function green_mid_attack(player)
+  AI_SetVar(player, 10, 0);
+  
+  if (AI_GetVar(player, 3) == 0) then
+    return;
+  end
+  
+  -- get info on our midhill first
+  GetEnemyAreaInfo(player, 58, 80, 5, Area);
+  
+  if (Area:contains_people()) then
+    local my_priests = AI_GetUnitCount(player, M_PERSON_RELIGIOUS);
+	local e_wars = Area:get_person_count(M_PERSON_WARRIOR);
+	local e_priests = Area:get_person_count(M_PERSON_RELIGIOUS);
+	
+	if (e_wars > 0 and e_priests == 0) then
+	  AI_SetVar(player, 10, 1);
+	  if (my_priests > 0) then
+	    -- only fws/braves on hill, can try sending wars.
+	    AI_SetAttackFlags(player, 3, 0, 0);
+	    AI_SetAways(player, 0, 0, 100, 0, 0);
+	    AI_SetShamanAway(player, false);
+	  
+	    ATTACK(player, TRIBE_RED, math.min(e_wars, my_priests >> 1), ATTACK_MARKER, 40, 500, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
+	  end
+	  return;
+	end
+	
+	if (e_priests > 0 and e_wars > 0) then
+	  AI_SetVar(player, 10, 1);
+	  -- send shaman and hypno/swarm them.
+	  if (AI_ShamanFree(player)) then
+	    if (player_can_cast(M_SPELL_HYPNOTISM, player) ~= 3) then
+	      set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
+		  set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
+		  set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
+	    end
+		
+		AI_SetAttackFlags(player, 3, 1, 0);
+	    AI_SetAways(player, 0, 0, 0, 0, 0);
+	    AI_SetShamanAway(player, true);
+	    SET_SPELL_ENTRY(player, 2, M_SPELL_GHOST_ARMY, SPELL_COST(M_SPELL_GHOST_ARMY) >> 2, 32, 1, 0);
+	    SET_SPELL_ENTRY(player, 3, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 0);
+	  
+		ATTACK(player, TRIBE_RED, 0, ATTACK_MARKER, 40, 400, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, ATTACK_NORMAL, 0, -1, -1, 0);
+		return;
+	  end
+	end
+  end
+end
+
 local function green_convert(player)
   if (AI_GetVar(player, 3) == 0) then
 	local turn = getTurn();
 	  
-	if (turn < 960) then
+	if (turn < 840) then
       sham:toggle_converting(true);
 	  SHAMAN_DEFEND(player, 64, 58, TRUE);
 	else
@@ -183,8 +252,9 @@ local function green_convert(player)
   end
 end
 
-ai:create_event(1, 114, 24, green_convert);
+ai:create_event(1, 90, 24, green_convert);
 ai:create_event(2, 192, 84, green_build);
 ai:create_event(3, 372, 90, green_check_towers);
 ai:create_event(4, 140, 44, green_early_towers);
 ai:create_event(5, 480, 96, green_look_for_buildings);
+ai:create_event(6, 1736, 362, green_mid_attack);
