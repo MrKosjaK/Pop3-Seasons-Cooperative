@@ -313,4 +313,4 @@ ai:create_event(3, 372, 90, green_check_towers);
 ai:create_event(4, 140, 44, green_early_towers);
 ai:create_event(5, 480, 96, green_look_for_buildings);
 ai:create_event(6, 1736, 362, green_mid_attack);
-ai:create_event(7, 2542, 586, green_main_attack);
+ai:create_event(7, 2542, 786, green_main_attack);
