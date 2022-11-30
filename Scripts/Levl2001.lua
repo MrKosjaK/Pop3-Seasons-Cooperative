@@ -52,7 +52,7 @@ function _OnLevelInit(level_id)
   AI_SetVehicleParams(TRIBE_GREEN, false, 0, 0, 0, 0);
   AI_SetFetchParams(TRIBE_GREEN, false, false, false, false);
 
-  AI_SetAttackingParams(TRIBE_GREEN, true, 3, 25);
+  AI_SetAttackingParams(TRIBE_GREEN, true, 3, 0, 12);
   AI_SetDefensiveParams(TRIBE_GREEN, true, true, true, true, 3, 1, 1);
   AI_SetSpyParams(TRIBE_GREEN, false, 0, 100, 128, 1);
   AI_SetPopulatingParams(TRIBE_GREEN, true, true);
@@ -87,7 +87,7 @@ function _OnLevelInit(level_id)
 
   AI_SetAways(TRIBE_CYAN, 1, 0, 0, 0, 0);
   AI_SetShamanAway(TRIBE_CYAN, false);
-  AI_SetShamanParams(TRIBE_CYAN, 138, 128, true, 16, 12);
+  AI_SetShamanParams(TRIBE_CYAN, 138, 128, true, 8, 12);
   AI_SetMainDrumTower(TRIBE_CYAN, false, 138, 128);
   AI_SetConvertingParams(TRIBE_CYAN, false, false, 12);
   AI_SetTargetParams(TRIBE_CYAN, TRIBE_BLUE, true, true);
@@ -100,7 +100,7 @@ function _OnLevelInit(level_id)
   AI_SetVehicleParams(TRIBE_CYAN, false, 0, 0, 0, 0);
   AI_SetFetchParams(TRIBE_CYAN, false, false, false, false);
 
-  AI_SetAttackingParams(TRIBE_CYAN, true, 3, 25);
+  AI_SetAttackingParams(TRIBE_CYAN, true, 3, 0, 12);
   AI_SetDefensiveParams(TRIBE_CYAN, true, true, true, true, 3, 1, 1);
   AI_SetSpyParams(TRIBE_CYAN, false, 0, 100, 128, 1);
   AI_SetPopulatingParams(TRIBE_CYAN, true, true);
@@ -146,7 +146,7 @@ function _OnLevelInit(level_id)
   AI_SetVehicleParams(TRIBE_PINK, false, 0, 0, 0, 0);
   AI_SetFetchParams(TRIBE_PINK, false, false, false, false);
 
-  AI_SetAttackingParams(TRIBE_PINK, true, 3, 25);
+  AI_SetAttackingParams(TRIBE_PINK, true, 3, 0, 12);
   AI_SetDefensiveParams(TRIBE_PINK, true, true, true, true, 3, 1, 1);
   AI_SetSpyParams(TRIBE_PINK, false, 0, 100, 128, 1);
   AI_SetPopulatingParams(TRIBE_PINK, true, true);

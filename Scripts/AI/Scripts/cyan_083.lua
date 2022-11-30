@@ -143,6 +143,8 @@ local function cyan_main_attack(player)
     return;
   end
   
+  do return; end
+  
   local result = NAV_CHECK(player, TRIBE_BLUE, ATTACK_BUILDING, 0, FALSE);
   local idx = AI_GetVar(player, 12);
   
@@ -203,12 +205,80 @@ end
 local function cyan_mid_attack(player)
   AI_SetVar(player, 10, 0);
   -- attacking momentos
-  if (AI_GetVar(player, 9) == 0 or AI_GetVar(player, 11) == 1) then
+  if (AI_GetVar(player, 9) == 0) then
     return;
   end
   
   -- get info on our midhill first
-  GetEnemyAreaInfo(player, 138, 78, 5, Area);
+  GetEnemyAreaInfo(player, 138, 78, 6, Area);
+  
+  if (Area:contains_people()) then
+    local e_priests = Area:get_person_count(M_PERSON_RELIGIOUS);
+	local e_fws = Area:get_person_count(M_PERSON_SUPER_WARRIOR);
+	local e_braves = Area:get_person_count(M_PERSON_BRAVE);
+	local e_shaman = Area:get_person_count(M_PERSON_MEDICINE_MAN);
+	local my_priests = AI_GetUnitCount(player, M_PERSON_RELIGIOUS);
+	
+	if (e_braves > 0 and e_shaman == 0 and e_fws == 0 and e_priests == 0) then
+	  -- mid only has braves, send some priests.
+	  if (my_priests > 0) then
+	    AI_SetAttackFlags(player, 1, 1, 0);
+		AI_SetAways(player, 0, 0, 90, 10, 0);
+		AI_SetShamanAway(player, false);
+		
+		ATTACK(player, TRIBE_BLUE, math.min(6, e_braves >> 2), ATTACK_MARKER, 6, 999, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
+	    LOG("ATTACKING MID 1");
+	    ai:set_event_ticks(5, 720 + G_RANDOM(120));
+		return;
+	  end
+	end
+	
+	if (my_priests >= e_priests and e_fws == 0 and e_shaman == 0) then
+	  -- mid only hass priests, we got more priests when what mid has, try attacking.
+	  -- we won't pull shaman for this attack
+	  AI_SetAttackFlags(player, 2, 1, 0);
+	  -- do not group at drum tower
+	  AI_SetAways(player, 0, 0, 75, 25, 0);
+	  AI_SetShamanAway(player, false);
+	  
+	  ATTACK(player, TRIBE_BLUE, math.min(e_priests, my_priests), ATTACK_MARKER, 6, 999, 0, 0, 0, ATTACK_NORMAL, 0, 30, -1, 0);
+	  LOG("ATTACKING MID 2");
+	  ai:set_event_ticks(5, 720 + G_RANDOM(120));
+	  return
+	end
+	
+	if (e_fws == 0 and e_shaman > 0) then
+	  -- mid has priests, and a shaman, include our own shaman and murder her.
+	  -- shaman will be in its own independent attack
+	  if (AI_ShamanFree(player)) then
+	    if (e_priests > 0) then
+	      AI_SetAttackFlags(player, 2, 1, 0);
+	      AI_SetAways(player, 0, 0, 75, 25, 0);
+	      AI_SetShamanAway(player, false);
+	  
+	      -- first troops.
+		  LOG("ATTACKING MID T");
+	      ATTACK(player, TRIBE_BLUE, math.min(e_priests, my_priests), ATTACK_MARKER, 6, 999, 0, 0, 0, ATTACK_NORMAL, 0, 30, -1, 0);
+		end
+		
+		-- now shaman.
+		AI_SetAttackFlags(player, 2, 0, 0);
+	    AI_SetAways(player, 0, 0, 0, 0, 0);
+	    AI_SetShamanAway(player, true);
+		TARGET_SHAMAN(player, TRIBE_BLUE); -- target the bitch
+		SET_SPELL_ENTRY(player, 2, M_SPELL_HYPNOTISM, SPELL_COST(M_SPELL_HYPNOTISM) >> 2, 32, 4, 0);
+		SET_SPELL_ENTRY(player, 3, M_SPELL_HYPNOTISM, SPELL_COST(M_SPELL_HYPNOTISM) >> 2, 32, 4, 1);
+	    SET_SPELL_ENTRY(player, 4, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 0);
+		SET_SPELL_ENTRY(player, 5, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 1);
+		ATTACK(player, TRIBE_BLUE, 0, ATTACK_PERSON, M_PERSON_MEDICINE_MAN, 999, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, ATTACK_NORMAL, 0, -1, -1, 0);
+	    LOG("ATTACKING MID S");
+	    ai:set_event_ticks(5, 840 + G_RANDOM(240));
+		return;
+	  end
+	end
+  end
+  
+  do return; end
   
   if (Area:contains_people()) then
 	-- it has em people. see if there are any fws.
@@ -424,7 +494,7 @@ ai:create_event(1, 174, 46, cyan_build);
 ai:create_event(2, 64, 12, cyan_convert);
 ai:create_event(3, 132, 32, cyan_early_towers);
 ai:create_event(4, 214, 88, cyan_anti_rush);
-ai:create_event(5, 928, 184, cyan_mid_attack);
+ai:create_event(5, 370, 70, cyan_mid_attack);
 ai:create_event(6, 480, 96, cyan_look_for_buildings);
 ai:create_event(7, 422, 104, cyan_check_towers);
 ai:create_event(8, 1455, 256, cyan_main_attack);

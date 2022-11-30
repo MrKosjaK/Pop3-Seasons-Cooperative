@@ -162,10 +162,11 @@ function AI_SetTrainingPeople(pn, a, b, c, d, e, f)
   WRITE_CP_ATTRIB(pn, ATTR_MAX_TRAIN_AT_ONCE, f);
 end
 
-function AI_SetAttackingParams(pn, a, b, c)
+function AI_SetAttackingParams(pn, a, b, c, d)
   STATE_SET(pn, a and 1 or 0, CP_AT_TYPE_AUTO_ATTACK);
   WRITE_CP_ATTRIB(pn, ATTR_MAX_ATTACKS, b);
   WRITE_CP_ATTRIB(pn, ATTR_RETREAT_VALUE, c);
+  WRITE_CP_ATTRIB(pn, ATTR_FIGHT_STOP_DISTANCE, d);
 end
 
 function AI_SetVehicleParams(pn, a, b, c, d, e)

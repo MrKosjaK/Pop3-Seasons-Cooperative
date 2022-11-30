@@ -66,6 +66,10 @@ function GetPlayerAreaInfo(player, x, z, r, tabl)
   for l = 1, #tabl[2] do
     tabl[2][l] = 0;
   end
+  
+  tabl.isEmpty = true;
+  tabl.hasPeople = false;
+  tabl.hasBuildings = false;
 
   SearchMapCells(SQUARE, 0, 0, r, map_xz_to_map_idx(x, z), function(me)
     me.MapWhoList:processList(function(t)
@@ -104,6 +108,10 @@ function GetAllyAreaInfo(player, x, z, r, tabl)
   for l = 1, #tabl[2] do
     tabl[2][l] = 0;
   end
+  
+  tabl.isEmpty = true;
+  tabl.hasPeople = false;
+  tabl.hasBuildings = false;
 
   SearchMapCells(SQUARE, 0, 0, r, map_xz_to_map_idx(x, z), function(me)
     me.MapWhoList:processList(function(t)
@@ -142,6 +150,10 @@ function GetEnemyAreaInfo(player, x, z, r, tabl)
   for l = 1, #tabl[2] do
     tabl[2][l] = 0;
   end
+  
+  tabl.isEmpty = true;
+  tabl.hasPeople = false;
+  tabl.hasBuildings = false;
 
   SearchMapCells(SQUARE, 0, 0, r, map_xz_to_map_idx(x, z), function(me)
     me.MapWhoList:processList(function(t)

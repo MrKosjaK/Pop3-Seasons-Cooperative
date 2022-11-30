@@ -398,6 +398,12 @@ function pl_mt:create_event(idx, ticks, randomness, func)
   end
 end
 
+function pl_mt:set_event_ticks(idx, ticks)
+  if (self.Events[idx] ~= nil) then
+    self.Events[idx].Ticks = ticks;
+  end
+end
+
 function ev_mt:is_triggered()
   self.Ticks = self.Ticks - 1;
 
