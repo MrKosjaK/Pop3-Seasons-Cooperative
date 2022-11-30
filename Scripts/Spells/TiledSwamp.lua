@@ -6,6 +6,7 @@ SwampTile.__index = SwampTile;
 SwampTileSize = 2;
 SwampTileDuration = 240;
 SwampTileRandomness = 60;
+SwampTileAffectAllies = false;
 SwampTileEnabled = false;
 
 function SwampTile:NewTile(owner, c3d, duration)
@@ -35,7 +36,7 @@ function SwampTile:Process()
   self.MapWho:processList(function(t)
     if (t.Type == T_PERSON) then
       if (t.Model > 1 and t.Model < 8) then
-        if (are_players_allied(t.Owner, self.Owner) == 0) then
+        if ((not SwampTileAffectAllies) and (are_players_allied(t.Owner, self.Owner) == 0)) or (SwampTileAffectAllies) then
           if (is_thing_on_ground(t) == 1 and is_person_in_airship(t) == 0 and is_person_on_a_building(t) == 0) then
             set_person_new_state(t, S_PERSON_DYING);
             self.Finished = true;

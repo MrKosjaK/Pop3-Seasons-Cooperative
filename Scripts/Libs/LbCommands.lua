@@ -24,6 +24,17 @@ function cmd_mt:get_person_idx(t)
   self.Idx = cmds;
 end
 
+function cmd_mt:get_commands_amount(t)
+  local cmds = 0;
+  for i = 0, 7 do
+    if (t.u.Pers.CmdIdxs[i] ~= nil) then
+	  cmds = cmds + 1;
+    end
+  end
+  
+  return cmds;
+end
+
 function cmd_mt:patrol_point(t, c2d)
   if (self.Idx < 8) then
     self.CTI.TargetCoord.Xpos = c2d.Xpos;

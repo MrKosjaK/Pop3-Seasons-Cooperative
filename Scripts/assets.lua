@@ -438,6 +438,43 @@ function TargetNearbyShamans(pn,radius,successChance)
 		end
 	end
 end
+
+--try to dodge enemy lights
+function dodgeLightnings(caster,successChance,lightThing)
+	if rnd() < successChance then
+		if nilT(lightThing) then
+			for k,v in ipairs(G_AI_ALIVE) do
+				if nilS(v) and caster ~= v then
+					if (getShaman(v).Flags2 & TF2_THING_IN_AIR == 0) then
+						local function ShDodge(distance,inTowerBool)
+							if distance < 256 then
+								if not inTowerBool then
+									if rnd() < 50 then
+										getShaman(v).State = S_PERSON_SCATTER
+									end
+								else
+									local success = false
+									local c2d = Coord2D.new()
+									SearchMapCells(SQUARE, 0, 0 , 1, world_coord3d_to_map_idx(getShaman(v).Pos.D3), function(me)
+										if rnd() < 30 and not success then
+											coord3D_to_coord2D(me2c3d(me),c2d)
+											success = true
+										end
+									return true end)
+									if success then command_person_go_to_coord2d(getShaman(v),c2d) end
+								end
+							elseif distance < 512*3 and not getShaman(v).State == S_PERSON_WAIT_IN_BLDG then
+								getShaman(v).State = S_PERSON_SCATTER
+							end
+						end
+						local dist = get_world_dist_xz(lightThing.Pos.D2,getShaman(v).Pos.D2)
+						ShDodge(dist,getShaman(v).State == S_PERSON_WAIT_IN_BLDG)
+					end
+				end
+			end
+		end
+	end
+end
 --------------------------------------------------------------------------------------------------------------------------------------------
 --read AI attacking troops (attr_away)
 function ReadAIAttackers(pn)
@@ -524,9 +561,7 @@ function allPopOnVehicles(pn)
 end
 
 --fill tower (fills one random empty tower with one unit)
-function FillRndEmptyTower(pn,unit) --1fw 2pre 3war 4spy 5brave
-	local unitType = M_PERSON_SUPER_WARRIOR
-	if unit == 2 then unitType = M_PERSON_RELIGIOUS elseif unit == 3 then unitType = M_PERSON_WARRIOR elseif unit == 4 then unitType = M_PERSON_SPY elseif unit == 5 then unitType = M_PERSON_BRAVE end
+function FillRndEmptyTower(pn,unitType)
 	ProcessGlobalSpecialList(pn, BUILDINGLIST, function(b)
 		if b.Model == M_BUILDING_DRUM_TOWER then
 			if (b.u.Bldg.NumDwellers == 0) then

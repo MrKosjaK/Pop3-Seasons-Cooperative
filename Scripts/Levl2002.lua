@@ -1,10 +1,16 @@
 -- Includes
 include("Common.lua");
 include("snow.lua");
+include("Spells\\TiledSwamp.lua");
+SwampTileEnabled = true
+SwampTileAffectAllies = true
+SwampTileDuration = 12*15
+SwampTileRandomness = 12*5
 
 G_NUM_OF_HUMANS_FOR_THIS_LEVEL = 2;
 local CYANatk = 2500 + (rndb(0,500))
 local BLACKatk = 2000 + (rndb(0,500))
+SET_NO_REINC(0)
 
 function _OnTurn(turn)
 
@@ -57,7 +63,7 @@ function _OnTurn(turn)
 	for k,v in ipairs(G_AI_ALIVE) do
 		Sulk(v,stage+3)
 		--small AI boosts lategame
-		if minutes() > 15 then
+		if minutes() > 5 then
 			fasterTrain(v,8+8*stage)
 			fasterHutBars(v,4+2*stage)
 		end
@@ -82,7 +88,7 @@ function _OnTurn(turn)
 	if CYANatk < turn then CYANatk = CYANatk - 1 elseif CYANatk == turn then attack(TRIBE_CYAN) end
 	if BLACKatk < turn then BLACKatk = BLACKatk - 1 elseif BLACKatk == turn then attack(TRIBE_BLACK) end
 	
-	if everySeconds(6-stage) then
+	if everySeconds(7-stage) then
 		ProcessDefensiveShaman()
 	end
 	if everySeconds(3) then
@@ -92,7 +98,7 @@ function _OnTurn(turn)
 		for i = #unitAtkunitTbl,1,-1 do unstuckT(unitAtkunitTbl[i]) table.remove(unitAtkunitTbl,i) end
 	end
 	if everySeconds(8) then
-		FillRndEmptyTower(TRIBE_CYAN,2)
+		FillRndEmptyTower(TRIBE_CYAN,M_PERSON_RELIGIOUS)
 		updateSpellEntries()
 		updateMarkerPatrols()
 	end
@@ -129,9 +135,16 @@ function _OnTurn(turn)
 	end
 	--process stalagtites
 	StalagtitesFalling()
+	ProcessTiledSwamps()
 end
 
 function _OnCreateThing(t)
+	if t.Type == T_SPELL and t.Model == M_SPELL_LIGHTNING_BOLT then
+		if isItemInTable(G_HUMANS_ALIVE,t.Owner) then
+			dodgeLightnings(t.Owner,60+G_GAMESTAGE*10,t) --AI chance to dodge lights
+		end
+	end
+	ProcessSwampCreate(t)
 end
 
 function _OnPlayerDeath(pn)
@@ -219,6 +232,7 @@ function attack(attacker)
 						ATTACK(attacker, target, numTroops, targType, 0, 969+(stage*10), spell1, spell2, spell3, atkType, bbv, mk1, mk2, 0)
 						IncrementAtkVar(attacker,(rndb(1800,2500)) - (G_GAMESTAGE*rndb(150,250))) --**
 						success = true
+						AI_SetTargetParams(attacker,target,true,true)
 						log_msg(attacker,"target: " .. target .. ", numTroops: " .. numTroops .. ", targType: " .. targType .. ", spell1: " .. spell1 .. ", spell2: " .. spell2 .. ", spell3: " .. spell3 .. ", atkType: " .. atkType .. ", mk1: " .. mk1 .. ", mk2: " .. mk2)
 					end
 				end
@@ -249,7 +263,7 @@ function ProcessDefensiveShaman()
 	local pn = TRIBE_CYAN
 	if isShamanHome(pn,0,24) then --pn,mk,rad
 		GetRidOfNearbyEnemies(pn,1,30+G_GAMESTAGE*10)
-		TargetNearbyShamans(pn,9+G_GAMESTAGE,10+G_GAMESTAGE*8)
+		if rnd() < 50 then TargetNearbyShamans(pn,9+G_GAMESTAGE,10+G_GAMESTAGE*8) end
 	end
 end
 
@@ -257,7 +271,7 @@ function ProcessAgressiveShaman()
 	local pn = TRIBE_CYAN
 	if not isShamanHome(pn,0,24) then --pn,mk,rad
 		GetRidOfNearbyEnemies(pn,1,30+G_GAMESTAGE*10)
-		TargetNearbyShamans(pn,9+G_GAMESTAGE,10+G_GAMESTAGE*10)
+		if rnd() < 50 then TargetNearbyShamans(pn,9+G_GAMESTAGE,10+G_GAMESTAGE*10) end
 	end	
 end
 
@@ -512,7 +526,6 @@ function _OnLevelInit(level_id)
 	AI_SetShamanParams(TRIBE_CYAN, 180, 160, true, 16, 12);
 	AI_SetMainDrumTower(TRIBE_CYAN, true, 180, 160);
 	AI_SetConvertingParams(TRIBE_CYAN, false, false, 24);
-	AI_SetTargetParams(TRIBE_CYAN, TRIBE_BLUE, true, true);
 
 	AI_SetBuildingParams(TRIBE_CYAN, true, 50, 3);
 	AI_SetTrainingHuts(TRIBE_CYAN, 0, 0, 0, 0);
@@ -520,7 +533,7 @@ function _OnLevelInit(level_id)
 	AI_SetVehicleParams(TRIBE_CYAN, false, 0, 0, 0, 0);
 	AI_SetFetchParams(TRIBE_CYAN, true, true, true, true);
 
-	AI_SetAttackingParams(TRIBE_CYAN, true, 255, 10);
+	AI_SetAttackingParams(TRIBE_CYAN, true, 255, 10, 20);
 	AI_SetDefensiveParams(TRIBE_CYAN, true, true, true, true, 3, 2, 1);
 	AI_SetSpyParams(TRIBE_CYAN, false, 0, 100, 128, 1);
 	AI_SetPopulatingParams(TRIBE_CYAN, true, true);
@@ -559,7 +572,7 @@ function ProcessIslandStalagtites()
 			createStalagtites(68,3)
 		else
 			if countPeopleInArea(0,68,0) > 2 or countPeopleInArea(1,68,0) > 2 then
-				stalagtites[1] = 80 --seconds
+				stalagtites[1] = 90 --seconds
 				stalagtites[2] = false
 				stalagtites[4] = true
 			end
