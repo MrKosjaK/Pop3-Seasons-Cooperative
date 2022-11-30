@@ -143,60 +143,94 @@ local function cyan_main_attack(player)
     return;
   end
   
-  do return; end
-  
   local result = NAV_CHECK(player, TRIBE_BLUE, ATTACK_BUILDING, 0, FALSE);
-  local idx = AI_GetVar(player, 12);
+  local pattern = G_RANDOM(6);
+  local shaman_busy = false;
   
   if (result == 1) then
-    -- our enemy is accessible.
-	if (idx == 0) then
-	  -- let's check if we can attack with just invisible priests
-	  local my_priests = AI_GetUnitCount(player, M_PERSON_RELIGIOUS);
-	  if (my_priests >= 4) then
-	    if (MANA(player) >= SPELL_COST(M_SPELL_INVISIBILITY) << 1) then
-		  AI_SetAttackFlags(player, 0, 0, 0);
-		  AI_SetAways(player, 0, 0, 100, 0, 0);
-		  AI_SetShamanAway(player, false);
-		  
-		  ATTACK(player, TRIBE_BLUE, math.min(10, my_priests), ATTACK_BUILDING, M_BUILDING_TEMPLE, 400, M_SPELL_INVISIBILITY, M_SPELL_INVISIBILITY, M_SPELL_INVISIBILITY, ATTACK_NORMAL, 0, 3, -1, 0);
-		end
-	  end
-	  AI_SetVar(player, 12, 1);
-	elseif (idx == 1) then
-	  -- mixed attack, fws + priests.
-	  local my_priests = AI_GetUnitCount(player, M_PERSON_RELIGIOUS);
-	  local my_fws = AI_GetUnitCount(player, M_PERSON_SUPER_WARRIOR);
-	  
-	  if (my_priests >= 3 and my_fws >= 3) then
-	    AI_SetAttackFlags(player, 0, 0, 0);
-		AI_SetAways(player, 5, 0, 50, 50, 0);
+    local my_priests = AI_GetUnitCount(player, M_PERSON_RELIGIOUS);
+	local my_fws = AI_GetUnitCount(player, M_PERSON_SUPER_WARRIOR);
+	
+    if (pattern == 0) then
+	  -- invisible priests, how pathetic.
+	  if (my_priests >= 3) then
+	    AI_SetAttackFlags(player, 2, 0, 0);
+	    AI_SetAways(player, 0, 0, 100, 0, 0);
 		AI_SetShamanAway(player, false);
 		
-		ATTACK(player, TRIBE_BLUE, math.min(18, (my_priests + my_fws) >> 1), ATTACK_BUILDING, M_BUILDING_SUPER_TRAIN, 500, 0, 0, 0, ATTACK_NORMAL, 0, 3, -1, 0);
-	  end
-	  
-	  AI_SetVar(player, 12, 0);
+		ATTACK(player, TRIBE_BLUE, math.min(8, my_priests), ATTACK_BUILDING, M_BUILDING_TEMPLE, 999, M_SPELL_INVISIBILITY, 0, 0, ATTACK_NORMAL, 0, 30, -1, 0);
+		ai:set_event_ticks(8, 1024 + G_RANDOM(120));
+		shaman_busy = true;
+      end
+	elseif (pattern == 1) then
+	  -- invisible fws attacking shaman. pathetic.
+	  if (my_fws >= 3) then
+	    AI_SetAttackFlags(player, 2, 0, 0);
+	    AI_SetAways(player, 0, 0, 0, 100, 0);
+		AI_SetShamanAway(player, false);
+		
+		ATTACK(player, TRIBE_BLUE, math.min(8, my_fws), ATTACK_PERSON, M_PERSON_MEDICINE_MAN, 999, M_SPELL_INVISIBILITY, 0, 0, ATTACK_NORMAL, 0, 30, -1, 0);
+		ai:set_event_ticks(8, 1024 + G_RANDOM(120));
+		shaman_busy = true;
+      end
+	elseif (pattern == 2) then
+	  -- 80% priests and 20% fws, no invis
+	  if (my_priests >= 4 and my_fws >= 2) then
+	    AI_SetAttackFlags(player, 2, 0, 0);
+	    AI_SetAways(player, 0, 0, 80, 0, 20);
+		AI_SetShamanAway(player, false);
+		
+		ATTACK(player, TRIBE_BLUE, math.min(16, (my_priests + my_fws)), ATTACK_BUILDING, M_BUILDING_SUPER_TRAIN, 999, 0, 0, 0, ATTACK_NORMAL, 0, 30, -1, 0);
+		ai:set_event_ticks(8, 1024 + G_RANDOM(120));
+      end
+	elseif (pattern == 3) then
+	  -- 50% priests and 50% fws, invis.
+	  if (my_fws >= 3 and my_priests >= 3) then
+	    AI_SetAttackFlags(player, 2, 0, 0);
+	    AI_SetAways(player, 0, 0, 50, 50, 0);
+		AI_SetShamanAway(player, false);
+		
+		ATTACK(player, TRIBE_BLUE, math.min(16, (my_priests + my_fws)), ATTACK_BUILDING, M_BUILDING_TEMPLE, 999, M_SPELL_INVISIBILITY, M_SPELL_INVISIBILITY, 0, ATTACK_NORMAL, 0, 30, -1, 0);
+		ai:set_event_ticks(8, 1024 + G_RANDOM(120));
+		shaman_busy = true;
+      end
+	elseif (pattern == 4) then
+	  -- 20% priests, 80% fws, no invis
+	  if (my_priests >= 2 and my_fws >= 4) then
+	    AI_SetAttackFlags(player, 2, 0, 0);
+	    AI_SetAways(player, 0, 0, 20, 0, 80);
+		AI_SetShamanAway(player, false);
+		
+		ATTACK(player, TRIBE_BLUE, math.min(12, (my_priests + my_fws)), ATTACK_BUILDING, M_BUILDING_TEMPLE, 999, 0, 0, 0, ATTACK_NORMAL, 0, 30, -1, 0);
+		ai:set_event_ticks(8, 1024 + G_RANDOM(120));
+      end
+	elseif (pattern == 5) then
+	  -- 30% braves, 20% priests, 50% fws, no invis
+	  if (my_priests >= 2 and my_fws >= 2) then
+	    AI_SetAttackFlags(player, 2, 0, 0);
+	    AI_SetAways(player, 30, 0, 20, 0, 50);
+		AI_SetShamanAway(player, false);
+		
+		ATTACK(player, TRIBE_BLUE, math.min(18, 7 + G_RANDOM(12)), ATTACK_BUILDING, M_BUILDING_SUPER_TRAIN, 999, 0, 0, 0, ATTACK_NORMAL, 0, 30, -1, 0);
+		ai:set_event_ticks(8, 1024 + G_RANDOM(120));
+      end
 	end
 	
-	-- now for shaman only attacks.
-	-- check if shes free
-	if (AI_ShamanFree(player) and (sham:can_cast_spell_from_entry(3) or sham:can_cast_spell_from_entry(2))) then
-	  -- now make sure mid is either taken by us or is clear
-	  if (AI_GetVar(player, 10) == 0) then
-	    AI_SetAttackFlags(player, 2, 1, 0);
-		AI_SetAways(player, 0, 0, 0, 0, 0);
-		AI_SetShamanAway(player, true);
+	if (not shaman_busy) then
+	  if (AI_ShamanFree(player)) then
+	    -- send shaman to murder opponent. in case she is FREE!!!!!
 		
-		if (player_can_cast(M_SPELL_HYPNOTISM, player) ~= 3) then
-	      set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
-		  set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
-		  set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
-	    end
-		
-		SET_SPELL_ENTRY(player, 2, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 0);
-		SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 2, 0);
-		ATTACK(player, TRIBE_BLUE, 0, ATTACK_BUILDING, 0, 600, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, ATTACK_NORMAL, 0, 3, -1, 0);
+		if (sham:can_cast_spell_from_entry(2) or sham:can_cast_spell_from_entry(3)) then
+		  AI_SetAttackFlags(player, 2, 1, 0);
+	      AI_SetAways(player, 0, 0, 0, 0, 0);
+		  AI_SetShamanAway(player, true);
+		  SET_SPELL_ENTRY(player, 2, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 2, 0);
+		  SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 2, 1);
+	      SET_SPELL_ENTRY(player, 4, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 0);
+		  SET_SPELL_ENTRY(player, 5, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 1);
+		  ATTACK(player, TRIBE_BLUE, 0, ATTACK_BUILDING, 0, 999, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, ATTACK_NORMAL, 0, -1, -1, 0);
+		  ai:set_event_ticks(8, 1024 + G_RANDOM(120));
+		end
 	  end
 	end
   end
@@ -247,7 +281,41 @@ local function cyan_mid_attack(player)
 	  return
 	end
 	
+	if (e_fws > 0 and e_priests == 0) then
+	  AI_SetVar(player, 10, 1);
+	  -- mid has fws, we'll check if theres a shaman as well.
+	  if (AI_ShamanFree(player)) then
+	    if (e_shaman > 0) then
+	      LOG("ATTACKING MID 4 S1");
+		  AI_SetAttackFlags(player, 1, 0, 0);
+	      AI_SetAways(player, 0, 0, 0, 0, 0);
+	      AI_SetShamanAway(player, true);
+		  TARGET_SHAMAN(player, TRIBE_BLUE); -- target the bitch
+		  SET_SPELL_ENTRY(player, 2, M_SPELL_HYPNOTISM, SPELL_COST(M_SPELL_HYPNOTISM) >> 2, 32, 4, 0);
+		  SET_SPELL_ENTRY(player, 3, M_SPELL_HYPNOTISM, SPELL_COST(M_SPELL_HYPNOTISM) >> 2, 32, 4, 1);
+	      SET_SPELL_ENTRY(player, 4, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 0);
+		  SET_SPELL_ENTRY(player, 5, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 1);
+		  ATTACK(player, TRIBE_BLUE, 0, ATTACK_PERSON, M_PERSON_MEDICINE_MAN, 999, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, ATTACK_NORMAL, 0, -1, -1, 0);
+	      ai:set_event_ticks(5, 720 + G_RANDOM(120));
+		  return;
+	    else
+	      LOG("ATTACKING MID 4 S2");
+	      AI_SetAttackFlags(player, 1, 0, 0);
+	      AI_SetAways(player, 0, 0, 0, 0, 0);
+	      AI_SetShamanAway(player, true);
+		  SET_SPELL_ENTRY(player, 2, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 2, 0);
+		  SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 2, 1);
+	      SET_SPELL_ENTRY(player, 4, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 0);
+		  SET_SPELL_ENTRY(player, 5, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 1);
+		  ATTACK(player, TRIBE_BLUE, 0, ATTACK_MARKER, 6, 999, M_SPELL_INSECT_PLAGUE, M_SPELL_HYPNOTISM, M_SPELL_INSECT_PLAGUE, ATTACK_NORMAL, 0, -1, -1, 0);
+	      ai:set_event_ticks(5, 720 + G_RANDOM(120));
+		  return;
+		end
+	  end
+	end
+	
 	if (e_fws == 0 and e_shaman > 0) then
+	  AI_SetVar(player, 10, 1);
 	  -- mid has priests, and a shaman, include our own shaman and murder her.
 	  -- shaman will be in its own independent attack
 	  if (AI_ShamanFree(player)) then
@@ -257,12 +325,12 @@ local function cyan_mid_attack(player)
 	      AI_SetShamanAway(player, false);
 	  
 	      -- first troops.
-		  LOG("ATTACKING MID T");
+		  LOG("ATTACKING MID 3 T");
 	      ATTACK(player, TRIBE_BLUE, math.min(e_priests, my_priests), ATTACK_MARKER, 6, 999, 0, 0, 0, ATTACK_NORMAL, 0, 30, -1, 0);
 		end
 		
 		-- now shaman.
-		AI_SetAttackFlags(player, 2, 0, 0);
+		AI_SetAttackFlags(player, 1, 0, 0);
 	    AI_SetAways(player, 0, 0, 0, 0, 0);
 	    AI_SetShamanAway(player, true);
 		TARGET_SHAMAN(player, TRIBE_BLUE); -- target the bitch
@@ -271,79 +339,41 @@ local function cyan_mid_attack(player)
 	    SET_SPELL_ENTRY(player, 4, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 0);
 		SET_SPELL_ENTRY(player, 5, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 1);
 		ATTACK(player, TRIBE_BLUE, 0, ATTACK_PERSON, M_PERSON_MEDICINE_MAN, 999, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, ATTACK_NORMAL, 0, -1, -1, 0);
-	    LOG("ATTACKING MID S");
+	    LOG("ATTACKING MID 3 S");
 	    ai:set_event_ticks(5, 840 + G_RANDOM(240));
 		return;
 	  end
 	end
-  end
-  
-  do return; end
-  
-  if (Area:contains_people()) then
-	-- it has em people. see if there are any fws.
-	local my_priests = AI_GetUnitCount(player, M_PERSON_RELIGIOUS);
-	local e_priests = Area:get_person_count(M_PERSON_RELIGIOUS);
-	local e_fws = Area:get_person_count(M_PERSON_SUPER_WARRIOR);
-	local e_braves = Area:get_person_count(M_PERSON_BRAVE);
 	
-	if (e_fws > 0 and e_priests == 0) then
-	  AI_SetVar(player, 10, 1); -- indicate that mid has enemies.
-	  -- so there are fws, then we should send our shaman, don't want to waste any priests or fws.
+	if (e_fws > 0 and e_priests > 0 and e_shaman > 0) then
+	  -- mid has all kinds of troops.
+	  -- try a double attack?
 	  if (AI_ShamanFree(player)) then
-	    if (player_can_cast(M_SPELL_INSECT_PLAGUE, player) ~= 3) then
-	      set_player_can_cast_temp(M_SPELL_INSECT_PLAGUE, player, 1);
-		  set_player_can_cast_temp(M_SPELL_INSECT_PLAGUE, player, 1);
-		  set_player_can_cast_temp(M_SPELL_INSECT_PLAGUE, player, 1);
-	    end
-	    AI_SetAttackFlags(player, 3, 1, 0);
+	    LOG("ATTACKING MID 5 S");
+	    AI_SetAttackFlags(player, 1, 1, 0);
 	    AI_SetAways(player, 0, 0, 0, 0, 0);
 	    AI_SetShamanAway(player, true);
-	    SET_SPELL_ENTRY(player, 2, M_SPELL_GHOST_ARMY, SPELL_COST(M_SPELL_GHOST_ARMY) >> 2, 32, 1, 0);
-	    SET_SPELL_ENTRY(player, 3, M_SPELL_HYPNOTISM, SPELL_COST(M_SPELL_HYPNOTISM) >> 2, 32, 4, 0);
+		TARGET_SHAMAN(player, TRIBE_BLUE); -- target the bitch
+		SET_SPELL_ENTRY(player, 2, M_SPELL_HYPNOTISM, SPELL_COST(M_SPELL_HYPNOTISM) >> 2, 32, 4, 0);
+		SET_SPELL_ENTRY(player, 3, M_SPELL_HYPNOTISM, SPELL_COST(M_SPELL_HYPNOTISM) >> 2, 32, 4, 1);
+	    SET_SPELL_ENTRY(player, 4, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 0);
+		SET_SPELL_ENTRY(player, 5, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 1);
+		ATTACK(player, TRIBE_BLUE, 0, ATTACK_PERSON, M_PERSON_MEDICINE_MAN, 999, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, ATTACK_NORMAL, 0, -1, -1, 0);
 	  
-	    ATTACK(player, TRIBE_BLUE, 0, ATTACK_MARKER, 6, 300, M_SPELL_INSECT_PLAGUE, M_SPELL_INSECT_PLAGUE, M_SPELL_INSECT_PLAGUE, ATTACK_NORMAL, 0, -1, -1, 0);
-	    return;
-	  end
-	end
-	
-	if (e_priests > 0 and e_fws == 0) then
-	  AI_SetVar(player, 10, 1);
-	  -- has priests, can we afford to kill them?
-	  if (my_priests >= e_priests) then
-	    -- we have more or enough priests to beat em up.
-		AI_SetAttackFlags(player, 0, 0, 0);
-		AI_SetAways(player, 0, 0, 100, 0, 0);
-		AI_SetShamanAway(player, false);
-		ATTACK(player, TRIBE_BLUE, math.min(e_priests, my_priests), ATTACK_MARKER, 6, 800, 0, 0, 0, ATTACK_NORMAL, 0, 31, -1, 0);
-	    return;
-	  elseif (AI_ShamanFree(player)) then
-	    -- cannot afford priests, try with shaman then!
-		if (player_can_cast(M_SPELL_HYPNOTISM, player) ~= 3) then
-		  set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
-		  set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
-		  set_player_can_cast_temp(M_SPELL_HYPNOTISM, player, 1);
+	    if (my_priests >= e_priests) then
+		  -- launch a supportive attack.
+		  AI_SetAttackFlags(player, 2, 1, 0);
+	      AI_SetAways(player, 0, 0, 80, 20, 0);
+	      AI_SetShamanAway(player, false);
+	  
+	      -- first troops.
+		  LOG("ATTACKING MID 5 T");
+	      ATTACK(player, TRIBE_BLUE, math.min(e_priests, my_priests), ATTACK_MARKER, 6, 999, 0, 0, 0, ATTACK_NORMAL, 0, 30, -1, 0);
 		end
-		AI_SetAttackFlags(player, 3, 1, 0);
-		AI_SetAways(player, 0, 0, 0, 0, 0);
-		AI_SetShamanAway(player, true);
-		SET_SPELL_ENTRY(player, 2, M_SPELL_GHOST_ARMY, SPELL_COST(M_SPELL_GHOST_ARMY) >> 2, 32, 1, 0);
-	    SET_SPELL_ENTRY(player, 3, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 0);
-	  
-	    ATTACK(player, TRIBE_BLUE, 0, ATTACK_MARKER, 6, 300, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, ATTACK_NORMAL, 0, -1, -1, 0);
-	    return;
+		
+		ai:set_event_ticks(5, 840 + G_RANDOM(240));
+		return;
 	  end
-	end
-	
-	if (e_braves > 4 and my_priests > 0) then
-	  -- do not even set danger variable.
-	  -- has braves only, maybe could sneak in priests?
-	  AI_SetAttackFlags(player, 3, 1, 0);
-	  AI_SetAways(player, 0, 0, 100, 0, 0);
-	  AI_SetShamanAway(player, false);
-	  
-	  ATTACK(player, TRIBE_BLUE, math.min(e_braves >> 2, 5), ATTACK_MARKER, 6, 250, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
-	  return;
 	end
   end
 end
@@ -497,4 +527,4 @@ ai:create_event(4, 214, 88, cyan_anti_rush);
 ai:create_event(5, 370, 70, cyan_mid_attack);
 ai:create_event(6, 480, 96, cyan_look_for_buildings);
 ai:create_event(7, 422, 104, cyan_check_towers);
-ai:create_event(8, 1455, 256, cyan_main_attack);
+ai:create_event(8, 512, 128, cyan_main_attack);
