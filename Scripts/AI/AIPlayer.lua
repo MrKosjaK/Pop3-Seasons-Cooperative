@@ -204,7 +204,8 @@ function sh_mt:process()
 		    if (not me.PlayerMapWho[8]:isEmpty()) then
 			  me.PlayerMapWho[8]:processList(function(t)
 			    if (t.Type == T_PERSON) then
-				  self.CastDelay = 32;
+				  self.CastDelay = 52;
+				  self.SpellCheckCurr = 0;
 				  CREATE_THING_WITH_PARAMS4(T_SPELL, M_SPELL_CONVERT_WILD, s.Owner, t.Pos.D3, 0, 0, 0, 0);
 				  stop_me_search = true;
 				  return false;
@@ -226,6 +227,7 @@ function sh_mt:process()
 			      for k = 1, #se[m].Models do
 				    if (se[m].Models[k] == shape_or_bldg.Model and se[m].UsageCount < se[m].MaxUsage) then
 				      self.CastDelay = 12;
+					  self.SpellCheckCurr = 0;
 					  se[m].UsageCount = se[m].UsageCount + 1;
 				      CREATE_THING_WITH_PARAMS4(T_SPELL, se[m].Spell, s.Owner, shape_or_bldg.Pos.D3, 0, 0, 0, 0);
 				      stop_me_search = true;

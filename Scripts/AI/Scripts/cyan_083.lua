@@ -334,10 +334,21 @@ local function cyan_convert(player)
 	  
 	if (turn < 1440) then
 	  sham:toggle_converting(true);
-	  if (turn < 840) then
-	    SHAMAN_DEFEND(player, 136, 44, TRUE);
+	  if (turn < 720) then
+	    SHAMAN_DEFEND(player, 134, 84, TRUE);
 	  else
-	    SHAMAN_DEFEND(player, 138, 138, TRUE);
+	    local spot = G_RANDOM(4);
+		if (spot == 0) then
+		  SHAMAN_DEFEND(player, 138, 136, TRUE);
+		elseif (spot == 1) then
+		  SHAMAN_DEFEND(player, 126, 144, TRUE);
+		elseif (spot == 2) then
+		  SHAMAN_DEFEND(player, 128, 122, TRUE);
+		elseif (spot == 3) then
+		  SHAMAN_DEFEND(player, 156, 140, TRUE);
+		elseif (spot == 4) then
+		  SHAMAN_DEFEND(player, 148, 158, TRUE);
+		end
 	  end
 	else
       AI_SetVar(player, 9, 1);
@@ -410,10 +421,10 @@ end
 
 -- events
 ai:create_event(1, 174, 46, cyan_build);
-ai:create_event(2, 90, 24, cyan_convert);
+ai:create_event(2, 64, 12, cyan_convert);
 ai:create_event(3, 132, 32, cyan_early_towers);
 ai:create_event(4, 214, 88, cyan_anti_rush);
-ai:create_event(5, 1436, 216, cyan_mid_attack);
+ai:create_event(5, 928, 184, cyan_mid_attack);
 ai:create_event(6, 480, 96, cyan_look_for_buildings);
 ai:create_event(7, 422, 104, cyan_check_towers);
-ai:create_event(8, 2384, 256, cyan_main_attack);
+ai:create_event(8, 1455, 256, cyan_main_attack);
