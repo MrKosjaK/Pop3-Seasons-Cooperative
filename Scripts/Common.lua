@@ -10,6 +10,9 @@ enable_feature(F_WILD_NO_RESPAWN); -- disable wild respawning, oh boy.
 G_SPELL_CONST[M_SPELL_GHOST_ARMY].Active = SPAC_NORMAL;
 G_SPELL_CONST[M_SPELL_GHOST_ARMY].NetworkOnly = 0;
 
+-- Constant Adsjutments
+G_CONST.ShamenDeadManaPer256Gained = 32; -- lower mana gain from kills
+
 -- Local variables (per human)
 local L_SHOW_POPS = false;
 
