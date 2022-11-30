@@ -25,7 +25,6 @@ Level 134 - TBD
 
 =====QUICK TO DO=====
 -- AI give less mana on kill(common)
--- Check code for set player name (online case i guess, its the one bugging)
 
 =====TO DO=====
 -- make sure all textures are alpha-converted to 8p
@@ -39,6 +38,7 @@ Level 134 - TBD
 Beta specific issues:
 -- Language replacement does not work with /mod command unless you put it inside "Language" folder outside of Mods folder, which isn't how it supposed to work.
 -- Computer player does not clear it's script from memory, causing the code to persist in case other level doesn't have a valid script file
+-- set_player_name() for online does put square brackets around name.
 
 =====EASTER EGGS=====
 -- 1 mouse message on some object per level
