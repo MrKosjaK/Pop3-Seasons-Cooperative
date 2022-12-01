@@ -75,7 +75,6 @@ end
 
 local function cyan_defend_base(player)
   AI_SetVar(player, 11, 0);
-  WRITE_CP_ATTRIB(player, ATTR_BASE_UNDER_ATTACK_RETREAT, 0);
   
   GetEnemyAreaInfo(player, 138, 136, 12, Area);
   
@@ -84,13 +83,13 @@ local function cyan_defend_base(player)
 	local e_priests = Area:get_person_count(M_PERSON_RELIGIOUS);
 	local e_fws = Area:get_person_count(M_PERSON_SUPER_WARRIOR);
 	local e_wars = Area:get_person_count(M_PERSON_WARRIOR);
+	local e_braves = Area:get_person_count(M_PERSON_BRAVE);
 	local e_shaman = Area:get_person_count(M_PERSON_MEDICINE_MAN);
 	local my_priests = AI_GetUnitCount(player, M_PERSON_RELIGIOUS);
 	local my_fws = AI_GetUnitCount(player, M_PERSON_SUPER_WARRIOR);
 	
-	if ((e_priests + e_fws + e_wars) >= 6) then
+	if ((e_priests + e_fws + e_wars + e_braves) >= 3) then
 	  AI_SetVar(player, 11, 1);
-      WRITE_CP_ATTRIB(player, ATTR_BASE_UNDER_ATTACK_RETREAT, 1);
 	  -- murder, murder and murder!!!!!
 	  -- marker 39
 	  if ((my_priests + my_fws) >= 3) then
