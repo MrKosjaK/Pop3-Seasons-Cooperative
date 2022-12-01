@@ -78,6 +78,9 @@ function GetPlayerAreaInfo(player, x, z, r, tabl)
       end
 
       if (t.Type == 1) then
+	    if (t.Flags & TF2_PERSON_NOT_SELECTABLE ~= 0) then
+	      return true;
+	    end
         tabl[1][t.Model] = tabl[1][t.Model] + 1;
 		tabl.isEmpty = false;
 		tabl.hasPeople = true;
@@ -120,6 +123,9 @@ function GetAllyAreaInfo(player, x, z, r, tabl)
       end
 
       if (t.Type == 1) then
+	    if (t.Flags & TF2_PERSON_NOT_SELECTABLE ~= 0) then
+	      return true;
+	    end
         tabl[1][t.Model] = tabl[1][t.Model] + 1;
 		tabl.isEmpty = false;
 		tabl.hasPeople = true;
@@ -162,6 +168,9 @@ function GetEnemyAreaInfo(player, x, z, r, tabl)
       end
 
       if (t.Type == 1) then
+	    if (t.Flags & TF2_PERSON_NOT_SELECTABLE ~= 0) then
+	      return true;
+	    end
         tabl[1][t.Model] = tabl[1][t.Model] + 1;
 		tabl.isEmpty = false;
 		tabl.hasPeople = true;
