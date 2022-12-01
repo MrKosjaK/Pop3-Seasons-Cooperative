@@ -70,49 +70,75 @@ function _OnTurn(turn)
 		end
 		--priorities
 		if everySeconds(12) then
+			updateGameStage(6,12,18,24)
 			updateBasePriorities(v)
 			unstuckS(v)
 			trainingHutsPriorities(v)
 		end
 		--update lb expand tbl
-		if everySeconds(1) then
-			if G_AI_EXPANSION_TABLE[v][1] > 0 then G_AI_EXPANSION_TABLE[v][1] = G_AI_EXPANSION_TABLE[v][1] - 1 end
-			if G_AI_EXPANSION_TABLE[v][1] == 0 and not G_AI_EXPANSION_TABLE[v][4] then
-				if v == tribe1 then
+		if v == tribe1 then
+			if everySeconds(1) then
+				if G_AI_EXPANSION_TABLE[v][1] > 0 then G_AI_EXPANSION_TABLE[v][1] = G_AI_EXPANSION_TABLE[v][1] - 1 end
+				if G_AI_EXPANSION_TABLE[v][1] == 0 and not G_AI_EXPANSION_TABLE[v][4] then
 					LBexpand(v,9+stage,rndb(120,180),false) --pn,radius,cooldownSecondsIncrement,requiresLBmana
 				end
+				tryToLB(v)
 			end
-			tryToLB(v)
 		end
 	end
-	--attacks
+	--attacks cdr
 	if TRIBE1atk < turn then TRIBE1atk = TRIBE1atk - 1 elseif TRIBE1atk == turn then attack(tribe1) end
 	if TRIBE2atk < turn then TRIBE2atk = TRIBE2atk - 1 elseif TRIBE2atk == turn then attack(tribe2) end
 	
-	if everySeconds(7-stage) then
-		ProcessDefensiveShaman()
-	end
 	if everySeconds(3) then
 		ProcessAgressiveShaman()
 		ProcessUnitMoveTbl()
 		ProcessIslandStalagtites()
 		for i = #unitAtkunitTbl,1,-1 do unstuckT(unitAtkunitTbl[i]) table.remove(unitAtkunitTbl,i) end
 	end
+	if everySeconds(7-stage) then
+		ProcessDefensiveShaman()
+	end
 	if everySeconds(8) then
 		FillRndEmptyTower(tribe1,M_PERSON_RELIGIOUS)
+		FillRndEmptyTower(tribe2,M_PERSON_SUPER_WARRIOR)
 		updateSpellEntries()
-		updateMarkerPatrols()
 	end
 	if everySeconds(15) then
 		updateVehiclesBuild()
 		updateConvertParams()
 		updateSpellBuckets(stage)
-		updateAtkSpells(stage) --use this b4 ttack
+		MARKER_ENTRIES(tribe2, 5,6,-1,-1) --base wars patrol
 	end
 	if everySeconds(30-stage) then
 		DefensivePreachMarkers()
 		DefendStoneHead(68)
+		DefendStoneHead(94)
 		updateTroopsAndAtkParams()
+		--tribe1
+		MARKER_ENTRIES(tribe1, 0,-1,-1,-1) --base big patrol
+		--tribe2
+		MARKER_ENTRIES(tribe2, 0,1,2,3) --base fws patrol
+		if stage > 1 and AI_GetUnitCount(tribe2,M_PERSON_SUPER_WARRIOR) > 4 then
+			MARKER_ENTRIES(tribe2, 4,-1,-1,-1) --extra patrol base
+		end
+	end
+	if everySeconds(120-stage*10) then
+		local targ = randomItemFromTable(G_HUMANS_ALIVE)
+		if nilT(targ) then
+			local mk = 2 if targ == TRIBE_RED then mk = 39 end
+			if countTroops(tribe2) > 10 then
+				if NavCheck(tribe2,targ,marker_to_coord3d(mk)) then
+					local mk1,mk2,mk3,mk4,mk5 = 86,85,84,83,87
+					if targ == TRIBE_BLUE then mk1,mk2,mk3,mk4,mk5 = 88,90,rndb(91,92),93,89 end
+					SET_MARKER_ENTRY(tribe2, 7, mk1, mk5, 1, math.max(2,stage), 1, 0)
+					SET_MARKER_ENTRY(tribe2, 8, mk2, -1, 1, math.max(2,stage), 1, 0)
+					SET_MARKER_ENTRY(tribe2, 9, mk3, mk3, 0, 2, 0, 0)
+					SET_MARKER_ENTRY(tribe2, 10, mk4, mk4, 0, 2, 0, 0)
+					MARKER_ENTRIES(tribe2,7,8,9,10)
+				end
+			end
+		end
 	end
 	if everySeconds(180-stage*10) then
 		OffensivePreachMarkers()
@@ -204,6 +230,7 @@ function attack(attacker)
 					local mksTbl = {}
 					if attacker == tribe1 then for i = 60,70 do table.insert(mksTbl,i) end else for i = 60,70 do table.insert(mksTbl,i) end end --**
 					local mk1,mk2 = randomItemFromTable(mksTbl),-1
+					updateAtkSpells(stage)
 					local spell1,spell2,spell3 = 0,0,0
 					if attacker == tribe1 then spell1,spell2,spell3 = TRIBE1_ATK_SPELLS[1],TRIBE1_ATK_SPELLS[2],TRIBE1_ATK_SPELLS[3] else spell1,spell2,spell3 = TRIBE2_ATK_SPELLS[1],TRIBE2_ATK_SPELLS[2],TRIBE2_ATK_SPELLS[3] end --**
 					if spell1 == M_SPELL_INVISIBILITY or spell1 == M_SPELL_SHIELD then mk2 = mk1 end
@@ -255,20 +282,17 @@ function IncrementAtkVar(pn,amt)
 	end
 end
 
-function updateMarkerPatrols()
-	local pn = tribe1
-	SET_MARKER_ENTRY(pn, 0, 69, 70, 0, 1, 0, 1)
-	MARKER_ENTRIES(pn, 0,-1,-1,-1)
-	--VEHICLE_PATROL(pn, 3, 71,72,73,74, M_VEHICLE_BOAT_1) --gl with that lol
-	local pn = tribe2
-	
-end
-
 function ProcessDefensiveShaman()
 	local pn = tribe1
 	if isShamanHome(pn,0,24) then --pn,mk,rad
 		GetRidOfNearbyEnemies(pn,1,30+G_GAMESTAGE*10)
 		if rnd() < 50 then TargetNearbyShamans(pn,9+G_GAMESTAGE,10+G_GAMESTAGE*8) end
+	end
+	--
+	local pn = tribe2
+	if isShamanHome(pn,1,14) then --pn,mk,rad
+		GetRidOfNearbyEnemies(pn,1,25+G_GAMESTAGE*8)
+		if rnd() < 55 then TargetNearbyShamans(pn,9+G_GAMESTAGE,8+G_GAMESTAGE*6) end
 	end
 end
 
@@ -277,6 +301,12 @@ function ProcessAgressiveShaman()
 	if not isShamanHome(pn,0,24) then --pn,mk,rad
 		GetRidOfNearbyEnemies(pn,1,30+G_GAMESTAGE*10)
 		if rnd() < 50 then TargetNearbyShamans(pn,9+G_GAMESTAGE,10+G_GAMESTAGE*10) end
+	end	
+	--
+	local pn = tribe2
+	if not isShamanHome(pn,1,14) then --pn,mk,rad
+		GetRidOfNearbyEnemies(pn,1,25+G_GAMESTAGE*12)
+		if rnd() < 55 then TargetNearbyShamans(pn,9+G_GAMESTAGE,12+G_GAMESTAGE*10) end
 	end	
 end
 
@@ -292,7 +322,26 @@ function updateTroopsAndAtkParams()
 		local braves = _gsi.Players[pn].NumPeopleOfType[M_PERSON_BRAVE]
 		local troopAmmount = countTroops(pn)
 		if troopAmmount < math.floor(braves/3) then
-			local troopsType = {{M_PERSON_WARRIOR,4+stage*2},{M_PERSON_RELIGIOUS,4+stage*2}--[[,{M_PERSON_SUPER_WARRIOR,4+stage*2},{M_PERSON_SPY,4+stage*2}]]}
+			local troopsType = {{M_PERSON_WARRIOR,8+stage*2},{M_PERSON_RELIGIOUS,8+stage*2}--[[,{M_PERSON_SUPER_WARRIOR,4+stage*2},{M_PERSON_SPY,4+stage*2}]]}
+			for k,v in ipairs(troopsType) do
+				if AI_EntryAvailable(pn) then
+					if AI_GetUnitCount(pn,v[1]) < v[2] then TRAIN_PEOPLE_NOW(pn,1,v[1]) end
+				end
+			end
+		end
+	end
+	--
+	local pn = tribe2
+	--update attack percentage
+	local atkp = 100 + stage*5
+	if atkp > 140 then atkp = 140 end
+	WRITE_CP_ATTRIB(pn, ATTR_ATTACK_PERCENTAGE, atkp)
+	--auto train units occasionally
+	if rnd() < 50 then --50% chance for main code executte
+		local braves = _gsi.Players[pn].NumPeopleOfType[M_PERSON_BRAVE]
+		local troopAmmount = countTroops(pn)
+		if troopAmmount < math.floor(braves/3) then
+			local troopsType = {{M_PERSON_WARRIOR,10+stage*2},--[[{M_PERSON_RELIGIOUS,8+stage*2},]]{M_PERSON_SUPER_WARRIOR,10+stage*2}--[[,{M_PERSON_SPY,4+stage*2}]]}
 			for k,v in ipairs(troopsType) do
 				if AI_EntryAvailable(pn) then
 					if AI_GetUnitCount(pn,v[1]) < v[2] then TRAIN_PEOPLE_NOW(pn,1,v[1]) end
@@ -326,15 +375,40 @@ function updateSpellEntries(marker,radius)
 			SET_SPELL_ENTRY(pn, 5, M_SPELL_FIRESTORM, 150000, 128, 24-s, 0)
 		end
 	end
-	local pn = tribe2,1,16
-	
+	--
+	local pn = tribe2,1,14
+	if IS_SHAMAN_IN_AREA(pn,marker,radius) then
+		SET_SPELL_ENTRY(pn, 0, M_SPELL_BLAST, SPELL_COST(M_SPELL_BLAST) >> (1+s), 128, 1, 1)
+		SET_SPELL_ENTRY(pn, 1, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> (1+s), 128, 7-s, 1)
+		SET_SPELL_ENTRY(pn, 2, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> (1+s), 128, 6, 1)
+		if s > 0 then
+			SET_SPELL_ENTRY(pn, 3, M_SPELL_HYPNOTISM, SPELL_COST(M_SPELL_HYPNOTISM) >> (1+s), 128, 15-(s*2), 1)
+		end
+	else
+		SET_SPELL_ENTRY(pn, 0, M_SPELL_BLAST, SPELL_COST(M_SPELL_BLAST) >> (1+s), 128, 1, 0)
+		SET_SPELL_ENTRY(pn, 1, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_BLAST) >> (1+s), 128, 2, 0)
+		SET_SPELL_ENTRY(pn, 2, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> (1+s), 128, 6, 0)
+		if s > 0 then
+			SET_SPELL_ENTRY(pn, 3, M_SPELL_GHOST_ARMY, 4000, 128, 6-s, 0)
+		end
+		if s > 1 then
+			SET_SPELL_ENTRY(pn, 4, M_SPELL_HYPNOTISM, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> (1+s), 128, 10-s, 0)
+		end
+		if s > 2 then
+			SET_SPELL_ENTRY(pn, 5, M_SPELL_FIRESTORM, 160000, 128, 22-s, 0)
+			SET_SPELL_ENTRY(pn, 6, M_SPELL_EARTHQUAKE, 14000, 128, 17, 0)
+		end
+		if s >= 4 then
+			SET_SPELL_ENTRY(pn, 7, M_SPELL_ANGEL_OF_DEATH, 200000, 128, 28, 0)
+		end
+	end	
 end
 
 function updateAtkSpells(s)
 	TRIBE1_ATK_SPELLS = {}
-	
+	TRIBE2_ATK_SPELLS = {}
 	--
-	local spellList = {}
+	local spellList1,spellList2 = {},{}
 	local function SpellPicker(possibilitiesTbl,aiTbl)
 		for i = 1,3 do
 			local k = rndb(0,#possibilitiesTbl)
@@ -343,22 +417,29 @@ function updateAtkSpells(s)
 		end		
 	end
 	if s == 0 then
-		spellList = {M_SPELL_INSECT_PLAGUE,M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND}
+		spellList1 = {M_SPELL_INSECT_PLAGUE,M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND}
+		spellList2 = {M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND}
 	elseif s == 1 then
-		spellList = {M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM}
+		spellList1 = {M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM}
+		spellList2 = {M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM,M_SPELL_EARTHQUAKE}
 	elseif s == 2 then
-		spellList = {M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWINDM_SPELL_HYPNOTISM,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE}
+		spellList1 = {M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE}
+		spellList2 = {M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_FIRESTORM}
 	elseif s == 3 then
-		spellList = {M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM,M_SPELL_FIRESTORM}
+		spellList1 = {M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM,M_SPELL_FIRESTORM}
+		spellList2 = {M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM,M_SPELL_FIRESTORM,M_SPELL_FIRESTORM}
 	else
-		spellList = {M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_FIRESTORM}
+		spellList1 = {M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_FIRESTORM}
+		spellList2 = {M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_FIRESTORM,M_SPELL_ANGEL_OF_DEATH}
 	end
-	SpellPicker(spellList,TRIBE1_ATK_SPELLS)
+	SpellPicker(spellList1,TRIBE1_ATK_SPELLS)
+	SpellPicker(spellList2,TRIBE2_ATK_SPELLS)
 	--feel the need to use SHIELD/INVI?
 	if s > 1 then
 		local chance = 20+s*10 --40-60% chance
 		if rnd() < chance then
 			TRIBE1_ATK_SPELLS[1] = M_SPELL_INVISIBILITY
+			TRIBE2_ATK_SPELLS[1] = M_SPELL_INVISIBILITY
 		end
 	end
 end
@@ -388,10 +469,21 @@ end
 
 function DefendStoneHead(mk)
 	--stone heads defending by tribe1(cyan)
-	if countBoats(tribe1) > 0 then
+	if countBoats(tribe1) > 0 and mk == 68 then
 		if countPeopleInArea(TRIBE_BLUE,mk,0) > 0 or countPeopleInArea(TRIBE_RED,mk,0) > 0 then
 			PREACH_AT_MARKER(tribe1,mk)
 			if rnd() < 40 and AI_ShamanFree(tribe1) then
+				local spellsTbl = {M_SPELL_BLAST,M_SPELL_LIGHTNING_BOLT,M_SPELL_INSECT_PLAGUE,M_SPELL_SWAMP}
+				local s = randomItemFromTable(spellsTbl)
+				GIVE_ONE_SHOT(s,tribe1)
+				SPELL_ATTACK(tribe1,s,mk,mk)
+			end
+		end
+	end
+	--totem pole defending by tribe2(black)
+	if mk == 94 then
+		if countPeopleInArea(TRIBE_BLUE,mk,0) > 0 or countPeopleInArea(TRIBE_RED,mk,0) > 0 then
+			if rnd() < 60 and AI_ShamanFree(tribe1) then
 				local spellsTbl = {M_SPELL_BLAST,M_SPELL_LIGHTNING_BOLT,M_SPELL_INSECT_PLAGUE,M_SPELL_SWAMP}
 				local s = randomItemFromTable(spellsTbl)
 				GIVE_ONE_SHOT(s,tribe1)
@@ -414,14 +506,30 @@ function updateSpellBuckets(s)
 	AI_SpellBucketCost(tribe, M_SPELL_WHIRLWIND, 18-s);
 	AI_SpellBucketCost(tribe, M_SPELL_GHOST_ARMY, 8-s);
 	--
-	
+	local tribe = tribe2
+	AI_SpellBucketCost(tribe, M_SPELL_BLAST, 1);
+	AI_SpellBucketCost(tribe, M_SPELL_CONVERT_WILD, 2);
+	AI_SpellBucketCost(tribe, M_SPELL_INSECT_PLAGUE, 7-s);
+	AI_SpellBucketCost(tribe, M_SPELL_INVISIBILITY, 14-s);
+	AI_SpellBucketCost(tribe, M_SPELL_LIGHTNING_BOLT, 10-s);
+	AI_SpellBucketCost(tribe, M_SPELL_HYPNOTISM, 15-s);
+	AI_SpellBucketCost(tribe, M_SPELL_EARTHQUAKE, 33-s);
+	AI_SpellBucketCost(tribe, M_SPELL_FIRESTORM, 48-s*2);
+	AI_SpellBucketCost(tribe, M_SPELL_WHIRLWIND, 22-s*2);
+	AI_SpellBucketCost(tribe, M_SPELL_GHOST_ARMY, 9-s);
+	AI_SpellBucketCost(tribe, M_SPELL_ANGEL_OF_DEATH, 80-s*2);	
 end
 
 function updateConvertParams()
 	local pn = tribe1
-	local cv = btn(GetPop(pn)>20+20*G_GAMESTAGE)
+	local cv = btn(GetPop(pn)<45+20*G_GAMESTAGE)
 	STATE_SET(pn, cv, CP_AT_TYPE_MED_MAN_GET_WILD_PEEPS)
-	WRITE_CP_ATTRIB(pn, ATTR_EXPANSION, 15+10*G_GAMESTAGE)
+	WRITE_CP_ATTRIB(pn, ATTR_EXPANSION, 25+10*G_GAMESTAGE)
+	--
+	local pn = tribe2
+	local cv = btn(GetPop(pn)<40+16*G_GAMESTAGE)
+	STATE_SET(pn, cv, CP_AT_TYPE_MED_MAN_GET_WILD_PEEPS)
+	WRITE_CP_ATTRIB(pn, ATTR_EXPANSION, 25+8*G_GAMESTAGE)
 end
 
 function updateVehiclesBuild()
@@ -434,14 +542,17 @@ end
 function trainingHutsPriorities(pn)
 	local pop,huts,s = GetPop(pn),countHuts(pn,false),G_GAMESTAGE
 	
-	WRITE_CP_ATTRIB(pn, ATTR_PREF_WARRIOR_TRAINS, btn(huts > 2))
-	--WRITE_CP_ATTRIB(pn, ATTR_PREF_SUPER_WARRIOR_TRAINS, btn(huts > 4))
-	WRITE_CP_ATTRIB(pn, ATTR_PREF_RELIGIOUS_TRAINS, btn(huts > 6))
-	--WRITE_CP_ATTRIB(pn, ATTR_PREF_SPY_TRAINS, btn(huts > 4))
-	WRITE_CP_ATTRIB(pn, ATTR_PREF_BOAT_HUTS, btn(countHuts(pn,false) > 1+s+4))
-	--WRITE_CP_ATTRIB(pn, ATTR_PREF_BALLOON_HUTS, btn(countHuts(pn,false) > 1+stage+7))
-	
-	--local w,t,fw,s = AI_GetBldgCount(pn, M_BUILDING_WARRIOR_TRAIN),AI_GetBldgCount(pn, M_BUILDING_TEMPLE), AI_GetBldgCount(pn, M_BUILDING_SUPER_TRAIN),AI_GetBldgCount(pn, M_BUILDING_SPY_TRAIN)
+	if pn == tribe1 then
+		WRITE_CP_ATTRIB(pn, ATTR_PREF_WARRIOR_TRAINS, btn(huts > 2))
+		--WRITE_CP_ATTRIB(pn, ATTR_PREF_SUPER_WARRIOR_TRAINS, btn(huts > 4))
+		WRITE_CP_ATTRIB(pn, ATTR_PREF_RELIGIOUS_TRAINS, btn(huts > 6))
+		--WRITE_CP_ATTRIB(pn, ATTR_PREF_SPY_TRAINS, btn(huts > 4))
+		WRITE_CP_ATTRIB(pn, ATTR_PREF_BOAT_HUTS, btn(countHuts(pn,false) > 1+s+4))
+		--WRITE_CP_ATTRIB(pn, ATTR_PREF_BALLOON_HUTS, btn(countHuts(pn,false) > 1+stage+7))
+	else
+		WRITE_CP_ATTRIB(pn, ATTR_PREF_WARRIOR_TRAINS, btn(huts > 4))
+		WRITE_CP_ATTRIB(pn, ATTR_PREF_SUPER_WARRIOR_TRAINS, btn(huts > 1))
+	end
 	
 	if pn == tribe1 then
 		WriteAiTrainTroops(pn, 1+(s*2)+15 ,1+(s*2)+15, 0, 0) --w,pr,fw,s
@@ -452,25 +563,27 @@ end
 
 --update base priorities
 function updateBasePriorities(pn)
-	updateGameStage(5,10,15,20)
 	local s,h,b = G_GAMESTAGE, countHuts(pn,true), AI_GetUnitCount(pn, M_PERSON_BRAVE)
-	--local t,p = countTroops(pn), GetPop(pn)
-	AI_SetBuildingParams(pn,true,60+s*15,3)
-	if b > 20+(s*5) and h > 6+s then
-		if AI_GetBldgCount(pn, M_BUILDING_BOAT_HUT_1) > 0 then
-			WRITE_CP_ATTRIB(pn, ATTR_PREF_BOAT_DRIVERS, 1+s+2);
-			WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BOAT, 1+s+2);
-		else
-			WRITE_CP_ATTRIB(pn, ATTR_PREF_BOAT_DRIVERS, 0);
-			WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BOAT, 0);
+	if pn == tribe1 then
+		AI_SetBuildingParams(pn,true,60+s*15,3)
+		if b > 20+(s*5) and h > 6+s then
+			if AI_GetBldgCount(pn, M_BUILDING_BOAT_HUT_1) > 0 then
+				WRITE_CP_ATTRIB(pn, ATTR_PREF_BOAT_DRIVERS, 1+s+2);
+				WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BOAT, 1+s+2);
+			else
+				WRITE_CP_ATTRIB(pn, ATTR_PREF_BOAT_DRIVERS, 0);
+				WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BOAT, 0);
+			end
+			if AI_GetBldgCount(pn, M_BUILDING_AIRSHIP_HUT_1) > 0 then
+				WRITE_CP_ATTRIB(pn, ATTR_PREF_BALLOON_DRIVERS, 1+s+2);
+				WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BALLOON, 1+s+2);
+			else
+				WRITE_CP_ATTRIB(pn, ATTR_PREF_BALLOON_DRIVERS, 0);
+				WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BALLOON, 0);
+			end
 		end
-		if AI_GetBldgCount(pn, M_BUILDING_AIRSHIP_HUT_1) > 0 then
-			WRITE_CP_ATTRIB(pn, ATTR_PREF_BALLOON_DRIVERS, 1+s+2);
-			WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BALLOON, 1+s+2);
-		else
-			WRITE_CP_ATTRIB(pn, ATTR_PREF_BALLOON_DRIVERS, 0);
-			WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BALLOON, 0);
-		end
+	else
+		AI_SetBuildingParams(pn,true,70+s*5,rndb(1,3))
 	end
 end
 
@@ -493,6 +606,21 @@ M_SPELL_FIRESTORM
 
 TRIBE1_ATK_SPELLS = {M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND}
 
+TRIBE2_SPELLS = {
+M_SPELL_BLAST,
+M_SPELL_CONVERT_WILD,
+M_SPELL_GHOST_ARMY,
+M_SPELL_LAND_BRIDGE,
+M_SPELL_LIGHTNING_BOLT,
+M_SPELL_WHIRLWIND,
+M_SPELL_INSECT_PLAGUE,
+M_SPELL_INVISIBILITY,
+M_SPELL_HYPNOTISM,
+M_SPELL_EARTHQUAKE,
+M_SPELL_FIRESTORM,
+M_SPELL_ANGEL_OF_DEATH
+}
+
 TRIBE2_ATK_SPELLS = {M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND}
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -503,51 +631,94 @@ function _OnLevelInit(level_id)
 	for i = 5,55 do Plant(i,i,-1) end
 
 	--stuff for AI
-	AI_Initialize(tribe1);
+	local pn = tribe1
+	AI_Initialize(pn);
 
 	for k,v in ipairs(TRIBE1_SPELLS) do
-		set_player_can_cast(v, tribe1);
+		set_player_can_cast(v, pn);
 	end
-	AI_EnableBuckets(tribe1);
-	AI_SpellBucketCost(tribe1, M_SPELL_BLAST, 1);
-	AI_SpellBucketCost(tribe1, M_SPELL_CONVERT_WILD, 2);
-	AI_SpellBucketCost(tribe1, M_SPELL_INSECT_PLAGUE, 6);
-	AI_SpellBucketCost(tribe1, M_SPELL_INVISIBILITY, 13);
-	AI_SpellBucketCost(tribe1, M_SPELL_LIGHTNING_BOLT, 11);
-	AI_SpellBucketCost(tribe1, M_SPELL_HYPNOTISM, 16);
-	AI_SpellBucketCost(tribe1, M_SPELL_EARTHQUAKE, 32);
-	AI_SpellBucketCost(tribe1, M_SPELL_FIRESTORM, 48);
-	AI_SpellBucketCost(tribe1, M_SPELL_WHIRLWIND, 18);
-	AI_SpellBucketCost(tribe1, M_SPELL_GHOST_ARMY, 8);
+	AI_EnableBuckets(pn);
+	AI_SpellBucketCost(pn, M_SPELL_BLAST, 1);
+	AI_SpellBucketCost(pn, M_SPELL_CONVERT_WILD, 2);
+	AI_SpellBucketCost(pn, M_SPELL_INSECT_PLAGUE, 6);
+	AI_SpellBucketCost(pn, M_SPELL_INVISIBILITY, 13);
+	AI_SpellBucketCost(pn, M_SPELL_LIGHTNING_BOLT, 11);
+	AI_SpellBucketCost(pn, M_SPELL_HYPNOTISM, 16);
+	AI_SpellBucketCost(pn, M_SPELL_EARTHQUAKE, 32);
+	AI_SpellBucketCost(pn, M_SPELL_FIRESTORM, 48);
+	AI_SpellBucketCost(pn, M_SPELL_WHIRLWIND, 18);
+	AI_SpellBucketCost(pn, M_SPELL_GHOST_ARMY, 8);
 	
-	set_player_can_build(M_BUILDING_TEPEE, tribe1);
-	set_player_can_build(M_BUILDING_DRUM_TOWER, tribe1);
-	set_player_can_build(M_BUILDING_WARRIOR_TRAIN, tribe1);
-	--set_player_can_build(M_BUILDING_SUPER_TRAIN, tribe1);
-	set_player_can_build(M_BUILDING_TEMPLE, tribe1);
-	set_player_can_build(M_BUILDING_BOAT_HUT_1, tribe1);
-	--set_player_can_build(M_BUILDING_AIRSHIP_HUT_1, tribe1);
+	set_player_can_build(M_BUILDING_TEPEE, pn);
+	set_player_can_build(M_BUILDING_DRUM_TOWER, pn);
+	set_player_can_build(M_BUILDING_WARRIOR_TRAIN, pn);
+	--set_player_can_build(M_BUILDING_SUPER_TRAIN, pn);
+	set_player_can_build(M_BUILDING_TEMPLE, pn);
+	set_player_can_build(M_BUILDING_BOAT_HUT_1, pn);
+	--set_player_can_build(M_BUILDING_AIRSHIP_HUT_1, pn);
 
-	AI_SetAways(tribe1, 1, 0, 0, 0, 0);
-	AI_SetShamanAway(tribe1, true);
-	AI_SetShamanParams(tribe1, 180, 160, true, 16, 12);
-	AI_SetMainDrumTower(tribe1, true, 180, 160);
-	AI_SetConvertingParams(tribe1, false, false, 24);
+	AI_SetAways(pn, 1, 0, 0, 0, 0);
+	AI_SetShamanAway(pn, true);
+	AI_SetShamanParams(pn, 180, 160, true, 16, 12);
+	AI_SetMainDrumTower(pn, true, 180, 160);
+	AI_SetConvertingParams(pn, false, false, 24);
 
-	AI_SetBuildingParams(tribe1, true, 50, 3);
-	AI_SetTrainingHuts(tribe1, 0, 0, 0, 0);
-	AI_SetTrainingPeople(tribe1, true, 10, 0, 0, 0, 0);
-	AI_SetVehicleParams(tribe1, false, 0, 0, 0, 0);
-	AI_SetFetchParams(tribe1, true, true, true, true);
+	AI_SetBuildingParams(pn, true, 50, 3);
+	AI_SetTrainingHuts(pn, 0, 0, 0, 0);
+	AI_SetTrainingPeople(pn, true, 10, 0, 0, 0, 0);
+	AI_SetVehicleParams(pn, false, 0, 0, 0, 0);
+	AI_SetFetchParams(pn, true, true, true, true);
 
-	AI_SetAttackingParams(tribe1, true, 255, 10, 20);
-	AI_SetDefensiveParams(tribe1, true, true, true, true, 3, 2, 1);
-	AI_SetSpyParams(tribe1, false, 0, 100, 128, 1);
-	AI_SetPopulatingParams(tribe1, true, true);
+	AI_SetAttackingParams(pn, true, 255, 10, 20);
+	AI_SetDefensiveParams(pn, true, true, true, true, 3, 2, 1);
+	AI_SetSpyParams(pn, false, 0, 100, 128, 1);
+	AI_SetPopulatingParams(pn, true, true);
 	
 	-------------------------------------------------------------------------
 	
-	AI_Initialize(tribe2)
+	local pn = tribe2
+	AI_Initialize(pn);
+	
+	for k,v in ipairs(TRIBE2_SPELLS) do
+		set_player_can_cast(v, pn);
+	end
+	AI_EnableBuckets(pn);
+	AI_SpellBucketCost(pn, M_SPELL_BLAST, 1);
+	AI_SpellBucketCost(pn, M_SPELL_CONVERT_WILD, 2);
+	AI_SpellBucketCost(pn, M_SPELL_INSECT_PLAGUE, 6);
+	AI_SpellBucketCost(pn, M_SPELL_INVISIBILITY, 13);
+	AI_SpellBucketCost(pn, M_SPELL_LIGHTNING_BOLT, 11);
+	AI_SpellBucketCost(pn, M_SPELL_HYPNOTISM, 16);
+	AI_SpellBucketCost(pn, M_SPELL_EARTHQUAKE, 32);
+	AI_SpellBucketCost(pn, M_SPELL_FIRESTORM, 48);
+	AI_SpellBucketCost(pn, M_SPELL_WHIRLWIND, 18);
+	AI_SpellBucketCost(pn, M_SPELL_GHOST_ARMY, 8);
+	AI_SpellBucketCost(pn, M_SPELL_ANGEL_OF_DEATH, 70);
+	
+	set_player_can_build(M_BUILDING_TEPEE, pn);
+	set_player_can_build(M_BUILDING_DRUM_TOWER, pn);
+	set_player_can_build(M_BUILDING_WARRIOR_TRAIN, pn);
+	set_player_can_build(M_BUILDING_SUPER_TRAIN, pn);
+	--set_player_can_build(M_BUILDING_TEMPLE, pn);
+	--set_player_can_build(M_BUILDING_BOAT_HUT_1, pn);
+	--set_player_can_build(M_BUILDING_AIRSHIP_HUT_1, pn);
+
+	AI_SetAways(pn, 1, 0, 0, 0, 0);
+	AI_SetShamanAway(pn, true);
+	AI_SetShamanParams(pn, 22, 32, true, 32, 12);
+	AI_SetMainDrumTower(pn, true, 22, 32);
+	AI_SetConvertingParams(pn, false, false, 24);
+
+	AI_SetBuildingParams(pn, true, 50, 2);
+	AI_SetTrainingHuts(pn, 0, 0, 0, 0);
+	AI_SetTrainingPeople(pn, true, 10, 0, 0, 0, 0);
+	AI_SetVehicleParams(pn, false, 0, 0, 0, 0);
+	AI_SetFetchParams(pn, true, false, false, true);
+
+	AI_SetAttackingParams(pn, true, 255, 10, 20);
+	AI_SetDefensiveParams(pn, true, true, true, true, 3, 2, 1);
+	AI_SetSpyParams(pn, false, 0, 100, 128, 1);
+	AI_SetPopulatingParams(pn, true, true);
 end
 
 function _OnPostLevelInit(level_id)
@@ -566,6 +737,17 @@ function _OnPostLevelInit(level_id)
 	G_AI_EXPANSION_TABLE[tribe1][1] = G_AI_EXPANSION_TABLE[tribe1][1] + rndb(60,120)
 	SET_DEFENCE_RADIUS(tribe1,9)
 	SET_DEFENCE_RADIUS(tribe2,7)
+	--patrols
+	SET_MARKER_ENTRY(tribe1, 0, 69, 70, 0, 1, 0, 1)
+	--VEHICLE_PATROL(pn, 3, 71,72,73,74, M_VEHICLE_BOAT_1) --gl with that lol
+	--
+	SET_MARKER_ENTRY(tribe2, 0, 75, 75, 0, 0, 2, 0)
+	SET_MARKER_ENTRY(tribe2, 1, 76, 76, 0, 0, 2, 0)
+	SET_MARKER_ENTRY(tribe2, 2, 77, 77, 0, 0, 2, 0)
+	SET_MARKER_ENTRY(tribe2, 3, 78, 78, 0, 0, 2, 0)
+	SET_MARKER_ENTRY(tribe2, 4, 78, 80, 0, 1, 2, 0)
+	SET_MARKER_ENTRY(tribe2, 5, 81, -1, 0, 2, 0, 0)
+	SET_MARKER_ENTRY(tribe2, 6, 82, -1, 0, 2, 0, 0)
 end
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -628,4 +810,4 @@ createStalagtites(68,3)
 
 
 --to do:
---black tribe
+--remove logs, log_msg
