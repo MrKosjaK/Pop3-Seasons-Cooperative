@@ -239,7 +239,7 @@ end
 local function cyan_mid_attack(player)
   AI_SetVar(player, 10, 0);
   -- attacking momentos
-  if (AI_GetVar(player, 9) == 0) then
+  if (AI_GetVar(player, 9) == 0 and AI_GetVar(player, 11) == 1) then
     return;
   end
   
