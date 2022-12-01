@@ -73,66 +73,59 @@ local function cyan_look_for_buildings(player)
   end);
 end
 
-local function cyan_anti_rush(player)
+local function cyan_defend_base(player)
   AI_SetVar(player, 11, 0);
+  WRITE_CP_ATTRIB(player, ATTR_BASE_UNDER_ATTACK_RETREAT, 0);
   
-  if (AI_GetVar(player, 12) == 0) then
-    local turn = getTurn();
+  GetEnemyAreaInfo(player, 138, 136, 12, Area);
+  
+  if (Area:contains_people()) then
+    -- our base is probably under attack?
+	local e_priests = Area:get_person_count(M_PERSON_RELIGIOUS);
+	local e_fws = Area:get_person_count(M_PERSON_SUPER_WARRIOR);
+	local e_wars = Area:get_person_count(M_PERSON_WARRIOR);
+	local e_shaman = Area:get_person_count(M_PERSON_MEDICINE_MAN);
+	local my_priests = AI_GetUnitCount(player, M_PERSON_RELIGIOUS);
+	local my_fws = AI_GetUnitCount(player, M_PERSON_SUPER_WARRIOR);
 	
-	if (turn < 5760) then
-	  GetEnemyAreaInfo(player, 138, 136, 12, Area);
-	  
-	  -- check if we're being attacked by priests.
-	  if (Area:contains_people()) then
-	    local e_priests = Area:get_person_count(M_PERSON_RELIGIOUS);
-		local my_priests = AI_GetUnitCount(player, M_PERSON_RELIGIOUS);
-		local e_shamans = Area:get_person_count(M_PERSON_MEDICINE_MAN);
-		
-		if (e_shamans > 0) then
-		  
-		  AI_SetVar(player, 11, 1);
-		  if (AI_ShamanFree(player)) then
-		    -- target fucking shaman and murder her to death.
-			AI_SetAttackFlags(player, 3, 1, 0);
-		    AI_SetAways(player, 0, 0, 0, 0, 0);
-		    AI_SetShamanAway(player, true);
-			
-			if (player_can_cast(M_SPELL_LIGHTNING_BOLT, player) ~= 3) then
-		      set_player_can_cast_temp(M_SPELL_LIGHTNING_BOLT, player, 1);
-		      set_player_can_cast_temp(M_SPELL_LIGHTNING_BOLT, player, 1);
-		      set_player_can_cast_temp(M_SPELL_LIGHTNING_BOLT, player, 1);
-		    end
-			
-			-- tear her apart.
-			ATTACK(player, TRIBE_BLUE, 0, ATTACK_PERSON, M_PERSON_MEDICINE_MAN, 998, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, ATTACK_NORMAL, 0, -1, -1, 0);
-		  end
-		end
-		
-		if (e_priests > 0) then
-		  AI_SetVar(player, 11, 1);
-		  -- murder.
-		  AI_SetAttackFlags(player, 3, 1, 0);
-		  AI_SetAways(player, 0, 0, 100, 0, 0);
-		  AI_SetShamanAway(player, false);
-		  
-		  if (AI_ShamanFree(player) and (my_priests <= e_priests)) then
-		    AI_SetShamanAway(player, true);
-		  
-		    if (player_can_cast(M_SPELL_BLAST, player) ~= 3) then
-		      set_player_can_cast_temp(M_SPELL_BLAST, player, 1);
-		      set_player_can_cast_temp(M_SPELL_BLAST, player, 1);
-		      set_player_can_cast_temp(M_SPELL_BLAST, player, 1);
-		    end
-		  
-		    SET_SPELL_ENTRY(player, 2, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 1);
-		    SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 2, 1);
-		  end
-		  ATTACK(player, TRIBE_BLUE, my_priests, ATTACK_MARKER, 39, 998, M_SPELL_BLAST, M_SPELL_BLAST, M_SPELL_BLAST, ATTACK_NORMAL, 0, -1, -1, 0);
-		end
+	if ((e_priests + e_fws + e_wars) >= 6) then
+	  AI_SetVar(player, 11, 1);
+      WRITE_CP_ATTRIB(player, ATTR_BASE_UNDER_ATTACK_RETREAT, 1);
+	  -- murder, murder and murder!!!!!
+	  -- marker 39
+	  if ((my_priests + my_fws) >= 3) then
+	    AI_SetAttackFlags(player, 3, 1, 0);
+	    AI_SetAways(player, 0, 0, 50, 50, 0);
+	    AI_SetShamanAway(player, false);
+	    LOG("DEFENDING MYSELF T");
+	    ATTACK(player, TRIBE_BLUE, (e_priests + e_fws + e_wars) >> 1, ATTACK_MARKER, 39, 999, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0); 
+	    ai:set_event_ticks(4, 1024 + G_RANDOM(120));
 	  end
-	else
-	  AI_SetVar(player, 11, 0);
-	  AI_SetVar(player, 12, 1);
+	  
+	  if (e_shaman > 0 and AI_ShamanFree(player)) then
+	    LOG("DEFENDING MYSELF S1");
+		AI_SetAttackFlags(player, 3, 1, 0);
+		AI_SetAways(player, 0, 0, 0, 0, 0);
+		AI_SetShamanAway(player, true);
+		TARGET_SHAMAN(player, TRIBE_BLUE);
+		SET_SPELL_ENTRY(player, 2, M_SPELL_HYPNOTISM, SPELL_COST(M_SPELL_HYPNOTISM) >> 2, 32, 4, 0);
+		SET_SPELL_ENTRY(player, 3, M_SPELL_HYPNOTISM, SPELL_COST(M_SPELL_HYPNOTISM) >> 2, 32, 4, 1);
+	    SET_SPELL_ENTRY(player, 4, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 0);
+		SET_SPELL_ENTRY(player, 5, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 1);
+		ATTACK(player, TRIBE_BLUE, 0, ATTACK_PERSON, M_PERSON_MEDICINE_MAN, 999, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, ATTACK_NORMAL, 0, -1, -1, 0);
+	    ai:set_event_ticks(4, 1024 + G_RANDOM(120));
+	  else
+	    LOG("DEFENDING MYSELF S2");
+	    AI_SetAttackFlags(player, 3, 1, 0);
+		AI_SetAways(player, 0, 0, 0, 0, 0);
+		AI_SetShamanAway(player, true);
+		SET_SPELL_ENTRY(player, 2, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 2, 0);
+		SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 2, 1);
+	    SET_SPELL_ENTRY(player, 4, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 0);
+		SET_SPELL_ENTRY(player, 5, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 1);
+	    ATTACK(player, TRIBE_BLUE, 0, ATTACK_MARKER, 39, 999, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, ATTACK_NORMAL, 0, -1, -1, 0); 
+	    ai:set_event_ticks(4, 1024 + G_RANDOM(120));
+	  end
 	end
   end
 end
@@ -154,6 +147,7 @@ local function cyan_main_attack(player)
     if (pattern == 0) then
 	  -- invisible priests, how pathetic.
 	  if (my_priests >= 3) then
+	    LOG("MAIN ATTACK P1");
 	    AI_SetAttackFlags(player, 2, 0, 0);
 	    AI_SetAways(player, 0, 0, 100, 0, 0);
 		AI_SetShamanAway(player, false);
@@ -165,6 +159,7 @@ local function cyan_main_attack(player)
 	elseif (pattern == 1) then
 	  -- invisible fws attacking shaman. pathetic.
 	  if (my_fws >= 3) then
+	    LOG("MAIN ATTACK P2");
 	    AI_SetAttackFlags(player, 2, 0, 0);
 	    AI_SetAways(player, 0, 0, 0, 100, 0);
 		AI_SetShamanAway(player, false);
@@ -173,9 +168,10 @@ local function cyan_main_attack(player)
 		ai:set_event_ticks(8, 1024 + G_RANDOM(120));
 		shaman_busy = true;
       end
-	elseif (pattern == 2) then
+	elseif (pattern == 2 and AI_GetVar(player, 10) == 0) then
 	  -- 80% priests and 20% fws, no invis
 	  if (my_priests >= 4 and my_fws >= 2) then
+	    LOG("MAIN ATTACK P3");
 	    AI_SetAttackFlags(player, 2, 0, 0);
 	    AI_SetAways(player, 0, 0, 80, 0, 20);
 		AI_SetShamanAway(player, false);
@@ -186,6 +182,7 @@ local function cyan_main_attack(player)
 	elseif (pattern == 3) then
 	  -- 50% priests and 50% fws, invis.
 	  if (my_fws >= 3 and my_priests >= 3) then
+	    LOG("MAIN ATTACK P4");
 	    AI_SetAttackFlags(player, 2, 0, 0);
 	    AI_SetAways(player, 0, 0, 50, 50, 0);
 		AI_SetShamanAway(player, false);
@@ -194,9 +191,10 @@ local function cyan_main_attack(player)
 		ai:set_event_ticks(8, 1024 + G_RANDOM(120));
 		shaman_busy = true;
       end
-	elseif (pattern == 4) then
+	elseif (pattern == 4 and AI_GetVar(player, 10) == 0) then
 	  -- 20% priests, 80% fws, no invis
 	  if (my_priests >= 2 and my_fws >= 4) then
+	    LOG("MAIN ATTACK P5");
 	    AI_SetAttackFlags(player, 2, 0, 0);
 	    AI_SetAways(player, 0, 0, 20, 0, 80);
 		AI_SetShamanAway(player, false);
@@ -204,9 +202,10 @@ local function cyan_main_attack(player)
 		ATTACK(player, TRIBE_BLUE, math.min(12, (my_priests + my_fws)), ATTACK_BUILDING, M_BUILDING_TEMPLE, 999, 0, 0, 0, ATTACK_NORMAL, 0, 30, -1, 0);
 		ai:set_event_ticks(8, 1024 + G_RANDOM(120));
       end
-	elseif (pattern == 5) then
+	elseif (pattern == 5 and AI_GetVar(player, 10) == 0) then
 	  -- 30% braves, 20% priests, 50% fws, no invis
 	  if (my_priests >= 2 and my_fws >= 2) then
+	    LOG("MAIN ATTACK P6");
 	    AI_SetAttackFlags(player, 2, 0, 0);
 	    AI_SetAways(player, 30, 0, 20, 0, 50);
 		AI_SetShamanAway(player, false);
@@ -217,10 +216,11 @@ local function cyan_main_attack(player)
 	end
 	
 	if (not shaman_busy) then
-	  if (AI_ShamanFree(player)) then
+	  if (AI_ShamanFree(player) and AI_GetVar(player, 10) == 0) then
 	    -- send shaman to murder opponent. in case she is FREE!!!!!
 		
 		if (sham:can_cast_spell_from_entry(2) or sham:can_cast_spell_from_entry(3)) then
+		  LOG("MAIN ATTACK S");
 		  AI_SetAttackFlags(player, 2, 1, 0);
 	      AI_SetAways(player, 0, 0, 0, 0, 0);
 		  AI_SetShamanAway(player, true);
@@ -523,7 +523,7 @@ end
 ai:create_event(1, 174, 46, cyan_build);
 ai:create_event(2, 64, 12, cyan_convert);
 ai:create_event(3, 132, 32, cyan_early_towers);
-ai:create_event(4, 214, 88, cyan_anti_rush);
+ai:create_event(4, 324, 64, cyan_defend_base);
 ai:create_event(5, 370, 70, cyan_mid_attack);
 ai:create_event(6, 480, 96, cyan_look_for_buildings);
 ai:create_event(7, 422, 104, cyan_check_towers);
