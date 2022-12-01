@@ -1,5 +1,7 @@
 local area_info_mt = {};
+local wood_area_info = {};
 area_info_mt.__index = area_info_mt;
+wood_area_info.__index = wood_area_info;
 
 function area_info_mt:is_empty()
   return (self.isEmpty);
@@ -19,6 +21,36 @@ end
 
 function area_info_mt:get_building_count(model)
   return (self[2][model]);
+end
+
+function wood_area_info:is_empty()
+  return (self.isEmpty);
+end
+
+function wood_area_info:contains_trees()
+  return (self.hasTrees);
+end
+
+function wood_area_info:contains_wood_piles()
+  return (self.hasWoodPiles);
+end
+
+function CreateWoodAreaInfo()
+  local t =
+  {
+    [1] = 0,
+	[2] = 0,
+	[3] = 0,
+	[4] = 0,
+	[5] = 0,
+	[6] = 0,
+	[7] = 0,
+	hasTrees = false,
+	hasWoodPiles = false,
+	isEmpty = true
+  };
+  setmetatable(t, wood_area_info);
+  return t;
 end
 
 function CreateAreaInfo()
@@ -52,6 +84,47 @@ function CreateAreaInfo()
   };
   setmetatable(t, area_info_mt);
   return t;
+end
+
+function GetWoodAreaInfo(x, z, r, tabl)
+  if (tabl == nil or type(tabl) ~= "table") then
+    return;
+  end
+  
+  for k = 1, 7 do
+    tabl[k] = 0;
+  end
+  
+  tabl.isEmpty = true;
+  tabl.hasTrees = false;
+  tabl.hasWoodPiles = false;
+  
+  SearchMapCells(SQUARE, 0, 0, r, map_xz_to_map_idx(x, z), function(me)
+    me.MapWhoList:processList(function(t)
+      if (t.Owner ~= TRIBE_HOSTBOT) then
+        return true;
+      end
+
+      if (t.Type == 5) then
+	    if (t.Model <= 6) then
+          tabl[t.Model] = tabl[t.Model] + 1;
+		  tabl.isEmpty = false;
+		  tabl.hasTrees = true;
+		  return true;
+		end
+		
+		if (t.Model == M_SCENERY_WOOD_PILE) then
+		  tabl[7] = tabl[7] + 1;
+		  tabl.isEmpty = false;
+		  tabl.hasWoodPiles = true;
+		  return true;
+		end
+        return true;
+      end
+      return true;
+    end);
+    return true;
+  end);
 end
 
 function GetPlayerAreaInfo(player, x, z, r, tabl)
@@ -123,9 +196,6 @@ function GetAllyAreaInfo(player, x, z, r, tabl)
       end
 
       if (t.Type == 1) then
-	    if (t.Flags & TF2_PERSON_NOT_SELECTABLE ~= 0) then
-	      return true;
-	    end
         tabl[1][t.Model] = tabl[1][t.Model] + 1;
 		tabl.isEmpty = false;
 		tabl.hasPeople = true;
