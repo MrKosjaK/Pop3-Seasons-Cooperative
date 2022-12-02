@@ -87,8 +87,8 @@ function _OnTurn(turn)
 		end
 	end
 	--attacks cdr
-	if TRIBE1atk < turn then TRIBE1atk = TRIBE1atk - 1 elseif TRIBE1atk == turn then attack(tribe1) end
-	if TRIBE2atk < turn then TRIBE2atk = TRIBE2atk - 1 elseif TRIBE2atk == turn then attack(tribe2) end
+	if TRIBE1atk == turn then attack(tribe1) end
+	if TRIBE2atk == turn then attack(tribe2) end
 	
 	if everySeconds(3) then
 		ProcessAgressiveShaman()
@@ -173,17 +173,21 @@ function _OnTurn(turn)
 end
 
 function _OnCreateThing(t)
-	if t.Type == T_SPELL and t.Model == M_SPELL_LIGHTNING_BOLT then
+	if t.Type == T_SPELL and (t.Model == M_SPELL_LIGHTNING_BOLT or t.Model == M_SPELL_BLAST) then
 		if isItemInTable(G_HUMANS_ALIVE,t.Owner) then
-			dodgeLightnings(t.Owner,60+G_GAMESTAGE*10,t) --AI chance to dodge lights
+			if t.Model == M_SPELL_LIGHTNING_BOLT then
+				dodgeLightnings(t.Owner,60+G_GAMESTAGE*10,t) --AI chance to dodge lights
+			else
+				dodgeAimedBlasts(t.Owner,50+G_GAMESTAGE*10,t) --AI chance to dodge aimed blasts
+			end
 		end
 	end
 	ProcessSwampCreate(t)
 end
 
 function _OnKeyDown(k)
-	if k == LB_KEY_A then
-		
+	if k == LB_KEY_6 then
+		log_msg(8,"" .. getTurn() .. "      " .. TRIBE1atk .. " -- " .. TRIBE2atk)
 	elseif k == LB_KEY_Q then
 		
 	end
@@ -194,7 +198,7 @@ end
 ------------------------------------------------------------------------------------------------------------------------
 
 function attack(attacker)
-	local success = 0
+	local success = false
 	if #G_HUMANS_ALIVE > 0 then --wont bother to continue level(attack) if only AIs exist
 		if AI_EntryAvailable(attacker) then
 			local stage = G_GAMESTAGE
@@ -218,7 +222,7 @@ function attack(attacker)
 					end
 				end
 				if attacker == tribe1 then atkType = ATTACK_BY_BOAT end --X
-				if atkType == ATTACK_NORMAL or ((atkType == ATTACK_BY_BOAT and countBoats(attacker) > 0) and (atkType == ATTACK_BY_BALLOON and countBalloons(attacker) > 0)) then
+				if atkType == ATTACK_NORMAL or ((atkType == ATTACK_BY_BOAT and countBoats(attacker) > 0) or (atkType == ATTACK_BY_BALLOON and countBalloons(attacker) > 0)) then
 					if stage < 2 then
 						WRITE_CP_ATTRIB(attacker, ATTR_BASE_UNDER_ATTACK_RETREAT, 1) WRITE_CP_ATTRIB(attacker, ATTR_RETREAT_VALUE, rndb(0,12))
 					else
@@ -250,26 +254,27 @@ function attack(attacker)
 					if rnd() > 90 and (spell1 ~= M_SPELL_INVISIBILITY and spell1 ~= M_SPELL_SHIELD) then mk1,mk2 = -1,-1 end
 					local targType = false
 					if countBuildings(target) > 0 then
-						if (NAV_CHECK(attacker,target,ATTACK_BUILDING,0,0) > 0) then targType = ATTACK_BUILDING else targType = ATTACK_PERSON end
+						if (NAV_CHECK(attacker,target,ATTACK_BUILDING,0,0) > 0) or atkType ~= ATTACK_NORMAL then targType = ATTACK_BUILDING else targType = ATTACK_PERSON end
 					else
-						if (NAV_CHECK(attacker,target,ATTACK_PERSON,0,0) > 0) then targType = ATTACK_PERSON end
+						if (NAV_CHECK(attacker,target,ATTACK_PERSON,0,0) > 0) or atkType ~= ATTACK_NORMAL then targType = ATTACK_PERSON end
 					end
 					if targType ~= false then
 						if targType == ATTACK_PERSON and allPopOnVehicles(target) then spell1,spell2,spell3 = M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_INSECT_PLAGUE end
 						GIVE_ONE_SHOT(spell1,attacker) GIVE_ONE_SHOT(spell2,attacker) GIVE_ONE_SHOT(spell3,attacker)
 						local bbv = iipp(0,1,30,70) --**
 						if atkType == ATTACK_NORMAL then bbv = 0 end
+						AI_SetTargetParams(attacker,target,true,true)
 						ATTACK(attacker, target, numTroops, targType, 0, 969+(stage*10), spell1, spell2, spell3, atkType, bbv, mk1, mk2, 0)
 						IncrementAtkVar(attacker,(rndb(1800,2500)) - (G_GAMESTAGE*rndb(150,250))) --**
 						success = true
-						AI_SetTargetParams(attacker,target,true,true)
 						log_msg(attacker,"target: " .. target .. ", numTroops: " .. numTroops .. ", targType: " .. targType .. ", spell1: " .. spell1 .. ", spell2: " .. spell2 .. ", spell3: " .. spell3 .. ", atkType: " .. atkType .. ", mk1: " .. mk1 .. ", mk2: " .. mk2)
 					end
 				end
 			end
 		end
 	end
-	if not success then IncrementAtkVar(attacker,400-G_GAMESTAGE*50) end
+
+	if not success then IncrementAtkVar(attacker,400-G_GAMESTAGE*50) IncrementAtkVar(attacker,44-G_GAMESTAGE*2) LOG("fail atk") end
 end
 
 function IncrementAtkVar(pn,amt)

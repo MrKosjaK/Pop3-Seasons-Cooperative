@@ -494,6 +494,29 @@ function dodgeLightnings(caster,successChance,lightThing)
 		end
 	end
 end
+
+--try to dodge enemy aimed blasts
+function dodgeAimedBlasts(caster,successChance,blast)
+	if rnd() < successChance then
+		if nilT(blast) then
+			for k,v in ipairs(G_AI_ALIVE) do
+				if nilS(v) and caster ~= v then
+					if (getShaman(v).Flags2 & TF2_THING_IN_AIR == 0) then
+						local function ShDodge(distance,inTowerBool)
+							if not inTowerBool then
+								if distance > 256 and distance < 512*3 then
+									getShaman(v).State = S_PERSON_SCATTER
+								end
+							end
+						end
+						local dist = get_world_dist_xz(blast.Pos.D2,getShaman(v).Pos.D2)
+						ShDodge(dist,getShaman(v).State == S_PERSON_WAIT_IN_BLDG)
+					end
+				end
+			end
+		end
+	end	
+end
 --------------------------------------------------------------------------------------------------------------------------------------------
 --read AI attacking troops (attr_away)
 function ReadAIAttackers(pn)
