@@ -12,6 +12,8 @@ local tribe1 = TRIBE_CYAN
 local tribe2 = TRIBE_BLACK
 local TRIBE1atk = 2500 + (rndb(0,500))
 local TRIBE2atk = 2000 + (rndb(0,500))
+local TRIBE1ShamanAtk = {900,2}
+local TRIBE2ShamanAtk = {500,3}
 
 function _OnTurn(turn)
 
@@ -64,9 +66,12 @@ function _OnTurn(turn)
 	for k,v in ipairs(G_AI_ALIVE) do
 		Sulk(v,stage+3)
 		--small AI boosts lategame
-		if minutes() > 5 then
-			fasterTrain(v,8+8*stage)
-			fasterHutBars(v,4+2*stage,false)
+		if minutes() > 4 then
+			fasterTrain(v,28+8*stage)
+			fasterHutBars(v,14+2*stage,false)
+		else
+			fasterTrain(v,48)
+			fasterHutBars(v,32,false)			
 		end
 		--priorities
 		if everySeconds(12) then
@@ -89,6 +94,8 @@ function _OnTurn(turn)
 	--attacks cdr
 	if TRIBE1atk == turn then attack(tribe1) end
 	if TRIBE2atk == turn then attack(tribe2) end
+	if TRIBE1ShamanAtk[1] == turn then Shamanattack(tribe1) end
+	if TRIBE2ShamanAtk[1] == turn then Shamanattack(tribe2) end
 	
 	if everySeconds(3) then
 		ProcessAgressiveShaman()
@@ -167,7 +174,7 @@ function _OnTurn(turn)
 	elseif turn == 29000 then
 		createSnow(1000, 100, 28, 60*2, 32)
 	end
-	--process stalagtites
+	--process stalagtites and swamps
 	StalagtitesFalling()
 	ProcessTiledSwamps()
 end
@@ -196,6 +203,58 @@ end
 ------------------------------------------------------------------------------------------------------------------------
 -- LEVEL FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------
+
+function Shamanattack(attacker)
+	local success = false
+	if AI_EntryAvailable(attacker) and nilS(attacker) and IS_SHAMAN_AVAILABLE_FOR_ATTACK(attacker) then
+		if #G_HUMANS_ALIVE > 0 then --wont bother to continue level(attack) if only AIs exist
+			local stage = G_GAMESTAGE
+			if attacker == tribe1 then target = iipp(TRIBE_BLUE,TRIBE_RED,40,60) else target = iipp(TRIBE_BLUE,TRIBE_RED,30,70) end --**
+			if #G_HUMANS_ALIVE == 1 then target = randomItemFromTable(G_HUMANS_ALIVE) end
+			local atkType = ATTACK_NORMAL if attacker == tribe1 then atkType = ATTACK_BY_BOAT end --**
+			local targ = iipp(ATTACK_PERSON,ATTACK_BUILDING,50,50) --**
+			if (NAV_CHECK(attacker,target,targ,0,0) > 0) or atkType ~= ATTACK_NORMAL then
+				if (attacker == tribe1 and TRIBE1ShamanAtk[2] > 0) or (attacker == tribe2 and TRIBE2ShamanAtk[2] > 0) then
+					local spell1,spell2,spell3 = M_SPELL_LIGHTNING_BOLT,0,0
+					local tierSpellsPerStageVsPers = {[0]=
+						{M_SPELL_BLAST,M_SPELL_INSECT_PLAGUE},
+						{M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT},
+						{M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_HYPNOTISM},
+						{M_SPELL_HYPNOTISM,M_SPELL_SWAMP},
+						{M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM,M_SPELL_SWAMP,M_SPELL_FIRESTORM}}
+					local tierSpellsPerStageVsBldgs = {[0]=
+						{M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT},
+						{M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND},
+						{M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND},
+						{M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_EARTHQUAKE},
+						{M_SPELL_WHIRLWIND,M_SPELL_EARTHQUAKE}}
+					if targ == ATTACK_BUILDING then
+						spell2,spell3 = randomItemFromTable(tierSpellsPerStageVsBldgs[stage]),randomItemFromTable(tierSpellsPerStageVsBldgs[stage]) else spell2,spell3 = randomItemFromTable(tierSpellsPerStageVsPers[stage]),randomItemFromTable(tierSpellsPerStageVsPers[stage])
+					end
+					if stage == 0 then spell3 = 0 end
+					GIVE_ONE_SHOT(spell1,attacker) GIVE_ONE_SHOT(spell2,attacker) GIVE_ONE_SHOT(spell3,attacker)
+					WRITE_CP_ATTRIB(attacker, ATTR_DONT_GROUP_AT_DT, 1) WRITE_CP_ATTRIB(attacker, ATTR_GROUP_OPTION, 3)
+					AI_SetTargetParams(attacker,target,true,true)
+					ATTACK(attacker, target, 1, targ, 0, 850+(stage*10), spell1, spell2, spell3, atkType, 0, -1, -1, 0)
+					IncrementShamanAtkVar(attacker,(rndb(600,1000)) - (G_GAMESTAGE*rndb(50,100))) --**
+					success = true
+					if attacker == tribe1 then TRIBE1ShamanAtk[2] = TRIBE1ShamanAtk[2] - 1 else TRIBE2ShamanAtk[2] = TRIBE2ShamanAtk[2] - 1 end
+					log_msg(attacker,"shaman atack vs " .. target .. ", spells: " .. spell1 .. " " .. spell2 .. " " .. spell3)
+				end
+			end
+		end
+	end
+	
+	if not success then IncrementShamanAtkVar(attacker,300-G_GAMESTAGE*25) LOG("fail shaman atk") end
+end
+
+function IncrementShamanAtkVar(pn,amt)
+	if pn == tribe1 then
+		TRIBE1ShamanAtk[1] = TRIBE1ShamanAtk[1] + amt
+	else
+		TRIBE2ShamanAtk[1] = TRIBE2ShamanAtk[1] + amt
+	end
+end
 
 function attack(attacker)
 	local success = false
@@ -230,7 +289,7 @@ function attack(attacker)
 					end
 					if attacker == tribe1 then WRITE_CP_ATTRIB(attacker, ATTR_FIGHT_STOP_DISTANCE, 24+G_RANDOM(8)) else WRITE_CP_ATTRIB(attacker, ATTR_FIGHT_STOP_DISTANCE, 16+G_RANDOM(4)) end --**
 					local mksTbl = {}
-					if attacker == tribe1 then for i = 60,70 do table.insert(mksTbl,i) end else for i = 60,70 do table.insert(mksTbl,i) end end --**
+					if attacker == tribe1 then for i = 106,108 do table.insert(mksTbl,i) end else for i = 102,105 do table.insert(mksTbl,i) end end --**
 					local mk1,mk2 = randomItemFromTable(mksTbl),-1
 					updateAtkSpells(stage)
 					local spell1,spell2,spell3 = 0,0,0
@@ -252,13 +311,13 @@ function attack(attacker)
 						end
 					end
 					if rnd() > 90 and (spell1 ~= M_SPELL_INVISIBILITY and spell1 ~= M_SPELL_SHIELD) then mk1,mk2 = -1,-1 end
-					local targType = false
+					local targType = -1
 					if countBuildings(target) > 0 then
 						if (NAV_CHECK(attacker,target,ATTACK_BUILDING,0,0) > 0) or atkType ~= ATTACK_NORMAL then targType = ATTACK_BUILDING else targType = ATTACK_PERSON end
 					else
 						if (NAV_CHECK(attacker,target,ATTACK_PERSON,0,0) > 0) or atkType ~= ATTACK_NORMAL then targType = ATTACK_PERSON end
 					end
-					if targType ~= false then
+					if targType ~= -1 then
 						if targType == ATTACK_PERSON and allPopOnVehicles(target) then spell1,spell2,spell3 = M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_INSECT_PLAGUE end
 						GIVE_ONE_SHOT(spell1,attacker) GIVE_ONE_SHOT(spell2,attacker) GIVE_ONE_SHOT(spell3,attacker)
 						local bbv = iipp(0,1,30,70) --**
@@ -267,6 +326,7 @@ function attack(attacker)
 						ATTACK(attacker, target, numTroops, targType, 0, 969+(stage*10), spell1, spell2, spell3, atkType, bbv, mk1, mk2, 0)
 						IncrementAtkVar(attacker,(rndb(1800,2500)) - (G_GAMESTAGE*rndb(150,250))) --**
 						success = true
+						if attacker == tribe1 then TRIBE1ShamanAtk[1] = getTurn()+rndb(200,300) TRIBE1ShamanAtk[2] = rndb(2,3) else TRIBE2ShamanAtk[1] = getTurn()+rndb(200,300) TRIBE2ShamanAtk[2] = rndb(3,4) end
 						log_msg(attacker,"target: " .. target .. ", numTroops: " .. numTroops .. ", targType: " .. targType .. ", spell1: " .. spell1 .. ", spell2: " .. spell2 .. ", spell3: " .. spell3 .. ", atkType: " .. atkType .. ", mk1: " .. mk1 .. ", mk2: " .. mk2)
 					end
 				end
@@ -274,7 +334,7 @@ function attack(attacker)
 		end
 	end
 
-	if not success then IncrementAtkVar(attacker,400-G_GAMESTAGE*50) IncrementAtkVar(attacker,44-G_GAMESTAGE*2) LOG("fail atk") end
+	if not success then IncrementAtkVar(attacker,400-G_GAMESTAGE*50) log_msg(attacker,"attack") end
 end
 
 function IncrementAtkVar(pn,amt)
@@ -659,6 +719,7 @@ M_SPELL_LIGHTNING_BOLT,
 M_SPELL_WHIRLWIND,
 M_SPELL_INSECT_PLAGUE,
 M_SPELL_INVISIBILITY,
+M_SPELL_SWAMP,
 M_SPELL_HYPNOTISM,
 M_SPELL_EARTHQUAKE,
 M_SPELL_FIRESTORM
@@ -675,6 +736,7 @@ M_SPELL_LIGHTNING_BOLT,
 M_SPELL_WHIRLWIND,
 M_SPELL_INSECT_PLAGUE,
 M_SPELL_INVISIBILITY,
+M_SPELL_SWAMP,
 M_SPELL_HYPNOTISM,
 M_SPELL_EARTHQUAKE,
 M_SPELL_FIRESTORM,
