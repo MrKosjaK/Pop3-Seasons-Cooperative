@@ -232,6 +232,23 @@ function me2c3d(me)
 	return c3d
 end
 
+--is marker land
+function isMkLand(mk)
+	SearchMapCells(SQUARE ,0, 0, 0, world_coord3d_to_map_idx(marker_to_coord3d(mk)), function(me)
+		if is_map_elem_all_land(me) > 0 then return true end
+	return true end)
+	
+	return false
+end
+--is marker water
+function isMkWater(mk)
+	SearchMapCells(SQUARE ,0, 0, 0, world_coord3d_to_map_idx(marker_to_coord3d(mk)), function(me)
+		if is_map_elem_all_sea(me) > 0 then return true end
+	return true end)
+	
+	return false
+end
+
 --shaman stuck
 function stuckS(pn)
 	if nilS(pn) then return getShaman(pn).State == S_PERSON_NAVIGATION_FAILED end
@@ -366,11 +383,13 @@ function GetRidOfNearbyEnemies(pn,radius,successChance)
 		if nilS(pn) then
 			SearchMapCells(SQUARE, 0, 0 , radius, world_coord3d_to_map_idx(getShaman(pn).Pos.D3), function(me)
 				me.MapWhoList:processList(function (t)
-					if isItemInTable(G_HUMANS_ALIVE,t.Owner) and not casted then
-						GIVE_ONE_SHOT(spell,pn)
-						local s = createThing(T_SPELL,spell,pn,t.Pos.D3,false,false)
-						s.u.Spell.TargetThingIdx:set(1)
-						casted = true
+					if t.Type == T_PERSON and t.Model ~= M_PERSON_ANGEL then
+						if isItemInTable(G_HUMANS_ALIVE,t.Owner) and not casted then
+							GIVE_ONE_SHOT(spell,pn)
+							local s = createThing(T_SPELL,spell,pn,t.Pos.D3,false,false)
+							s.u.Spell.TargetThingIdx:set(1)
+							casted = true
+						end
 					end
 				return true end)
 			return true end)
@@ -940,7 +959,7 @@ end
 function NavCheck(tribe,enemy,c3d)
 	gns.ThisLevelHeader.Markers[254] = world_coord3d_to_map_idx(c3d)
 	
-	return NAV_CHECK(tribe, enemy, ATTACK_MARKER, 254, FALSE)
+	return ntb(NAV_CHECK(tribe, enemy, ATTACK_MARKER, 254, FALSE))
 end
 
 --get me a random building

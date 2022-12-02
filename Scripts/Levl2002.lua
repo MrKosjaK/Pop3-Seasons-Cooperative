@@ -105,6 +105,7 @@ function _OnTurn(turn)
 		updateSpellEntries()
 	end
 	if everySeconds(15) then
+		giveSpellsOccasionally()
 		updateVehiclesBuild()
 		updateConvertParams()
 		updateSpellBuckets(stage)
@@ -146,6 +147,9 @@ function _OnTurn(turn)
 	if everySeconds(180-stage*10) then
 		OffensivePreachMarkers()
 	end	
+	if (everySeconds(240-stage*rndb(5,35)) and rnd() > 50) or (GetPop(TRIBE_RED) < 6 and everySeconds(30)) then
+		BlackConnectBlue()
+	end
 	------------------------------------------------------------------------------------------------------------------------
 	-- NON-AI STUFF
 	------------------------------------------------------------------------------------------------------------------------
@@ -179,7 +183,7 @@ end
 
 function _OnKeyDown(k)
 	if k == LB_KEY_A then
-		LOG(NavCheck(tribe2,tribe2,marker_to_coord3d(3)))
+		
 	elseif k == LB_KEY_Q then
 		
 	end
@@ -276,18 +280,60 @@ function IncrementAtkVar(pn,amt)
 	end
 end
 
+function BlackConnectBlue()
+	local pn,targ = tribe2,TRIBE_BLUE
+	if GetPop(targ) > 0 then
+		if (NAV_CHECK(pn,targ,ATTACK_PERSON,0,0) <= 0) then
+			if AI_EntryAvailable(pn) and nilS(pn) and IS_SHAMAN_AVAILABLE_FOR_ATTACK(pn) and TRIBE2atk-getTurn() > 256 then
+				local mk1,mk2 = -1,-1
+				if rnd() > 50 and (isMkLand(102) and isMkLand(103)) then
+					mk1,mk2 = 102,103
+					WRITE_CP_ATTRIB(pn, ATTR_GROUP_OPTION, 2) WriteAiAttackers(pn,0,0,0,0,0,100)
+					GIVE_ONE_SHOT(M_SPELL_LAND_BRIDGE,pn)
+					ATTACK(pn, targ, 1, ATTACK_MARKER, mk2, 1, M_SPELL_LAND_BRIDGE, 0, 0, ATTACK_NORMAL, 0, mk1, mk2, 0)
+				elseif (isMkLand(104) and isMkLand(105)) then
+					mk1,mk2 = 104,105
+					WRITE_CP_ATTRIB(pn, ATTR_GROUP_OPTION, 2) WriteAiAttackers(pn,0,0,0,0,0,100)
+					GIVE_ONE_SHOT(M_SPELL_LAND_BRIDGE,pn)
+					ATTACK(pn, targ, 1, ATTACK_MARKER, mk2, 1, M_SPELL_LAND_BRIDGE, 0, 0, ATTACK_NORMAL, 0, mk1, mk2, 0)
+				end
+			end
+		end
+	end
+end
+
 function ReconnectToEnemies()
-	
-	
-	
-	
-	
-	
-					WRITE_CP_ATTRIB(tribe2, ATTR_GROUP_OPTION, 2)
-					WriteAiAttackers(tribe2,0,0,0,0,0,100)
-					GIVE_ONE_SHOT(M_SPELL_LAND_BRIDGE,tribe2) GIVE_ONE_SHOT(M_SPELL_INSECT_PLAGUE,tribe2) GIVE_ONE_SHOT(M_SPELL_INSECT_PLAGUE,tribe2)
-					local mk1,mk2 = 99,100
-					ATTACK(tribe2, TRIBE_BLUE, 1, ATTACK_MARKER, mk2, 1, M_SPELL_LAND_BRIDGE, M_SPELL_INSECT_PLAGUE, M_SPELL_INSECT_PLAGUE, ATTACK_NORMAL, 0, mk1, mk2, 0);
+	local pn,targ = tribe2,TRIBE_RED
+	if GetPop(targ) > 0 then
+		if (NAV_CHECK(pn,targ,ATTACK_PERSON,0,0) <= 0) then
+			if AI_EntryAvailable(pn) and nilS(pn) and IS_SHAMAN_AVAILABLE_FOR_ATTACK(pn) and TRIBE2atk-getTurn() > 512 then
+				local lbMarkersChain = {96,97,98,99,100,101}
+				local mk1,mk2 = -1,-1
+				for k,v in ipairs(lbMarkersChain) do
+					if not NavCheck(pn,targ,marker_to_coord3d(v)) then
+						mk1,mk2 = v-1,v
+						WRITE_CP_ATTRIB(pn, ATTR_GROUP_OPTION, 2) WriteAiAttackers(pn,0,0,0,0,0,100)
+						GIVE_ONE_SHOT(M_SPELL_LAND_BRIDGE,pn)
+						ATTACK(pn, targ, 1, ATTACK_MARKER, mk2, 1, M_SPELL_LAND_BRIDGE, 0, 0, ATTACK_NORMAL, 0, mk1, mk2, 0)
+						break
+					end
+					mk1,mk2 = mk1+1,mk2+1
+				end
+			end
+		end
+	end
+end
+
+function giveSpellsOccasionally()
+	local s = G_GAMESTAGE
+	local tbl = {{M_SPELL_BLAST,70,0},{M_SPELL_INSECT_PLAGUE,40,0},{M_SPELL_HYPNOTISM,25,2},{M_SPELL_EARTHQUAKE,10,3},{M_SPELL_WHIRLWIND,30,1},{M_SPELL_GHOST_ARMY,50,0}}
+	for k,v in ipairs(G_AI_ALIVE) do
+		for kk,vv in ipairs(tbl) do
+			if vv[3] >= s and rnd() < vv[2] then
+				GIVE_ONE_SHOT(vv[1],v)
+			end
+		end
+	end
 end
 
 function ProcessDefensiveShaman()
@@ -743,6 +789,8 @@ function _OnPostLevelInit(level_id)
 		set_correct_gui_menu();
 	end
 	--stuff for AI
+	set_players_allied(tribe1,tribe2)
+	set_players_allied(tribe2,tribe1)
 	G_AI_EXPANSION_TABLE[tribe1][1] = G_AI_EXPANSION_TABLE[tribe1][1] + rndb(60,120)
 	SET_DEFENCE_RADIUS(tribe1,9)
 	SET_DEFENCE_RADIUS(tribe2,7)
@@ -819,5 +867,5 @@ createStalagtites(68,3)
 
 
 --to do:
---give spells sometimes
+--do some only shaman attackos
 --remove logs, log_msg
