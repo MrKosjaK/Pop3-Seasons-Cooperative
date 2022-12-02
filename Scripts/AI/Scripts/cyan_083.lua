@@ -97,7 +97,7 @@ local function cyan_defend_base(player)
 	    AI_SetAways(player, 0, 0, 50, 50, 0);
 	    AI_SetShamanAway(player, false);
 	    LOG("DEFENDING MYSELF T");
-	    ATTACK(player, TRIBE_BLUE, (e_priests + e_fws + e_wars) >> 1, ATTACK_MARKER, 39, 999, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0); 
+	    ATTACK(player, TRIBE_BLUE, (my_fws + my_priests), ATTACK_MARKER, 39, 999, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0); 
 	    ai:set_event_ticks(4, 1024 + G_RANDOM(120));
 	  end
 	  
@@ -141,7 +141,7 @@ local function cyan_main_attack(player)
   
   if (result == 1) then
     local my_priests = AI_GetUnitCount(player, M_PERSON_RELIGIOUS);
-	local my_fws = AI_GetUnitCount(player, M_PERSON_SUPER_WARRIOR);
+	  local my_fws = AI_GetUnitCount(player, M_PERSON_SUPER_WARRIOR);
 	
     if (pattern == 0) then
 	  -- invisible priests, how pathetic.
@@ -302,11 +302,11 @@ local function cyan_mid_attack(player)
 	      AI_SetAttackFlags(player, 1, 0, 0);
 	      AI_SetAways(player, 0, 0, 0, 0, 0);
 	      AI_SetShamanAway(player, true);
-		  SET_SPELL_ENTRY(player, 2, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 2, 0);
-		  SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 2, 1);
+		    SET_SPELL_ENTRY(player, 2, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 2, 0);
+		    SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 2, 1);
 	      SET_SPELL_ENTRY(player, 4, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 0);
-		  SET_SPELL_ENTRY(player, 5, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 1);
-		  ATTACK(player, TRIBE_BLUE, 0, ATTACK_MARKER, 6, 999, M_SPELL_INSECT_PLAGUE, M_SPELL_HYPNOTISM, M_SPELL_INSECT_PLAGUE, ATTACK_NORMAL, 0, -1, -1, 0);
+		    SET_SPELL_ENTRY(player, 5, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 1);
+		    ATTACK(player, TRIBE_BLUE, 0, ATTACK_MARKER, 6, 999, M_SPELL_INSECT_PLAGUE, M_SPELL_HYPNOTISM, M_SPELL_INSECT_PLAGUE, ATTACK_NORMAL, 0, -1, -1, 0);
 	      ai:set_event_ticks(5, 720 + G_RANDOM(120));
 		  return;
 		end

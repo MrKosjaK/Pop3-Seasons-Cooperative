@@ -166,9 +166,18 @@ function _OnLevelInit(level_id)
   set_player_cannot_build(M_BUILDING_WARRIOR_TRAIN, TRIBE_BLUE);
   set_player_cannot_build(M_BUILDING_SUPER_TRAIN, TRIBE_RED);
   set_player_cannot_build(M_BUILDING_TEMPLE, TRIBE_YELLOW);
+  
+  set_correct_gui_menu();
 end
 
 function _OnTurn(turn)
+  if (turn > 0) then
+    if ((turn & (1 << 7)-1) == 0) then
+      AIfasterSprogging(128)
+      LOG("BOOSTING M8");
+    end
+  end
+  
   if ((turn % 4096) == 0) then
     createSnow(1000, 10, 16, 180, 12);
   end
@@ -182,40 +191,30 @@ function _OnPlayerDeath(pn)
     CompPlayer:deinit(pn);
   end
   
-  -- now we figure who winnerino
-  
   -- losing moment
   if (pn == TRIBE_BLUE) then
-    duel_1_winner = TRIBE_CYAN;
-	TRIGGER_THING(42);
+    TRIGGER_THING(41);
   end
   
-  if (pn == TRIBE_RED) then
-    duel_2_winner = TRIBE_GREEN;
-	TRIGGER_THING(46);
+  if (pn == TRIBE_CYAN) then
+    TRIGGER_THING(42);
   end
   
   if (pn == TRIBE_YELLOW) then
-    duel_3_winner = TRIBE_PINK;
-	TRIGGER_THING(44);
-  end
-  
-  -- winning moment
-   if (pn == TRIBE_CYAN) then
-    duel_1_winner = TRIBE_BLUE;
-	TRIGGER_THING(41);
-  end
-  
-  if (pn == TRIBE_GREEN) then
-    duel_2_winner = TRIBE_RED;
-	TRIGGER_THING(45);
+    TRIGGER_THING(43);
   end
   
   if (pn == TRIBE_PINK) then
-    duel_3_winner = TRIBE_YELLOW;
-	TRIGGER_THING(43);
+    TRIGGER_THING(44);
   end
-  -- veru lazy to do array
+  
+  if (pn == TRIBE_RED) then
+    TRIGGER_THING(45);
+  end
+  
+  if (pn == TRIBE_GREEN) then
+    TRIGGER_THING(46);
+  end
 end
 
 function _OnFrame(w,h,guiW)
