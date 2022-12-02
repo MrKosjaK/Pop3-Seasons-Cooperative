@@ -639,14 +639,16 @@ function fasterTrain(tribe, amt)
 	return true end)
 end
 --buildings faster green red bar
-function fasterHutBars(tribe, amt)
+function fasterHutBars(tribe, amt, onlySproggingBool)
 	ProcessGlobalSpecialList(tribe, BUILDINGLIST, function(b)
 		if (b.Model <= 3) then
-			if (b.u.Bldg.UpgradeCount < 1850) then
-				b.u.Bldg.UpgradeCount = b.u.Bldg.UpgradeCount + amt
-			end
 			if (b.u.Bldg.SproggingCount < 1000) then
 				b.u.Bldg.SproggingCount = b.u.Bldg.SproggingCount + amt
+			end
+			if onlySproggingBool then
+				if (b.u.Bldg.UpgradeCount < 1850) then
+					b.u.Bldg.UpgradeCount = b.u.Bldg.UpgradeCount + amt
+				end
 			end
 		end
 	return true end)

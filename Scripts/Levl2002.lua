@@ -66,7 +66,7 @@ function _OnTurn(turn)
 		--small AI boosts lategame
 		if minutes() > 5 then
 			fasterTrain(v,8+8*stage)
-			fasterHutBars(v,4+2*stage)
+			fasterHutBars(v,4+2*stage,false)
 		end
 		--priorities
 		if everySeconds(12) then
@@ -123,6 +123,9 @@ function _OnTurn(turn)
 			MARKER_ENTRIES(tribe2, 4,-1,-1,-1) --extra patrol base
 		end
 	end
+	if everySeconds(120-stage*20) then
+		ReconnectToEnemies()
+	end
 	if everySeconds(120-stage*10) then
 		local targ = randomItemFromTable(G_HUMANS_ALIVE)
 		if nilT(targ) then
@@ -174,19 +177,10 @@ function _OnCreateThing(t)
 	ProcessSwampCreate(t)
 end
 
-function _OnPlayerDeath(pn)
-end
-
-function _OnFrame(w,h,guiW)
-end
-
-function _OnKeyUp(k)
-end
-
 function _OnKeyDown(k)
 	if k == LB_KEY_A then
-		
-	elseif k == LB_KEY_B then
+		LOG(NavCheck(tribe2,tribe2,marker_to_coord3d(3)))
+	elseif k == LB_KEY_Q then
 		
 	end
 end
@@ -282,6 +276,20 @@ function IncrementAtkVar(pn,amt)
 	end
 end
 
+function ReconnectToEnemies()
+	
+	
+	
+	
+	
+	
+					WRITE_CP_ATTRIB(tribe2, ATTR_GROUP_OPTION, 2)
+					WriteAiAttackers(tribe2,0,0,0,0,0,100)
+					GIVE_ONE_SHOT(M_SPELL_LAND_BRIDGE,tribe2) GIVE_ONE_SHOT(M_SPELL_INSECT_PLAGUE,tribe2) GIVE_ONE_SHOT(M_SPELL_INSECT_PLAGUE,tribe2)
+					local mk1,mk2 = 99,100
+					ATTACK(tribe2, TRIBE_BLUE, 1, ATTACK_MARKER, mk2, 1, M_SPELL_LAND_BRIDGE, M_SPELL_INSECT_PLAGUE, M_SPELL_INSECT_PLAGUE, ATTACK_NORMAL, 0, mk1, mk2, 0);
+end
+
 function ProcessDefensiveShaman()
 	local pn = tribe1
 	if isShamanHome(pn,0,24) then --pn,mk,rad
@@ -301,6 +309,7 @@ function ProcessAgressiveShaman()
 	if not isShamanHome(pn,0,24) then --pn,mk,rad
 		GetRidOfNearbyEnemies(pn,1,30+G_GAMESTAGE*10)
 		if rnd() < 50 then TargetNearbyShamans(pn,9+G_GAMESTAGE,10+G_GAMESTAGE*10) end
+		GIVE_ONE_SHOT(M_SPELL_LIGHTNING_BOLT,pn)
 	end	
 	--
 	local pn = tribe2
@@ -726,7 +735,7 @@ function _OnPostLevelInit(level_id)
 	set_player_can_cast(M_SPELL_LAND_BRIDGE, TRIBE_BLUE);
 	set_player_can_cast(M_SPELL_LIGHTNING_BOLT, TRIBE_RED);
 	set_player_cannot_cast(M_SPELL_INVISIBILITY, TRIBE_RED);
-	set_player_cannot_cast(M_SPELL_FIRESTORM, TRIBE_RED);
+	set_player_cannot_cast(M_SPELL_SWAMP, TRIBE_RED);
 	set_player_cannot_cast(M_SPELL_HYPNOTISM, TRIBE_RED);
 	set_player_cannot_cast(M_SPELL_EARTHQUAKE, TRIBE_RED);
 	for k,v in ipairs(G_HUMANS) do
@@ -810,4 +819,5 @@ createStalagtites(68,3)
 
 
 --to do:
+--give spells sometimes
 --remove logs, log_msg
