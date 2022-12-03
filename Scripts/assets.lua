@@ -958,7 +958,7 @@ function unitAtkunit(tribe,enemy,model,enemyModel,attackerMustBeIdleBool)
 	end
 end
 
---unit nav check(doesnt work instantly, gotta have a table and process after) (send units to c3d, if can nav, else it removes hands up)
+--unit nav check and go there(doesnt work instantly, gotta have a table and process after) (send units to c3d, if can nav, else it removes hands up)
 unitNavTbl = {}
 function unitNavAndMoveC3d(thing,dest)
 	if nilT(thing) then

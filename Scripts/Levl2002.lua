@@ -91,11 +91,15 @@ function _OnTurn(turn)
 			end
 		end
 	end
-	--attacks cdr
+	--attacks
 	if TRIBE1atk == turn then attack(tribe1) end
 	if TRIBE2atk == turn then attack(tribe2) end
+	--shaman attacks
 	if TRIBE1ShamanAtk[1] == turn then Shamanattack(tribe1) end
 	if TRIBE2ShamanAtk[1] == turn then Shamanattack(tribe2) end
+	--aod late casts
+	if turn == 25000 or turn == 35000 then if AI_EntryAvailable(tribe2) and nilS(tribe2) and IS_SHAMAN_AVAILABLE_FOR_ATTACK(tribe2) then GIVE_ONE_SHOT(M_SPELL_ANGEL_OF_DEATH,tribe2) SPELL_ATTACK(tribe2,M_SPELL_ANGEL_OF_DEATH,109,109) end end
+	if turn == 35000 or turn == 45000 then if AI_EntryAvailable(tribe1) and nilS(tribe1) and IS_SHAMAN_AVAILABLE_FOR_ATTACK(tribe1) then GIVE_ONE_SHOT(M_SPELL_ANGEL_OF_DEATH,tribe1) SPELL_ATTACK(tribe1,M_SPELL_ANGEL_OF_DEATH,106,106) end end
 	
 	if everySeconds(3) then
 		ProcessAgressiveShaman()
@@ -130,6 +134,9 @@ function _OnTurn(turn)
 		if stage > 1 and AI_GetUnitCount(tribe2,M_PERSON_SUPER_WARRIOR) > 4 then
 			MARKER_ENTRIES(tribe2, 4,-1,-1,-1) --extra patrol base
 		end
+	end
+	if everySeconds(60-stage*10) then
+		sendRandomUnit(TRIBE_BLACK,iipp(M_PERSON_WARRIOR,M_PERSON_WARRIOR,50,50))
 	end
 	if everySeconds(120-stage*20) then
 		ReconnectToEnemies()
@@ -342,6 +349,19 @@ function IncrementAtkVar(pn,amt)
 		TRIBE1atk = TRIBE1atk + amt
 	else
 		TRIBE2atk = TRIBE2atk + amt
+	end
+end
+
+function sendRandomUnit(pn,model) LOG("send?")
+	local t = randomUnit(pn,model,false)
+	local targetThing,targetOwner = nil,iipp(TRIBE_BLUE,TRIBE_RED,20,80)
+	if rnd() < 60 then
+		targetThing = get_me_a_random_building(targetOwner,false,true)
+	else
+		targetThing = get_me_a_random_person(targetOwner)
+	end
+	if nilT(targetThing) then
+		unitNavAndMoveC3d(t,targetThing.Pos.D3) LOG("yes")
 	end
 end
 
