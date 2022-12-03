@@ -194,6 +194,8 @@ function _OnPlayerDeath(pn)
   -- losing moment
   if (pn == TRIBE_BLUE) then
     TRIGGER_THING(41);
+    AI_SetVar(TRIBE_CYAN, 12, 1); -- blue died.
+    AI_SetVar(TRIBE_CYAN, 13, 1); -- prayge totemo
   end
   
   if (pn == TRIBE_CYAN) then
