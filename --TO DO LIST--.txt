@@ -9,7 +9,7 @@
 Level 80 - Cold Front [2v2] [Texture - 3] - ONGOING ((LEVEL2002 FOR SP))
 Level 82 - TBD
 Level 83 - Multi-Duel [3 Humans vs 3 AI] [Texture - 6] - ONGOING ((LEVEL2001 FOR SP))
-Level 84 - TBD
+Level 84 - Yin-Yang [2 Humans vs 6 AI (timed defensive)] [Texture - C] - ONGOING ((LEVEL2003 FOR SP))
 Level 94 - TBD
 Level 100 - TBD
 Level 109 - TBD
