@@ -105,7 +105,7 @@ local function purple_main_attack(player)
     if (pattern == 0) then
       -- invis wars target shaman.
       if (my_wars >= 3) then
-        LOG("MAIN ATTACK P1");
+        --LOG("MAIN ATTACK P1");
         AI_SetAttackFlags(player, 1, 0, 0);
         AI_SetAways(player, 0, 100, 0, 0, 0);
         AI_SetShamanAway(player, false);
@@ -117,7 +117,7 @@ local function purple_main_attack(player)
     elseif (pattern == 1) then
       -- invis fws target shaman.
       if (my_fws >= 3) then
-        LOG("MAIN ATTACK P2");
+        --LOG("MAIN ATTACK P2");
         AI_SetAttackFlags(player, 1, 0, 0);
         AI_SetAways(player, 0, 0, 0, 100, 0);
         AI_SetShamanAway(player, false);
@@ -129,7 +129,7 @@ local function purple_main_attack(player)
     elseif (pattern == 2 and AI_GetVar(player, 11) == 0) then
       -- regular attack with wars.
       if (my_wars >= 3) then
-        LOG("MAIN ATTACK P3");
+        --LOG("MAIN ATTACK P3");
         AI_SetAttackFlags(player, 1, 0, 0);
         AI_SetAways(player, 0, 100, 0, 0, 0);
         AI_SetShamanAway(player, false);
@@ -140,7 +140,7 @@ local function purple_main_attack(player)
     elseif (pattern == 3 and AI_GetVar(player, 11) == 0) then
       -- strong attack with wars.
       if (my_wars >= 5) then
-        LOG("MAIN ATTACK P4");
+        --LOG("MAIN ATTACK P4");
         AI_SetAttackFlags(player, 1, 0, 0);
         AI_SetAways(player, 0, 100, 0, 0, 0);
         AI_SetShamanAway(player, false);
@@ -151,7 +151,7 @@ local function purple_main_attack(player)
     elseif (pattern == 4 and AI_GetVar(player, 11) == 0) then
       -- moderate attack with wars & fws
       if (my_wars >= 4 and my_fws >= 2) then
-        LOG("MAIN ATTACK P5");
+        --LOG("MAIN ATTACK P5");
         AI_SetAttackFlags(player, 1, 0, 0);
         AI_SetAways(player, 0, 80, 0, 20, 0);
         AI_SetShamanAway(player, false);
@@ -162,7 +162,7 @@ local function purple_main_attack(player)
     elseif (pattern == 5) then
       -- moderate attack with wars & fws, invis
       if (my_wars >= 4 and my_fws >= 2) then
-        LOG("MAIN ATTACK P6");
+        --LOG("MAIN ATTACK P6");
         AI_SetAttackFlags(player, 1, 0, 0);
         AI_SetAways(player, 0, 80, 0, 20, 0);
         AI_SetShamanAway(player, false);
@@ -178,7 +178,7 @@ local function purple_main_attack(player)
         -- send shaman to murder opponent. in case she is FREE!!!!!
 		
         if (sham:can_cast_spell_from_entry(2) or sham:can_cast_spell_from_entry(3)) then
-          LOG("MAIN ATTACK S");
+          --LOG("MAIN ATTACK S");
           AI_SetAttackFlags(player, 2, 1, 0);
           AI_SetAways(player, 0, 0, 0, 0, 0);
           AI_SetShamanAway(player, true);
@@ -214,7 +214,7 @@ local function purple_mid_attack(player)
     if (e_fws > 0 and e_wars > 0 and e_shaman == 0) then
       AI_SetVar(player, 11, 1);
       if (AI_ShamanFree(player)) then
-        LOG("ATTACKING MID 2S");
+        --LOG("ATTACKING MID 2S");
         AI_SetAttackFlags(player, 1, 1, 0);
         AI_SetAways(player, 0, 0, 0, 0, 0);
         AI_SetShamanAway(player, true);
@@ -227,7 +227,7 @@ local function purple_mid_attack(player)
       end
       
       if (my_wars >= 5) then
-        LOG("ATTACKING MID 2T");
+        --LOG("ATTACKING MID 2T");
         AI_SetAttackFlags(player, 2, 1, 0);
         AI_SetAways(player, 5, 50, 0, 50, 0);
         AI_SetShamanAway(player, false);
@@ -240,7 +240,7 @@ local function purple_mid_attack(player)
     if (e_fws > 0 and e_wars == 0 and e_shaman == 0) then
       AI_SetVar(player, 11, 1);
       if (AI_ShamanFree(player)) then
-        LOG("ATTACKING MID 1S");
+        --LOG("ATTACKING MID 1S");
         AI_SetAttackFlags(player, 1, 0, 0);
         AI_SetAways(player, 0, 0, 0, 0, 0);
         AI_SetShamanAway(player, true);
@@ -253,7 +253,7 @@ local function purple_mid_attack(player)
       end
       
       if (my_wars >= 4) then
-        LOG("ATTACKING MID 1T");
+        --LOG("ATTACKING MID 1T");
         AI_SetAttackFlags(player, 2, 1, 0);
         AI_SetAways(player, 0, 100, 0, 0, 0);
         AI_SetShamanAway(player, false);
@@ -269,7 +269,7 @@ local function purple_mid_attack(player)
         AI_SetAttackFlags(player, 1, 0, 0);
         AI_SetAways(player, 0, 0, 0, 0, 0);
         AI_SetShamanAway(player, true);
-        LOG("ATTACKING MID S");
+        --LOG("ATTACKING MID S");
         TARGET_SHAMAN(player, TRIBE_YELLOW);
         SET_SPELL_ENTRY(player, 2, M_SPELL_HYPNOTISM, SPELL_COST(M_SPELL_HYPNOTISM) >> 2, 32, 4, 0);
 		    SET_SPELL_ENTRY(player, 3, M_SPELL_HYPNOTISM, SPELL_COST(M_SPELL_HYPNOTISM) >> 2, 32, 4, 1);
@@ -449,13 +449,13 @@ local function purple_defend_base(player)
         AI_SetAttackFlags(player, 3, 1, 0);
         AI_SetAways(player, 0, 0, 50, 50, 0);
         AI_SetShamanAway(player, false);
-        LOG("DEFENDING MYSELF T");
+        --LOG("DEFENDING MYSELF T");
         ATTACK(player, TRIBE_YELLOW, (my_wars + my_fws), ATTACK_MARKER, 39, 999, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0); 
         ai:set_event_ticks(8, 1024 + G_RANDOM(120));
       end
       
       if (e_shaman > 0 and AI_ShamanFree(player)) then
-        LOG("DEFENDING MYSELF S1");
+        --LOG("DEFENDING MYSELF S1");
         AI_SetAttackFlags(player, 3, 1, 0);
         AI_SetAways(player, 0, 0, 0, 0, 0);
         AI_SetShamanAway(player, true);
@@ -467,7 +467,7 @@ local function purple_defend_base(player)
         ATTACK(player, TRIBE_YELLOW, 0, ATTACK_PERSON, M_PERSON_MEDICINE_MAN, 999, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, ATTACK_NORMAL, 0, -1, -1, 0);
         ai:set_event_ticks(8, 1024 + G_RANDOM(120));
       else
-        LOG("DEFENDING MYSELF S2");
+        --LOG("DEFENDING MYSELF S2");
         AI_SetAttackFlags(player, 3, 1, 0);
         AI_SetAways(player, 0, 0, 0, 0, 0);
         AI_SetShamanAway(player, true);

@@ -105,13 +105,13 @@ local function cyan_defend_base(player)
 	    AI_SetAttackFlags(player, 3, 1, 0);
 	    AI_SetAways(player, 0, 0, 50, 50, 0);
 	    AI_SetShamanAway(player, false);
-	    LOG("DEFENDING MYSELF T");
+	    --LOG("DEFENDING MYSELF T");
 	    ATTACK(player, TRIBE_BLUE, (my_fws + my_priests), ATTACK_MARKER, 39, 999, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0); 
 	    ai:set_event_ticks(4, 1024 + G_RANDOM(120));
 	  end
 	  
 	  if (e_shaman > 0 and AI_ShamanFree(player)) then
-	    LOG("DEFENDING MYSELF S1");
+	    --LOG("DEFENDING MYSELF S1");
 		AI_SetAttackFlags(player, 3, 1, 0);
 		AI_SetAways(player, 0, 0, 0, 0, 0);
 		AI_SetShamanAway(player, true);
@@ -123,7 +123,7 @@ local function cyan_defend_base(player)
 		ATTACK(player, TRIBE_BLUE, 0, ATTACK_PERSON, M_PERSON_MEDICINE_MAN, 999, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, ATTACK_NORMAL, 0, -1, -1, 0);
 	    ai:set_event_ticks(4, 1024 + G_RANDOM(120));
 	  else
-	    LOG("DEFENDING MYSELF S2");
+	    --LOG("DEFENDING MYSELF S2");
 	    AI_SetAttackFlags(player, 3, 1, 0);
 		AI_SetAways(player, 0, 0, 0, 0, 0);
 		AI_SetShamanAway(player, true);
@@ -161,7 +161,7 @@ local function cyan_main_attack(player)
     if (pattern == 0) then
 	  -- invisible priests, how pathetic.
 	  if (my_priests >= 3) then
-	    LOG("MAIN ATTACK P1");
+	    --LOG("MAIN ATTACK P1");
 	    AI_SetAttackFlags(player, 1, 0, 0);
 	    AI_SetAways(player, 0, 0, 100, 0, 0);
 		AI_SetShamanAway(player, false);
@@ -173,7 +173,7 @@ local function cyan_main_attack(player)
 	elseif (pattern == 1) then
 	  -- invisible fws attacking shaman. pathetic.
 	  if (my_fws >= 3) then
-	    LOG("MAIN ATTACK P2");
+	    --LOG("MAIN ATTACK P2");
 	    AI_SetAttackFlags(player, 1, 0, 0);
 	    AI_SetAways(player, 0, 0, 0, 100, 0);
 		AI_SetShamanAway(player, false);
@@ -185,7 +185,7 @@ local function cyan_main_attack(player)
 	elseif (pattern == 2 and AI_GetVar(player, 10) == 0) then
 	  -- 80% priests and 20% fws, no invis
 	  if (my_priests >= 4 and my_fws >= 2) then
-	    LOG("MAIN ATTACK P3");
+	    --LOG("MAIN ATTACK P3");
 	    AI_SetAttackFlags(player, 1, 0, 0);
 	    AI_SetAways(player, 0, 0, 80, 0, 20);
 		AI_SetShamanAway(player, false);
@@ -196,7 +196,7 @@ local function cyan_main_attack(player)
 	elseif (pattern == 3) then
 	  -- 50% priests and 50% fws, invis.
 	  if (my_fws >= 3 and my_priests >= 3) then
-	    LOG("MAIN ATTACK P4");
+	    --LOG("MAIN ATTACK P4");
 	    AI_SetAttackFlags(player, 1, 0, 0);
 	    AI_SetAways(player, 0, 0, 50, 50, 0);
 		AI_SetShamanAway(player, false);
@@ -208,7 +208,7 @@ local function cyan_main_attack(player)
 	elseif (pattern == 4 and AI_GetVar(player, 10) == 0) then
 	  -- 20% priests, 80% fws, no invis
 	  if (my_priests >= 2 and my_fws >= 4) then
-	    LOG("MAIN ATTACK P5");
+	    --LOG("MAIN ATTACK P5");
 	    AI_SetAttackFlags(player, 1, 0, 0);
 	    AI_SetAways(player, 0, 0, 20, 0, 80);
 		AI_SetShamanAway(player, false);
@@ -219,7 +219,7 @@ local function cyan_main_attack(player)
 	elseif (pattern == 5 and AI_GetVar(player, 10) == 0) then
 	  -- 30% braves, 20% priests, 50% fws, no invis
 	  if (my_priests >= 2 and my_fws >= 2) then
-	    LOG("MAIN ATTACK P6");
+	    --LOG("MAIN ATTACK P6");
 	    AI_SetAttackFlags(player, 1, 0, 0);
 	    AI_SetAways(player, 30, 0, 20, 0, 50);
 		AI_SetShamanAway(player, false);
@@ -234,7 +234,7 @@ local function cyan_main_attack(player)
 	    -- send shaman to murder opponent. in case she is FREE!!!!!
 		
 		if (sham:can_cast_spell_from_entry(2) or sham:can_cast_spell_from_entry(3)) then
-		  LOG("MAIN ATTACK S");
+		  --LOG("MAIN ATTACK S");
 		  AI_SetAttackFlags(player, 1, 1, 0);
 	      AI_SetAways(player, 0, 0, 0, 0, 0);
 		  AI_SetShamanAway(player, true);
@@ -275,7 +275,7 @@ local function cyan_mid_attack(player)
 		AI_SetShamanAway(player, false);
 		
 		ATTACK(player, TRIBE_BLUE, math.min(6, e_braves >> 2), ATTACK_MARKER, 6, 999, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
-	    LOG("ATTACKING MID 1");
+	    --LOG("ATTACKING MID 1");
 	    ai:set_event_ticks(5, 720 + G_RANDOM(120));
 		return;
 	  end
@@ -290,7 +290,7 @@ local function cyan_mid_attack(player)
 	  AI_SetShamanAway(player, false);
 	  
 	  ATTACK(player, TRIBE_BLUE, math.min(e_priests, my_priests), ATTACK_MARKER, 6, 999, 0, 0, 0, ATTACK_NORMAL, 0, 30, -1, 0);
-	  LOG("ATTACKING MID 2");
+	  --LOG("ATTACKING MID 2");
 	  ai:set_event_ticks(5, 720 + G_RANDOM(120));
 	  return
 	end
@@ -300,7 +300,7 @@ local function cyan_mid_attack(player)
 	  -- mid has fws, we'll check if theres a shaman as well.
 	  if (AI_ShamanFree(player)) then
 	    if (e_shaman > 0) then
-	      LOG("ATTACKING MID 4 S1");
+	      --LOG("ATTACKING MID 4 S1");
 		  AI_SetAttackFlags(player, 1, 0, 0);
 	      AI_SetAways(player, 0, 0, 0, 0, 0);
 	      AI_SetShamanAway(player, true);
@@ -313,7 +313,7 @@ local function cyan_mid_attack(player)
 	      ai:set_event_ticks(5, 720 + G_RANDOM(120));
 		  return;
 	    else
-	      LOG("ATTACKING MID 4 S2");
+	      --LOG("ATTACKING MID 4 S2");
 	      AI_SetAttackFlags(player, 1, 0, 0);
 	      AI_SetAways(player, 0, 0, 0, 0, 0);
 	      AI_SetShamanAway(player, true);
@@ -339,7 +339,7 @@ local function cyan_mid_attack(player)
 	      AI_SetShamanAway(player, false);
 	  
 	      -- first troops.
-		  LOG("ATTACKING MID 3 T");
+		  --LOG("ATTACKING MID 3 T");
 	      ATTACK(player, TRIBE_BLUE, math.min(e_priests, my_priests), ATTACK_MARKER, 6, 999, 0, 0, 0, ATTACK_NORMAL, 0, 30, -1, 0);
 		end
 		
@@ -353,7 +353,7 @@ local function cyan_mid_attack(player)
 	    SET_SPELL_ENTRY(player, 4, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 0);
 		SET_SPELL_ENTRY(player, 5, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 1);
 		ATTACK(player, TRIBE_BLUE, 0, ATTACK_PERSON, M_PERSON_MEDICINE_MAN, 999, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, ATTACK_NORMAL, 0, -1, -1, 0);
-	    LOG("ATTACKING MID 3 S");
+	    --LOG("ATTACKING MID 3 S");
 	    ai:set_event_ticks(5, 840 + G_RANDOM(240));
 		return;
 	  end
@@ -363,7 +363,7 @@ local function cyan_mid_attack(player)
 	  -- mid has all kinds of troops.
 	  -- try a double attack?
 	  if (AI_ShamanFree(player)) then
-	    LOG("ATTACKING MID 5 S");
+	    --LOG("ATTACKING MID 5 S");
 	    AI_SetAttackFlags(player, 1, 1, 0);
 	    AI_SetAways(player, 0, 0, 0, 0, 0);
 	    AI_SetShamanAway(player, true);
@@ -381,7 +381,7 @@ local function cyan_mid_attack(player)
 	      AI_SetShamanAway(player, false);
 	  
 	      -- first troops.
-		  LOG("ATTACKING MID 5 T");
+		  --LOG("ATTACKING MID 5 T");
 	      ATTACK(player, TRIBE_BLUE, math.min(e_priests, my_priests), ATTACK_MARKER, 6, 999, 0, 0, 0, ATTACK_NORMAL, 0, 30, -1, 0);
 		end
 		
