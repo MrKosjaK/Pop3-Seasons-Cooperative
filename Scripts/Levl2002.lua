@@ -771,6 +771,14 @@ TRIBE2_ATK_SPELLS = {M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLW
 function _OnLevelInit(level_id)
 	--scenery
 	for i = 5,55 do Plant(i,i,-1) end
+	for i = 110,130 do 
+		local stalagm = createThing(T_EFFECT,M_EFFECT_FLY_THINGUMMY,8,marker_to_coord3d(i),false,false) stalagm.u.Effect.Duration = -1
+		set_thing_draw_info(stalagm,TDI_SPRITE_F1_D1, rndb(1791,1793)) stalagm.DrawInfo.Alpha = -16 centre_coord3d_on_block(stalagm.Pos.D3)
+		stalagm.DrawInfo.Flags = EnableFlag(stalagm.DrawInfo.Flags, DF_USE_ENGINE_SHADOW) stalagm.Pos.D3.Ypos = stalagm.Pos.D3.Ypos - 96
+		SearchMapCells(SQUARE ,0, 0, 0, world_coord3d_to_map_idx(marker_to_coord3d(i)), function(me)
+			me.Flags = EnableFlag(me.Flags, (1<<2)) me.Flags = EnableFlag(me.Flags, (1<<26))
+		return true end)
+	end
 
 	--stuff for AI
 	local pn = tribe1
