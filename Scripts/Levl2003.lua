@@ -269,23 +269,38 @@ end
 ------------------------------------------------------------------------------------------------------------------------
 -- LEVEL FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------
+SearchMapCells(SQUARE ,0, 0, 1, world_coord3d_to_map_idx(marker_to_coord3d(0)), function(me)
+	me.Flags = EnableFlag(me.Flags, (1<<9))
+return true end)
+
+local YinSpells = {M_SPELL_BLAST,M_SPELL_CONVERT_WILD,M_SPELL_INSECT_PLAGUE,M_SPELL_GHOST_ARMY,M_SPELL_LIGHTNING_BOLT,M_SPELL_SWAMP,M_SPELL_LAND_BRIDGE}
+local YangSpells = {M_SPELL_BLAST,M_SPELL_GHOST_ARMY,M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_EARTHQUAKE,M_SPELL_FIRESTORM}
 
 function YinYangSwap()
 	if yinYangCDR == 0 then
 		if PlayersStats[0][2] == "none" then
-			PlayersStats[0][2] = "yin" PlayersStats[1][2] = "yang"
+			PlayersStats[0][2] = "yang" PlayersStats[1][2] = "yin"
+			log_msg(8,"Yin-Yang has been acquired. Yin (moon) will grant offensive status, while Yang (sun) will highlight the defense. Stay on the area to swap anytime, at the cost of mana reset.")
 		else
 			if PlayersStats[0][2] == "yin" then
 				PlayersStats[0][2] = "yang" PlayersStats[1][2] = "yin"
 			else
 				PlayersStats[0][2] = "yin" PlayersStats[1][2] = "yang"
 			end
+			log_msg(8,"Yin-Yang energy swapped. All mana has been reset.")
 		end
 		local s = createThing(T_EFFECT,M_EFFECT_HYPNOSIS_FLASH,8,marker_to_coord3d(0),false,false) centre_coord3d_on_block(s.Pos.D3)
 		s.Pos.D3.Ypos = 512 queue_sound_event(s,SND_EVENT_HYPNOTISE, 0)
 		yinYangCDR = 12*3
-		--reset yinYang perks on each players, and swap stuff
-		
+		--reset mana for each player, and swap yinYang spells
+		if PlayersStats[0][2] == "yang" then
+			for k,v in ipairs(YangSpells) do set_player_cannot_cast(v, 0) end for k,v in ipairs(YinSpells) do set_player_can_cast(v, 0) end GIVE_MANA_TO_PLAYER(0,-9999999)
+			for k,v in ipairs(YinSpells) do set_player_cannot_cast(v, 1) end for k,v in ipairs(YangSpells) do set_player_can_cast(v, 1) end GIVE_MANA_TO_PLAYER(1,-9999999)
+		else
+			for k,v in ipairs(YangSpells) do set_player_cannot_cast(v, 1) end for k,v in ipairs(YinSpells) do set_player_can_cast(v, 1) end GIVE_MANA_TO_PLAYER(0,-9999999)
+			for k,v in ipairs(YinSpells) do set_player_cannot_cast(v, 0) end for k,v in ipairs(YangSpells) do set_player_can_cast(v, 0) end GIVE_MANA_TO_PLAYER(1,-9999999)
+		end
+		set_correct_gui_menu()
 	end
 end
 
@@ -956,7 +971,7 @@ function _OnPostLevelInit(level_id)
 	end]]
 	--stuff for AI
 	
-	for k,v in ipairs(G_AI_ALIVE) do LOG(v)
+	for k,v in ipairs(G_AI_ALIVE) do
 		for kk,vv in ipairs(G_AI_ALIVE) do
 			if v ~= vv then
 				set_players_allied(v,vv)
