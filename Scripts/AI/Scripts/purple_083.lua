@@ -28,6 +28,15 @@ local construction_list = cont.PlayerLists[BUILDINGMARKERLIST];
 local people_list = cont.PlayerLists[PEOPLELIST];
 local shapes_without_workers = {};
 local Area = CreateAreaInfo();
+local my_enemies_table = {TRIBE_YELLOW};
+
+local function get_my_enemy()
+  if (#my_enemies_table == 0) then
+    return nil
+  else
+    return (my_enemies_table[G_RANDOM(#my_enemies_table) + 1]);
+  end
+end
 
 local function purple_look_for_buildings(player)
   if (construction_list:isEmpty()) then
@@ -79,9 +88,15 @@ local function purple_main_attack(player)
     return;
   end
   
-  local result = NAV_CHECK(player, TRIBE_YELLOW, ATTACK_BUILDING, 0, FALSE);
-  local pattern = G_RANDOM(6);
+  local target = get_my_enemy();
+  
+  if (target == nil) then
+    return;
+  end
+  
   local shaman_busy = false;
+  local result = NAV_CHECK(player, target, ATTACK_BUILDING, 0, FALSE);
+  local pattern = G_RANDOM(6);
   
   if (result == 1) then
     local my_wars = AI_GetUnitCount(player, M_PERSON_WARRIOR);
@@ -95,7 +110,7 @@ local function purple_main_attack(player)
         AI_SetAways(player, 0, 100, 0, 0, 0);
         AI_SetShamanAway(player, false);
         
-        ATTACK(player, TRIBE_YELLOW, 3, ATTACK_PERSON, M_PERSON_MEDICINE_MAN, 999, M_SPELL_INVISIBILITY, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
+        ATTACK(player, target, 3, ATTACK_PERSON, M_PERSON_MEDICINE_MAN, 999, M_SPELL_INVISIBILITY, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
         ai:set_event_ticks(5, 1024 + G_RANDOM(120));
         shaman_busy = true;
       end
@@ -107,7 +122,7 @@ local function purple_main_attack(player)
         AI_SetAways(player, 0, 0, 0, 100, 0);
         AI_SetShamanAway(player, false);
         
-        ATTACK(player, TRIBE_YELLOW, 3, ATTACK_PERSON, M_PERSON_MEDICINE_MAN, 999, M_SPELL_INVISIBILITY, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
+        ATTACK(player, target, 3, ATTACK_PERSON, M_PERSON_MEDICINE_MAN, 999, M_SPELL_INVISIBILITY, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
         ai:set_event_ticks(5, 1024 + G_RANDOM(120));
         shaman_busy = true;
       end
@@ -119,7 +134,7 @@ local function purple_main_attack(player)
         AI_SetAways(player, 0, 100, 0, 0, 0);
         AI_SetShamanAway(player, false);
         
-        ATTACK(player, TRIBE_YELLOW, math.min(6, my_wars), ATTACK_BUILDING, M_BUILDING_WARRIOR_TRAIN, 999, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
+        ATTACK(player, target, math.min(6, my_wars), ATTACK_BUILDING, M_BUILDING_WARRIOR_TRAIN, 999, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
         ai:set_event_ticks(5, 1024 + G_RANDOM(120));
       end
     elseif (pattern == 3 and AI_GetVar(player, 11) == 0) then
@@ -130,7 +145,7 @@ local function purple_main_attack(player)
         AI_SetAways(player, 0, 100, 0, 0, 0);
         AI_SetShamanAway(player, false);
         
-        ATTACK(player, TRIBE_YELLOW, math.min(12, my_wars), ATTACK_BUILDING, M_BUILDING_SUPER_TRAIN, 999, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
+        ATTACK(player, target, math.min(12, my_wars), ATTACK_BUILDING, M_BUILDING_SUPER_TRAIN, 999, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
         ai:set_event_ticks(5, 1024 + G_RANDOM(120));
       end
     elseif (pattern == 4 and AI_GetVar(player, 11) == 0) then
@@ -141,7 +156,7 @@ local function purple_main_attack(player)
         AI_SetAways(player, 0, 80, 0, 20, 0);
         AI_SetShamanAway(player, false);
         
-        ATTACK(player, TRIBE_YELLOW, math.min(12, (my_wars + my_fws)), ATTACK_BUILDING, M_BUILDING_SUPER_TRAIN, 999, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
+        ATTACK(player, target, math.min(12, (my_wars + my_fws)), ATTACK_BUILDING, M_BUILDING_SUPER_TRAIN, 999, 0, 0, 0, ATTACK_NORMAL, 0, -1, -1, 0);
         ai:set_event_ticks(5, 1024 + G_RANDOM(120));
       end
     elseif (pattern == 5) then
@@ -152,7 +167,7 @@ local function purple_main_attack(player)
         AI_SetAways(player, 0, 80, 0, 20, 0);
         AI_SetShamanAway(player, false);
         
-        ATTACK(player, TRIBE_YELLOW, math.min(12, (my_wars + my_fws)), ATTACK_BUILDING, M_BUILDING_WARRIOR_TRAIN, 999, M_SPELL_INVISIBILITY, M_SPELL_INVISIBILITY, 0, ATTACK_NORMAL, 0, -1, -1, 0);
+        ATTACK(player, target, math.min(12, (my_wars + my_fws)), ATTACK_BUILDING, M_BUILDING_WARRIOR_TRAIN, 999, M_SPELL_INVISIBILITY, M_SPELL_INVISIBILITY, 0, ATTACK_NORMAL, 0, -1, -1, 0);
         ai:set_event_ticks(5, 1024 + G_RANDOM(120));
         shaman_busy = true;
       end
@@ -171,7 +186,7 @@ local function purple_main_attack(player)
           SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 2, 1);
           SET_SPELL_ENTRY(player, 4, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 0);
           SET_SPELL_ENTRY(player, 5, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 1);
-          ATTACK(player, TRIBE_YELLOW, 0, ATTACK_BUILDING, 0, 999, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, ATTACK_NORMAL, 0, -1, -1, 0);
+          ATTACK(player, target, 0, ATTACK_BUILDING, 0, 999, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, ATTACK_NORMAL, 0, -1, -1, 0);
           ai:set_event_ticks(5, 1024 + G_RANDOM(120));
         end
       end
@@ -467,6 +482,54 @@ local function purple_defend_base(player)
   end
 end
 
+local function purple_try_pray_totem(player)
+  if (AI_GetVar(player, 13) == 1) then
+    if (GET_HEAD_TRIGGER_COUNT(224, 12) > 0) then
+      AI_SetAways(player, 10, 10, 10, 10, 10);
+      AI_SetShamanAway(player, false);
+      PRAY_AT_HEAD(player, 3, 55);
+      ai:set_event_ticks(9, 720 + G_RANDOM(360));
+    else
+      AI_SetVar(player, 13, 2);
+    end
+  end
+end
+
+local function purple_check_my_enemies(player)
+  if (AI_GetVar(player, 14) == 1) then
+    -- yellow died.
+    for i = 1, #my_enemies_table do
+      if (my_enemies_table[i] == TRIBE_YELLOW) then
+        my_enemies_table[i] = nil;
+      end
+    end
+  end
+  
+  if (AI_GetVar(player, 13) == 2) then
+    -- pray'd totem, red is now accessible.
+    my_enemies_table[#my_enemies_table + 1] = TRIBE_RED;
+    AI_SetVar(player, 13, 3);
+  end
+  
+  if (AI_GetVar(player, 15) == 1) then
+    -- blue died.
+    for i = 1, #my_enemies_table do
+      if (my_enemies_table[i] == TRIBE_BLUE) then
+        my_enemies_table[i] = nil;
+      end
+    end
+  end
+  
+  if (AI_GetVar(player, 16) == 1) then
+    -- blue died.
+    for i = 1, #my_enemies_table do
+      if (my_enemies_table[i] == TRIBE_RED) then
+        my_enemies_table[i] = nil;
+      end
+    end
+  end
+end
+
 -- events
 ai:create_event(1, 64, 12, purple_convert);
 ai:create_event(2, 188, 74, purple_build);
@@ -476,3 +539,5 @@ ai:create_event(5, 512, 128, purple_main_attack);
 ai:create_event(6, 480, 96, purple_look_for_buildings);
 ai:create_event(7, 384, 96, purple_check_towers);
 ai:create_event(8, 324, 64, purple_defend_base);
+ai:create_event(9, 256, 64, purple_try_pray_totem);
+ai:create_event(10, 16, 8, purple_check_my_enemies);

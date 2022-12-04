@@ -26,6 +26,15 @@ local construction_list = cont.PlayerLists[BUILDINGMARKERLIST];
 local people_list = cont.PlayerLists[PEOPLELIST];
 local shapes_without_workers = {};
 local Area = CreateAreaInfo();
+local my_enemies_table = {TRIBE_RED};
+
+local function get_my_enemy()
+  if (#my_enemies_table == 0) then
+    return nil
+  else
+    return (my_enemies_table[G_RANDOM(#my_enemies_table) + 1]);
+  end
+end
 
 local function green_look_for_buildings(player)
   if (construction_list:isEmpty()) then
@@ -242,7 +251,14 @@ local function green_main_attack(player)
     return;
   end
   
-  local result = NAV_CHECK(player, TRIBE_RED, ATTACK_BUILDING, 0, FALSE);
+  local target = get_my_enemy();
+  
+  if (target == nil) then
+    return;
+  end
+  
+  local shaman_busy = false;
+  local result = NAV_CHECK(player, target, ATTACK_BUILDING, 0, FALSE);
   local idx = AI_GetVar(player, 11);
   
   if (result == 1) then
@@ -254,7 +270,7 @@ local function green_main_attack(player)
 		  AI_SetAways(player, 0, 0, 100, 0, 0);
 		  AI_SetShamanAway(player, false);
 		  
-		  ATTACK(player, TRIBE_RED, math.min(10, my_priests), ATTACK_BUILDING, M_BUILDING_TEMPLE, 400, M_SPELL_INVISIBILITY, M_SPELL_INVISIBILITY, M_SPELL_INVISIBILITY, ATTACK_NORMAL, 0, 32, -1, 0);
+		  ATTACK(player, target, math.min(10, my_priests), ATTACK_BUILDING, M_BUILDING_TEMPLE, 400, M_SPELL_INVISIBILITY, M_SPELL_INVISIBILITY, M_SPELL_INVISIBILITY, ATTACK_NORMAL, 0, 32, -1, 0);
 		end
 	  end
       AI_SetVar(player, 11, 1);
@@ -267,7 +283,7 @@ local function green_main_attack(player)
 		AI_SetAways(player, 5, 50, 50, 0, 0);
 		AI_SetShamanAway(player, false);
 		
-		ATTACK(player, TRIBE_RED, math.min(16, (my_priests + my_wars) >> 1), ATTACK_BUILDING, M_BUILDING_WARRIOR_TRAIN, 500, 0, 0, 0, ATTACK_NORMAL, 0, 32, -1, 0);
+		ATTACK(player, target, math.min(16, (my_priests + my_wars) >> 1), ATTACK_BUILDING, M_BUILDING_WARRIOR_TRAIN, 500, 0, 0, 0, ATTACK_NORMAL, 0, 32, -1, 0);
 	  end
 	  AI_SetVar(player, 11, 0);
 	end
@@ -286,7 +302,7 @@ local function green_main_attack(player)
 		
 		SET_SPELL_ENTRY(player, 2, M_SPELL_INSECT_PLAGUE, SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2, 32, 3, 0);
 		SET_SPELL_ENTRY(player, 3, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 2, 0);
-		ATTACK(player, TRIBE_RED, 0, ATTACK_BUILDING, 0, 600, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, ATTACK_NORMAL, 0, 32, -1, 0);
+		ATTACK(player, target, 0, ATTACK_BUILDING, 0, 600, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, ATTACK_NORMAL, 0, 32, -1, 0);
 	  end
 	end
   end
@@ -307,6 +323,54 @@ local function green_convert(player)
   end
 end
 
+local function green_try_pray_totem(player)
+  if (AI_GetVar(player, 13) == 1) then
+    if (GET_HEAD_TRIGGER_COUNT(56, 24) > 0) then
+      AI_SetAways(player, 10, 10, 10, 10, 10);
+      AI_SetShamanAway(player, false);
+      PRAY_AT_HEAD(player, 3, 56);
+      ai:set_event_ticks(9, 720 + G_RANDOM(360));
+    else
+      AI_SetVar(player, 13, 2);
+    end
+  end
+end
+
+local function green_check_my_enemies(player)
+  if (AI_GetVar(player, 14) == 1) then
+    -- red died.
+    for i = 1, #my_enemies_table do
+      if (my_enemies_table[i] == TRIBE_RED) then
+        my_enemies_table[i] = nil;
+      end
+    end
+  end
+  
+  if (AI_GetVar(player, 13) == 2) then
+    -- pray'd totem, blue is now accessible.
+    my_enemies_table[#my_enemies_table + 1] = TRIBE_BLUE;
+    AI_SetVar(player, 13, 3);
+  end
+  
+  if (AI_GetVar(player, 15) == 1) then
+    -- blue died.
+    for i = 1, #my_enemies_table do
+      if (my_enemies_table[i] == TRIBE_BLUE) then
+        my_enemies_table[i] = nil;
+      end
+    end
+  end
+  
+  if (AI_GetVar(player, 16) == 1) then
+    -- blue died.
+    for i = 1, #my_enemies_table do
+      if (my_enemies_table[i] == TRIBE_YELLOW) then
+        my_enemies_table[i] = nil;
+      end
+    end
+  end
+end
+
 ai:create_event(1, 90, 24, green_convert);
 ai:create_event(2, 192, 84, green_build);
 ai:create_event(3, 372, 90, green_check_towers);
@@ -314,3 +378,6 @@ ai:create_event(4, 140, 44, green_early_towers);
 ai:create_event(5, 480, 96, green_look_for_buildings);
 ai:create_event(6, 1736, 362, green_mid_attack);
 ai:create_event(7, 2542, 786, green_main_attack);
+ai:create_event(8, 199, 99, function() end);
+ai:create_event(9, 256, 64, green_try_pray_totem);
+ai:create_event(10, 16, 8, green_check_my_enemies);

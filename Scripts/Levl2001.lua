@@ -172,9 +172,8 @@ end
 
 function _OnTurn(turn)
   if (turn > 0) then
-    if ((turn & (1 << 7)-1) == 0) then
-      AIfasterSprogging(128)
-      LOG("BOOSTING M8");
+    if ((turn & (1 << 9)-1) == 0) then
+      AIfasterSprogging(512);
     end
   end
   
@@ -196,6 +195,8 @@ function _OnPlayerDeath(pn)
     TRIGGER_THING(41);
     AI_SetVar(TRIBE_CYAN, 12, 1); -- blue died.
     AI_SetVar(TRIBE_CYAN, 13, 1); -- prayge totemo
+    AI_SetVar(TRIBE_PINK, 15, 1); -- blue died (purple)
+    AI_SetVar(TRIBE_GREEN, 15, 1); -- blue died(green)
   end
   
   if (pn == TRIBE_CYAN) then
@@ -204,6 +205,10 @@ function _OnPlayerDeath(pn)
   
   if (pn == TRIBE_YELLOW) then
     TRIGGER_THING(43);
+    AI_SetVar(TRIBE_PINK, 13, 1); -- prayge totemo
+    AI_SetVar(TRIBE_PINK, 14, 1); -- yellow diedo
+    AI_SetVar(TRIBE_CYAN, 14, 1); -- yellow diedo (cyan)
+    AI_SetVar(TRIBE_GREEN, 16, 1); -- yellow diedo (green)
   end
   
   if (pn == TRIBE_PINK) then
@@ -212,6 +217,10 @@ function _OnPlayerDeath(pn)
   
   if (pn == TRIBE_RED) then
     TRIGGER_THING(45);
+    AI_SetVar(TRIBE_GREEN, 13, 1); -- prayge totemo
+    AI_SetVar(TRIBE_GREEN, 14, 1); -- red diedo
+    AI_SetVar(TRIBE_PINK, 16, 1); -- red diedo (purple)
+    AI_SetVar(TRIBE_CYAN, 15, 1); -- red diedo (cyan)
   end
   
   if (pn == TRIBE_GREEN) then

@@ -162,7 +162,7 @@ local function cyan_main_attack(player)
 	  -- invisible priests, how pathetic.
 	  if (my_priests >= 3) then
 	    LOG("MAIN ATTACK P1");
-	    AI_SetAttackFlags(player, 2, 0, 0);
+	    AI_SetAttackFlags(player, 1, 0, 0);
 	    AI_SetAways(player, 0, 0, 100, 0, 0);
 		AI_SetShamanAway(player, false);
 		
@@ -174,7 +174,7 @@ local function cyan_main_attack(player)
 	  -- invisible fws attacking shaman. pathetic.
 	  if (my_fws >= 3) then
 	    LOG("MAIN ATTACK P2");
-	    AI_SetAttackFlags(player, 2, 0, 0);
+	    AI_SetAttackFlags(player, 1, 0, 0);
 	    AI_SetAways(player, 0, 0, 0, 100, 0);
 		AI_SetShamanAway(player, false);
 		
@@ -186,7 +186,7 @@ local function cyan_main_attack(player)
 	  -- 80% priests and 20% fws, no invis
 	  if (my_priests >= 4 and my_fws >= 2) then
 	    LOG("MAIN ATTACK P3");
-	    AI_SetAttackFlags(player, 2, 0, 0);
+	    AI_SetAttackFlags(player, 1, 0, 0);
 	    AI_SetAways(player, 0, 0, 80, 0, 20);
 		AI_SetShamanAway(player, false);
 		
@@ -197,7 +197,7 @@ local function cyan_main_attack(player)
 	  -- 50% priests and 50% fws, invis.
 	  if (my_fws >= 3 and my_priests >= 3) then
 	    LOG("MAIN ATTACK P4");
-	    AI_SetAttackFlags(player, 2, 0, 0);
+	    AI_SetAttackFlags(player, 1, 0, 0);
 	    AI_SetAways(player, 0, 0, 50, 50, 0);
 		AI_SetShamanAway(player, false);
 		
@@ -209,7 +209,7 @@ local function cyan_main_attack(player)
 	  -- 20% priests, 80% fws, no invis
 	  if (my_priests >= 2 and my_fws >= 4) then
 	    LOG("MAIN ATTACK P5");
-	    AI_SetAttackFlags(player, 2, 0, 0);
+	    AI_SetAttackFlags(player, 1, 0, 0);
 	    AI_SetAways(player, 0, 0, 20, 0, 80);
 		AI_SetShamanAway(player, false);
 		
@@ -220,7 +220,7 @@ local function cyan_main_attack(player)
 	  -- 30% braves, 20% priests, 50% fws, no invis
 	  if (my_priests >= 2 and my_fws >= 2) then
 	    LOG("MAIN ATTACK P6");
-	    AI_SetAttackFlags(player, 2, 0, 0);
+	    AI_SetAttackFlags(player, 1, 0, 0);
 	    AI_SetAways(player, 30, 0, 20, 0, 50);
 		AI_SetShamanAway(player, false);
 		
@@ -235,7 +235,7 @@ local function cyan_main_attack(player)
 		
 		if (sham:can_cast_spell_from_entry(2) or sham:can_cast_spell_from_entry(3)) then
 		  LOG("MAIN ATTACK S");
-		  AI_SetAttackFlags(player, 2, 1, 0);
+		  AI_SetAttackFlags(player, 1, 1, 0);
 	      AI_SetAways(player, 0, 0, 0, 0, 0);
 		  AI_SetShamanAway(player, true);
 		  SET_SPELL_ENTRY(player, 2, M_SPELL_LIGHTNING_BOLT, SPELL_COST(M_SPELL_LIGHTNING_BOLT) >> 2, 32, 2, 0);
@@ -535,9 +535,7 @@ end
 
 local function cyan_try_pray_totem(player)
   if (AI_GetVar(player, 13) == 1) then
-    LOG(string.format("VAR IS SET"));
     if (GET_HEAD_TRIGGER_COUNT(130, 12) > 0) then
-      LOG(string.format("PRAYGE"));
       AI_SetAways(player, 10, 10, 10, 10, 10);
       AI_SetShamanAway(player, false);
       PRAY_AT_HEAD(player, 3, 54);
@@ -562,6 +560,24 @@ local function cyan_check_my_enemies(player)
     -- pray'd totem, yellow is now accessible.
     my_enemies_table[#my_enemies_table + 1] = TRIBE_YELLOW;
     AI_SetVar(player, 13, 3);
+  end
+  
+  if (AI_GetVar(player, 14) == 1) then
+    -- yellow died.
+    for i = 1, #my_enemies_table do
+      if (my_enemies_table[i] == TRIBE_YELLOW) then
+        my_enemies_table[i] = nil;
+      end
+    end
+  end
+  
+  if (AI_GetVar(player, 15) == 1) then
+    -- yellow died.
+    for i = 1, #my_enemies_table do
+      if (my_enemies_table[i] == TRIBE_RED) then
+        my_enemies_table[i] = nil;
+      end
+    end
   end
 end
 
