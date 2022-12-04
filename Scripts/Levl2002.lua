@@ -246,13 +246,13 @@ function Shamanattack(attacker)
 					IncrementShamanAtkVar(attacker,(rndb(600,1000)) - (G_GAMESTAGE*rndb(50,100))) --**
 					success = true
 					if attacker == tribe1 then TRIBE1ShamanAtk[2] = TRIBE1ShamanAtk[2] - 1 else TRIBE2ShamanAtk[2] = TRIBE2ShamanAtk[2] - 1 end
-					log_msg(attacker,"shaman atack vs " .. target .. ", spells: " .. spell1 .. " " .. spell2 .. " " .. spell3)
+					--log_msg(attacker,"shaman atack vs " .. target .. ", spells: " .. spell1 .. " " .. spell2 .. " " .. spell3)
 				end
 			end
 		end
 	end
 	
-	if not success then IncrementShamanAtkVar(attacker,300-G_GAMESTAGE*25) LOG("fail shaman atk") end
+	if not success then IncrementShamanAtkVar(attacker,300-G_GAMESTAGE*25) --[[LOG("fail shaman atk")]] end
 end
 
 function IncrementShamanAtkVar(pn,amt)
@@ -334,14 +334,14 @@ function attack(attacker)
 						IncrementAtkVar(attacker,(rndb(1800,2500)) - (G_GAMESTAGE*rndb(150,250))) --**
 						success = true
 						if attacker == tribe1 then TRIBE1ShamanAtk[1] = getTurn()+rndb(200,300) TRIBE1ShamanAtk[2] = rndb(2,3) else TRIBE2ShamanAtk[1] = getTurn()+rndb(200,300) TRIBE2ShamanAtk[2] = rndb(3,4) end
-						log_msg(attacker,"target: " .. target .. ", numTroops: " .. numTroops .. ", targType: " .. targType .. ", spell1: " .. spell1 .. ", spell2: " .. spell2 .. ", spell3: " .. spell3 .. ", atkType: " .. atkType .. ", mk1: " .. mk1 .. ", mk2: " .. mk2)
+						--log_msg(attacker,"target: " .. target .. ", numTroops: " .. numTroops .. ", targType: " .. targType .. ", spell1: " .. spell1 .. ", spell2: " .. spell2 .. ", spell3: " .. spell3 .. ", atkType: " .. atkType .. ", mk1: " .. mk1 .. ", mk2: " .. mk2)
 					end
 				end
 			end
 		end
 	end
 
-	if not success then IncrementAtkVar(attacker,400-G_GAMESTAGE*50) log_msg(attacker,"attack") end
+	if not success then IncrementAtkVar(attacker,400-G_GAMESTAGE*50) --[[log_msg(attacker,"attack")]] end
 end
 
 function IncrementAtkVar(pn,amt)
@@ -352,7 +352,7 @@ function IncrementAtkVar(pn,amt)
 	end
 end
 
-function sendRandomUnit(pn,model) LOG("send?")
+function sendRandomUnit(pn,model)
 	local t = randomUnit(pn,model,false)
 	local targetThing,targetOwner = nil,iipp(TRIBE_BLUE,TRIBE_RED,20,80)
 	if rnd() < 60 then
@@ -361,7 +361,7 @@ function sendRandomUnit(pn,model) LOG("send?")
 		targetThing = get_me_a_random_person(targetOwner)
 	end
 	if nilT(targetThing) then
-		unitNavAndMoveC3d(t,targetThing.Pos.D3) LOG("yes")
+		unitNavAndMoveC3d(t,targetThing.Pos.D3)
 	end
 end
 
@@ -962,5 +962,4 @@ createStalagtites(68,3)
 
 
 --to do:
---do some only shaman attackos
 --remove logs, log_msg
