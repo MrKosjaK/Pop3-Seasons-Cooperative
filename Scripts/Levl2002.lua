@@ -303,7 +303,7 @@ function attack(attacker)
 					else
 						WRITE_CP_ATTRIB(attacker, ATTR_BASE_UNDER_ATTACK_RETREAT, 0) WRITE_CP_ATTRIB(attacker, ATTR_RETREAT_VALUE, 0)
 					end
-					if attacker == tribe1 then WRITE_CP_ATTRIB(attacker, ATTR_FIGHT_STOP_DISTANCE, 24+G_RANDOM(8)) else WRITE_CP_ATTRIB(attacker, ATTR_FIGHT_STOP_DISTANCE, 16+G_RANDOM(4)) end --**
+					if attacker == tribe1 then WRITE_CP_ATTRIB(attacker, ATTR_FIGHT_STOP_DISTANCE, 24+G_RANDOM(8)) else WRITE_CP_ATTRIB(attacker, ATTR_FIGHT_STOP_DISTANCE, 24+G_RANDOM(4)) end --**
 					local mksTbl = {}
 					if attacker == tribe1 then for i = 106,108 do table.insert(mksTbl,i) end else for i = 102,105 do table.insert(mksTbl,i) end end --**
 					local mk1,mk2 = randomItemFromTable(mksTbl),-1
@@ -326,7 +326,7 @@ function attack(attacker)
 							WRITE_CP_ATTRIB(attacker, ATTR_GROUP_OPTION, iipp(0,2,60,40))
 						end
 					end
-					if rnd() > 90 and (spell1 ~= M_SPELL_INVISIBILITY and spell1 ~= M_SPELL_SHIELD) then mk1,mk2 = -1,-1 end
+					if rnd() > 80 and (spell1 ~= M_SPELL_INVISIBILITY and spell1 ~= M_SPELL_SHIELD) then mk1,mk2 = -1,-1 end
 					local targType = -1
 					if countBuildings(target) > 0 then
 						if (NAV_CHECK(attacker,target,ATTACK_BUILDING,0,0) > 0) or atkType ~= ATTACK_NORMAL then targType = ATTACK_BUILDING else targType = ATTACK_PERSON end
@@ -339,6 +339,7 @@ function attack(attacker)
 						local bbv = iipp(0,1,30,70) --**
 						if atkType == ATTACK_NORMAL then bbv = 0 end
 						AI_SetTargetParams(attacker,target,true,true)
+						if attacker == tribe1 and atkType == ATTACK_BY_BOAT and (spell1 ~= M_SPELL_INVISIBILITY and spell1 ~= M_SPELL_SHIELD) then mk1 = rndb(131,134) mk2 = -1 end
 						ATTACK(attacker, target, numTroops, targType, 0, 969+(stage*10), spell1, spell2, spell3, atkType, bbv, mk1, mk2, 0)
 						IncrementAtkVar(attacker,(rndb(1800,2500)) - (G_GAMESTAGE*rndb(150,250))) --**
 						success = true
