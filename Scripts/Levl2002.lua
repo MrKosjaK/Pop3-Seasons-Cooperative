@@ -474,7 +474,7 @@ function updateTroopsAndAtkParams()
 			local troopsType = {{M_PERSON_WARRIOR,8+stage*2},{M_PERSON_RELIGIOUS,8+stage*2}--[[,{M_PERSON_SUPER_WARRIOR,4+stage*2},{M_PERSON_SPY,4+stage*2}]]}
 			for k,v in ipairs(troopsType) do
 				if AI_EntryAvailable(pn) then
-					if AI_GetUnitCount(pn,v[1]) < v[2] then TRAIN_PEOPLE_NOW(pn,1,v[1]) end 	log_msg(pn,"train: " .. v[1])
+					if AI_GetUnitCount(pn,v[1]) < v[2] then TRAIN_PEOPLE_NOW(pn,1,v[1]) end
 				end
 			end
 		end
@@ -493,7 +493,7 @@ function updateTroopsAndAtkParams()
 			local troopsType = {{M_PERSON_WARRIOR,10+stage*2},--[[{M_PERSON_RELIGIOUS,8+stage*2},]]{M_PERSON_SUPER_WARRIOR,10+stage*2}--[[,{M_PERSON_SPY,4+stage*2}]]}
 			for k,v in ipairs(troopsType) do
 				if AI_EntryAvailable(pn) then
-					if AI_GetUnitCount(pn,v[1]) < v[2] then TRAIN_PEOPLE_NOW(pn,1,v[1]) end		log_msg(pn,"train: " .. v[1])
+					if AI_GetUnitCount(pn,v[1]) < v[2] then TRAIN_PEOPLE_NOW(pn,1,v[1]) end
 				end
 			end
 		end
