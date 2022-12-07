@@ -121,12 +121,12 @@ function _OnTurn(turn)
 		updateConvertParams()
 		updateSpellBuckets(stage)
 		MARKER_ENTRIES(tribe2, 5,6,-1,-1) --base wars patrol
+		updateTroopsAndAtkParams()
 	end
 	if everySeconds(30-stage) then
 		DefensivePreachMarkers()
 		DefendStoneHead(68)
 		DefendStoneHead(94)
-		updateTroopsAndAtkParams()
 		--tribe1
 		MARKER_ENTRIES(tribe1, 0,-1,-1,-1) --base big patrol
 		--tribe2
@@ -137,6 +137,7 @@ function _OnTurn(turn)
 	end
 	if everySeconds(60-stage*10) then
 		sendRandomUnit(TRIBE_BLACK,iipp(M_PERSON_WARRIOR,M_PERSON_WARRIOR,50,50))
+		TribeFlattenBase(tribe2,16,500,false)
 	end
 	if everySeconds(120-stage*20) then
 		ReconnectToEnemies()
@@ -203,7 +204,15 @@ function _OnKeyDown(k)
 	if k == LB_KEY_6 then
 		log_msg(8,"" .. getTurn() .. "      " .. TRIBE1atk .. " -- " .. TRIBE2atk)
 	elseif k == LB_KEY_Q then
-		
+		--BlackGoFlatten(TRIBE_BLACK,16,10,false)
+		--[[SearchMapCells(CIRCULAR, 0, 2, 1, world_coord2d_to_map_idx(getShaman(0).Pos.D2), function(me)
+			if is_map_cell_near_coast(MAP_ELEM_PTR_2_IDX(me),1) > 0 and is_map_elem_all_land(me) > 0 then
+				local meptr = MAP_ELEM_PTR_2_IDX(me)
+				local c3d = Coord3D.new() map_idx_to_world_coord3d(meptr,c3d)
+				createThing(T_EFFECT,60,8,c3d,false,false)
+			end
+			return true
+		end)]]
 	end
 end
 
@@ -458,14 +467,14 @@ function updateTroopsAndAtkParams()
 	if atkp > 140 then atkp = 140 end
 	WRITE_CP_ATTRIB(pn, ATTR_ATTACK_PERCENTAGE, atkp)
 	--auto train units occasionally
-	if rnd() < 50 then --50% chance for main code executte
+	if rnd() < 75 then --75% chance for main code executte
 		local braves = _gsi.Players[pn].NumPeopleOfType[M_PERSON_BRAVE]
 		local troopAmmount = countTroops(pn)
 		if troopAmmount < math.floor(braves/3) then
 			local troopsType = {{M_PERSON_WARRIOR,8+stage*2},{M_PERSON_RELIGIOUS,8+stage*2}--[[,{M_PERSON_SUPER_WARRIOR,4+stage*2},{M_PERSON_SPY,4+stage*2}]]}
 			for k,v in ipairs(troopsType) do
 				if AI_EntryAvailable(pn) then
-					if AI_GetUnitCount(pn,v[1]) < v[2] then TRAIN_PEOPLE_NOW(pn,1,v[1]) end
+					if AI_GetUnitCount(pn,v[1]) < v[2] then TRAIN_PEOPLE_NOW(pn,1,v[1]) end 	log_msg(pn,"train: " .. v[1])
 				end
 			end
 		end
@@ -477,14 +486,14 @@ function updateTroopsAndAtkParams()
 	if atkp > 140 then atkp = 140 end
 	WRITE_CP_ATTRIB(pn, ATTR_ATTACK_PERCENTAGE, atkp)
 	--auto train units occasionally
-	if rnd() < 50 then --50% chance for main code executte
+	if rnd() < 75 then --75% chance for main code executte
 		local braves = _gsi.Players[pn].NumPeopleOfType[M_PERSON_BRAVE]
 		local troopAmmount = countTroops(pn)
 		if troopAmmount < math.floor(braves/3) then
 			local troopsType = {{M_PERSON_WARRIOR,10+stage*2},--[[{M_PERSON_RELIGIOUS,8+stage*2},]]{M_PERSON_SUPER_WARRIOR,10+stage*2}--[[,{M_PERSON_SPY,4+stage*2}]]}
 			for k,v in ipairs(troopsType) do
 				if AI_EntryAvailable(pn) then
-					if AI_GetUnitCount(pn,v[1]) < v[2] then TRAIN_PEOPLE_NOW(pn,1,v[1]) end
+					if AI_GetUnitCount(pn,v[1]) < v[2] then TRAIN_PEOPLE_NOW(pn,1,v[1]) end		log_msg(pn,"train: " .. v[1])
 				end
 			end
 		end
@@ -664,12 +673,12 @@ function updateConvertParams()
 	local pn = tribe1
 	local cv = btn(GetPop(pn)<45+20*G_GAMESTAGE)
 	STATE_SET(pn, cv, CP_AT_TYPE_MED_MAN_GET_WILD_PEEPS)
-	WRITE_CP_ATTRIB(pn, ATTR_EXPANSION, 25+10*G_GAMESTAGE)
+	WRITE_CP_ATTRIB(pn, ATTR_EXPANSION, 30+10*G_GAMESTAGE)
 	--
 	local pn = tribe2
 	local cv = btn(GetPop(pn)<40+16*G_GAMESTAGE)
 	STATE_SET(pn, cv, CP_AT_TYPE_MED_MAN_GET_WILD_PEEPS)
-	WRITE_CP_ATTRIB(pn, ATTR_EXPANSION, 25+8*G_GAMESTAGE)
+	WRITE_CP_ATTRIB(pn, ATTR_EXPANSION, 30+8*G_GAMESTAGE)
 end
 
 function updateVehiclesBuild()
@@ -695,9 +704,9 @@ function trainingHutsPriorities(pn)
 	end
 	
 	if pn == tribe1 then
-		WriteAiTrainTroops(pn, 1+(s*2)+15 ,1+(s*2)+15, 0, 0) --w,pr,fw,s
+		WriteAiTrainTroops(pn, 1+(s*2)+16 ,1+(s*2)+16, 0, 0) --w,pr,fw,s
 	else -- tribe2(black)
-		WriteAiTrainTroops(pn, 1+(s*2)+15 , 0, 1+(s*2)+15, 0) --w,pr,fw,s
+		WriteAiTrainTroops(pn, 1+(s*2)+16 , 0, 1+(s*2)+16, 0) --w,pr,fw,s
 	end
 end
 
@@ -815,7 +824,7 @@ function _OnLevelInit(level_id)
 
 	AI_SetBuildingParams(pn, true, 50, 3);
 	AI_SetTrainingHuts(pn, 0, 0, 0, 0);
-	AI_SetTrainingPeople(pn, true, 10, 0, 0, 0, 0);
+	AI_SetTrainingPeople(pn, true, 10, 0, 0, 0, 3);
 	AI_SetVehicleParams(pn, false, 0, 0, 0, 0);
 	AI_SetFetchParams(pn, true, true, true, true);
 
@@ -861,7 +870,7 @@ function _OnLevelInit(level_id)
 
 	AI_SetBuildingParams(pn, true, 50, 2);
 	AI_SetTrainingHuts(pn, 0, 0, 0, 0);
-	AI_SetTrainingPeople(pn, true, 10, 0, 0, 0, 0);
+	AI_SetTrainingPeople(pn, true, 10, 0, 0, 0, 3);
 	AI_SetVehicleParams(pn, false, 0, 0, 0, 0);
 	AI_SetFetchParams(pn, true, false, false, true);
 

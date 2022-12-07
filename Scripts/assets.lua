@@ -722,6 +722,40 @@ function AIfasterUpgradeCount(amt)
 	return true end)
 end
 
+--ai flatten around base
+function TribeFlattenBase(pn,radius,minAlt,requiresLBmana)
+	local success = false
+
+	if (requiresLBmana and MANA(pn) >= 125000) or (not requiresLBmana) then
+		if FREE_ENTRIES(pn) > 0 then
+			if nilS(pn) then
+				if AI_ShamanFree(pn) then
+					local c3d = getPlayer(pn).ReincarnSiteCoord
+					local c2d = Coord2D.new() ; coord3D_to_coord2D(c3d,c2d)
+					if get_world_dist_xz(getShaman(pn).Pos.D2,c2d) < 512*16 then
+						local meTbl = {}
+						local currIsuccess = false
+						for i = 1,radius do
+							SearchMapCells(CIRCULAR, 0, i, i-1, world_coord2d_to_map_idx(getShaman(pn).Pos.D2), function(me)
+								if is_map_cell_near_coast(MAP_ELEM_PTR_2_IDX(me),2) > 0 and is_map_elem_all_land(me) > 0 and me.Alt > minAlt then
+									local meptr = MAP_ELEM_PTR_2_IDX(me)
+									local c3d = Coord3D.new() map_idx_to_world_coord3d(meptr,c3d)
+									table.insert(meTbl,c3d)
+									success = true currIsuccess = true
+								end
+							return true end)
+							if currIsuccess then break end
+						end
+						if success then
+							local f = createThing(T_SPELL,M_SPELL_FLATTEN,pn,randomItemFromTable(meTbl),false,false)
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
 --ai shaman go expand
 function LBexpand(pn,radius,cooldownSecondsIncrement,requiresLBmana)
 	local success = false
