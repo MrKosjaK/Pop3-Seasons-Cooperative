@@ -158,6 +158,10 @@ function OnKeyUp(k)
   if (am_i_in_network_game() == 0) then
     if k == LB_KEY_0 then
       readSomeGlobals()
+	elseif k == LB_KEY_1 then
+      for k,v in ipairs(G_AI_ALIVE) do
+        log_msg(v, "house percentage: " .. READ_CP_ATTRIB(v,ATTR_HOUSE_PERCENTAGE) .. " | huts amt (total): " .. countHuts(v,true) .. " | huts amt(only healthy): " .. countHuts(v,false))
+      end
     elseif k == LB_KEY_2 then
       for k,v in ipairs(G_AI_ALIVE) do
         ReadAIAttackers(v)
@@ -170,10 +174,6 @@ function OnKeyUp(k)
       for k,v in ipairs(G_AI_ALIVE) do
         ReadAITrainedTroops(v)
       end
-    elseif k == LB_KEY_1 then
-      for k,v in ipairs(G_AI_ALIVE) do
-        log_msg(v, "house percentage: " .. READ_CP_ATTRIB(v,ATTR_HOUSE_PERCENTAGE) .. " | huts amt (total): " .. countHuts(v,true) .. " | huts amt(only healthy): " .. countHuts(v,false))
-      end
     elseif k == LB_KEY_5 then
       for k,v in ipairs(G_AI_ALIVE) do
         log_msg(v, "mana: " .. getPlayer(v).Mana)
@@ -182,13 +182,13 @@ function OnKeyUp(k)
   else
     if k == LB_KEY_0 then
       Send(PACKET_KEYS_DEBUG, tostring(k));
+	elseif k == LB_KEY_1 then
+      Send(PACKET_KEYS_DEBUG, tostring(k));
     elseif k == LB_KEY_2 then
       Send(PACKET_KEYS_DEBUG, tostring(k));
     elseif k == LB_KEY_3 then
       Send(PACKET_KEYS_DEBUG, tostring(k));
     elseif k == LB_KEY_4 then
-      Send(PACKET_KEYS_DEBUG, tostring(k));
-    elseif k == LB_KEY_1 then
       Send(PACKET_KEYS_DEBUG, tostring(k));
     elseif k == LB_KEY_5 then
       Send(PACKET_KEYS_DEBUG, tostring(k));
