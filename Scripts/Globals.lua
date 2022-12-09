@@ -1,6 +1,7 @@
 -- Imports
 import(Module_Building);
 import(Module_Commands);
+import(Module_Control);
 import(Module_DataTypes);
 import(Module_Defines);
 import(Module_Draw);
@@ -13,6 +14,7 @@ import(Module_Level);
 import(Module_Map);
 import(Module_MapWho);
 import(Module_Math);
+import(Module_Network);
 import(Module_Objects);
 import(Module_Person);
 import(Module_Players);
