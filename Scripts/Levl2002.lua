@@ -10,10 +10,16 @@ SwampTileRandomness = 12*5
 G_NUM_OF_HUMANS_FOR_THIS_LEVEL = 2;
 local tribe1 = TRIBE_CYAN
 local tribe2 = TRIBE_BLACK
-local TRIBE1atk = 2500 + (rndb(0,500))
-local TRIBE2atk = 2000 + (rndb(0,500))
-local TRIBE1ShamanAtk = {900,2}
-local TRIBE2ShamanAtk = {500,3}
+local TRIBE1atk = 1300 + (rndb(0,400))
+local TRIBE2atk = 1800 + (rndb(0,400))
+--local TRIBE1ShamanAtk = {900,2}
+--local TRIBE2ShamanAtk = {700,3}
+local TRIBE1ShamanAtk = {111+rndb(0,200),2}
+local TRIBE2ShamanAtk = {133+rndb(0,200),3}
+local idleAwayShaman1 = 0
+local idleAwayShaman2 = 0
+local extraTroopsAtk1 = 60
+local extraTroopsAtk2 = 60
 
 function _OnTurn(turn)
 
@@ -39,7 +45,7 @@ function _OnTurn(turn)
 	
 	if stage > 0 then
 		--build towers
-		if everySeconds(180-stage*20) then
+		if everySeconds(140-stage*20) then
 			local ct = countTowers(tribe1,true)
 			if ct < 2 then
 				BUILD_DRUM_TOWER(tribe1,rndb(136,216),rndb(138,186))
@@ -67,15 +73,15 @@ function _OnTurn(turn)
 		Sulk(v,stage+3)
 		--small AI boosts lategame
 		if minutes() > 4 then
-			fasterTrain(v,28+8*stage)
-			fasterHutBars(v,14+2*stage,false)
+			fasterTrain(v,32+8*stage)
+			fasterHutBars(v,16+4*stage,false)
 		else
-			fasterTrain(v,48)
-			fasterHutBars(v,32,false)			
+			fasterTrain(v,96)
+			fasterHutBars(v,48,false)
 		end
 		--priorities
 		if everySeconds(12) then
-			updateGameStage(6,12,18,24)
+			updateGameStage(5,10,14,18)
 			updateBasePriorities(v)
 			unstuckS(v)
 			trainingHutsPriorities(v)
@@ -97,10 +103,17 @@ function _OnTurn(turn)
 	--shaman attacks
 	if TRIBE1ShamanAtk[1] == turn then Shamanattack(tribe1) end
 	if TRIBE2ShamanAtk[1] == turn then Shamanattack(tribe2) end
+	--extra troops attacks
+	if extraTroopsAtk1 == turn then ExtraTroopsAttack(tribe1) end
+	if extraTroopsAtk2 == turn then ExtraTroopsAttack(tribe2) end
 	--aod late casts
 	if turn == 25000 or turn == 35000 then if AI_EntryAvailable(tribe2) and nilS(tribe2) and IS_SHAMAN_AVAILABLE_FOR_ATTACK(tribe2) then GIVE_ONE_SHOT(M_SPELL_ANGEL_OF_DEATH,tribe2) SPELL_ATTACK(tribe2,M_SPELL_ANGEL_OF_DEATH,109,109) end end
 	if turn == 35000 or turn == 45000 then if AI_EntryAvailable(tribe1) and nilS(tribe1) and IS_SHAMAN_AVAILABLE_FOR_ATTACK(tribe1) then GIVE_ONE_SHOT(M_SPELL_ANGEL_OF_DEATH,tribe1) SPELL_ATTACK(tribe1,M_SPELL_ANGEL_OF_DEATH,106,106) end end
 	
+	if everySeconds(1) then
+		--idle away shamans
+		ProcessIdleAwayShamans()
+	end
 	if everySeconds(3) then
 		ProcessAgressiveShaman()
 		ProcessUnitMoveTbl()
@@ -120,8 +133,8 @@ function _OnTurn(turn)
 		updateVehiclesBuild()
 		updateConvertParams()
 		updateSpellBuckets(stage)
-		MARKER_ENTRIES(tribe2, 5,6,-1,-1) --base wars patrol
 		updateTroopsAndAtkParams()
+		MARKER_ENTRIES(tribe2, 5,6,-1,-1) --base wars patrol
 	end
 	if everySeconds(30-stage) then
 		DefensivePreachMarkers()
@@ -162,7 +175,7 @@ function _OnTurn(turn)
 	if everySeconds(180-stage*10) then
 		OffensivePreachMarkers()
 	end	
-	if (everySeconds(240-stage*rndb(5,35)) and rnd() > 50) or (GetPop(TRIBE_RED) < 6 and everySeconds(30)) then
+	if (everySeconds(140-stage*16) and rnd() < 80) or (GetPop(TRIBE_RED) < 7 and seconds() > 60 and everySeconds(30)) then
 		BlackConnectBlue()
 	end
 	------------------------------------------------------------------------------------------------------------------------
@@ -193,7 +206,7 @@ function _OnCreateThing(t)
 			if t.Model == M_SPELL_LIGHTNING_BOLT then
 				dodgeLightnings(t.Owner,60+G_GAMESTAGE*10,t) --AI chance to dodge lights
 			else
-				dodgeAimedBlasts(t.Owner,50+G_GAMESTAGE*10,t) --AI chance to dodge aimed blasts
+				dodgeAimedBlasts(t.Owner,70+G_GAMESTAGE*5,t) --AI chance to dodge aimed blasts
 			end
 		end
 	end
@@ -204,15 +217,7 @@ function _OnKeyDown(k)
 	if k == LB_KEY_6 then
 		log_msg(8,"" .. getTurn() .. "      " .. TRIBE1atk .. " -- " .. TRIBE2atk)
 	elseif k == LB_KEY_Q then
-		--BlackGoFlatten(TRIBE_BLACK,16,10,false)
-		--[[SearchMapCells(CIRCULAR, 0, 2, 1, world_coord2d_to_map_idx(getShaman(0).Pos.D2), function(me)
-			if is_map_cell_near_coast(MAP_ELEM_PTR_2_IDX(me),1) > 0 and is_map_elem_all_land(me) > 0 then
-				local meptr = MAP_ELEM_PTR_2_IDX(me)
-				local c3d = Coord3D.new() map_idx_to_world_coord3d(meptr,c3d)
-				createThing(T_EFFECT,60,8,c3d,false,false)
-			end
-			return true
-		end)]]
+		--LOG(getShaman(tribe1).State) LOG(getShaman(tribe2).State)
 	end
 end
 
@@ -220,17 +225,39 @@ end
 -- LEVEL FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------
 
-function Shamanattack(attacker)
+function ExtraTroopsAttack(attacker)
 	local success = false
-	if AI_EntryAvailable(attacker) and nilS(attacker) and IS_SHAMAN_AVAILABLE_FOR_ATTACK(attacker) then
+	local hut,target = get_me_a_random_building(attacker,true,false),randomItemFromTable(G_HUMANS_ALIVE)
+	if nilT(hut) and nil(target) then
+		local troop2 = M_PERSON_RELIGIOUS if attaker == tribe2 then troop2 = M_PERSON_SUPER_WARRIOr end
+		for i = 3,3+stage do
+			createThing(T_PERSON,iipp(M_PERSON_WARRIOR,troop2,65,35),attacker,hut.Pos.D3,false,false)
+		end
+		local atkType = ATTACK_NORMAL if attacker == tribe1 then atkType = ATTACK_BY_BOAT end
+		if (NAV_CHECK(attacker,target,ATTACK_BUILDING,0,0) > 0) or atkType ~= ATTACK_NORMAL then
+			WRITE_CP_ATTRIB(attacker, ATTR_DONT_GROUP_AT_DT, rndb(0,1)) WRITE_CP_ATTRIB(attacker, ATTR_GROUP_OPTION, rndb(0,3))
+			if attacker == tribe1 then WriteAiAttackers(attacker,0,65,35,0,0,0) else WriteAiAttackers(attacker,0,65,0,35,0,0) end
+			ATTACK(attacker, target, 3+stage, ATTACK_BUILDING, 0, 999, 0, 0, 0, atkType, 0, -1, -1, 0)
+			if attacker == tribe1 then extraTroopsAtk1 = extraTroopsAtk1 + rndb(500,1000) else extraTroopsAtk2 = extraTroopsAtk2 + rndb(500,1000) end
+			success = true
+		end
+	end
+	if not success then
+		if attacker == tribe1 then extraTroopsAtk1 = extraTroopsAtk1 + rndb(250,500) else extraTroopsAtk2 = extraTroopsAtk2 + rndb(250,500) end
+	end
+end
+
+function Shamanattack(attacker)
+	local success = false LOG("a")
+	if AI_EntryAvailable(attacker) and nilS(attacker) and IS_SHAMAN_AVAILABLE_FOR_ATTACK(attacker) then LOG("aa")
 		if #G_HUMANS_ALIVE > 0 then --wont bother to continue level(attack) if only AIs exist
 			local stage = G_GAMESTAGE
 			if attacker == tribe1 then target = iipp(TRIBE_BLUE,TRIBE_RED,40,60) else target = iipp(TRIBE_BLUE,TRIBE_RED,30,70) end --**
 			if #G_HUMANS_ALIVE == 1 then target = randomItemFromTable(G_HUMANS_ALIVE) end
 			local atkType = ATTACK_NORMAL if attacker == tribe1 then atkType = ATTACK_BY_BOAT end --**
 			local targ = iipp(ATTACK_PERSON,ATTACK_BUILDING,50,50) --**
-			if (NAV_CHECK(attacker,target,targ,0,0) > 0) or atkType ~= ATTACK_NORMAL then
-				if (attacker == tribe1 and TRIBE1ShamanAtk[2] > 0) or (attacker == tribe2 and TRIBE2ShamanAtk[2] > 0) then
+			if (NAV_CHECK(attacker,target,targ,0,0) > 0) or atkType ~= ATTACK_NORMAL then LOG("b")
+				if (attacker == tribe1 and TRIBE1ShamanAtk[2] > 0) or (attacker == tribe2 and TRIBE2ShamanAtk[2] > 0) then LOG("c")
 					local spell1,spell2,spell3 = M_SPELL_LIGHTNING_BOLT,0,0
 					local tierSpellsPerStageVsPers = {[0]=
 						{M_SPELL_BLAST,M_SPELL_INSECT_PLAGUE},
@@ -251,6 +278,7 @@ function Shamanattack(attacker)
 					GIVE_ONE_SHOT(spell1,attacker) GIVE_ONE_SHOT(spell2,attacker) GIVE_ONE_SHOT(spell3,attacker)
 					WRITE_CP_ATTRIB(attacker, ATTR_DONT_GROUP_AT_DT, 1) WRITE_CP_ATTRIB(attacker, ATTR_GROUP_OPTION, 3)
 					AI_SetTargetParams(attacker,target,true,true)
+					WriteAiAttackers(attacker,0,0,0,0,0,100)
 					ATTACK(attacker, target, 1, targ, 0, 850+(stage*10), spell1, spell2, spell3, atkType, 0, -1, -1, 0)
 					IncrementShamanAtkVar(attacker,(rndb(600,1000)) - (G_GAMESTAGE*rndb(50,100))) --**
 					success = true
@@ -334,6 +362,7 @@ function attack(attacker)
 						if (NAV_CHECK(attacker,target,ATTACK_PERSON,0,0) > 0) or atkType ~= ATTACK_NORMAL then targType = ATTACK_PERSON end
 					end
 					if targType ~= -1 then
+						trainingHutsPriorities(attacker)
 						if targType == ATTACK_PERSON and allPopOnVehicles(target) then spell1,spell2,spell3 = M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_INSECT_PLAGUE end
 						GIVE_ONE_SHOT(spell1,attacker) GIVE_ONE_SHOT(spell2,attacker) GIVE_ONE_SHOT(spell3,attacker)
 						local bbv = iipp(0,1,30,70) --**
@@ -344,7 +373,7 @@ function attack(attacker)
 						IncrementAtkVar(attacker,(rndb(1800,2500)) - (G_GAMESTAGE*rndb(150,250))) --**
 						success = true
 						if attacker == tribe1 then TRIBE1ShamanAtk[1] = getTurn()+rndb(200,300) TRIBE1ShamanAtk[2] = rndb(2,3) else TRIBE2ShamanAtk[1] = getTurn()+rndb(200,300) TRIBE2ShamanAtk[2] = rndb(3,4) end
-						--log_msg(attacker,"target: " .. target .. ", numTroops: " .. numTroops .. ", targType: " .. targType .. ", spell1: " .. spell1 .. ", spell2: " .. spell2 .. ", spell3: " .. spell3 .. ", atkType: " .. atkType .. ", mk1: " .. mk1 .. ", mk2: " .. mk2)
+						log_msg(attacker,"target: " .. target .. ", numTroops: " .. numTroops .. ", targType: " .. targType .. ", spell1: " .. spell1 .. ", spell2: " .. spell2 .. ", spell3: " .. spell3 .. ", atkType: " .. atkType .. ", mk1: " .. mk1 .. ", mk2: " .. mk2)
 					end
 				end
 			end
@@ -379,15 +408,15 @@ function BlackConnectBlue()
 	local pn,targ = tribe2,TRIBE_BLUE
 	if GetPop(targ) > 0 then
 		if (NAV_CHECK(pn,targ,ATTACK_PERSON,0,0) <= 0) then
-			if AI_EntryAvailable(pn) and nilS(pn) and IS_SHAMAN_AVAILABLE_FOR_ATTACK(pn) and TRIBE2atk-getTurn() > 256 then
+			if AI_EntryAvailable(pn) and nilS(pn) and IS_SHAMAN_AVAILABLE_FOR_ATTACK(pn) and TRIBE2atk-getTurn() > 128 then LOG("2")
 				local mk1,mk2 = -1,-1
-				if rnd() > 50 and (isMkLand(102) and isMkLand(103)) then
-					mk1,mk2 = 102,103
+				if rnd() > 50 and (isMkLand(135) and isMkLand(136)) then
+					mk1,mk2 = 135,136
 					WRITE_CP_ATTRIB(pn, ATTR_GROUP_OPTION, 2) WriteAiAttackers(pn,0,0,0,0,0,100)
 					GIVE_ONE_SHOT(M_SPELL_LAND_BRIDGE,pn)
 					ATTACK(pn, targ, 1, ATTACK_MARKER, mk2, 1, M_SPELL_LAND_BRIDGE, 0, 0, ATTACK_NORMAL, 0, mk1, mk2, 0)
-				elseif (isMkLand(104) and isMkLand(105)) then
-					mk1,mk2 = 104,105
+				elseif (isMkLand(137) and isMkLand(138)) then
+					mk1,mk2 = 137,138
 					WRITE_CP_ATTRIB(pn, ATTR_GROUP_OPTION, 2) WriteAiAttackers(pn,0,0,0,0,0,100)
 					GIVE_ONE_SHOT(M_SPELL_LAND_BRIDGE,pn)
 					ATTACK(pn, targ, 1, ATTACK_MARKER, mk2, 1, M_SPELL_LAND_BRIDGE, 0, 0, ATTACK_NORMAL, 0, mk1, mk2, 0)
@@ -431,6 +460,30 @@ function giveSpellsOccasionally()
 	end
 end
 
+function ProcessIdleAwayShamans()
+	local pn = tribe1
+	if not isShamanHome(pn,0,24) then
+		if nilS(pn) and (getShaman(pn).State == 17 or getShaman(pn).State == 19) then idleAwayShaman1 = idleAwayShaman1 + 1 end
+		if idleAwayShaman1 >= 6 then
+			idleAwayShaman1 = 0
+			Shamanattack(pn)
+		end
+	else
+		idleAwayShaman1 = 0
+	end
+	--
+	local pn = tribe2
+	if not isShamanHome(pn,1,14) then
+		if nilS(pn) and (getShaman(pn).State == 17 or getShaman(pn).State == 19) then idleAwayShaman2 = idleAwayShaman2 + 1 end
+		if idleAwayShaman2 >= 6 then
+			idleAwayShaman2 = 0 LOG("go ok")
+			Shamanattack(pn)
+		end
+	else
+		idleAwayShaman2 = 0
+	end
+end
+
 function ProcessDefensiveShaman()
 	local pn = tribe1
 	if isShamanHome(pn,0,24) then --pn,mk,rad
@@ -449,14 +502,13 @@ function ProcessAgressiveShaman()
 	local pn = tribe1
 	if not isShamanHome(pn,0,24) then --pn,mk,rad
 		GetRidOfNearbyEnemies(pn,1,30+G_GAMESTAGE*10)
-		if rnd() < 50 then TargetNearbyShamans(pn,9+G_GAMESTAGE,10+G_GAMESTAGE*10) end
-		GIVE_ONE_SHOT(M_SPELL_LIGHTNING_BOLT,pn)
+		if rnd() < 50 then GIVE_ONE_SHOT(M_SPELL_LIGHTNING_BOLT,pn) TargetNearbyShamans(pn,9+G_GAMESTAGE,10+G_GAMESTAGE*10) end
 	end	
 	--
 	local pn = tribe2
 	if not isShamanHome(pn,1,14) then --pn,mk,rad
 		GetRidOfNearbyEnemies(pn,1,25+G_GAMESTAGE*12)
-		if rnd() < 55 then TargetNearbyShamans(pn,9+G_GAMESTAGE,12+G_GAMESTAGE*10) end
+		if rnd() < 55 then GIVE_ONE_SHOT(M_SPELL_LIGHTNING_BOLT,pn) TargetNearbyShamans(pn,9+G_GAMESTAGE,12+G_GAMESTAGE*10) end
 	end	
 end
 
@@ -697,7 +749,7 @@ function trainingHutsPriorities(pn)
 		--WRITE_CP_ATTRIB(pn, ATTR_PREF_SUPER_WARRIOR_TRAINS, btn(huts > 4))
 		WRITE_CP_ATTRIB(pn, ATTR_PREF_RELIGIOUS_TRAINS, btn(huts > 6))
 		--WRITE_CP_ATTRIB(pn, ATTR_PREF_SPY_TRAINS, btn(huts > 4))
-		WRITE_CP_ATTRIB(pn, ATTR_PREF_BOAT_HUTS, btn(countHuts(pn,false) > 1+s+4))
+		WRITE_CP_ATTRIB(pn, ATTR_PREF_BOAT_HUTS, btn(countHuts(pn,false) > 1+s+2))
 		--WRITE_CP_ATTRIB(pn, ATTR_PREF_BALLOON_HUTS, btn(countHuts(pn,false) > 1+stage+7))
 	else
 		WRITE_CP_ATTRIB(pn, ATTR_PREF_WARRIOR_TRAINS, btn(huts > 4))
@@ -716,20 +768,20 @@ function updateBasePriorities(pn)
 	local s,h,b = G_GAMESTAGE, countHuts(pn,true), AI_GetUnitCount(pn, M_PERSON_BRAVE)
 	if pn == tribe1 then
 		AI_SetBuildingParams(pn,true,60+s*15,3)
-		if b > 20+(s*5) and h > 6+s then
+		if b > 16+(s*5) and h > 4+s then
 			if AI_GetBldgCount(pn, M_BUILDING_BOAT_HUT_1) > 0 then
-				WRITE_CP_ATTRIB(pn, ATTR_PREF_BOAT_DRIVERS, 1+s+2);
-				WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BOAT, 1+s+2);
+				WRITE_CP_ATTRIB(pn, ATTR_PREF_BOAT_DRIVERS, 5-s)
+				WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BOAT, 5-s)
 			else
-				WRITE_CP_ATTRIB(pn, ATTR_PREF_BOAT_DRIVERS, 0);
-				WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BOAT, 0);
+				WRITE_CP_ATTRIB(pn, ATTR_PREF_BOAT_DRIVERS, 0)
+				WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BOAT, 0)
 			end
 			if AI_GetBldgCount(pn, M_BUILDING_AIRSHIP_HUT_1) > 0 then
-				WRITE_CP_ATTRIB(pn, ATTR_PREF_BALLOON_DRIVERS, 1+s+2);
-				WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BALLOON, 1+s+2);
+				WRITE_CP_ATTRIB(pn, ATTR_PREF_BALLOON_DRIVERS, 5-s)
+				WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BALLOON, 5-s)
 			else
-				WRITE_CP_ATTRIB(pn, ATTR_PREF_BALLOON_DRIVERS, 0);
-				WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BALLOON, 0);
+				WRITE_CP_ATTRIB(pn, ATTR_PREF_BALLOON_DRIVERS, 0)
+				WRITE_CP_ATTRIB(pn, ATTR_PEOPLE_PER_BALLOON, 0)
 			end
 		end
 	else
@@ -752,7 +804,8 @@ M_SPELL_INVISIBILITY,
 M_SPELL_SWAMP,
 M_SPELL_HYPNOTISM,
 M_SPELL_EARTHQUAKE,
-M_SPELL_FIRESTORM
+M_SPELL_FIRESTORM,
+M_SPELL_ANGEL_OF_DEATH
 }
 
 TRIBE1_ATK_SPELLS = {M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND}
@@ -766,6 +819,7 @@ M_SPELL_LIGHTNING_BOLT,
 M_SPELL_WHIRLWIND,
 M_SPELL_INSECT_PLAGUE,
 M_SPELL_INVISIBILITY,
+M_SPELL_FLATTEN,
 M_SPELL_SWAMP,
 M_SPELL_HYPNOTISM,
 M_SPELL_EARTHQUAKE,
@@ -972,4 +1026,6 @@ createStalagtites(68,3)
 
 
 --to do:
+--check for idle shaman, send her to atk again
+--better cyan boats. if success, more preacher invi atks
 --remove logs, log_msg

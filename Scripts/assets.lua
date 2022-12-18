@@ -234,19 +234,21 @@ end
 
 --is marker land
 function isMkLand(mk)
+	local is = false
 	SearchMapCells(SQUARE ,0, 0, 0, world_coord3d_to_map_idx(marker_to_coord3d(mk)), function(me)
-		if is_map_elem_all_land(me) > 0 then return true end
+		if is_map_elem_all_land(me) > 0 then is = true end
 	return true end)
 	
-	return false
+	return is
 end
 --is marker water
 function isMkWater(mk)
+	local is = false
 	SearchMapCells(SQUARE ,0, 0, 0, world_coord3d_to_map_idx(marker_to_coord3d(mk)), function(me)
-		if is_map_elem_all_sea(me) > 0 then return true end
+		if is_map_elem_all_sea(me) > 0 then is = true end
 	return true end)
 	
-	return false
+	return is
 end
 
 --shaman stuck
@@ -275,7 +277,7 @@ end
 
 --is shaman is their base area
 function isShamanHome(pn,marker,radius)
-	return ntb(IS_SHAMAN_IN_AREA(pn,marker,radius) == 1)
+	return IS_SHAMAN_IN_AREA(pn,marker,radius) == 1
 end
 
 --is thing in area
