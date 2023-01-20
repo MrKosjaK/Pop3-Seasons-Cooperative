@@ -226,9 +226,10 @@ end
 ------------------------------------------------------------------------------------------------------------------------
 
 function ExtraTroopsAttack(attacker)
+	local stage = G_GAMESTAGE
 	local success = false
 	local hut,target = get_me_a_random_building(attacker,true,false),randomItemFromTable(G_HUMANS_ALIVE)
-	if nilT(hut) and nil(target) then
+	if nilT(hut) and nilT(target) then
 		local troop2 = M_PERSON_RELIGIOUS if attaker == tribe2 then troop2 = M_PERSON_SUPER_WARRIOr end
 		for i = 3,3+stage do
 			createThing(T_PERSON,iipp(M_PERSON_WARRIOR,troop2,65,35),attacker,hut.Pos.D3,false,false)
