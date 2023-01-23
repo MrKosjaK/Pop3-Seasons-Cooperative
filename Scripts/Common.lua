@@ -20,6 +20,7 @@ local L_SHOW_POPS = false;
 
 -- OnLevelInit executed only once at start of the game (level start not lobby)
 function OnLevelInit(level_id)
+  TJournal:Init();
 	if _OnLevelInit ~= nil then _OnLevelInit(level_id); end
 
 	-- Ally players at beginning (to ensure they didn't forget in setup) ; unally from AIs
@@ -129,6 +130,8 @@ function OnFrame()
 			end
 		end
 	end
+  
+  TJournal:Draw();
 end
 
 -- OnPlayerDeath executed once upon player's death
@@ -158,7 +161,7 @@ function OnKeyUp(k)
   if (am_i_in_network_game() == 0) then
     if k == LB_KEY_0 then
       readSomeGlobals()
-	elseif k == LB_KEY_1 then
+	  elseif k == LB_KEY_1 then
       for k,v in ipairs(G_AI_ALIVE) do
         log_msg(v, "house percentage: " .. READ_CP_ATTRIB(v,ATTR_HOUSE_PERCENTAGE) .. " | huts amt (total): " .. countHuts(v,true) .. " | huts amt(only healthy): " .. countHuts(v,false))
       end
@@ -178,11 +181,13 @@ function OnKeyUp(k)
       for k,v in ipairs(G_AI_ALIVE) do
         log_msg(v, "mana: " .. getPlayer(v).Mana)
       end
+    elseif k == LB_KEY_J then
+      TJournal:Toggle();
     end
   else
     if k == LB_KEY_0 then
       Send(PACKET_KEYS_DEBUG, tostring(k));
-	elseif k == LB_KEY_1 then
+	  elseif k == LB_KEY_1 then
       Send(PACKET_KEYS_DEBUG, tostring(k));
     elseif k == LB_KEY_2 then
       Send(PACKET_KEYS_DEBUG, tostring(k));
