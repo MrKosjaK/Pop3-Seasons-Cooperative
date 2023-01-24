@@ -12,10 +12,10 @@ local tribe1 = TRIBE_CYAN
 local tribe2 = TRIBE_BLACK
 local TRIBE1atk = 1300 + (rndb(0,400))
 local TRIBE2atk = 1800 + (rndb(0,400))
---local TRIBE1ShamanAtk = {900,2}
---local TRIBE2ShamanAtk = {700,3}
-local TRIBE1ShamanAtk = {111+rndb(0,200),2}
-local TRIBE2ShamanAtk = {133+rndb(0,200),3}
+local TRIBE1ShamanAtk = {1000+rndb(150,300),2}
+local TRIBE2ShamanAtk = {800+rndb(50,150),3}
+--local TRIBE1ShamanAtk = {111+rndb(0,200),2}
+--local TRIBE2ShamanAtk = {133+rndb(0,200),3}
 local idleAwayShaman1 = 0
 local idleAwayShaman2 = 0
 local extraTroopsAtk1 = 60
@@ -119,9 +119,11 @@ function _OnTurn(turn)
 		ProcessUnitMoveTbl()
 		ProcessIslandStalagtites()
 		for i = #unitAtkunitTbl,1,-1 do unstuckT(unitAtkunitTbl[i]) table.remove(unitAtkunitTbl,i) end
+		InviNearPreacher()
 	end
 	if everySeconds(7-stage) then
 		ProcessDefensiveShaman()
+		castGhostsOccasionally()
 	end
 	if everySeconds(8) then
 		FillRndEmptyTower(tribe1,M_PERSON_RELIGIOUS)
@@ -154,6 +156,7 @@ function _OnTurn(turn)
 	end
 	if everySeconds(120-stage*20) then
 		ReconnectToEnemies()
+		SendInviPreachers()
 	end
 	if everySeconds(120-stage*10) then
 		local targ = randomItemFromTable(G_HUMANS_ALIVE)
@@ -178,6 +181,7 @@ function _OnTurn(turn)
 	if (everySeconds(140-stage*16) and rnd() < 80) or (GetPop(TRIBE_RED) < 7 and seconds() > 60 and everySeconds(30)) then
 		BlackConnectBlue()
 	end
+	
 	------------------------------------------------------------------------------------------------------------------------
 	-- NON-AI STUFF
 	------------------------------------------------------------------------------------------------------------------------
@@ -225,6 +229,66 @@ end
 -- LEVEL FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------
 
+function InviNearPreacher()
+	local pn = tribe1
+	if nilS(pn) and getShaman(pn).State == S_PERSON_WAIT_IN_BLDG then
+		if CountThingsOfTypeInArea(T_PERSON,M_PERSON_RELIGIOUS,pn,ThingX(getShaman(pn)),ThingZ(getShaman(pn)),3) > 1 then
+			local things = {}
+			ProcessGlobalTypeList(T_PERSON, function(t)
+				if t.Model == M_PERSON_RELIGIOUS and t.Owner == pn then
+					if get_world_dist_xz(getShaman(pn).Pos.D2,t.Pos.D2) < 4*512 and not isInvisible(t) then
+						table.insert(things,t)
+					end
+				end
+			return true end)
+			if #things > 0 then
+				createThing(T_SPELL,M_SPELL_INVISIBILITY,pn,randomItemFromTable(things).Pos.D3,false,false)
+			end
+		end
+	end
+end
+
+function SendInviPreachers()
+	local pn = tribe1
+	if countBoats(pn) > 0 then
+		if _gsi.Players[pn].NumPeopleOfType[M_PERSON_RELIGIOUS] >= G_GAMESTAGE then
+			WriteAiAttackers(pn,0,0,100,0,0,0)
+			local amt = G_GAMESTAGE+1
+			local target = randomItemFromTable(G_HUMANS_ALIVE)
+			if nilT(target) then
+				WRITE_CP_ATTRIB(pn, ATTR_GROUP_OPTION, iipp(0,1,50,50))
+				ATTACK(pn, target, amt, ATTACK_BUILDING, 0, 999, 0, 0, 0, ATTACK_BY_BOAT, 0, 0, -1, 0)
+			end
+		end
+	end
+end
+
+function castGhostsOccasionally()
+	local pnBasemk = {{tribe1,24},{tribe2,14}}
+	for k,v in ipairs(pnBasemk) do
+		local pn = v[1]
+		if nilS(pn) then
+			if (not isShamanHome(pn,0,v[2]) and rnd() >= 20) or (isShamanHome(pn,1,v[2]) and rnd() >= 65) then
+				if getShaman(pn).State ~= S_PERSON_SPELL_TRANCE and (getShaman(pn).Flags2 & TF2_THING_IN_AIR == 0) then
+					if CountThingsOfTypeInArea(T_PERSON,M_PERSON_SUPER_WARRIOR,0,ThingX(getShaman(pn)),ThingZ(getShaman(pn)),5) + CountThingsOfTypeInArea(T_PERSON,M_PERSON_SUPER_WARRIOR,1,ThingX(getShaman(pn)),ThingZ(getShaman(pn)),5) > 1 then
+						local things = {}
+						ProcessGlobalTypeList(T_PERSON, function(t)
+							if t.Model == M_PERSON_SUPER_WARRIOR and ((t.Owner == 0) or (t.Owner == 1)) then
+								if get_world_dist_xz(getShaman(pn).Pos.D2,t.Pos.D2) < 7*512 then
+									table.insert(things,t)
+								end
+							end
+						return true end)
+						if #things > 0 then
+							createThing(T_SPELL,M_SPELL_GHOST_ARMY,pn,randomItemFromTable(things).Pos.D3,false,false)
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
 function ExtraTroopsAttack(attacker)
 	local stage = G_GAMESTAGE
 	local success = false
@@ -249,16 +313,16 @@ function ExtraTroopsAttack(attacker)
 end
 
 function Shamanattack(attacker)
-	local success = false LOG("a")
-	if AI_EntryAvailable(attacker) and nilS(attacker) and IS_SHAMAN_AVAILABLE_FOR_ATTACK(attacker) then LOG("aa")
+	local success = false --LOG("a")
+	if AI_EntryAvailable(attacker) and nilS(attacker) and IS_SHAMAN_AVAILABLE_FOR_ATTACK(attacker) then --LOG("aa")
 		if #G_HUMANS_ALIVE > 0 then --wont bother to continue level(attack) if only AIs exist
 			local stage = G_GAMESTAGE
 			if attacker == tribe1 then target = iipp(TRIBE_BLUE,TRIBE_RED,40,60) else target = iipp(TRIBE_BLUE,TRIBE_RED,30,70) end --**
 			if #G_HUMANS_ALIVE == 1 then target = randomItemFromTable(G_HUMANS_ALIVE) end
 			local atkType = ATTACK_NORMAL if attacker == tribe1 then atkType = ATTACK_BY_BOAT end --**
 			local targ = iipp(ATTACK_PERSON,ATTACK_BUILDING,50,50) --**
-			if (NAV_CHECK(attacker,target,targ,0,0) > 0) or atkType ~= ATTACK_NORMAL then LOG("b")
-				if (attacker == tribe1 and TRIBE1ShamanAtk[2] > 0) or (attacker == tribe2 and TRIBE2ShamanAtk[2] > 0) then LOG("c")
+			if (NAV_CHECK(attacker,target,targ,0,0) > 0) or atkType ~= ATTACK_NORMAL then --LOG("b")
+				if (attacker == tribe1 and TRIBE1ShamanAtk[2] > 0) or (attacker == tribe2 and TRIBE2ShamanAtk[2] > 0) then --LOG("c")
 					local spell1,spell2,spell3 = M_SPELL_LIGHTNING_BOLT,0,0
 					local tierSpellsPerStageVsPers = {[0]=
 						{M_SPELL_BLAST,M_SPELL_INSECT_PLAGUE},
@@ -374,7 +438,7 @@ function attack(attacker)
 						IncrementAtkVar(attacker,(rndb(1800,2500)) - (G_GAMESTAGE*rndb(150,250))) --**
 						success = true
 						if attacker == tribe1 then TRIBE1ShamanAtk[1] = getTurn()+rndb(200,300) TRIBE1ShamanAtk[2] = rndb(2,3) else TRIBE2ShamanAtk[1] = getTurn()+rndb(200,300) TRIBE2ShamanAtk[2] = rndb(3,4) end
-						log_msg(attacker,"target: " .. target .. ", numTroops: " .. numTroops .. ", targType: " .. targType .. ", spell1: " .. spell1 .. ", spell2: " .. spell2 .. ", spell3: " .. spell3 .. ", atkType: " .. atkType .. ", mk1: " .. mk1 .. ", mk2: " .. mk2)
+						--log_msg(attacker,"target: " .. target .. ", numTroops: " .. numTroops .. ", targType: " .. targType .. ", spell1: " .. spell1 .. ", spell2: " .. spell2 .. ", spell3: " .. spell3 .. ", atkType: " .. atkType .. ", mk1: " .. mk1 .. ", mk2: " .. mk2)
 					end
 				end
 			end
@@ -409,7 +473,7 @@ function BlackConnectBlue()
 	local pn,targ = tribe2,TRIBE_BLUE
 	if GetPop(targ) > 0 then
 		if (NAV_CHECK(pn,targ,ATTACK_PERSON,0,0) <= 0) then
-			if AI_EntryAvailable(pn) and nilS(pn) and IS_SHAMAN_AVAILABLE_FOR_ATTACK(pn) and TRIBE2atk-getTurn() > 128 then LOG("2")
+			if AI_EntryAvailable(pn) and nilS(pn) and IS_SHAMAN_AVAILABLE_FOR_ATTACK(pn) and TRIBE2atk-getTurn() > 128 then --LOG("2")
 				local mk1,mk2 = -1,-1
 				if rnd() > 50 and (isMkLand(135) and isMkLand(136)) then
 					mk1,mk2 = 135,136
@@ -477,7 +541,7 @@ function ProcessIdleAwayShamans()
 	if not isShamanHome(pn,1,14) then
 		if nilS(pn) and (getShaman(pn).State == 17 or getShaman(pn).State == 19) then idleAwayShaman2 = idleAwayShaman2 + 1 end
 		if idleAwayShaman2 >= 6 then
-			idleAwayShaman2 = 0 LOG("go ok")
+			idleAwayShaman2 = 0 --LOG("go ok")
 			Shamanattack(pn)
 		end
 	else
@@ -737,7 +801,7 @@ end
 
 function updateVehiclesBuild()
 	local pn = tribe1
-	STATE_SET(pn, btn(countBoats(pn) < 3), CP_AT_TYPE_BUILD_VEHICLE)
+	STATE_SET(pn, btn(countBoats(pn) < 5), CP_AT_TYPE_BUILD_VEHICLE)
 	STATE_SET(pn, btn(countBoats(pn) > 0), CP_AT_TYPE_FETCH_LOST_VEHICLE)
 	STATE_SET(pn, btn(countBoats(pn) > 0), CP_AT_TYPE_FETCH_FAR_VEHICLE)
 end
