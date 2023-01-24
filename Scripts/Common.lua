@@ -14,7 +14,7 @@ G_SPELL_CONST[M_SPELL_GHOST_ARMY].NetworkOnly = 0;
 G_CONST.ShamenDeadManaPer256Gained = 32; -- lower mana gain from kills
 
 -- Local variables (per human)
-local L_SHOW_POPS = false;
+local L_SHOW_POPS = true;
 
 -- Main hooks
 
