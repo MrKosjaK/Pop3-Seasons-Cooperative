@@ -18,8 +18,8 @@ local TRIBE2ShamanAtk = {800+rndb(50,150),3}
 --local TRIBE2ShamanAtk = {133+rndb(0,200),3}
 local idleAwayShaman1 = 0
 local idleAwayShaman2 = 0
-local extraTroopsAtk1 = 60
-local extraTroopsAtk2 = 60
+local extraTroopsAtk1 = 12*120
+local extraTroopsAtk2 = 12*60
 
 function _OnTurn(turn)
 
