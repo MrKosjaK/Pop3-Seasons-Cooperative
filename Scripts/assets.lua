@@ -912,6 +912,21 @@ function LOSE()
 	gns.Flags = gns.Flags | GNS_LEVEL_FAILED
 end
 
+function killTribe(tribe)
+	ProcessGlobalSpecialList(tribe, BUILDINGLIST, function(t)
+		if nilT(t) then
+			if (t.Model <= 3) then
+				t.u.Bldg.SproggingCount = 1
+			end
+		end
+	return true end)
+	ProcessGlobalSpecialList(tribe, PEOPLELIST, function(t)
+		if nilT(t) then
+			t.u.Pers.Life = 0
+		end
+	return true end)
+end
+
 --is sp or mp
 function isOnline()
 	return gns.Flags & GNS_NETWORK

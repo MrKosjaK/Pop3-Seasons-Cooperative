@@ -2,6 +2,7 @@
 include("Common.lua");
 include("snow.lua");
 include("Spells\\TiledSwamp.lua");
+include("FooterMsgs.lua");
 SwampTileEnabled = true
 SwampTileAffectAllies = true
 SwampTileDuration = 12*15
@@ -186,6 +187,10 @@ function _OnTurn(turn)
 	-- NON-AI STUFF
 	------------------------------------------------------------------------------------------------------------------------
 	
+	if turn == 12*30 then
+		FooterMsg("Sahel, the black tribe, forged an alliance with Tiyao long before you arrived here. They will not rest until intruders are wiped off the planet.", 2, 171)
+		FooterMsg("Help your ally and, together, destroy Sahel and Tiyao tribes.", 2, 175)
+	end
 	--snowing 3 times during level
 	--snowAmtTarget, AmtPerSecCreation, speed, (durationSeconds, internTimer), fadeSeconds
 	if turn == 1000 then

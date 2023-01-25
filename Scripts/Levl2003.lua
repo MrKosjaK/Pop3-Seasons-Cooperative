@@ -2,6 +2,7 @@
 include("Common.lua");
 include("snow.lua");
 include("Spells\\TiledSwamp.lua");
+include("FooterMsgs.lua");
 SwampTileEnabled = true
 SwampTileAffectAllies = true
 SwampTileDuration = 12*12
@@ -32,6 +33,7 @@ local PlayersStats = { --reinc cdr (seconds), yin or yang
 }
 local level_completed = false
 local yinYangCDR = 0
+local borderRad = 24
 SET_TIMER_GOING(12*60*30 + 12, 1)
 
 function _OnTurn(turn)
@@ -116,7 +118,9 @@ function _OnTurn(turn)
 				if PlayersStats[v][1] > 0 then
 					PlayersStats[v][1] = PlayersStats[v][1] - 1
 				elseif PlayersStats[v][1] == 0 then
-					local s = createThing(T_PERSON,M_PERSON_MEDICINE_MAN,v,marker_to_coord3d(rndb(1,4)),false,false)
+					local mk = rndb(1,4)
+					if PlayersStats[v][2] == "yin" then mk = rndb(17,20) end
+					local s = createThing(T_PERSON,M_PERSON_MEDICINE_MAN,v,marker_to_coord3d(mk),false,false)
 					PlayersStats[v][1] = -1
 					queue_sound_event(s,SND_EVENT_SHAMAN_RETURN, 0)
 				end
@@ -135,7 +139,7 @@ function _OnTurn(turn)
 						return true end)
 					return true end)
 					if count == 1 and ShOwner ~= -1 then
-						YinYangSwap()
+						YinYangSwap(v)
 					end
 				end
 			end
@@ -216,6 +220,26 @@ function _OnTurn(turn)
 	-- NON-AI STUFF
 	------------------------------------------------------------------------------------------------------------------------
 	
+	if turn == 12 then
+		FooterMsg("Centuries ago, on this very location, the high priests forged a magical rune that would shape the way mana flew through the body. Unfortunately, all of them got murdered by the tribes that inhabited the planet, and the location got lost forever... Until two tribes found it...", 2, 171)
+	elseif turn == 12*60 then
+		FooterMsg("Work together and destroy all 6 enemy tribes before you run out of time.", 2, 175)
+	elseif turn == 12*120 then
+		FooterMsg("The shaman with yin (offensive) reincarnates after 40 seconds, while the shaman with yan (defensive) reincarnates twice as fast. If shamans decide to fight without yin-yang, they will reincarnate after 30 seconds, upon death.", 2, 174)
+	end
+	if everySeconds(1) then
+		if not level_completed and (gns.Flags & GNS_LEVEL_COMPLETE ~= 0) then
+			level_completed = true
+			REMOVE_TIMER()
+		end
+		if HAS_TIMER_REACHED_ZERO() then
+			FooterMsg("You did not kill all enemy tribes on time. Your journey ends here...", 2, 174)
+			LOSE()
+			REMOVE_TIMER()
+			killTribe(0) killTribe(1)
+		end
+		BorderRadBehaviour()
+	end
 	--snowing 3 times during level
 	--snowAmtTarget, AmtPerSecCreation, speed, (durationSeconds, internTimer), fadeSeconds
 	if turn == 1500 then
@@ -234,6 +258,7 @@ function _OnTurn(turn)
 	ProcessTiledSwamps()
 	--yin yang cdr
 	if yinYangCDR > 0 then yinYangCDR = yinYangCDR - 1 end
+	if turn == 1 then TJournal:Toggle(); end
 end
 
 function _OnCreateThing(t)
@@ -259,7 +284,7 @@ end
 
 function _OnFrame(w,h,guiW)
 	local yySpr = 1788
-	local box = math.floor(w/24)
+	local box = math.floor(w/32)
 	if PlayersStats[0][2] ~= "none" then
 		if PlayersStats[0][2] == "yin" then yySpr = 1789 else yySpr = 1790 end
 	end
@@ -269,29 +294,102 @@ end
 ------------------------------------------------------------------------------------------------------------------------
 -- LEVEL FUNCTIONS
 ------------------------------------------------------------------------------------------------------------------------
-SearchMapCells(SQUARE ,0, 0, 1, world_coord3d_to_map_idx(marker_to_coord3d(0)), function(me)
-	me.Flags = EnableFlag(me.Flags, (1<<9))
+SearchMapCells(SQUARE ,0, 1, 2, world_coord3d_to_map_idx(marker_to_coord3d(0)), function(me)
+	me.ShadeIncr = -32
 return true end)
+SearchMapCells(SQUARE ,0, 0, 1, world_coord3d_to_map_idx(marker_to_coord3d(0)), function(me)
+	me.ShadeIncr = -16
+return true end)
+for i = 5,16 do
+	SearchMapCells(SQUARE ,0, 0, 0, world_coord3d_to_map_idx(marker_to_coord3d(i)), function(me)
+		me.Flags = EnableFlag(me.Flags, (1<<2))
+	return true end)
+end
+local a = 0
+SearchMapCells(CIRCULAR, 0, borderRad, borderRad-1, world_coord3d_to_map_idx(marker_to_coord3d(0)), function(me)
+	local _me = MAP_ELEM_PTR_2_IDX(me)
+	local c3d = Coord3D.new()
+	map_idx_to_world_coord3d_centre(_me,c3d)
+	local spk = createThing(T_EFFECT,74,TRIBE_NEUTRAL,c3d,false,false)
+	centre_coord3d_on_block(spk.Pos.D3)
+	spk.DrawInfo.Alpha = 0 if a % 2 == 0 then spk.DrawInfo.Alpha = 7 end
+	spk.u.Effect.Duration = -1
+	a = a + 1
+return true end)
+
+local BorderRadBehaviourCDR = 4
+function BorderRadBehaviour()
+	if BorderRadBehaviourCDR > 0 then BorderRadBehaviourCDR = BorderRadBehaviourCDR - 1 end
+	if BorderRadBehaviourCDR == 0 then
+		for i = 0,1 do
+			if nilS(i) then
+				local dist = get_world_dist_xz(getShaman(i).Pos.D2,marker_to_coord2d(0))
+				local limit = 1024 + 512*borderRad
+				if dist > limit and PlayersStats[i][2] == "yang" then
+					createThing(T_EFFECT,M_EFFECT_TELEPORT,i,marker_to_coord3d(rndb(1,4)),false,false)
+					FooterMsg("The Yang Shaman can not leave the inner circle (base). Focus on defending.", 2, 174)
+					BorderRadBehaviourCDR = 4 break
+				elseif dist < limit - 1024 and PlayersStats[i][2] == "yin" then
+					local disTbl = {}
+					SearchMapCells(CIRCULAR, 0, borderRad+2, borderRad+1, world_coord3d_to_map_idx(marker_to_coord3d(0)), function(me)
+						if is_map_elem_all_land(me) > 0 then
+							local c2d = Coord2D.new()
+							coord3D_to_coord2D(me2c3d(me),c2d)
+							local dis = get_world_dist_xz(getShaman(i).Pos.D2,c2d)
+							if dis < 512*12 then
+								table.insert(disTbl, {dis, me})
+							end
+						end
+					return true end)
+					local curr = {99999,0}
+					for k,v in ipairs (disTbl) do
+						if v[1] < curr[1] then curr[1] = v[1] curr[2] = v[2] end
+					end
+					if #disTbl > 0 then
+						local c3d = Coord3D.new()
+						c3d = me2c3d(curr[2])
+						createThing(T_EFFECT,M_EFFECT_TELEPORT,i,c3d,false,false)
+					else
+						createThing(T_EFFECT,M_EFFECT_TELEPORT,i,marker_to_coord3d(rndb(17,20)),false,false)
+					end
+					FooterMsg("The yin shaman can not enter the inner circle (base). Focus on attacking.", 2, 174)
+					BorderRadBehaviourCDR = 4 break
+				end
+			end
+		end
+	end
+end
 
 local YinSpells = {M_SPELL_BLAST,M_SPELL_CONVERT_WILD,M_SPELL_INSECT_PLAGUE,M_SPELL_GHOST_ARMY,M_SPELL_LIGHTNING_BOLT,M_SPELL_SWAMP,M_SPELL_LAND_BRIDGE}
 local YangSpells = {M_SPELL_BLAST,M_SPELL_GHOST_ARMY,M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_EARTHQUAKE,M_SPELL_FIRESTORM}
 
-function YinYangSwap()
+function YinYangSwap(pn)
 	if yinYangCDR == 0 then
 		if PlayersStats[0][2] == "none" then
 			PlayersStats[0][2] = "yang" PlayersStats[1][2] = "yin"
-			log_msg(8,"Yin-Yang has been acquired. Yin (moon) will grant offensive status, while Yang (sun) will highlight the defense. Stay on the area to swap anytime, at the cost of mana reset.")
+			FooterMsg("Yin-Yang has been acquired. Yin (moon) will grant offensive status, while Yang (sun) will highlight the defense. Stay on the area to swap anytime, at the cost of spells and mana reset for both shamans.", 2, 1788)
+			createThing(T_EFFECT,M_EFFECT_TELEPORT,1,marker_to_coord3d(rndb(17,20)),false,false)
+			BorderRadBehaviourCDR = 6
 		else
 			if PlayersStats[0][2] == "yin" then
 				PlayersStats[0][2] = "yang" PlayersStats[1][2] = "yin"
+				FooterMsg("Yin-Yang energy swapped by " .. get_player_name(pn,ntb(isOnline())) .. ". All mana has been reset. " .. get_player_name(1,ntb(isOnline())) .. " is now Yin (offensive), and " .. get_player_name(0,ntb(isOnline())) .. " is now Yang (defensive).", 3, 1790)
 			else
 				PlayersStats[0][2] = "yin" PlayersStats[1][2] = "yang"
+				FooterMsg("Yin-Yang energy swapped by " .. get_player_name(pn,ntb(isOnline())) .. ". All mana has been reset. " .. get_player_name(0,ntb(isOnline())) .. " is now Yin (offensive), and " .. get_player_name(1,ntb(isOnline())) .. " is now Yang (defensive).", 3, 1789)
 			end
-			log_msg(8,"Yin-Yang energy swapped. All mana has been reset.")
+			BorderRadBehaviourCDR = 6
+			for i = 0,1 do
+				if nilS(i) then
+					local mk = rndb(1,4)
+					if PlayersStats[i][2] == "yin" then mk = rndb(17,20) end
+					createThing(T_EFFECT,M_EFFECT_TELEPORT,i,marker_to_coord3d(mk),false,false)
+				end
+			end
 		end
 		local s = createThing(T_EFFECT,M_EFFECT_HYPNOSIS_FLASH,8,marker_to_coord3d(0),false,false) centre_coord3d_on_block(s.Pos.D3)
 		s.Pos.D3.Ypos = 512 queue_sound_event(s,SND_EVENT_HYPNOTISE, 0)
-		yinYangCDR = 12*3
+		yinYangCDR = 12*7
 		--reset mana for each player, and swap yinYang spells
 		if PlayersStats[0][2] == "yang" then
 			for k,v in ipairs(YangSpells) do set_player_cannot_cast(v, 0) end for k,v in ipairs(YinSpells) do set_player_can_cast(v, 0) end GIVE_MANA_TO_PLAYER(0,-9999999)

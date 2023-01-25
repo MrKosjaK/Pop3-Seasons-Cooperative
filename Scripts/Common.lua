@@ -113,6 +113,7 @@ end
 function OnFrame()
 	local w,h,guiW = ScreenWidth(), ScreenHeight(), GFGetGuiWidth()
 	if _OnFrame ~= nil then _OnFrame(w,h,guiW) end
+	if _FooterMsgOnFrame ~= nil then _FooterMsgOnFrame(w,h,guiW) end
 
 	-- tab shows/hides humans info
 	PopSetFont(3);
