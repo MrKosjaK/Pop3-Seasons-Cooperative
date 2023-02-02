@@ -22,9 +22,30 @@ setmetatable(TJournal,
   __call = function(t, ...) end
 });
 
+function j_mt:AddEntry(_str_header, _str_text)
+  local entry =
+  {
+    StrHeader = _str_header,
+    StrText = _str_text
+  };
+  self.Blocks[#self.Blocks + 1] = entry;
+end
+
 function j_mt:Draw()
   if (self.DrawInfo.isOpen) then
     DrawStretchyButtonBox(self.DrawInfo.RenderArea, self.DrawInfo.Style);
+    
+    if (#self.Blocks > 0) then
+      local y = self.DrawInfo.Pos[2];
+      for i = #self.Blocks, 1, -1 do
+        PopSetFont(3);
+        LbDraw_Text(self.DrawInfo.Pos[1], y, self.Blocks[i].StrHeader, 0);
+        y = y + CharHeight2();
+        PopSetFont(4);
+        LbDraw_Text(self.DrawInfo.Pos[1], y, self.Blocks[i].StrText, 0);
+        y = y + CharHeight2();
+      end
+    end
   end
 end
 
@@ -36,7 +57,7 @@ function j_mt:Init()
   self.Blocks = nil;
   self.Blocks = {};
   
-  self.DrawInfo.isOpen = true;
+  self.DrawInfo.isOpen = false;
   self.DrawInfo.Size[1] = ScreenWidth() >> 1;
   self.DrawInfo.Size[2] = (ScreenHeight() >> 1) + 128;
   self.DrawInfo.Pos[1] = (ScreenWidth() >> 1) - (self.DrawInfo.Size[1] >> 1);

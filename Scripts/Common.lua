@@ -21,6 +21,7 @@ local L_SHOW_POPS = true;
 -- OnLevelInit executed only once at start of the game (level start not lobby)
 function OnLevelInit(level_id)
   TJournal:Init();
+  TJournal:AddEntry("This is Header", "And this is the text after header");
 	if _OnLevelInit ~= nil then _OnLevelInit(level_id); end
 
 	-- Ally players at beginning (to ensure they didn't forget in setup) ; unally from AIs
