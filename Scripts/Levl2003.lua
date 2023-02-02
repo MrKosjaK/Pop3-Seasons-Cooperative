@@ -264,13 +264,13 @@ function _OnTurn(turn)
 		ProcessDefensiveShaman()
 	end
 	if everySeconds(8) then
-		FillRndEmptyTower(2,iipp,M_PERSON_SUPER_WARRIOR,M_PERSON_RELIGIOUS,85,15)
+		FillRndEmptyTower(2,iipp(M_PERSON_SUPER_WARRIOR,M_PERSON_RELIGIOUS,85,15))
 		FillRndEmptyTower(3,M_PERSON_RELIGIOUS)
 		FillRndEmptyTower(4,M_PERSON_SUPER_WARRIOR)
-		FillRndEmptyTower(5,iipp,M_PERSON_SUPER_WARRIOR,M_PERSON_RELIGIOUS,60,40)
+		FillRndEmptyTower(5,iipp(M_PERSON_SUPER_WARRIOR,M_PERSON_RELIGIOUS,60,40))
 		FillRndEmptyTower(6,M_PERSON_RELIGIOUS)
 		FillRndEmptyTower(7,M_PERSON_SUPER_WARRIOR)
-		updateSpellEntries()
+		--updateSpellEntries()
 	end
 	if everySeconds(15) then
 		giveSpellsOccasionally()
@@ -646,7 +646,7 @@ function ProcessDefensiveShaman()
 	for k, tribe in ipairs(AI) do if k > 1 and isAlive(k) then
 		if isShamanHome(k,tribe.baseMk[1],tribe.baseMk[2]) then --pn,mk,rad
 			GetRidOfNearbyEnemies(k,1,tribe.shBlasts.blastNearUnitsChance + G_GAMESTAGE*tribe.shBlasts.blastNearUnitsChanceMult)
-			if rnd() < 50 then TargetNearbyShamans(k,tribe.shLights.raadius+G_GAMESTAGE, tribe.shLights.lightChance + G_GAMESTAGE*tribe.shLights.lightChanceMult) end
+			if rnd() < 50 then TargetNearbyShamans(k,tribe.shLights.radius+G_GAMESTAGE, tribe.shLights.lightChance + G_GAMESTAGE*tribe.shLights.lightChanceMult) end
 		end
 	end end
 end
@@ -655,7 +655,7 @@ function ProcessAgressiveShaman()
 	for k, tribe in ipairs(AI) do if k > 1 and isAlive(k) then
 		if not isShamanHome(k,tribe.baseMk[1],tribe.baseMk[2]) then --pn,mk,rad
 			GetRidOfNearbyEnemies(k,1,tribe.shBlasts.blastNearUnitsChance + G_GAMESTAGE*tribe.shBlasts.blastNearUnitsChanceMult)
-			if rnd() < 50 then GIVE_ONE_SHOT(M_SPELL_LIGHTNING_BOLT,k) TargetNearbyShamans(k,tribe.shLights.raadius+G_GAMESTAGE, tribe.shLights.lightChance + G_GAMESTAGE*tribe.shLights.lightChanceMult) end
+			if rnd() < 50 then GIVE_ONE_SHOT(M_SPELL_LIGHTNING_BOLT,k) TargetNearbyShamans(k,tribe.shLights.radius+G_GAMESTAGE, tribe.shLights.lightChance + G_GAMESTAGE*tribe.shLights.lightChanceMult) end
 		end
 	end end
 end
