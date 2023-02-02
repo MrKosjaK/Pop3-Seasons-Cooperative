@@ -22,14 +22,26 @@ setmetatable(TJournal,
   __call = function(t, ...) end
 });
 
+function j_mt:Separator()
+  local entry =
+  {
+    Type = 1
+  };
+  self.Blocks[#self.Blocks + 1] = entry;
+end
+
 function j_mt:AddEntry(_str_header, _str_text)
   local entry =
   {
+    Type = 0,
     StrHeader = _str_header,
     StrText = _str_text
   };
   self.Blocks[#self.Blocks + 1] = entry;
 end
+
+local clr = TbColour.new();
+clr.Index = 226;
 
 function j_mt:Draw()
   if (self.DrawInfo.isOpen) then
@@ -38,12 +50,18 @@ function j_mt:Draw()
     if (#self.Blocks > 0) then
       local y = self.DrawInfo.Pos[2];
       for i = #self.Blocks, 1, -1 do
-        PopSetFont(3);
-        LbDraw_Text(self.DrawInfo.Pos[1], y, self.Blocks[i].StrHeader, 0);
-        y = y + CharHeight2();
-        PopSetFont(4);
-        LbDraw_Text(self.DrawInfo.Pos[1], y, self.Blocks[i].StrText, 0);
-        y = y + CharHeight2();
+        if (self.Blocks[i].Type == 0) then
+          PopSetFont(3);
+          LbDraw_Text(self.DrawInfo.Pos[1], y, self.Blocks[i].StrHeader, 0);
+          y = y + CharHeight2();
+          PopSetFont(4);
+          LbDraw_Text(self.DrawInfo.Pos[1], y, self.Blocks[i].StrText, 0);
+          y = y + CharHeight2();
+        elseif (self.Blocks[i].Type == 1) then
+          y = y + 4;
+          LbDraw_Line(self.DrawInfo.Pos[1], y, self.DrawInfo.RenderArea.Right, y, clr);
+          y = y + 4;
+        end
       end
     end
   end

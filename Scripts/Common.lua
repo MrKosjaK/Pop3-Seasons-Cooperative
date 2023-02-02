@@ -22,6 +22,12 @@ local L_SHOW_POPS = true;
 function OnLevelInit(level_id)
   TJournal:Init();
   TJournal:AddEntry("This is Header", "And this is the text after header");
+  TJournal:AddEntry("This is Header", "And this is the text after header");
+  TJournal:AddEntry("This is Header", "And this is the text after header");
+  TJournal:Separator();
+  TJournal:AddEntry("Separated", "And this is the text after header");
+  TJournal:AddEntry("Separated", "And this is the text after header");
+  TJournal:AddEntry("Separated", "And this is the text after header");
 	if _OnLevelInit ~= nil then _OnLevelInit(level_id); end
 
 	-- Ally players at beginning (to ensure they didn't forget in setup) ; unally from AIs
