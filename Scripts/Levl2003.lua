@@ -11,6 +11,7 @@ SwampTileRandomness = 12*5
 G_NUM_OF_HUMANS_FOR_THIS_LEVEL = 2;
 
 --M_BUILDING_TEPEE,M_BUILDING_DRUM_TOWER,M_BUILDING_WARRIOR_TRAIN,M_BUILDING_SUPER_TRAIN,M_BUILDING_TEMPLE,INT_M_BUILDING_SPY_TRAIN,M_BUILDING_BOAT_HUT_1,M_BUILDING_AIRSHIP_HUT_1 
+local stone_heads = {86,87,88}
 local AI = {
 			{},
 			{
@@ -26,11 +27,13 @@ local AI = {
 				spellsCanCast = {2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19},
 				trainingBldgs = {10,4,-1,6}, --required huts to build: spyHut,temple,warHut,fwHut
 				unitPref = {spies={8,2},preachers={14,2},wars={0,0},fws={14,2},}, --amt, stageMultiplier
+				defPreachMks = {66,67,68,69},
+				offPreachMks = {70,71,72,73,74},
 				spellsPerStage = {[0]=
 								{M_SPELL_INSECT_PLAGUE,M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND},
 								{M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND},
 								{M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_FIRESTORM},
-								{M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM,M_SPELL_FIRESTORM},
+								{M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM,M_SPELL_FIRESTORM,M_SPELL_HYPNOTISM},
 								{M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_FIRESTORM}
 				},
 				Atkspells = {M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND},
@@ -50,10 +53,12 @@ local AI = {
 				spellsCanCast = {2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19},
 				trainingBldgs = {-1,5,3,-1}, --required huts to build: spyHut,temple,warHut,fwHut
 				unitPref = {spies={0,0},preachers={17,2},wars={14,3},fws={0,0},}, --amt, stageMultiplier
+				defPreachMks = {75,76,77,78},
+				offPreachMks = {70,71,72,73,74},
 				spellsPerStage = {[0]=
 								{M_SPELL_INSECT_PLAGUE,M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND},
 								{M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM},
-								{M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE},
+								{M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE},
 								{M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM,M_SPELL_FIRESTORM},
 								{M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_FIRESTORM}
 				},
@@ -74,11 +79,13 @@ local AI = {
 				spellsCanCast = {2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19},
 				trainingBldgs = {-1,-1,4,5}, --required huts to build: spyHut,temple,warHut,fwHut
 				unitPref = {spies={0,0},preachers={0,0},wars={17,2},fws={15,2},}, --amt, stageMultiplier
+				defPreachMks = {},
+				offPreachMks = {},
 				spellsPerStage = {[0]=
 								{M_SPELL_INSECT_PLAGUE,M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND},
 								{M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM},
 								{M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_FIRESTORM},
-								{M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM,M_SPELL_FIRESTORM},
+								{M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM,M_SPELL_FIRESTORM,M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM},
 								{M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_FIRESTORM,M_SPELL_ANGEL_OF_DEATH}
 				},
 				Atkspells = {M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND},
@@ -98,12 +105,14 @@ local AI = {
 				spellsCanCast = {2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19},
 				trainingBldgs = {-1,6,-1,5}, --required huts to build: spyHut,temple,warHut,fwHut
 				unitPref = {spies={0,0},preachers={13,3},wars={0,0},fws={18,2},}, --amt, stageMultiplier
+				defPreachMks = {79,80,81,82},
+				offPreachMks = {70,71,72,73,74},
 				spellsPerStage = {[0]=
 								{M_SPELL_INSECT_PLAGUE,M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND},
 								{M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND},
 								{M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE},
 								{M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM,M_SPELL_FIRESTORM,M_SPELL_FIRESTORM},
-								{M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_FIRESTORM}
+								{M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_FIRESTORM,M_SPELL_HYPNOTISM}
 				},
 				Atkspells = {M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND},
 				shBlasts = {blast=16, blastNearUnitsChance=30, blastNearUnitsChanceMult=10},
@@ -122,6 +131,8 @@ local AI = {
 				spellsCanCast = {2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19},
 				trainingBldgs = {8,4,4,-1}, --required huts to build: spyHut,temple,warHut,fwHut
 				unitPref = {spies={9,1},preachers={15,2},wars={15,2},fws={0,0},}, --amt, stageMultiplier
+				defPreachMks = {83,84,85},
+				offPreachMks = {70,71,72,73,74},
 				spellsPerStage = {[0]=
 								{M_SPELL_INSECT_PLAGUE,M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND},
 								{M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM},
@@ -146,11 +157,13 @@ local AI = {
 				spellsCanCast = {2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19},
 				trainingBldgs = {-1,-1,11,4}, --required huts to build: spyHut,temple,warHut,fwHut
 				unitPref = {spies={0,0},preachers={0,0},wars={11,3},fws={22,3},}, --amt, stageMultiplier
+				defPreachMks = {},
+				offPreachMks = {},
 				spellsPerStage = {[0]=
 								{M_SPELL_INSECT_PLAGUE,M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND},
 								{M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM},
 								{M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_FIRESTORM},
-								{M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM,M_SPELL_FIRESTORM},
+								{M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM,M_SPELL_FIRESTORM,M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM},
 								{M_SPELL_WHIRLWIND,M_SPELL_WHIRLWIND,M_SPELL_HYPNOTISM,M_SPELL_HYPNOTISM,M_SPELL_EARTHQUAKE,M_SPELL_EARTHQUAKE,M_SPELL_FIRESTORM,M_SPELL_ANGEL_OF_DEATH}
 				},
 				Atkspells = {M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND},
@@ -189,12 +202,12 @@ function _OnTurn(turn)
 		fasterTrain(v,28+12*stage)
 		fasterHutBars(v,16+6*stage,false)
 		--priorities
-		--[[if everySeconds(12) then
-			updateGameStage(6,12,18,24)
+		if everySeconds(12) then
+			updateGameStage(9,18,24,32)
 			updateBasePriorities(v)
 			unstuckS(v)
 			trainingHutsPriorities(v)
-		end]]
+		end
 	end
 	--Process Humans on turn
 	for k,v in ipairs(G_HUMANS_ALIVE) do
@@ -241,62 +254,51 @@ function _OnTurn(turn)
 		if tribe.shamanAtkTimer == turn then Shamanattack(k) end
 	end end
 	
-	--[[if everySeconds(3) then
+	if everySeconds(3) then
 		ProcessAgressiveShaman()
 		ProcessUnitMoveTbl()
-		ProcessIslandStalagtites()
+		--ProcessIslandStalagtites()
 		for i = #unitAtkunitTbl,1,-1 do unstuckT(unitAtkunitTbl[i]) table.remove(unitAtkunitTbl,i) end
 	end
 	if everySeconds(7-stage) then
 		ProcessDefensiveShaman()
 	end
 	if everySeconds(8) then
-		FillRndEmptyTower(tribe1,M_PERSON_RELIGIOUS)
-		FillRndEmptyTower(tribe2,M_PERSON_SUPER_WARRIOR)
+		FillRndEmptyTower(2,iipp,M_PERSON_SUPER_WARRIOR,M_PERSON_RELIGIOUS,85,15)
+		FillRndEmptyTower(3,M_PERSON_RELIGIOUS)
+		FillRndEmptyTower(4,M_PERSON_SUPER_WARRIOR)
+		FillRndEmptyTower(5,iipp,M_PERSON_SUPER_WARRIOR,M_PERSON_RELIGIOUS,60,40)
+		FillRndEmptyTower(6,M_PERSON_RELIGIOUS)
+		FillRndEmptyTower(7,M_PERSON_SUPER_WARRIOR)
 		updateSpellEntries()
 	end
 	if everySeconds(15) then
 		giveSpellsOccasionally()
 		updateConvertParams()
 		updateSpellBuckets(stage)
-		MARKER_ENTRIES(tribe2, 5,6,-1,-1) --base wars patrol
 	end
 	if everySeconds(30-stage) then
 		DefensivePreachMarkers()
-		DefendStoneHead(68)
-		DefendStoneHead(94)
+		DefendStoneHeads()
 		updateTroopsAndAtkParams()
-		--tribe1
-		MARKER_ENTRIES(tribe1, 0,-1,-1,-1) --base big patrol
-		--tribe2
-		MARKER_ENTRIES(tribe2, 0,1,2,3) --base fws patrol
-		if stage > 1 and AI_GetUnitCount(tribe2,M_PERSON_SUPER_WARRIOR) > 4 then
-			MARKER_ENTRIES(tribe2, 4,-1,-1,-1) --extra patrol base
-		end
 	end
 	if everySeconds(60-stage*10) then
-		sendRandomUnit(TRIBE_BLACK,iipp(M_PERSON_WARRIOR,M_PERSON_WARRIOR,50,50))
-	end
-	if everySeconds(120-stage*10) then
-		local targ = randomItemFromTable(G_HUMANS_ALIVE)
-		if nilT(targ) then
-			local mk = 2 if targ == TRIBE_RED then mk = 39 end
-			if countTroops(tribe2) > 10 then
-				if NavCheck(tribe2,targ,marker_to_coord3d(mk)) then
-					local mk1,mk2,mk3,mk4,mk5 = 86,85,84,83,87
-					if targ == TRIBE_BLUE then mk1,mk2,mk3,mk4,mk5 = 88,90,rndb(91,92),93,89 end
-					SET_MARKER_ENTRY(tribe2, 7, mk1, mk5, 1, math.max(2,stage), 1, 0)
-					SET_MARKER_ENTRY(tribe2, 8, mk2, -1, 1, math.max(2,stage), 1, 0)
-					SET_MARKER_ENTRY(tribe2, 9, mk3, mk3, 0, 2, 0, 0)
-					SET_MARKER_ENTRY(tribe2, 10, mk4, mk4, 0, 2, 0, 0)
-					MARKER_ENTRIES(tribe2,7,8,9,10)
+		if stage > 0 then
+			sendRandomUnit(2,iipp(M_PERSON_RELIGIOUS,M_PERSON_SUPERWARRIOR,50,50))--
+			sendRandomUnit(5,iipp(M_PERSON_RELIGIOUS,M_PERSON_SUPERWARRIOR,50,50))
+			if stage > 1 then
+				sendRandomUnit(3,iipp(M_PERSON_RELIGIOUS,M_PERSON_WARRIOR,50,50))
+				sendRandomUnit(6,iipp(M_PERSON_RELIGIOUS,M_PERSON_WARRIOR,50,50))
+				if stage > 2 then
+					sendRandomUnit(4,iipp(M_PERSON_WARRIOR,M_PERSON_SUPER_WARRIOR,50,50))
+					sendRandomUnit(7,iipp(M_PERSON_WARRIOR,M_PERSON_SUPER_WARRIOR,50,50))
 				end
 			end
 		end
 	end
 	if everySeconds(180-stage*10) then
 		OffensivePreachMarkers()
-	end]]
+	end
 	------------------------------------------------------------------------------------------------------------------------
 	-- NON-AI STUFF
 	------------------------------------------------------------------------------------------------------------------------
@@ -753,51 +755,46 @@ function updateAtkSpells(s)
 end
 
 function DefensivePreachMarkers()
-	local tribe = tribe1
-	local markers = {} for i = 56,60 do table.insert(markers,i) end
-	if _gsi.Players[tribe].NumPeopleOfType[M_PERSON_RELIGIOUS] > 3 then
-		for k,v in ipairs(markers) do
-			PREACH_AT_MARKER(tribe,v)
+	for k,tribe in ipairs(AI) do if k > 1 and isAlive(k) then
+		if _gsi.Players[k].NumPeopleOfType[M_PERSON_RELIGIOUS] > 3 then
+			for kk,mk in ipairs(tribe.defPreachMks) do
+				if rnd() >= 50 then
+					PREACH_AT_MARKER(k,mk)
+				end
+			end
 		end
-	end
+	end end
 end
 
 function OffensivePreachMarkers()
 	if G_GAMESTAGE > 1 then
-		local tribe = tribe1
-		local markers = {}
-		if GetPop(1) > 0 then for i = 61,63 do table.insert(markers,i) end else for i = 64,67 do table.insert(markers,i) end end
-		if _gsi.Players[tribe].NumPeopleOfType[M_PERSON_RELIGIOUS] > 3 then
-			for k,v in ipairs(markers) do
-				PREACH_AT_MARKER(tribe,v)
+		for k,tribe in ipairs(AI) do if k > 1 and isAlive(k) then
+			if _gsi.Players[k].NumPeopleOfType[M_PERSON_RELIGIOUS] > 5 then
+				for kk,mk in ipairs(tribe.offPreachMks) do
+					if rnd() >= 40 then
+						PREACH_AT_MARKER(k,mk)
+					end
+				end
 			end
-		end
+		end end
 	end
 end
 
-function DefendStoneHead(mk)
-	--stone heads defending by tribe1(cyan)
-	if countBoats(tribe1) > 0 and mk == 68 then
-		if countPeopleInArea(TRIBE_BLUE,mk,0) > 0 or countPeopleInArea(TRIBE_RED,mk,0) > 0 then
-			PREACH_AT_MARKER(tribe1,mk)
-			if rnd() < 40 and AI_ShamanFree(tribe1) then
-				local spellsTbl = {M_SPELL_BLAST,M_SPELL_LIGHTNING_BOLT,M_SPELL_INSECT_PLAGUE,M_SPELL_SWAMP}
-				local s = randomItemFromTable(spellsTbl)
-				GIVE_ONE_SHOT(s,tribe1)
-				SPELL_ATTACK(tribe1,s,mk,mk)
+function DefendStoneHeads()
+	for key, head in ipairs(stone_heads) do
+		local success = false
+		for k,tribe in ipairs(AI) do if k > 1 and isAlive(k) then
+			if countPeopleInArea(TRIBE_BLUE,head,0) > 0 or countPeopleInArea(TRIBE_RED,head,0) > 0 then
+				if _gsi.Players[k].NumPeopleOfType[M_PERSON_RELIGIOUS] > 4 and rnd() > 50 then PREACH_AT_MARKER(k,head) end
+				if rnd() < 40 and AI_ShamanFree(k) then
+					local spellsTbl = {M_SPELL_BLAST,M_SPELL_LIGHTNING_BOLT,M_SPELL_INSECT_PLAGUE,M_SPELL_SWAMP}
+					local s = randomItemFromTable(spellsTbl)
+					GIVE_ONE_SHOT(s,k)
+					SPELL_ATTACK(k,s,head,head)
+				end
+				break
 			end
-		end
-	end
-	--totem pole defending by tribe2(black)
-	if mk == 94 then
-		if countPeopleInArea(TRIBE_BLUE,mk,0) > 0 or countPeopleInArea(TRIBE_RED,mk,0) > 0 then
-			if rnd() < 60 and AI_ShamanFree(tribe1) then
-				local spellsTbl = {M_SPELL_BLAST,M_SPELL_LIGHTNING_BOLT,M_SPELL_INSECT_PLAGUE,M_SPELL_SWAMP}
-				local s = randomItemFromTable(spellsTbl)
-				GIVE_ONE_SHOT(s,tribe1)
-				SPELL_ATTACK(tribe1,s,mk,mk)
-			end
-		end
+		end end
 	end
 end
 
@@ -905,16 +902,7 @@ end
 
 function _OnPostLevelInit(level_id)
 	--stuff for humans
-	--[[set_player_can_cast(M_SPELL_LAND_BRIDGE, TRIBE_BLUE);
-	set_player_can_cast(M_SPELL_LIGHTNING_BOLT, TRIBE_RED);
-	set_player_cannot_cast(M_SPELL_INVISIBILITY, TRIBE_RED);
-	set_player_cannot_cast(M_SPELL_SWAMP, TRIBE_RED);
-	set_player_cannot_cast(M_SPELL_HYPNOTISM, TRIBE_RED);
-	set_player_cannot_cast(M_SPELL_EARTHQUAKE, TRIBE_RED);
-	for k,v in ipairs(G_HUMANS) do
-		set_player_can_cast(M_SPELL_GHOST_ARMY, v);
-		set_correct_gui_menu();
-	end]]
+	
 	TJournal:AddEntry("The hidden Rune","Me and Dakini have found the location of the magical rune left behind by the high priests, centuries ago.")
 	
 	--stuff for AI
@@ -938,5 +926,8 @@ end
 
 
 
-
 --to do:
+
+--attack part
+--troops entries
+--updateSpellEntries
