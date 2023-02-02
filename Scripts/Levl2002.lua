@@ -322,6 +322,7 @@ function Shamanattack(attacker)
 	if AI_EntryAvailable(attacker) and nilS(attacker) and IS_SHAMAN_AVAILABLE_FOR_ATTACK(attacker) then --LOG("aa")
 		if #G_HUMANS_ALIVE > 0 then --wont bother to continue level(attack) if only AIs exist
 			local stage = G_GAMESTAGE
+			local target = 0
 			if attacker == tribe1 then target = iipp(TRIBE_BLUE,TRIBE_RED,40,60) else target = iipp(TRIBE_BLUE,TRIBE_RED,30,70) end --**
 			if #G_HUMANS_ALIVE == 1 then target = randomItemFromTable(G_HUMANS_ALIVE) end
 			local atkType = ATTACK_NORMAL if attacker == tribe1 then atkType = ATTACK_BY_BOAT end --**
@@ -439,7 +440,7 @@ function attack(attacker)
 						if atkType == ATTACK_NORMAL then bbv = 0 end
 						AI_SetTargetParams(attacker,target,true,true)
 						if attacker == tribe1 and atkType == ATTACK_BY_BOAT and (spell1 ~= M_SPELL_INVISIBILITY and spell1 ~= M_SPELL_SHIELD) then mk1 = rndb(131,134) mk2 = -1 end
-						ATTACK(attacker, target, numTroops, targType, 0, 969+(stage*10), spell1, spell2, spell3, atkType, bbv, mk1, mk2, 0)
+						ATTACK(attacker, target, numTroops, targType, 0, 959+(stage*10), spell1, spell2, spell3, atkType, bbv, mk1, mk2, 0)
 						IncrementAtkVar(attacker,(rndb(1800,2500)) - (G_GAMESTAGE*rndb(150,250))) --**
 						success = true
 						if attacker == tribe1 then TRIBE1ShamanAtk[1] = getTurn()+rndb(200,300) TRIBE1ShamanAtk[2] = rndb(2,3) else TRIBE2ShamanAtk[1] = getTurn()+rndb(200,300) TRIBE2ShamanAtk[2] = rndb(3,4) end
