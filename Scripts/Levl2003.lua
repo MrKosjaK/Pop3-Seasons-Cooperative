@@ -40,10 +40,10 @@ local AI = {
 				Atkspells = {M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND},
 				shBlasts = {blast=32, blastNearUnitsChance=30, blastNearUnitsChanceMult=10},
 				shLights = {radius=9, lightChance=10, lightChanceMult=10},
-				spellEntriesDef = {{spell=M_SPELL_BLAST,cost=8000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=14000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=24000,ppl=5,pplSM=1,sR=0},{spell=M_SPELL_HYPNOTISM,cost=28000,ppl=5,pplSM=0,sR=1},{spell=M_SPELL_SWAMP,cost=32000,ppl=5,pplSM=0,sR=2},
+				spellEntriesDef = {{spell=M_SPELL_BLAST,cost=8000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=18000,ppl=4,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=24000,ppl=5,pplSM=1,sR=0},{spell=M_SPELL_HYPNOTISM,cost=28000,ppl=5,pplSM=0,sR=1},{spell=M_SPELL_SWAMP,cost=32000,ppl=5,pplSM=0,sR=2},
 									{spell=M_SPELL_ANGEL_OF_DEATH,cost=200000,ppl=30,pplSM=0,sR=4}},
 									--
-				spellEntriesOff = {{spell=M_SPELL_BLAST,cost=7000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=12000,ppl=2,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=20000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_HYPNOTISM,cost=25000,ppl=8,pplSM=1,sR=1},{spell=M_SPELL_SWAMP,cost=30000,ppl=9,pplSM=1,sR=2},
+				spellEntriesOff = {{spell=M_SPELL_BLAST,cost=7000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=14000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=20000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_HYPNOTISM,cost=25000,ppl=8,pplSM=1,sR=1},{spell=M_SPELL_SWAMP,cost=30000,ppl=9,pplSM=1,sR=2},
 									--[[{spell=M_SPELL_ANGEL_OF_DEATH,cost=200000,ppl=25,pplSM=0,sR=4},]]{spell=M_SPELL_EARTHQUAKE,cost=120000,ppl=24,pplSM=2,sR=3},--[[{spell=M_SPELL_EROSION,cost=110000,ppl=20,pplSM=2,sR=3},]]{spell=M_SPELL_FIRESTORM,cost=140000,ppl=32,pplSM=2,sR=3},{spell=M_SPELL_VOLCANO,cost=250000,ppl=40,pplSM=3,sR=4}}
 			},
 			{
@@ -71,10 +71,10 @@ local AI = {
 				Atkspells = {M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND},
 				shBlasts = {blast=16, blastNearUnitsChance=30, blastNearUnitsChanceMult=10},
 				shLights = {radius=9, lightChance=10, lightChanceMult=10},
-				spellEntriesDef = {{spell=M_SPELL_BLAST,cost=8000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=14000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=24000,ppl=6,pplSM=1,sR=0},{spell=M_SPELL_HYPNOTISM,cost=28000,ppl=5,pplSM=0,sR=1},{spell=M_SPELL_SWAMP,cost=32000,ppl=5,pplSM=0,sR=2},
+				spellEntriesDef = {{spell=M_SPELL_BLAST,cost=8000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=20000,ppl=5,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=24000,ppl=6,pplSM=1,sR=0},{spell=M_SPELL_HYPNOTISM,cost=28000,ppl=5,pplSM=0,sR=1},{spell=M_SPELL_SWAMP,cost=32000,ppl=5,pplSM=0,sR=2},
 									--[[{spell=M_SPELL_ANGEL_OF_DEATH,cost=200000,ppl=30,pplSM=0,sR=4}]]},
 									--
-				spellEntriesOff = {{spell=M_SPELL_BLAST,cost=7000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=12000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=20000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_HYPNOTISM,cost=25000,ppl=8,pplSM=1,sR=1},{spell=M_SPELL_SWAMP,cost=30000,ppl=9,pplSM=1,sR=2},
+				spellEntriesOff = {{spell=M_SPELL_BLAST,cost=7000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=15000,ppl=4,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=20000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_HYPNOTISM,cost=25000,ppl=8,pplSM=1,sR=1},{spell=M_SPELL_SWAMP,cost=30000,ppl=9,pplSM=1,sR=2},
 									{spell=M_SPELL_ANGEL_OF_DEATH,cost=200000,ppl=25,pplSM=0,sR=4},{spell=M_SPELL_EARTHQUAKE,cost=120000,ppl=20,pplSM=2,sR=3},{spell=M_SPELL_EROSION,cost=110000,ppl=20,pplSM=2,sR=3},--[[{spell=M_SPELL_FIRESTORM,cost=140000,ppl=32,pplSM=2,sR=3},{spell=M_SPELL_VOLCANO,cost=250000,ppl=40,pplSM=3,sR=4}]]}
 			},
 			{
@@ -102,10 +102,10 @@ local AI = {
 				Atkspells = {M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND},
 				shBlasts = {blast=64, blastNearUnitsChance=30, blastNearUnitsChanceMult=10},
 				shLights = {radius=9, lightChance=10, lightChanceMult=10},
-				spellEntriesDef = {{spell=M_SPELL_BLAST,cost=8000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=14000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=24000,ppl=7,pplSM=1,sR=0},{spell=M_SPELL_HYPNOTISM,cost=28000,ppl=5,pplSM=0,sR=1},{spell=M_SPELL_SWAMP,cost=32000,ppl=5,pplSM=0,sR=2},
+				spellEntriesDef = {{spell=M_SPELL_BLAST,cost=8000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=20000,ppl=4,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=24000,ppl=7,pplSM=1,sR=0},{spell=M_SPELL_HYPNOTISM,cost=28000,ppl=5,pplSM=0,sR=1},{spell=M_SPELL_SWAMP,cost=32000,ppl=5,pplSM=0,sR=2},
 									--[[{spell=M_SPELL_ANGEL_OF_DEATH,cost=200000,ppl=30,pplSM=0,sR=4}]]},
 									--
-				spellEntriesOff = {{spell=M_SPELL_BLAST,cost=7000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=12000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=20000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_HYPNOTISM,cost=25000,ppl=9,pplSM=1,sR=1},{spell=M_SPELL_SWAMP,cost=30000,ppl=9,pplSM=1,sR=2},
+				spellEntriesOff = {{spell=M_SPELL_BLAST,cost=7000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=18000,ppl=2,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=20000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_HYPNOTISM,cost=25000,ppl=9,pplSM=1,sR=1},{spell=M_SPELL_SWAMP,cost=30000,ppl=9,pplSM=1,sR=2},
 									{spell=M_SPELL_ANGEL_OF_DEATH,cost=200000,ppl=25,pplSM=0,sR=4},--[[{spell=M_SPELL_EARTHQUAKE,cost=120000,ppl=26,pplSM=2,sR=3},{spell=M_SPELL_EROSION,cost=110000,ppl=20,pplSM=2,sR=3},]]{spell=M_SPELL_FIRESTORM,cost=140000,ppl=32,pplSM=2,sR=3},{spell=M_SPELL_VOLCANO,cost=250000,ppl=38,pplSM=2,sR=4}}
 			},
 			{
@@ -133,10 +133,10 @@ local AI = {
 				Atkspells = {M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND},
 				shBlasts = {blast=16, blastNearUnitsChance=30, blastNearUnitsChanceMult=10},
 				shLights = {radius=9, lightChance=10, lightChanceMult=10},
-				spellEntriesDef = {{spell=M_SPELL_BLAST,cost=8000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=14000,ppl=2,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=24000,ppl=4,pplSM=0,sR=0},{spell=M_SPELL_HYPNOTISM,cost=28000,ppl=5,pplSM=0,sR=1},{spell=M_SPELL_SWAMP,cost=32000,ppl=5,pplSM=0,sR=2},
+				spellEntriesDef = {{spell=M_SPELL_BLAST,cost=8000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=22000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=24000,ppl=4,pplSM=0,sR=0},{spell=M_SPELL_HYPNOTISM,cost=28000,ppl=5,pplSM=0,sR=1},{spell=M_SPELL_SWAMP,cost=32000,ppl=5,pplSM=0,sR=2},
 									{spell=M_SPELL_ANGEL_OF_DEATH,cost=200000,ppl=32,pplSM=1,sR=3}},
 									--
-				spellEntriesOff = {{spell=M_SPELL_BLAST,cost=7000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=12000,ppl=2,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=20000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_HYPNOTISM,cost=25000,ppl=9,pplSM=0,sR=1},{spell=M_SPELL_SWAMP,cost=30000,ppl=9,pplSM=1,sR=2},
+				spellEntriesOff = {{spell=M_SPELL_BLAST,cost=7000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=16000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=20000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_HYPNOTISM,cost=25000,ppl=9,pplSM=0,sR=1},{spell=M_SPELL_SWAMP,cost=30000,ppl=9,pplSM=1,sR=2},
 									--[[{spell=M_SPELL_ANGEL_OF_DEATH,cost=200000,ppl=25,pplSM=0,sR=4},{spell=M_SPELL_EARTHQUAKE,cost=120000,ppl=28,pplSM=2,sR=3},]]{spell=M_SPELL_EROSION,cost=110000,ppl=20,pplSM=2,sR=3},{spell=M_SPELL_FIRESTORM,cost=140000,ppl=32,pplSM=2,sR=3},{spell=M_SPELL_VOLCANO,cost=250000,ppl=44,pplSM=3,sR=4}}
 			},
 			{
@@ -164,10 +164,10 @@ local AI = {
 				Atkspells = {M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND},
 				shBlasts = {blast=128, blastNearUnitsChance=30, blastNearUnitsChanceMult=10},
 				shLights = {radius=9, lightChance=10, lightChanceMult=10},
-				spellEntriesDef = {{spell=M_SPELL_BLAST,cost=8000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=14000,ppl=2,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=24000,ppl=5,pplSM=1,sR=1},{spell=M_SPELL_HYPNOTISM,cost=28000,ppl=5,pplSM=0,sR=1},{spell=M_SPELL_SWAMP,cost=32000,ppl=5,pplSM=0,sR=2},
+				spellEntriesDef = {{spell=M_SPELL_BLAST,cost=8000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=24000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=24000,ppl=5,pplSM=1,sR=1},{spell=M_SPELL_HYPNOTISM,cost=28000,ppl=5,pplSM=0,sR=1},{spell=M_SPELL_SWAMP,cost=32000,ppl=5,pplSM=0,sR=2},
 									{spell=M_SPELL_ANGEL_OF_DEATH,cost=200000,ppl=28,pplSM=1,sR=4}},
 									--
-				spellEntriesOff = {{spell=M_SPELL_BLAST,cost=7000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=12000,ppl=2,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=20000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_HYPNOTISM,cost=25000,ppl=7,pplSM=1,sR=2},{spell=M_SPELL_SWAMP,cost=30000,ppl=9,pplSM=1,sR=2},
+				spellEntriesOff = {{spell=M_SPELL_BLAST,cost=7000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=18000,ppl=4,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=20000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_HYPNOTISM,cost=25000,ppl=7,pplSM=1,sR=2},{spell=M_SPELL_SWAMP,cost=30000,ppl=9,pplSM=1,sR=2},
 									{spell=M_SPELL_ANGEL_OF_DEATH,cost=200000,ppl=25,pplSM=0,sR=4},{spell=M_SPELL_EARTHQUAKE,cost=120000,ppl=18,pplSM=2,sR=3},--[[{spell=M_SPELL_EROSION,cost=110000,ppl=20,pplSM=2,sR=3},{spell=M_SPELL_FIRESTORM,cost=140000,ppl=32,pplSM=2,sR=3},]]{spell=M_SPELL_VOLCANO,cost=250000,ppl=42,pplSM=3,sR=4}}
 			},
 			{
@@ -195,10 +195,10 @@ local AI = {
 				Atkspells = {M_SPELL_LIGHTNING_BOLT,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND},
 				shBlasts = {blast=16, blastNearUnitsChance=30, blastNearUnitsChanceMult=10},
 				shLights = {radius=9, lightChance=10, lightChanceMult=10},
-				spellEntriesDef = {{spell=M_SPELL_BLAST,cost=8000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=14000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=24000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_HYPNOTISM,cost=28000,ppl=5,pplSM=0,sR=1},{spell=M_SPELL_SWAMP,cost=32000,ppl=5,pplSM=0,sR=2},
+				spellEntriesDef = {{spell=M_SPELL_BLAST,cost=8000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=26000,ppl=4,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=24000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_HYPNOTISM,cost=28000,ppl=5,pplSM=0,sR=1},{spell=M_SPELL_SWAMP,cost=32000,ppl=5,pplSM=0,sR=2},
 									{spell=M_SPELL_ANGEL_OF_DEATH,cost=200000,ppl=32,pplSM=0,sR=4}},
 									--
-				spellEntriesOff = {{spell=M_SPELL_BLAST,cost=7000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=12000,ppl=2,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=20000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_HYPNOTISM,cost=25000,ppl=8,pplSM=1,sR=1},{spell=M_SPELL_SWAMP,cost=30000,ppl=9,pplSM=1,sR=2},
+				spellEntriesOff = {{spell=M_SPELL_BLAST,cost=7000,ppl=1,pplSM=0,sR=0},{spell=M_SPELL_INSECT_PLAGUE,cost=14000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_LIGHTNING_BOLT,cost=20000,ppl=3,pplSM=0,sR=0},{spell=M_SPELL_HYPNOTISM,cost=25000,ppl=8,pplSM=1,sR=1},{spell=M_SPELL_SWAMP,cost=30000,ppl=9,pplSM=1,sR=2},
 									{spell=M_SPELL_ANGEL_OF_DEATH,cost=200000,ppl=25,pplSM=0,sR=4},--[[{spell=M_SPELL_EARTHQUAKE,cost=120000,ppl=20,pplSM=2,sR=3},]]{spell=M_SPELL_EROSION,cost=110000,ppl=25,pplSM=2,sR=3},{spell=M_SPELL_FIRESTORM,cost=140000,ppl=32,pplSM=2,sR=3}--[[,{spell=M_SPELL_VOLCANO,cost=250000,ppl=40,pplSM=3,sR=4}]]}
 			}
 }
@@ -210,7 +210,7 @@ local PlayersStats = { --reinc cdr (seconds), yin or yang
 local level_completed = false
 local yinYangCDR = 0
 local borderRad = 22
-SET_TIMER_GOING(12*60*45 + 12, 1)
+--SET_TIMER_GOING(12*60*45 + 12, 1)
 
 function _OnTurn(turn)
 
@@ -342,23 +342,24 @@ function _OnTurn(turn)
 	------------------------------------------------------------------------------------------------------------------------
 	
 	if turn == 12 then
-		FooterMsg("Centuries ago, on this very location, the high priests forged a magical rune that would shape the way mana flew through the body. Unfortunately, all of them got murdered by the tribes that inhabited the planet, and the location got lost forever... Until two tribes found it...", 2, 171)
+		--FooterMsg("Centuries ago, on this very location, the high priests forged a magical rune that would shape the way mana flew through the body. Unfortunately, all of them got murdered by the tribes that inhabited the planet, and the location got lost forever... Until two tribes found it...", 2, 171)
 	elseif turn == 12*60 then
-		FooterMsg("Work together and destroy all 6 enemy tribes before you run out of time.", 2, 175)
+		--FooterMsg("Work together and destroy all 6 enemy tribes before you run out of time.", 2, 175)
+		FooterMsg("Work together and destroy all 6 enemy tribes.", 2, 175)
 	elseif turn == 12*120 then
 		FooterMsg("The shaman with yin (offensive) reincarnates after 40 seconds, while the shaman with yan (defensive) reincarnates twice as fast.", 2, 174)
 	end
 	if everySeconds(1) then
 		if not level_completed and (gns.Flags & GNS_LEVEL_COMPLETE ~= 0) then
 			level_completed = true
-			REMOVE_TIMER()
+			--REMOVE_TIMER()
 		end
-		if HAS_TIMER_REACHED_ZERO() and not level_completed then
+		--[[if HAS_TIMER_REACHED_ZERO() and not level_completed then
 			FooterMsg("You did not kill all enemy tribes on time. Your journey ends here...", 2, 174)
 			LOSE()
 			REMOVE_TIMER()
 			killTribe(0) killTribe(1)
-		end
+		end]]
 		BorderRadBehaviour()
 	end
 	--snowing 3 times during level
@@ -479,8 +480,8 @@ function BorderRadBehaviour()
 	end
 end
 
-local YinSpells = {M_SPELL_BLAST,M_SPELL_CONVERT_WILD,M_SPELL_INSECT_PLAGUE,M_SPELL_GHOST_ARMY,M_SPELL_LIGHTNING_BOLT,M_SPELL_SWAMP,M_SPELL_LAND_BRIDGE,M_SPELL_FIRESTORM,M_SPELL_FLATTEN}
-local YangSpells = {M_SPELL_BLAST,M_SPELL_GHOST_ARMY,M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_EARTHQUAKE,M_SPELL_FIRESTORM,M_SPELL_ANGEL_OF_DEATH} --add blizzard
+local YinSpells = {M_SPELL_BLAST,M_SPELL_CONVERT_WILD,M_SPELL_INSECT_PLAGUE,M_SPELL_GHOST_ARMY,M_SPELL_LIGHTNING_BOLT,M_SPELL_SWAMP,M_SPELL_LAND_BRIDGE,M_SPELL_FIRESTORM,M_SPELL_FLATTEN,M_SPELL_SHIELD}
+local YangSpells = {M_SPELL_BLAST,M_SPELL_GHOST_ARMY,M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_WHIRLWIND,M_SPELL_EARTHQUAKE,M_SPELL_FIRESTORM,M_SPELL_ANGEL_OF_DEATH,M_SPELL_LAND_BRIDGE,M_SPELL_CONVERT_WILD} --add blizzard
 
 function YinYangSwap(pn)
 	if yinYangCDR == 0 then
@@ -621,7 +622,7 @@ function attack(attacker)
 			if #G_HUMANS_ALIVE == 1 then target = randomItemFromTable(G_HUMANS_ALIVE) end
 			local troops = countTroops(attacker)
 			if troops > 4 + stage*2 then
-				local numTroops = rndb(4,5) + stage*2 --**
+				local numTroops = rndb(3,4) + stage*2 --**
 				if IS_SHAMAN_AVAILABLE_FOR_ATTACK(attacker) == 0 then WRITE_CP_ATTRIB(attacker, ATTR_AWAY_MEDICINE_MAN, 0) else WRITE_CP_ATTRIB(attacker, ATTR_AWAY_MEDICINE_MAN, btn(rnd() < 80+10*stage)) end
 				local atkType = ATTACK_NORMAL
 				if atkType == ATTACK_NORMAL then
@@ -847,16 +848,16 @@ end
 
 function updateSpellBuckets(s)
 	for tribe = 2,7 do
-		AI_SpellBucketCost(tribe, M_SPELL_BLAST, 1);
+		AI_SpellBucketCost(tribe, M_SPELL_BLAST, 2);
 		AI_SpellBucketCost(tribe, M_SPELL_CONVERT_WILD, 2);
-		AI_SpellBucketCost(tribe, M_SPELL_INSECT_PLAGUE, 6-s);
+		AI_SpellBucketCost(tribe, M_SPELL_INSECT_PLAGUE, 10-s);
 		AI_SpellBucketCost(tribe, M_SPELL_INVISIBILITY, 13-s);
-		AI_SpellBucketCost(tribe, M_SPELL_LIGHTNING_BOLT, 11-s);
-		AI_SpellBucketCost(tribe, M_SPELL_HYPNOTISM, 16-s);
+		AI_SpellBucketCost(tribe, M_SPELL_LIGHTNING_BOLT, 12-s);
+		AI_SpellBucketCost(tribe, M_SPELL_HYPNOTISM, 17-s);
 		AI_SpellBucketCost(tribe, M_SPELL_EARTHQUAKE, 32-s);
 		AI_SpellBucketCost(tribe, M_SPELL_FIRESTORM, 48-s);
-		AI_SpellBucketCost(tribe, M_SPELL_WHIRLWIND, 18-s);
-		AI_SpellBucketCost(tribe, M_SPELL_GHOST_ARMY, 8-s);
+		AI_SpellBucketCost(tribe, M_SPELL_WHIRLWIND, 22-s);
+		AI_SpellBucketCost(tribe, M_SPELL_GHOST_ARMY, 9-s);
 	end
 end
 
