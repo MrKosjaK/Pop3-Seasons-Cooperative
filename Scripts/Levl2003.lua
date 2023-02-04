@@ -18,7 +18,7 @@ local AI = {
 			{
 				tribe = TRIBE_YELLOW,
 				atkTimer = 3500 + (rndb(500,1500)),
-				shamanAtkTimer = {3700,2},
+				shamanAtkTimer = {4700,2},
 				baseMk = {21,14}, --baseMK, rad
 				mainTower = {184,8},
 				wantedTowers = 5,
@@ -48,8 +48,8 @@ local AI = {
 			},
 			{
 				tribe = TRIBE_GREEN,
-				atkTimer = 3000 + (rndb(300,2500)),
-				shamanAtkTimer = {1500,3},
+				atkTimer = 4000 + (rndb(300,2500)),
+				shamanAtkTimer = {3500,3},
 				baseMk = {22,13}, --baseMK, rad
 				mainTower = {236, 56},
 				wantedTowers = 3,
@@ -110,8 +110,8 @@ local AI = {
 			},
 			{
 				tribe = TRIBE_MAGENTA,
-				atkTimer = 4300 + (rndb(0,500)),
-				shamanAtkTimer = {3300,1},
+				atkTimer = 5300 + (rndb(0,500)),
+				shamanAtkTimer = {4300,1},
 				baseMk = {24,16}, --baseMK, rad
 				mainTower = {46, 208},
 				wantedTowers = 5,
@@ -142,7 +142,7 @@ local AI = {
 			{
 				tribe = TRIBE_BLACK,
 				atkTimer = 2200 + (rndb(100,900)),
-				shamanAtkTimer = {2700,2},
+				shamanAtkTimer = {3700,2},
 				baseMk = {25,15}, --baseMK, rad
 				mainTower = {34, 170},
 				wantedTowers = 3,
@@ -203,6 +203,7 @@ local AI = {
 			}
 }
 
+--level vars
 local PlayersStats = { --reinc cdr (seconds), yin or yang
 		[0]= {-1,"none"},{-1,"none"}				
 }
@@ -314,6 +315,7 @@ function _OnTurn(turn)
 		DefensivePreachMarkers()
 		DefendStoneHeads()
 		updateTroopsAndAtkParams()
+		DefensiveMarkerEntries()
 	end
 	if everySeconds(60-stage*10) then
 		if stage > 0 then
@@ -328,6 +330,9 @@ function _OnTurn(turn)
 				end
 			end
 		end
+	end
+	if everySeconds(130-stage*15) then
+		OffensiveMarkerEntries()
 	end
 	if everySeconds(180-stage*10) then
 		OffensivePreachMarkers()
@@ -520,12 +525,40 @@ end
 
 ----------------------------------------------------
 
+function DefensiveMarkerEntries()
+	for k,tribe in ipairs(AI) do
+		if k > 1 and isAlive(k) then
+			if AI_EntryAvailable(k) then
+				if _gsi.Players[k].NumPeopleOfType[M_PERSON_SUPER_WARRIOR] > 4 and rnd() < 70 then
+					MARKER_ENTRIES(k, 0,1,2,-1)
+				end
+				if _gsi.Players[k].NumPeopleOfType[M_PERSON_WARRIOR] > 4 and rnd() < 60 then
+					MARKER_ENTRIES(k, 3,4,5,-1)
+				end
+			end
+		end
+	end
+end
+
+function OffensiveMarkerEntries()
+	for k,tribe in ipairs(AI) do
+		if k > 1 and isAlive(k) then
+			if AI_EntryAvailable(k) then
+				if _gsi.Players[k].NumPeopleOfType[M_PERSON_SUPER_WARRIOR] > 6 and rnd() < 50 then
+					MARKER_ENTRIES(k, 6,7,8,-1)
+				end
+			end
+		end
+	end	
+end
+
 function buildTowers(stage)
 	for k,tribe in ipairs(AI) do
 		if k > 1 and isAlive(k) then
 			local ct = countTowers(k,true)
 			if ct < tribe.wantedTowers then
-				BUILD_DRUM_TOWER(k,randomItemFromTable(tribe.towerMarkers))
+				local towerMk = randomItemFromTable(tribe.towerMarkers)
+				BUILD_DRUM_TOWER(k,markerIdxX(towerMk),markerIdxZ(towerMk))
 			end
 		end
 	end
@@ -563,16 +596,16 @@ function Shamanattack(attacker)
 					WRITE_CP_ATTRIB(attacker, ATTR_DONT_GROUP_AT_DT, 1) WRITE_CP_ATTRIB(attacker, ATTR_GROUP_OPTION, 3)
 					AI_SetTargetParams(attacker,target,true,true)
 					ATTACK(attacker, target, 1, targ, 0, 999, spell1, spell2, spell3, atkType, 0, -1, -1, 0)
-					IncrementShamanAtkVar(attacker,(rndb(2500,4000)) - (stage*rndb(200,400))) --**
+					IncrementShamanAtkVar(attacker,(rndb(2500,4500)) - (stage*rndb(200,400))) --**
 					success = true
 					AI[attacker].shamanAtkTimer[2] = AI[attacker].shamanAtkTimer[2] - 1
-					log_msg(attacker,"shaman atack vs " .. target .. ", spells: " .. spell1 .. " " .. spell2 .. " " .. spell3)
+					--log_msg(attacker,"shaman atack vs " .. target .. ", spells: " .. spell1 .. " " .. spell2 .. " " .. spell3)
 				end
 			end
 		end
 	end
 	
-	if not success then IncrementShamanAtkVar(attacker,450-G_GAMESTAGE*25) LOG("fail shaman atk") end
+	if not success then IncrementShamanAtkVar(attacker,450-G_GAMESTAGE*25) --[[LOG("fail shaman atk")]] end
 end
 
 function IncrementShamanAtkVar(pn,amt)
@@ -630,18 +663,18 @@ function attack(attacker)
 						GIVE_ONE_SHOT(spell1,attacker) GIVE_ONE_SHOT(spell2,attacker) GIVE_ONE_SHOT(spell3,attacker)
 						AI_SetTargetParams(attacker,target,true,true)
 						ATTACK(attacker, target, numTroops, targType, 0, 959+(stage*10), spell1, spell2, spell3, atkType, 0, mk1, mk2, 0)
-						IncrementAtkVar(attacker,(rndb(1800,2800)) - (stage*rndb(200,300))) --**
+						IncrementAtkVar(attacker,(rndb(2800,3800)) - (stage*rndb(400,600))) --**
 						success = true
 						AI[attacker].shamanAtkTimer[1] = getTurn()+rndb(500,800)
 						AI[attacker].shamanAtkTimer[2] = getTurn()+rndb(1,4)
-						log_msg(attacker,"target: " .. target .. ", numTroops: " .. numTroops .. ", targType: " .. targType .. ", spell1: " .. spell1 .. ", spell2: " .. spell2 .. ", spell3: " .. spell3 .. ", atkType: " .. atkType .. ", mk1: " .. mk1 .. ", mk2: " .. mk2)
+						--log_msg(attacker,"target: " .. target .. ", numTroops: " .. numTroops .. ", targType: " .. targType .. ", spell1: " .. spell1 .. ", spell2: " .. spell2 .. ", spell3: " .. spell3 .. ", atkType: " .. atkType .. ", mk1: " .. mk1 .. ", mk2: " .. mk2)
 					end
 				end
 			end
 		end
 	end
 
-	if not success then IncrementAtkVar(attacker,600-G_GAMESTAGE*50) log_msg(attacker,"fail attack") end
+	if not success then IncrementAtkVar(attacker,600-G_GAMESTAGE*50) --[[log_msg(attacker,"fail attack")]] end
 end
 
 function IncrementAtkVar(pn,amt)
@@ -933,6 +966,29 @@ function _OnPostLevelInit(level_id)
 			end
 		end
 	end
+	
+	--marker entries
+	local fwDefMks = {{},{89,90,91},{},{95,96,97},{101,102,103},{},{107,108,109}}
+	local fwOffMks = {{},{92,93,94},{},{98,99,100},{104,105,106},{},{110,111}}
+	local warDefMks = {{},{},{112,113},{114,115,116},{},{117,118},{}}
+
+	for k, tribes in ipairs(AI) do
+		if k > 1 and isAlive(k) then
+			local entryIdx = 0
+			for i = 1,#fwDefMks[k] do
+				SET_MARKER_ENTRY(k,entryIdx, fwDefMks[k][i], fwDefMks[k][i], 0, 0, 2, 0)
+				entryIdx = entryIdx + 1
+			end
+			for i = 1,#fwOffMks[k] do
+				SET_MARKER_ENTRY(k,entryIdx, fwOffMks[k][i], fwOffMks[k][i], 0, 0, 2, 0)
+				entryIdx = entryIdx + 1
+			end
+			for i = 1,#warDefMks[k] do
+				SET_MARKER_ENTRY(k,entryIdx, warDefMks[k][i], -1, 0, math.max(2,G_GAMESTAGE-1), 0, 0)
+				entryIdx = entryIdx + 1
+			end
+		end
+	end
 end
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -942,8 +998,4 @@ end
 
 
 
-
-
 --to do:
-
---troops entries

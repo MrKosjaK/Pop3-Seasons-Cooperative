@@ -232,6 +232,21 @@ function me2c3d(me)
 	return c3d
 end
 
+--marker to XZ.X
+function markerIdxX(marker)
+	local m = MapPosXZ.new()
+	m.Pos = world_coord3d_to_map_idx(marker_to_coord3d(marker))
+	
+	return m.XZ.X
+end
+--marker to XZ.Z
+function markerIdxZ(marker)
+	local m = MapPosXZ.new()
+	m.Pos = world_coord3d_to_map_idx(marker_to_coord3d(marker))
+	
+	return m.XZ.Z
+end
+
 --is marker land
 function isMkLand(mk)
 	local is = false
