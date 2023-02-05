@@ -17,7 +17,7 @@ local AI = {
 			{},
 			{
 				tribe = TRIBE_YELLOW,
-				atkTimer = 3500 + (rndb(500,1500)),
+				atkTimer = 3700 + (rndb(500,1500)),
 				shamanAtkTimer = {4700,2},
 				baseMk = {21,14}, --baseMK, rad
 				mainTower = {184,8},
@@ -80,7 +80,7 @@ local AI = {
 			{
 				tribe = TRIBE_CYAN,
 				atkTimer = 2900 + (rndb(50,800)),
-				shamanAtkTimer = {2700,2},
+				shamanAtkTimer = {3100,2},
 				baseMk = {23,14}, --baseMK, rad
 				mainTower = {154, 116},
 				wantedTowers = 8,
@@ -142,7 +142,7 @@ local AI = {
 			{
 				tribe = TRIBE_BLACK,
 				atkTimer = 2200 + (rndb(100,900)),
-				shamanAtkTimer = {3700,2},
+				shamanAtkTimer = {4700,2},
 				baseMk = {25,15}, --baseMK, rad
 				mainTower = {34, 170},
 				wantedTowers = 3,
@@ -597,7 +597,7 @@ function Shamanattack(attacker)
 					WRITE_CP_ATTRIB(attacker, ATTR_DONT_GROUP_AT_DT, 1) WRITE_CP_ATTRIB(attacker, ATTR_GROUP_OPTION, 3)
 					AI_SetTargetParams(attacker,target,true,true)
 					ATTACK(attacker, target, 1, targ, 0, 999, spell1, spell2, spell3, atkType, 0, -1, -1, 0)
-					IncrementShamanAtkVar(attacker,(rndb(2500,4500)) - (stage*rndb(200,400))) --**
+					IncrementShamanAtkVar(attacker,(rndb(3500,4500)) - (stage*rndb(200,400))) --**
 					success = true
 					AI[attacker].shamanAtkTimer[2] = AI[attacker].shamanAtkTimer[2] - 1
 					--log_msg(attacker,"shaman atack vs " .. target .. ", spells: " .. spell1 .. " " .. spell2 .. " " .. spell3)
@@ -664,7 +664,7 @@ function attack(attacker)
 						GIVE_ONE_SHOT(spell1,attacker) GIVE_ONE_SHOT(spell2,attacker) GIVE_ONE_SHOT(spell3,attacker)
 						AI_SetTargetParams(attacker,target,true,true)
 						ATTACK(attacker, target, numTroops, targType, 0, 959+(stage*10), spell1, spell2, spell3, atkType, 0, mk1, mk2, 0)
-						IncrementAtkVar(attacker,(rndb(2800,3800)) - (stage*rndb(400,600))) --**
+						IncrementAtkVar(attacker,(rndb(3800,4800)) - (stage*rndb(400,600))) --**
 						success = true
 						AI[attacker].shamanAtkTimer[1] = getTurn()+rndb(500,800)
 						AI[attacker].shamanAtkTimer[2] = getTurn()+rndb(1,4)
@@ -943,7 +943,7 @@ function _OnLevelInit(level_id)
 			AI_SetSpyParams(k, false, 0, 100, 128, 1);
 			AI_SetPopulatingParams(k, true, true);
 			
-			SET_DEFENCE_RADIUS(k, 9)
+			SET_DEFENCE_RADIUS(k, iipp(7,9,40,60))
 			AI_SetShamanParams(k, tribe.mainTower[1], tribe.mainTower[2], true, tribe.shBlasts.blast, 12);
 			AI_SetMainDrumTower(k, true, tribe.mainTower[1], tribe.mainTower[2]);
 		end
