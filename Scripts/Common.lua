@@ -131,7 +131,7 @@ function OnFrame()
 				for k,v in ipairs(G_EVERYONE_IN_GAME) do --change to G_HUMANS
 					local clr = 4 if v == 1 then clr = 12 elseif v == 2 then clr = 5 elseif v == 3 then clr = 3 end
 					if v == 4 then clr = 7 elseif v == 5 then clr = 6 elseif v == 6 then clr = 1 elseif v == 7 then clr = 2 end -- remove later
-					local str = "" .. get_player_name(v,ntb(isOnline())) .. ":  " .. tostring(GetPop(v)) --change to true for online(?)
+					local str = "" .. get_player_name(v,ntb(isOnline())) .. ":  " .. tostring(GetPop(v))
 					LbDraw_Text(w - 4 - (string_width(str)), h - (24*k), str, 0);
 					DrawBox(w - 8 - box - (string_width(str)), h - (24*k),box,box,clr)
 				end
