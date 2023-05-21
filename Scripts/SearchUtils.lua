@@ -86,6 +86,8 @@ function CreateAreaInfo()
   return t;
 end
 
+local c_mposxz = MapPosXZ.new();
+
 function GetWoodAreaInfo(x, z, r, tabl)
   if (tabl == nil or type(tabl) ~= "table") then
     return;
@@ -99,7 +101,10 @@ function GetWoodAreaInfo(x, z, r, tabl)
   tabl.hasTrees = false;
   tabl.hasWoodPiles = false;
   
-  SearchMapCells(SQUARE, 0, 0, r, map_xz_to_map_idx(x, z), function(me)
+  c_mposxz.XZ.X = x;
+  c_mposxz.XZ.Z = z;
+  
+  SearchMapCells(SQUARE, 0, 0, r, c_mposxz.Pos, function(me)
     me.MapWhoList:processList(function(t)
       if (t.Owner ~= TRIBE_HOSTBOT) then
         return true;
@@ -143,8 +148,11 @@ function GetPlayerAreaInfo(player, x, z, r, tabl)
   tabl.isEmpty = true;
   tabl.hasPeople = false;
   tabl.hasBuildings = false;
+  
+  c_mposxz.XZ.X = x;
+  c_mposxz.XZ.Z = z;
 
-  SearchMapCells(SQUARE, 0, 0, r, map_xz_to_map_idx(x, z), function(me)
+  SearchMapCells(SQUARE, 0, 0, r, c_mposxz.Pos, function(me)
     me.MapWhoList:processList(function(t)
       if (t.Owner ~= player) then
         return true;
@@ -188,8 +196,11 @@ function GetAllyAreaInfo(player, x, z, r, tabl)
   tabl.isEmpty = true;
   tabl.hasPeople = false;
   tabl.hasBuildings = false;
+  
+  c_mposxz.XZ.X = x;
+  c_mposxz.XZ.Z = z;
 
-  SearchMapCells(SQUARE, 0, 0, r, map_xz_to_map_idx(x, z), function(me)
+  SearchMapCells(SQUARE, 0, 0, r, c_mposxz.Pos, function(me)
     me.MapWhoList:processList(function(t)
       if (are_players_allied(player, t.Owner) == 0) then
         return true;
@@ -230,8 +241,11 @@ function GetEnemyAreaInfo(player, x, z, r, tabl)
   tabl.isEmpty = true;
   tabl.hasPeople = false;
   tabl.hasBuildings = false;
+  
+  c_mposxz.XZ.X = x;
+  c_mposxz.XZ.Z = z;
 
-  SearchMapCells(SQUARE, 0, 0, r, map_xz_to_map_idx(x, z), function(me)
+  SearchMapCells(SQUARE, 0, 0, r, c_mposxz.Pos, function(me)
     me.MapWhoList:processList(function(t)
       if (are_players_allied(player, t.Owner) == 1) then
         return true;

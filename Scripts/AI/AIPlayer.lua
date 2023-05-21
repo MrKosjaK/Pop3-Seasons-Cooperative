@@ -32,6 +32,8 @@ setmetatable(CompPlayer,
   __index = cp_mt
 });
 
+local c_mposxz = MapPosXZ.new();
+
 -- preallocate 12 towers & 8 events.
 function cp_mt:init(player_num)
   if (self.Data[player_num] == nil) then
@@ -323,7 +325,9 @@ function tw_mt:check_for_creation()
   if (self.Stage == 0) then
     if (self.Obj:isNull()) then
       -- will attempt to place a tower shape at given pos, then link its idx
-      local map_idx = map_xz_to_map_idx(self.X, self.Z);
+      c_mposxz.XZ.X = self.X;
+      c_mposxz.XZ.Z = self.Z;
+      --local map_idx = map_xz_to_map_idx(self.X, self.Z);
       local orient = 0;
       if (self.Orient == -1) then
         orient = G_RANDOM(4);
@@ -331,18 +335,18 @@ function tw_mt:check_for_creation()
         orient = self.Orient;
       end
 
-      if (is_map_cell_bldg_markable(getPlayer(self.Owner), map_idx, 0, M_BUILDING_DRUM_TOWER, 0, 0) ~= 0) then
+      if (is_map_cell_bldg_markable(getPlayer(self.Owner), c_mposxz.Pos, 0, M_BUILDING_DRUM_TOWER, 0, 0) ~= 0) then
         -- place tower plan.
-        process_shape_map_elements(map_idx, M_BUILDING_DRUM_TOWER, orient, self.Owner, SHME_MODE_SET_PERM);
+        process_shape_map_elements(c_mposxz.Pos, M_BUILDING_DRUM_TOWER, orient, self.Owner, SHME_MODE_SET_PERM);
 
         -- bind thingidx
-        local me = MAP_ELEM_IDX_2_PTR(map_idx);
+        local me = map_xz_to_map_ptr(c_mposxz);
         self.Obj:set(me.ShapeOrBldgIdx:getThingNum());
         self.Stage = 1;
       end
 	  
 	  -- just in case, check if theres actually already a tower existing.
-	  local me = MAP_ELEM_IDX_2_PTR(map_idx);
+	  local me = map_xz_to_map_ptr(c_mposxz);
 	  local obj = me.ShapeOrBldgIdx:get();
 	  if (obj ~= nil) then
         if (obj.Type == T_BUILDING and obj.Model == M_BUILDING_DRUM_TOWER and obj.Owner == self.Owner) then
@@ -354,8 +358,9 @@ function tw_mt:check_for_creation()
     end
   elseif (self.Stage == 1) then
     if (self.Obj:isNull()) then
-      local map_idx = map_xz_to_map_idx(self.X, self.Z);
-      local me = MAP_ELEM_IDX_2_PTR(map_idx);
+      c_mposxz.XZ.X = self.X;
+      c_mposxz.XZ.Z = self.Z;
+      local me = map_xz_to_map_ptr(c_mposxz);
       local obj = me.ShapeOrBldgIdx:get();
       if (obj ~= nil) then
         if (obj.Type == T_BUILDING and obj.Model == M_BUILDING_DRUM_TOWER and obj.Owner == self.Owner) then
