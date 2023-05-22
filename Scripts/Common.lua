@@ -8,11 +8,6 @@ include("AI\\AIPlayer.lua"); -- AIPlayer class
 include("Libs\\LbCommands.lua"); -- Commands class
 include("ToolBox.lua"); -- Journal, Quests, Achievements classes
 
--- Features
-enable_feature(F_SUPER_WARRIOR_NO_AMENDMENT); -- fix fws not shooting
-enable_feature(F_MINIMAP_ENEMIES); -- who the hell plays with minimap off?
-enable_feature(F_WILD_NO_RESPAWN); -- disable wild respawning, oh boy.
-
 -- Ghost Army
 G_SPELL_CONST[M_SPELL_GHOST_ARMY].Active = SPAC_NORMAL;
 G_SPELL_CONST[M_SPELL_GHOST_ARMY].NetworkOnly = 0;
@@ -27,6 +22,13 @@ local L_SHOW_POPS = true;
 
 -- OnLevelInit executed only once at start of the game (level start not lobby)
 function OnLevelInit(level_id)
+  -- init features only in SP and only at start of level
+  if (am_i_in_network_game() == 0) then
+    -- Features
+    enable_feature(F_SUPER_WARRIOR_NO_AMENDMENT); -- fix fws not shooting
+    enable_feature(F_MINIMAP_ENEMIES); -- who the hell plays with minimap off?
+    enable_feature(F_WILD_NO_RESPAWN); -- disable wild respawning, oh boy.
+  end
   TJournal:Init();
   TJournal:AddEntry("This is Header", "And this is the text after header");
   TJournal:AddEntry("This is Header", "And this is the text after header");
