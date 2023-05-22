@@ -20,14 +20,14 @@ end
 --------------------------------------------------------------------------------------------------------------------------------------------
 --pow 2 turn
 function every2Pow(a)
-  if (_gsi.Counts.GameTurn % 2^a == 0) then
+  if (_gsi.Counts.ProcessThings % 2^a == 0) then
     return true else return false
   end
 end
 
 --pow 2 turn with offset
 function every2PowOffset(pow,offset)
-  local curr_turn = _gsi.Counts.GameTurn
+  local curr_turn = _gsi.Counts.ProcessThings
   local turn_offset = curr_turn-offset
   if (turn_offset % 2^pow == 0) then
     return true
@@ -38,14 +38,14 @@ end
 
 --every x
 function every(a)
-  if (_gsi.Counts.GameTurn % a == 0) then
+  if (_gsi.Counts.ProcessThings % a == 0) then
     return true else return false
   end
 end
 
 --every x seconds
 function everySeconds(a)
-  if (_gsi.Counts.GameTurn % (a*12) == 0) then
+  if (_gsi.Counts.ProcessThings % (a*12) == 0) then
     return true else return false
   end
 end
