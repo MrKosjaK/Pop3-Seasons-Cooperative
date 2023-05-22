@@ -1,7 +1,5 @@
 -- Includes
 include("Globals.lua");
-
-include("assets.lua"); -- Misc useful tools
 include("PSHelpers.lua"); -- PopScript helpers
 include("SearchUtils.lua"); -- Search stuff
 include("AI\\AIPlayer.lua"); -- AIPlayer class
@@ -23,7 +21,7 @@ local L_SHOW_POPS = true;
 -- OnLevelInit executed only once at start of the game (level start not lobby)
 function OnLevelInit(level_id)
   -- init features only in SP and only at start of level
-  if (am_i_in_network_game() == 0) then
+  if (not isOnline()) then
     -- Features
     enable_feature(F_SUPER_WARRIOR_NO_AMENDMENT); -- fix fws not shooting
     enable_feature(F_MINIMAP_ENEMIES); -- who the hell plays with minimap off?

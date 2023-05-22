@@ -312,9 +312,18 @@ local function green_convert(player)
   if (AI_GetVar(player, 3) == 0) then
 	local turn = getTurn();
 	  
-	if (turn < 840) then
-      sham:toggle_converting(true);
-	  SHAMAN_DEFEND(player, 64, 58, TRUE);
+	if (turn < 1440) then
+    sham:toggle_converting(true);
+    if (turn < 720) then
+      SHAMAN_DEFEND(player, 58, 86, TRUE);
+    else
+      local spot = G_RANDOM(3);
+      
+      if (spot == 0) then SHAMAN_DEFEND(player, 68, 140, TRUE);
+      elseif (spot == 1) then SHAMAN_DEFEND(player, 42, 136, TRUE);
+      elseif (spot == 2) then SHAMAN_DEFEND(player, 62, 112, TRUE);
+      end
+    end
 	else
       AI_SetVar(player, 3, 1);
 	  SHAMAN_DEFEND(player, 54, 126, TRUE);

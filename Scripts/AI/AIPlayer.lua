@@ -208,7 +208,7 @@ function sh_mt:process()
 			    if (t.Type == T_PERSON) then
 				  self.CastDelay = 52;
 				  self.SpellCheckCurr = 0;
-				  CREATE_THING_WITH_PARAMS4(T_SPELL, M_SPELL_CONVERT_WILD, s.Owner, t.Pos.D3, 0, 0, 0, 0);
+				  CREATE_THING_WITH_PARAMS4(T_SPELL, M_SPELL_CONVERT_WILD, s.Owner, t.Pos.D3, 10000, 0, 0, 0);
 				  stop_me_search = true;
 				  return false;
 			    end

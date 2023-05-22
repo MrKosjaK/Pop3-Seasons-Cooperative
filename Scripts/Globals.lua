@@ -26,6 +26,8 @@ import(Module_String);
 import(Module_System);
 import(Module_Table);
 
+include("assets.lua"); -- Misc useful tools
+
 -- Global variables
 G_GAMESTAGE = 0; --game always starts in early-game stage
 G_GAME_RESYNC = false;
