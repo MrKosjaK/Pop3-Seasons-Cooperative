@@ -1,6 +1,13 @@
 -- Includes
 include("Globals.lua");
 
+include("assets.lua"); -- Misc useful tools
+include("PSHelpers.lua"); -- PopScript helpers
+include("SearchUtils.lua"); -- Search stuff
+include("AI\\AIPlayer.lua"); -- AIPlayer class
+include("Libs\\LbCommands.lua"); -- Commands class
+include("ToolBox.lua"); -- Journal, Quests, Achievements classes
+
 -- Features
 enable_feature(F_SUPER_WARRIOR_NO_AMENDMENT); -- fix fws not shooting
 enable_feature(F_MINIMAP_ENEMIES); -- who the hell plays with minimap off?
