@@ -1,6 +1,7 @@
 -- Includes
 include("Common.lua");
 include("Snow.lua");
+include("Libs\\LbAreaInfo.lua");
 include("AI\\Scripts\\cyan_083.lua");
 include("AI\\Scripts\\green_083.lua");
 include("AI\\Scripts\\purple_083.lua");

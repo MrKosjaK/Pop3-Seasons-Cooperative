@@ -27,7 +27,7 @@ local cont = getPlayerContainer(TRIBE_PINK);
 local construction_list = cont.PlayerLists[BUILDINGMARKERLIST];
 local people_list = cont.PlayerLists[PEOPLELIST];
 local shapes_without_workers = {};
-local Area = CreateAreaInfo();
+local my_area = create_area_info();
 local my_enemies_table = {TRIBE_YELLOW};
 
 local function get_my_enemy()
@@ -202,14 +202,15 @@ local function purple_mid_attack(player)
   end
   
   -- get info on our midhill first
-  GetEnemyAreaInfo(player, 222, 82, 5, Area);
+  clear_area_info(my_area);
+  get_enemy_area_info(player, 222, 82, 5, my_area);
   
-  if (Area:contains_people()) then
+  if (does_area_contain_people(my_area)) then
     local my_wars = AI_GetUnitCount(player, M_PERSON_WARRIOR);
-    local e_wars = Area:get_person_count(M_PERSON_WARRIOR);
-    local e_fws = Area:get_person_count(M_PERSON_SUPER_WARRIOR);
-    local e_braves = Area:get_person_count(M_PERSON_BRAVE);
-    local e_shaman = Area:get_person_count(M_PERSON_MEDICINE_MAN);
+    local e_wars = my_area[T_PERSON][M_PERSON_WARRIOR];
+    local e_fws = my_area[T_PERSON][M_PERSON_SUPER_WARRIOR];
+    local e_braves = my_area[T_PERSON][M_PERSON_BRAVE];
+    local e_shaman = my_area[T_PERSON][M_PERSON_MEDICINE_MAN];
     
     if (e_fws > 0 and e_wars > 0 and e_shaman == 0) then
       AI_SetVar(player, 11, 1);
@@ -429,15 +430,16 @@ end
 local function purple_defend_base(player)
   AI_SetVar(player, 12, 0);
   
-  GetEnemyAreaInfo(player, 222, 152, 12, Area);
+  clear_area_info(my_area);
+  get_enemy_area_info(player, 222, 152, 12, my_area);
   
-  if (Area:contains_people()) then
+  if (does_area_contain_people(my_area)) then
       -- our base is probably under attack?
-    local e_priests = Area:get_person_count(M_PERSON_RELIGIOUS);
-    local e_fws = Area:get_person_count(M_PERSON_SUPER_WARRIOR);
-    local e_wars = Area:get_person_count(M_PERSON_WARRIOR);
-    local e_braves = Area:get_person_count(M_PERSON_BRAVE);
-    local e_shaman = Area:get_person_count(M_PERSON_MEDICINE_MAN);
+    local e_priests = my_area[T_PERSON][M_PERSON_RELIGIOUS];
+    local e_fws = my_area[T_PERSON][M_PERSON_SUPER_WARRIOR];
+    local e_wars = my_area[T_PERSON][M_PERSON_WARRIOR];
+    local e_braves = my_area[T_PERSON][M_PERSON_BRAVE];
+    local e_shaman = my_area[T_PERSON][M_PERSON_MEDICINE_MAN];
     local my_wars = AI_GetUnitCount(player, M_PERSON_WARRIOR);
     local my_fws = AI_GetUnitCount(player, M_PERSON_SUPER_WARRIOR);
 	

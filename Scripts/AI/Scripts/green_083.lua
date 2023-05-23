@@ -25,7 +25,7 @@ local cont = getPlayerContainer(TRIBE_GREEN);
 local construction_list = cont.PlayerLists[BUILDINGMARKERLIST];
 local people_list = cont.PlayerLists[PEOPLELIST];
 local shapes_without_workers = {};
-local Area = CreateAreaInfo();
+local my_area = create_area_info();
 local my_enemies_table = {TRIBE_RED};
 
 local function get_my_enemy()
@@ -203,12 +203,13 @@ local function green_mid_attack(player)
   end
   
   -- get info on our midhill first
-  GetEnemyAreaInfo(player, 58, 80, 5, Area);
+  clear_area_info(my_area);
+  get_enemy_area_info(player, 58, 80, 5, my_area);
   
-  if (Area:contains_people()) then
+  if (does_area_contain_people(my_area)) then
     local my_priests = AI_GetUnitCount(player, M_PERSON_RELIGIOUS);
-	local e_wars = Area:get_person_count(M_PERSON_WARRIOR);
-	local e_priests = Area:get_person_count(M_PERSON_RELIGIOUS);
+    local e_wars = my_area[T_PERSON][M_PERSON_WARRIOR];
+    local e_priests = my_area[T_PERSON][M_PERSON_RELIGIOUS];
 	
 	if (e_wars > 0 and e_priests == 0) then
 	  AI_SetVar(player, 10, 1);

@@ -1,7 +1,6 @@
 -- Includes
 include("Globals.lua");
 include("PSHelpers.lua"); -- PopScript helpers
-include("SearchUtils.lua"); -- Search stuff
 include("AI\\AIPlayer.lua"); -- AIPlayer class
 include("Libs\\LbCommands.lua"); -- Commands class
 include("ToolBox.lua"); -- Journal, Quests, Achievements classes
