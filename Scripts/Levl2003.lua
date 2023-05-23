@@ -655,9 +655,9 @@ function attack(attacker)
 					if rnd() > 90 and (spell1 ~= M_SPELL_INVISIBILITY and spell1 ~= M_SPELL_SHIELD) then mk1,mk2 = -1,-1 end
 					local targType = -1
 					if countBuildings(target) > 0 then
-						if (NAV_CHECK(attacker,target,ATTACK_BUILDING,0,0) > 0) or atkType ~= ATTACK_NORMAL then targType = ATTACK_BUILDING else targType = ATTACK_PERSON end
+						if (NAV_CHECK(attacker,target,ATTACK_BUILDING,0,0) > 0) then targType = ATTACK_BUILDING else if (NAV_CHECK(attacker,target,ATTACK_PERSON,0,0) > 0) then targType = ATTACK_PERSON end end
 					else
-						if (NAV_CHECK(attacker,target,ATTACK_PERSON,0,0) > 0) or atkType ~= ATTACK_NORMAL then targType = ATTACK_PERSON end
+						if (NAV_CHECK(attacker,target,ATTACK_PERSON,0,0) > 0) then targType = ATTACK_PERSON end
 					end
 					if targType ~= -1 then
 						--if targType == ATTACK_PERSON and allPopOnVehicles(target) then spell1,spell2,spell3 = M_SPELL_INSECT_PLAGUE,M_SPELL_LIGHTNING_BOLT,M_SPELL_INSECT_PLAGUE end
@@ -754,7 +754,7 @@ function updateTroopsAndAtkParams()
 	end
 end
 
-function updateSpellEntries(marker,radius)
+function updateSpellEntries()
 	local s = G_GAMESTAGE
 	
 	for k,tribe in ipairs(AI) do

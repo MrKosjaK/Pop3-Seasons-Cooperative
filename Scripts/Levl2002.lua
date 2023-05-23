@@ -624,7 +624,7 @@ function updateTroopsAndAtkParams()
 	end
 end
 
-function updateSpellEntries(marker,radius)
+function updateSpellEntries()
 	local s = G_GAMESTAGE
 	local pn,marker,radius = tribe1,0,24
 	if IS_SHAMAN_IN_AREA(pn,marker,radius) then

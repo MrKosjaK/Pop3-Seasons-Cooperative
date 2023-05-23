@@ -400,7 +400,7 @@ function GetRidOfNearbyEnemies(pn,radius,successChance)
 		if nilS(pn) then
 			SearchMapCells(SQUARE, 0, 0 , radius, world_coord3d_to_map_idx(getShaman(pn).Pos.D3), function(me)
 				me.MapWhoList:processList(function (t)
-					if t.Type == T_PERSON and t.Model ~= M_PERSON_ANGEL and t.State ~= S_PERSON_WAIT_IN_BLDG then
+					if t.Owner ~= pn and t.Owner ~= TRIBE_HOSTBOT and t.Type == T_PERSON and t.Model ~= M_PERSON_ANGEL and t.State ~= S_PERSON_WAIT_IN_BLDG then
 						if isItemInTable(G_HUMANS_ALIVE,t.Owner) and not casted then
 							GIVE_ONE_SHOT(spell,pn)
 							local s = createThing(T_SPELL,spell,pn,t.Pos.D3,false,false)
