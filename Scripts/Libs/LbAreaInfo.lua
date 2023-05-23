@@ -46,7 +46,7 @@ function get_enemy_area_info(self_owner, x, z, r, area_info)
       end
       
       if (t.Type == 1) then
-        if (is_person_selectable(t) == 1) then
+        if (is_person_selectable(t, TRUE) == 1) then
           area_info[1][t.Model] = area_info[1][t.Model] + 1;
           area_info.hasPeople = true;
           area_info.hasEnemy = true;
