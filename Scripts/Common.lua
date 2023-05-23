@@ -20,7 +20,7 @@ local L_SHOW_POPS = true;
 -- OnLevelInit executed only once at start of the game (level start not lobby)
 function OnLevelInit(level_id)
   -- init features only in SP and only at start of level
-  if (not isOnline()) then
+  if (isOnline() == 0) then
     -- Features
     enable_feature(F_SUPER_WARRIOR_NO_AMENDMENT); -- fix fws not shooting
     enable_feature(F_MINIMAP_ENEMIES); -- who the hell plays with minimap off?
@@ -71,14 +71,22 @@ function OnLevelInit(level_id)
 		log_msg(8,"The level can not be started. It requires " .. G_NUM_OF_HUMANS_FOR_THIS_LEVEL .. " humans cooperating.")
 	end
 	-- REMOVE LATER
-	set_player_name(0,"mrkosjak",ntb(isOnline()))
-	set_player_name(1,"map_pepe",ntb(isOnline()))
-	for i = 2,3 do
-		if isHuman(i) then
-			local name = "nici" if i == 3 then name = "leaf" end
-			set_player_name(i,name,ntb(isOnline()))
-		end
-	end
+  if (isOnline() == 0) then
+	  set_player_name(0,"mrkosjak", false)
+	  set_player_name(1,"map_pepe", false)
+    set_player_name(2,"nici", false);
+    
+    set_player_name(4,"Tiyao", false)
+    set_player_name(5,"Toktai", false)
+    set_player_name(6,"Sahel",false)
+    set_player_name(7,"Nomel",false)
+  else
+    set_player_name(4,"Tiyao", true)
+    set_player_name(5,"Toktai", true)
+    set_player_name(6,"Sahel",true)
+    set_player_name(7,"Nomel",true)
+  end
+  
 	-- AI custom names
 	for i = 2,3 do
 		if not isHuman(i) then
@@ -89,10 +97,6 @@ function OnLevelInit(level_id)
 			end
 		end
 	end
-	set_player_name(4,"Tiyao",ntb(isOnline()))
-	set_player_name(5,"Toktai",ntb(isOnline()))
-	set_player_name(6,"Sahel",ntb(isOnline()))
-	set_player_name(7,"Nomel",ntb(isOnline()))
 	
 	if _OnPostLevelInit ~= nil then _OnPostLevelInit(level_id); end
 end
