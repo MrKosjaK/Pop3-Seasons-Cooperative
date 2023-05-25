@@ -84,7 +84,7 @@ local function purple_look_for_buildings(player)
 end
 
 local function purple_main_attack(player)
-  if (AI_GetVar(player, 1) == 0 and AI_GetVar(player, 12) == 1) then
+  if (AI_GetVar(player, 1) == 0 or AI_GetVar(player, 11) == 1 or AI_GetVar(player, 12) == 1) then
     return;
   end
   
@@ -502,7 +502,7 @@ local function purple_check_my_enemies(player)
     -- yellow died.
     for i = 1, #my_enemies_table do
       if (my_enemies_table[i] == TRIBE_YELLOW) then
-        my_enemies_table[i] = nil;
+        table.remove(my_enemies_table, i);
       end
     end
   end
@@ -517,7 +517,7 @@ local function purple_check_my_enemies(player)
     -- blue died.
     for i = 1, #my_enemies_table do
       if (my_enemies_table[i] == TRIBE_BLUE) then
-        my_enemies_table[i] = nil;
+        table.remove(my_enemies_table, i);
       end
     end
   end
@@ -526,7 +526,7 @@ local function purple_check_my_enemies(player)
     -- blue died.
     for i = 1, #my_enemies_table do
       if (my_enemies_table[i] == TRIBE_RED) then
-        my_enemies_table[i] = nil;
+        table.remove(my_enemies_table, i);
       end
     end
   end

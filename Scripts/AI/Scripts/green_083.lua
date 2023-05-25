@@ -351,7 +351,7 @@ local function green_check_my_enemies(player)
     -- red died.
     for i = 1, #my_enemies_table do
       if (my_enemies_table[i] == TRIBE_RED) then
-        my_enemies_table[i] = nil;
+        table.remove(my_enemies_table, i);
       end
     end
   end
@@ -366,7 +366,7 @@ local function green_check_my_enemies(player)
     -- blue died.
     for i = 1, #my_enemies_table do
       if (my_enemies_table[i] == TRIBE_BLUE) then
-        my_enemies_table[i] = nil;
+        table.remove(my_enemies_table, i);
       end
     end
   end
@@ -375,7 +375,7 @@ local function green_check_my_enemies(player)
     -- blue died.
     for i = 1, #my_enemies_table do
       if (my_enemies_table[i] == TRIBE_YELLOW) then
-        my_enemies_table[i] = nil;
+        table.remove(my_enemies_table, i);
       end
     end
   end

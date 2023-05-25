@@ -141,7 +141,7 @@ end
 
 local function cyan_main_attack(player)
   -- this one will perform full navigation check before attacking
-  if (AI_GetVar(player, 9) == 0 or AI_GetVar(player, 11) == 1) then
+  if (AI_GetVar(player, 9) == 0 or AI_GetVar(player, 11) == 1 or AI_GetVar(player, 10) == 1) then
     return;
   end
   
@@ -188,7 +188,7 @@ local function cyan_main_attack(player)
 	  if (my_priests >= 4 and my_fws >= 2) then
 	    --LOG("MAIN ATTACK P3");
 	    AI_SetAttackFlags(player, 1, 0, 0);
-	    AI_SetAways(player, 0, 0, 80, 0, 20);
+	    AI_SetAways(player, 0, 0, 80, 20, 0);
 		AI_SetShamanAway(player, false);
 		
 		ATTACK(player, target, math.min(16, (my_priests + my_fws)), ATTACK_BUILDING, M_BUILDING_SUPER_TRAIN, 999, 0, 0, 0, ATTACK_NORMAL, 0, 30, -1, 0);
@@ -211,7 +211,7 @@ local function cyan_main_attack(player)
 	  if (my_priests >= 2 and my_fws >= 4) then
 	    --LOG("MAIN ATTACK P5");
 	    AI_SetAttackFlags(player, 1, 0, 0);
-	    AI_SetAways(player, 0, 0, 20, 0, 80);
+	    AI_SetAways(player, 0, 0, 20, 80, 0);
 		AI_SetShamanAway(player, false);
 		
 		ATTACK(player, target, math.min(12, (my_priests + my_fws)), ATTACK_BUILDING, M_BUILDING_TEMPLE, 999, 0, 0, 0, ATTACK_NORMAL, 0, 30, -1, 0);
@@ -222,7 +222,7 @@ local function cyan_main_attack(player)
 	  if (my_priests >= 2 and my_fws >= 2) then
 	    --LOG("MAIN ATTACK P6");
 	    AI_SetAttackFlags(player, 1, 0, 0);
-	    AI_SetAways(player, 30, 0, 20, 0, 50);
+	    AI_SetAways(player, 30, 0, 20, 50, 0);
 		AI_SetShamanAway(player, false);
 		
 		ATTACK(player, target, math.min(18, 7 + G_RANDOM(12)), ATTACK_BUILDING, M_BUILDING_SUPER_TRAIN, 999, 0, 0, 0, ATTACK_NORMAL, 0, 30, -1, 0);
@@ -553,7 +553,7 @@ local function cyan_check_my_enemies(player)
     -- blue died.
     for i = 1, #my_enemies_table do
       if (my_enemies_table[i] == TRIBE_BLUE) then
-        my_enemies_table[i] = nil;
+        table.remove(my_enemies_table, i);
       end
     end
   end
@@ -568,7 +568,7 @@ local function cyan_check_my_enemies(player)
     -- yellow died.
     for i = 1, #my_enemies_table do
       if (my_enemies_table[i] == TRIBE_YELLOW) then
-        my_enemies_table[i] = nil;
+        table.remove(my_enemies_table, i);
       end
     end
   end
@@ -577,7 +577,7 @@ local function cyan_check_my_enemies(player)
     -- yellow died.
     for i = 1, #my_enemies_table do
       if (my_enemies_table[i] == TRIBE_RED) then
-        my_enemies_table[i] = nil;
+        table.remove(my_enemies_table, i);
       end
     end
   end
