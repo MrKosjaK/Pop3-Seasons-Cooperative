@@ -1,102 +1,122 @@
-Cmds = 
+local cmd_data =
 {
-  Command = Commands.new(),
-  CTI = CmdTargetInfo.new(),
-  Idx = 0,
+  Data = { Commands.new(), Commands.new(), Commands.new(), Commands.new(), Commands.new(), Commands.new(), Commands.new(), Commands.new() },
+  Info = CmdTargetInfo.new(),
+  Count = 0
 };
 
-local cmd_mt = {};
+local c_xz = MapPosXZ.new();
+local c_me = nil;
+local c_thing = nil;
 
-function cmd_mt:clear_person_commands(t)
-  self.Idx = 0;
-  remove_all_persons_commands(t);
+local function clear_target_cache()
+  local u = cmd_data.Info;
+  u.TargetCoord.Xpos = 0;
+  u.TargetCoord.Zpos = 0;
+  u.TargetIdx:set(0);
+  u.TIdxSize.CellsX = 0;
+  u.TIdxSize.CellsZ = 0;
+  u.TIdxSize.MapIdx = 0;
+  u.TMIdxs.MapIdx = 0;
+  u.TMIdxs.TargetIdx:set(0);
 end
 
-function cmd_mt:get_person_idx(t)
-  -- check the amount of commands person has
-  local cmds = 0;
-  for i = 0, 7 do
-    if (t.u.Pers.CmdIdxs[i] ~= nil) then
-	  cmds = cmds + 1;
+function cmd_clear_cache()
+  for i,k in ipairs(cmd_data.Data) do
+    k.CommandType = 0;
+  end
+  
+  cmd_data.Count = 0;
+  clear_target_cache();
+end
+
+function cmd_set_next_command(_cmd_type, _x, _z, _flags)
+  if (cmd_data.Count < 8) then cmd_data.Count = cmd_data.Count + 1; else do return; end end
+  
+  clear_target_cache();
+  
+  local cmd = cmd_data.Data[cmd_data.Count];
+  
+  if (_cmd_type == 22) then
+    c_xz.XZ.X = _x;
+    c_xz.XZ.Z = _z;
+    
+    c_me = map_xz_to_map_ptr(c_xz);
+    c_me.MapWhoList:processList(function(t)
+      if (t.Type == 4) then
+        cmd_data.Info.TargetIdx:set(t.ThingNum);
+        cmd_data.Info.TMIdxs.MapIdx = c_xz.Pos;
+        return false;
+      end
+      
+      return true;
+    end);
+  end
+  
+  if (_cmd_type == 27) then
+    c_xz.XZ.X = _x;
+    c_xz.XZ.Z = _z;
+    
+    c_me = map_xz_to_map_ptr(c_xz);
+    c_me.MapWhoList:processList(function(t)
+      if (t.Type == 5) then
+        if (t.Model == 9) then
+          cmd_data.Info.TargetIdx:set(t.ThingNum);
+          return false;
+        end
+      end
+      
+      return true;
+    end);
+  end
+  
+  if (_cmd_type == 8) then
+    c_xz.XZ.X = _x;
+    c_xz.XZ.Z = _z;
+    
+    c_me = map_xz_to_map_ptr(c_xz);
+    if (not c_me.ShapeOrBldgIdx:isNull()) then
+      c_thing = c_me.ShapeOrBldgIdx:get();
+      if (c_thing.Type == T_BUILDING) then
+        cmd_data.Info.TargetIdx:set(c_thing.ThingNum);
+      end
     end
   end
   
-  self.Idx = cmds;
-end
-
-function cmd_mt:get_commands_amount(t)
-  local cmds = 0;
-  for i = 0, 7 do
-    if (t.u.Pers.CmdIdxs[i] ~= nil) then
-	  cmds = cmds + 1;
+  if (_cmd_type == 6 or _cmd_type == 10) then
+    c_xz.XZ.X = _x;
+    c_xz.XZ.Z = _z;
+    
+    c_me = map_xz_to_map_ptr(c_xz);
+    if (not c_me.ShapeOrBldgIdx:isNull()) then
+      cmd_data.Info.TMIdxs.TargetIdx:set(c_me.ShapeOrBldgIdx:getThingNum());
     end
+    
+    cmd_data.Info.TMIdxs.MapIdx = c_xz.Pos;
   end
   
-  return cmds;
-end
-
-function cmd_mt:patrol_point(t, c2d)
-  if (self.Idx < 8) then
-    self.CTI.TargetCoord.Xpos = c2d.Xpos;
-	self.CTI.TargetCoord.Zpos = c2d.Zpos;
-	
-	self.CTI.TIdxSize.MapIdx = world_coord2d_to_map_idx(c2d);
-	self.CTI.TIdxSize.CellsX = 6;
-	self.CTI.TIdxSize.CellsZ = 6;
-	
-	update_cmd_list_entry(self.Command, CMD_GUARD_AREA_PATROL, self.CTI, 0);
-	
-	t.Flags = t.Flags | TF_RESET_STATE;
-	add_persons_command(t, self.Command, self.Idx);
-	self.Idx = self.Idx + 1;
+  if (_cmd_type == 3 or _cmd_type == 7 or _cmd_type == 9 or _cmd_type == 13 or _cmd_type == 15 or _cmd_type == 17 or _cmd_type == 18 or _cmd_type == 23 or _cmd_type == 25) then
+    cmd_data.Info.TargetCoord.Xpos = ((_x << 8) & 0xfe00);
+    cmd_data.Info.TargetCoord.Zpos = ((_z << 8) & 0xfe00);
   end
-end
-
-function cmd_mt:patrol_circle(t, x, z)
-  if (self.Idx < 8) then
-    self.CTI.TIdxSize.MapIdx = map_xz_to_map_idx(x, z);
-	self.CTI.TIdxSize.CellsX = 6;
-	self.CTI.TIdxSize.CellsZ = 6;
-	
-	update_cmd_list_entry(self.Command, CMD_GUARD_AREA, self.CTI, 0);
-	
-	t.Flags = t.Flags | TF_RESET_STATE;
-	add_persons_command(t, self.Command, self.Idx);
-	self.Idx = self.Idx + 1;
-  end
-end
-
-function cmd_mt:construct_building(t, target_thing)
-  if (self.Idx < 8) then
-    self.CTI.TargetIdx:set(0);
-    self.CTI.TMIdxs.TargetIdx:set(target_thing.ThingNum);
-	self.CTI.TMIdxs.MapIdx = world_coord2d_to_map_idx(target_thing.Pos.D2);
-	
-	update_cmd_list_entry(self.Command, CMD_BUILD_BUILDING, self.CTI, 0);
-	
-	t.Flags = t.Flags | TF_RESET_STATE;
-	add_persons_command(t, self.Command, self.Idx);
-	self.Idx = self.Idx + 1;
-  end
-end
-
-function cmd_mt:attack_person(t, victim_idx)
-  if (self.Idx < 8) then
-    self.CTI.TargetIdx:set(victim_idx);
-    self.CTI.TMIdxs.TargetIdx:set(victim_idx);
   
-    update_cmd_list_entry(self.Command, CMD_ATTACK_TARGET, self.CTI, 0);
-  
-    t.Flags = t.Flags | TF_RESET_STATE;
-    add_persons_command(t, self.Command, self.Idx);
-    self.Idx = self.Idx + 1;
+  if (_cmd_type == 11 or  _cmd_type == 19) then
+    c_xz.XZ.X = _x;
+    c_xz.XZ.Z = _z;
+    cmd_data.Info.TIdxSize.CellsX = 4;
+    cmd_data.Info.TIdxSize.CellsZ = 4;
+    cmd_data.Info.TIdxSize.MapIdx = c_xz.Pos;
   end
+  
+  update_cmd_list_entry(cmd, _cmd_type, cmd_data.Info, _flags);
 end
 
-setmetatable(Cmds,
-{
-  __index = cmd_mt,
-  __call = function(t, ...)
-    -- nothing.
-  end,
-});
+function cmd_dispatch_commands(_t)
+  remove_all_persons_commands(_t);
+  
+  for i = 1, cmd_data.Count do
+    add_persons_command(_t, cmd_data.Data[i], i-1);
+  end
+  
+  set_person_top_state(_t);
+end

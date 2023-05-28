@@ -51,7 +51,7 @@ local function purple_look_for_buildings(player)
       shapes_without_workers[#shapes_without_workers + 1] = t;
       return true;
     end
-      
+	  
     return true;
   end);
   
@@ -64,12 +64,13 @@ local function purple_look_for_buildings(player)
     end
 	
     if (t.Model == M_PERSON_BRAVE) then
-      if (t.State == S_PERSON_WAIT_AT_POINT) then
+      if (is_person_waiting_for_command(t)) then
         local shape = shapes_without_workers[#shapes_without_workers];
 		
-		-- command brave here i guessorino
-        Cmds:clear_person_commands(t);
-        Cmds:construct_building(t, shape);
+        -- command brave here i guessorino
+        cmd_clear_cache();
+        cmd_set_next_command(CMD_BUILD_BUILDING, (shape.Pos.D2.Xpos >> 8) & 0xfe, (shape.Pos.D2.Zpos >> 8) & 0xfe, 0);
+        cmd_dispatch_commands(t);
 		
         peeps_per_shape = peeps_per_shape - 1;
         if (peeps_per_shape == 0) then
@@ -79,6 +80,7 @@ local function purple_look_for_buildings(player)
         return true;
       end
     end
+    
     return true;
   end);
 end
