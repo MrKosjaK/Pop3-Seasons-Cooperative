@@ -1,6 +1,6 @@
 @echo off
 
-SET curr_path=%CD%
+SET curr_path=%~dp0
 
 ECHO Copying single player formatted levels into multiplayer ones!
 
