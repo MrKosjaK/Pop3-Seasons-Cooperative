@@ -7,10 +7,10 @@ SET CURR_PATH=%~dp0
 SET WORK_DIR=%LocalAppData%\Bullfrog\Populous
 SET LVL_PATH=%CURR_PATH%levels
 SET LANG_PATH=%CURR_PATH%language
-SET OBJ_PATH = %CURR_PATH%objects
-SET SCR_PATH = %CURR_PATH%scripts
-SET SND_PATH = %CURR_PATH%sounds
-SET DATA_PATH = %CURR_PATH%data
+SET OBJ_PATH=%CURR_PATH%objects
+SET SCR_PATH=%CURR_PATH%scripts
+SET SND_PATH=%CURR_PATH%sounds
+SET DATA_PATH=%CURR_PATH%data
 
 :: Data
 ECHO.
@@ -53,6 +53,9 @@ ECHO Copying object files...
 :: Scripts
 ECHO.
 ECHO Copying lua script files...
+COPY "%SCR_PATH%\globals.lua" "%WORK_DIR%\scripts"
+COPY "%SCR_PATH%\common.lua" "%WORK_DIR%\scripts"
+COPY "%SCR_PATH%\level_1.lua" "%WORK_DIR%\scripts"
 
 :: Sound
 ECHO.
