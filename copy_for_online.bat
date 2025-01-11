@@ -78,6 +78,7 @@ ECHO.
 ECHO Copying lua script files...
 COPY "%SCR_PATH%\globals.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\common.lua" "%WORK_DIR%\scripts"
+COPY "%SCR_PATH%\lb_box.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\pop_helper.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\level_1.lua" "%WORK_DIR%\scripts"
 

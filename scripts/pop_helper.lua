@@ -1,18 +1,33 @@
--- shows scores of each tribe
+-- detailed information about tribe's progression
+include("lb_box.lua");
 
-local win_box_style = BorderLayout.new();
 
-win_box_style.TopLeft = 713;
-win_box_style.TopRight = win_box_style.TopLeft + 1;
-win_box_style.BottomLeft = win_box_style.TopLeft + 2;
-win_box_style.BottomRight = win_box_style.TopLeft + 3;
-win_box_style.Top = win_box_style.TopLeft + 4;
-win_box_style.Bottom = win_box_style.TopLeft + 5;
-win_box_style.Left = win_box_style.TopLeft + 6;
-win_box_style.Right = win_box_style.TopLeft + 7;
-win_box_style.Centre = win_box_style.TopLeft + 8;
+local win_box_style = create_layout(713);
+local player_collection_data = {};
 
-local rect_area = TbRect.new();
+for i = 0, 7 do
+  player_collection_data[i] =
+  {
+    PopStamps = {},
+    BldgStamps = {},
+  };
+end
+
+local function add_population_stamp()
+  for i = 0, 7 do
+    local ps = player_collection_data[i].PopStamps;
+    ps[#ps + 1] = getPlayer(i).NumPeople;
+  end
+end
+
+function display_population_graph()
+  
+end
+
+
+
+
+local rect_area = create_rectangle(250, 420, 0, 0);
 local box_sizes = { 250, 420 };
 
 local player_rects =
