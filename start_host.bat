@@ -28,7 +28,7 @@ SET /p PLAYER_NUM=Enter the num of the tribe to play as (1 = Blue, 2 = Red, 3 = 
 ECHO Tribe is set to: %PLAYER_NUM%
 ECHO.
 
-START "" %CURR_PATH%\pop3.exe /h %PORT% /n %NICK% /pn %PLAYER_NUM% /mod Pop3-Seasons-Cooperative /multi
+START "" "%CURR_PATH%\pop3.exe" /h %PORT% /n %NICK% /pn %PLAYER_NUM% /mod Pop3-Seasons-Cooperative /multi
 POPD
 
 ECHO Launching game as host...
