@@ -1,7 +1,6 @@
 -- includes
 include("globals.lua");
 
-
 -- main hooks
 
 -- triggered on level initialization
