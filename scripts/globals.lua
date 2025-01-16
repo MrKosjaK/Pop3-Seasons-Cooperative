@@ -32,3 +32,21 @@ G_CONST = constants();
 G_SPELL_CONST = spells_type_info();
 G_BLDG_CONST = building_type_info();
 G_ENCY = encyclopedia_info();
+G_NSI = gnsi();
+
+-- global function
+function set_level_unable_to_complete()
+  G_NSI.GameParams.Flags2 = G_NSI.GameParams.Flags2 | GPF2_GAME_NO_WIN;
+end
+
+function set_level_able_to_complete()
+  G_NSI.GameParams.Flags2 = G_NSI.GameParams.Flags2 & ~GPF2_GAME_NO_WIN;
+end
+
+function set_level_unable_to_lose()
+  G_NSI.GameParams.Flags3 = G_NSI.GameParams.Flags3 & ~GPF3_NO_GAME_OVER_PROCESS;
+end
+
+function set_level_able_to_lose()
+  G_NSI.GameParams.Flags3 = G_NSI.GameParams.Flags3 | GPF3_NO_GAME_OVER_PROCESS;
+end
