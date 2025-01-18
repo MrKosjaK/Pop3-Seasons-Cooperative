@@ -7,6 +7,7 @@ local SHAM_ORIG_POS = {};
 local SHAM_CURR_POS = {};
 local SHAM_ORDER = {};
 
+
 -- main hooks
 
 -- triggered on level initialization
@@ -62,14 +63,20 @@ function OnTurn()
         return true;
       end);
       
-      for i = 0,7 do
-        if (getPlayer(i).NumPeople > 0) then
-          set_player_reinc_site_on(getPlayer(i));
-          mark_reincarnation_site_mes(getPlayer(i).ReincarnSiteCoord, i, MARK);
-          set_players_shaman_initial_command(getPlayer(i));
+      for i = 1, #SHAM_CURR_POS do
+        local n = SHAM_ORDER[i];
+        if (getPlayer(n).NumPeople > 0) then
+          set_player_reinc_site_on(getPlayer(n));
+          getPlayer(n).ReincarnSiteCoord.Xpos = SHAM_CURR_POS[i].Xpos;
+          getPlayer(n).ReincarnSiteCoord.Zpos = SHAM_CURR_POS[i].Zpos;
+          mark_reincarnation_site_mes(getPlayer(n).ReincarnSiteCoord, n, MARK);
+          set_players_shaman_initial_command(getPlayer(n));
         end
       end
       
+      
+      set_level_able_to_complete();
+      set_level_able_to_lose();
       GAME_STARTED = false;
       set_game_state(GM_STATE_GAME);
     end
@@ -140,9 +147,9 @@ function OnKeyUp(key)
     else
       -- forward
       if (key == LB_KEY_E) then
-        for i,k in ipairs(SHAM_CURR_POS) do
-          local value = ((i + 1) % 5);
-          if (value == 0) then value = 1; end
+        for i = 1, #SHAM_CURR_POS do
+          local value = (i % #SHAM_CURR_POS) + 1;
+          --if (value == 0) then value = 1; end
           log(string.format("%i", value));
           --set_person_standing_anim(getShaman(SHAM_ORDER[i]));
           move_thing_within_mapwho(getShaman(SHAM_ORDER[i]), SHAM_CURR_POS[value]);
@@ -151,7 +158,7 @@ function OnKeyUp(key)
           --set_person_standing_anim(getShaman(SHAM_ORDER[i]));
         end
         
-        for i,k in ipairs(SHAM_CURR_POS) do
+        for i = 1, #SHAM_CURR_POS do
           -- update positions
           SHAM_CURR_POS[i].Xpos = getShaman(SHAM_ORDER[i]).Pos.D3.Xpos;
           SHAM_CURR_POS[i].Zpos = getShaman(SHAM_ORDER[i]).Pos.D3.Zpos;

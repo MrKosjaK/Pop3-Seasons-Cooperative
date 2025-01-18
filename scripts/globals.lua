@@ -44,9 +44,9 @@ function set_level_able_to_complete()
 end
 
 function set_level_unable_to_lose()
-  G_NSI.GameParams.Flags3 = G_NSI.GameParams.Flags3 & ~GPF3_NO_GAME_OVER_PROCESS;
+  G_NSI.GameParams.Flags3 = G_NSI.GameParams.Flags3 | GPF3_NO_GAME_OVER_PROCESS;
 end
 
 function set_level_able_to_lose()
-  G_NSI.GameParams.Flags3 = G_NSI.GameParams.Flags3 | GPF3_NO_GAME_OVER_PROCESS;
+  G_NSI.GameParams.Flags3 = G_NSI.GameParams.Flags3 & ~GPF3_NO_GAME_OVER_PROCESS;
 end
