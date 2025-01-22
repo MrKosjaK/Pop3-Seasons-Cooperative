@@ -1,6 +1,7 @@
 -- includes
 include("globals.lua");
 include("game_state.lua");
+include("event_logger.lua");
 
 local GAME_STARTED = false;
 local SHAM_ORIG_POS = {};
@@ -18,6 +19,7 @@ function OnLevelInit(level_id)
     -- let's prepare level for lobby
     set_level_unable_to_complete();
     set_level_unable_to_lose();
+    create_log_event(EVENT_TYPE_INFO, "Welcome to the Seasons Lobby!", 64);
     
     -- freeze all units and make them unselectable
     ProcessGlobalTypeList(T_PERSON, function(t_thing)
@@ -78,6 +80,7 @@ function OnTurn()
       set_level_able_to_complete();
       set_level_able_to_lose();
       GAME_STARTED = false;
+      create_log_event(EVENT_TYPE_INFO, "Game has been started!", 64);
       set_game_state(GM_STATE_GAME);
     end
   elseif (is_game_state(GM_STATE_GAME)) then
@@ -86,6 +89,7 @@ function OnTurn()
   end
 end
 
+mouse_c2d = get_mouse_pointed_at_coord2d();
 
 -- triggered on thing spawning
 function OnCreateThing(t_thing)
@@ -134,6 +138,8 @@ function OnFrame()
     
     LbDraw_Text(x, y, str, 0);
   end
+  
+  draw_log_events(w, h, guiW);
 end
 
 
