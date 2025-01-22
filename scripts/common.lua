@@ -97,9 +97,43 @@ function OnCreateThing(t_thing)
   if (ScrOnCreateThing ~= nil) then ScrOnCreateThing(t_thing); end
 end
 
+
+local clr = TbColour.new();
 -- triggered on every frame
 function OnFrame()
-  if (ScrOnFrame ~= nil) then ScrOnFrame(); end
+  local w,h,guiW = ScreenWidth(), ScreenHeight(), GFGetGuiWidth();
+  
+  if (ScrOnFrame ~= nil) then ScrOnFrame(w, h, guiW); end
+  
+  if (is_game_state(GM_STATE_SETUP)) then
+    --LbDraw_VerticalLine((w >> 1) + (guiW >> 1), 0, h, clr);
+    local str = "Press [Space] to start the game";
+    
+    PopSetFont(3);
+    
+    local str_width = string_width(str);
+    local x = (w >> 1) - (str_width >> 1) + (guiW >> 1);
+    local y = (h - 96);
+    
+    LbDraw_Text(x, y, str, 0);
+    
+    str = "Press [Q] to rotate backward";
+    
+    PopSetFont(4);
+    str_width = string_width(str);
+    y = y - CharHeight2();
+    x = (w >> 1) - (str_width) - (str_width >> 2) + (guiW >> 1);
+    --LbDraw_VerticalLine(x + (str_width >> 1), 0, h, clr);
+    
+    LbDraw_Text(x, y, str, 0);
+    
+    str = "Press [E] to rotate forward"
+    str_width = string_width(str);
+    x = (w >> 1) + (str_width >> 1) - (str_width >> 2) + (guiW >> 1);
+    --LbDraw_VerticalLine(x + (str_width >> 1), 0, h, clr);
+    
+    LbDraw_Text(x, y, str, 0);
+  end
 end
 
 

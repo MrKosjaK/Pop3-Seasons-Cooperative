@@ -17,7 +17,7 @@ function ScrOnCreateThing(t_thing)
   log(string.format("T: %i, M: %i", t_thing.Type, t_thing.Model));
 end
 
-function ScrOnFrame()
+function ScrOnFrame(w, h, guiW)
   PopSetFont(4);
   draw_population_scores();
   LbDraw_Text(150, 150, string.format("Turn: %i", _TURN), 0);
