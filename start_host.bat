@@ -5,7 +5,7 @@ ECHO Follow through instructions to configure settings.
 ECHO.
 ECHO.
 
-SET NICK=Player
+SET NICK=Host
 SET PORT=7575
 SET PLAYER_NUM=1
 
@@ -18,7 +18,7 @@ SET /p PORT=Enter port for hosting (default: 7575):
 ECHO Port is set to: %PORT%
 ECHO.
 
-SET /p NICK=Enter your player nickname (default: Player):
+SET /p NICK=Enter your player nickname (default: Host):
 
 ECHO Nickname is set to: %NICK%
 ECHO.
@@ -32,5 +32,3 @@ START "" "%CURR_PATH%\pop3.exe" /h %PORT% /n %NICK% /pn %PLAYER_NUM% /mod Pop3-S
 POPD
 
 ECHO Launching game as host...
-
-PAUSE

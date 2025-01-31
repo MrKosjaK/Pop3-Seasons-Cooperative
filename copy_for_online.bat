@@ -91,5 +91,3 @@ ECHO Copying sound files...
 
 ECHO.
 ECHO Finished preparing for online testing!
-
-PAUSE

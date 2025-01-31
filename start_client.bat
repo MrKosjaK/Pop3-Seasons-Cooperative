@@ -38,5 +38,3 @@ START "" "%CURR_PATH%\pop3.exe" /j %IP%:%PORT% /n %NICK% /pn %PLAYER_NUM% /mod P
 POPD
 
 ECHO Launching game as client...
-
-PAUSE

@@ -32,6 +32,9 @@ function OnLevelInit(level_id)
     end);
     
     for i = 0, 7 do
+      if (G_PLR[i].DeadCount > 0) then
+        G_PLR[i].PlayerType = NO_PLAYER;
+      end
       if (getPlayer(i).NumPeople > 0 and getShaman(i)) then
         set_player_reinc_site_off(getPlayer(i));
         mark_reincarnation_site_mes(getPlayer(i).ReincarnSiteCoord, OWNER_NONE, UNMARK);
@@ -54,7 +57,7 @@ end
 function OnTurn()
   if (is_game_state(GM_STATE_SETUP)) then
     if (GAME_STARTED) then
-      get_info_on_players_count();
+      --get_info_on_players_count();
     
       ProcessGlobalTypeList(T_PERSON, function(t_thing)
         remove_all_persons_commands(t_thing);
@@ -78,6 +81,7 @@ function OnTurn()
         end
       end
       
+      spawn_players_initial_stuff();
       
       set_level_able_to_complete();
       set_level_able_to_lose();
@@ -112,33 +116,78 @@ function OnFrame()
   if (ScrOnFrame ~= nil) then ScrOnFrame(w, h, guiW); end
   
   if (is_game_state(GM_STATE_SETUP)) then
-    --LbDraw_VerticalLine((w >> 1) + (guiW >> 1), 0, h, clr);
-    local str = "Press [Space] to start the game";
+    local str = "";
+    local str_width = 0;
+    local x = 0;
+    local y = 0;
     
-    PopSetFont(3);
-    
-    local str_width = string_width(str);
-    local x = (w >> 1) - (str_width >> 1) + (guiW >> 1);
-    local y = (h - 96);
-    
-    LbDraw_Text(x, y, str, 0);
-    
-    str = "Press [Q] to rotate backward";
-    
-    PopSetFont(4);
-    str_width = string_width(str);
-    y = y - CharHeight2();
-    x = (w >> 1) - (str_width) - (str_width >> 2) + (guiW >> 1);
-    --LbDraw_VerticalLine(x + (str_width >> 1), 0, h, clr);
-    
-    LbDraw_Text(x, y, str, 0);
-    
-    str = "Press [E] to rotate forward"
-    str_width = string_width(str);
-    x = (w >> 1) + (str_width >> 1) - (str_width >> 2) + (guiW >> 1);
-    --LbDraw_VerticalLine(x + (str_width >> 1), 0, h, clr);
-    
-    LbDraw_Text(x, y, str, 0);
+    if (am_i_in_network_game() ~= 0) then
+      if (not i_am_checked_in()) then
+        PopSetFont(3);
+        str = "Press [Space] to check in";
+        str_width = string_width(str);
+        x = (w >> 1) - (str_width >> 1) + (guiW >> 1);
+        y = (h - 96);
+        
+        LbDraw_Text(x, y, str, 0);
+      else
+        --LbDraw_VerticalLine((w >> 1) + (guiW >> 1), 0, h, clr);
+        str = "Press [Space] to start the game";
+        
+        PopSetFont(3);
+        
+        str_width = string_width(str);
+        x = (w >> 1) - (str_width >> 1) + (guiW >> 1);
+        y = (h - 96);
+        
+        LbDraw_Text(x, y, str, 0);
+        
+        str = "Press [Q] to rotate backward";
+        
+        PopSetFont(4);
+        str_width = string_width(str);
+        y = y - CharHeight2();
+        x = (w >> 1) - (str_width) - (str_width >> 2) + (guiW >> 1);
+        --LbDraw_VerticalLine(x + (str_width >> 1), 0, h, clr);
+        
+        LbDraw_Text(x, y, str, 0);
+        
+        str = "Press [E] to rotate forward"
+        str_width = string_width(str);
+        x = (w >> 1) + (str_width >> 1) - (str_width >> 2) + (guiW >> 1);
+        --LbDraw_VerticalLine(x + (str_width >> 1), 0, h, clr);
+        
+        LbDraw_Text(x, y, str, 0);
+      end
+    else
+      --LbDraw_VerticalLine((w >> 1) + (guiW >> 1), 0, h, clr);
+      str = "Press [Space] to start the game";
+        
+      PopSetFont(3);
+        
+      str_width = string_width(str);
+      x = (w >> 1) - (str_width >> 1) + (guiW >> 1);
+      y = (h - 96);
+        
+      LbDraw_Text(x, y, str, 0);
+        
+      str = "Press [Q] to rotate backward";
+        
+      PopSetFont(4);
+      str_width = string_width(str);
+      y = y - CharHeight2();
+      x = (w >> 1) - (str_width) - (str_width >> 2) + (guiW >> 1);
+      --LbDraw_VerticalLine(x + (str_width >> 1), 0, h, clr);
+        
+      LbDraw_Text(x, y, str, 0);
+        
+      str = "Press [E] to rotate forward"
+      str_width = string_width(str);
+      x = (w >> 1) + (str_width >> 1) - (str_width >> 2) + (guiW >> 1);
+      --LbDraw_VerticalLine(x + (str_width >> 1), 0, h, clr);
+        
+      LbDraw_Text(x, y, str, 0);
+    end
   end
   
   draw_log_events(w, h, guiW);
@@ -169,7 +218,14 @@ function OnKeyUp(key)
   if (is_game_state(GM_STATE_SETUP)) then
     if (am_i_in_network_game() ~= 0) then
       if (key == LB_KEY_SPACE) then
-        Send(PACKET_START_GAME, "0");
+        log("space bar");
+        if (not i_am_checked_in()) then
+          check_myself_in();
+          log("space bar 1");
+        else
+          Send(PACKET_START_GAME, "0");
+          log("space bar 2");
+        end
       end
       -- for now rotating will be via hotkeys, later will do GUI
       
@@ -230,12 +286,20 @@ end
 
 -- triggered on receiving a network packet
 function OnPacket(player_num, packet_type, data)
+  --log(string.format("%i %i %s", player_num, packet_type, data));
   if (am_i_in_network_game() ~= 0) then
     if (ScrOnPacket ~= nil) then ScrOnPacket(player_num, packet_type, data); end
-    
+    --log(string.format("%i %i %s", player_num, packet_type, data));
     if (is_game_state(GM_STATE_SETUP)) then
+      --log(string.format("%i %i %s", player_num, packet_type, data));
+      if (packet_type == 256) then
+        --log("" .. data);
+        update_network_players_count(tonumber(data));
+      end
+      
       if (packet_type == PACKET_START_GAME) then
         GAME_STARTED = true;
+        log(string.format("Starting network game... Real players: %i", HUMAN_PLAYERS_COUNT));
       end
     
       if (packet_type == PACKET_GIVE_SPELL_ADD) then
