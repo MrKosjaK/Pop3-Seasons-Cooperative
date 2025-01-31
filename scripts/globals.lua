@@ -26,6 +26,9 @@ import(Module_String);
 import(Module_System);
 import(Module_Table);
 
+-- lib
+include("lb_box.lua");
+
 
 -- global pointers
 G_CONST = constants();
@@ -33,6 +36,16 @@ G_SPELL_CONST = spells_type_info();
 G_BLDG_CONST = building_type_info();
 G_ENCY = encyclopedia_info();
 G_NSI = gnsi();
+G_PLR = {
+  [0] = getPlayer(0),
+  getPlayer(1),
+  getPlayer(2),
+  getPlayer(3),
+  getPlayer(4),
+  getPlayer(5),
+  getPlayer(6),
+  getPlayer(7)
+};
 
 -- global function
 function set_level_unable_to_complete()

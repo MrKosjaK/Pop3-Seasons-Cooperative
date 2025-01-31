@@ -1,6 +1,4 @@
 -- detailed information about tribe's progression
-include("lb_box.lua");
-
 
 local win_box_style = create_layout(713);
 local player_collection_data = {};

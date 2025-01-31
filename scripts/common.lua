@@ -1,5 +1,6 @@
 -- includes
 include("globals.lua");
+include("game_lobby.lua");
 include("game_state.lua");
 include("event_logger.lua");
 
@@ -7,7 +8,6 @@ local GAME_STARTED = false;
 local SHAM_ORIG_POS = {};
 local SHAM_CURR_POS = {};
 local SHAM_ORDER = {};
-
 
 -- main hooks
 
@@ -19,7 +19,7 @@ function OnLevelInit(level_id)
     -- let's prepare level for lobby
     set_level_unable_to_complete();
     set_level_unable_to_lose();
-    create_log_event(EVENT_TYPE_INFO, "Welcome to the Seasons Lobby!", 64);
+    --create_log_event(EVENT_TYPE_INFO, "Welcome to the Seasons Lobby!", 64);
     
     -- freeze all units and make them unselectable
     ProcessGlobalTypeList(T_PERSON, function(t_thing)
@@ -54,6 +54,8 @@ end
 function OnTurn()
   if (is_game_state(GM_STATE_SETUP)) then
     if (GAME_STARTED) then
+      get_info_on_players_count();
+    
       ProcessGlobalTypeList(T_PERSON, function(t_thing)
         remove_all_persons_commands(t_thing);
         set_person_top_state(t_thing);
@@ -80,7 +82,7 @@ function OnTurn()
       set_level_able_to_complete();
       set_level_able_to_lose();
       GAME_STARTED = false;
-      create_log_event(EVENT_TYPE_INFO, "Game has been started!", 64);
+      --create_log_event(EVENT_TYPE_INFO, "Game has been started!", 64);
       set_game_state(GM_STATE_GAME);
     end
   elseif (is_game_state(GM_STATE_GAME)) then
@@ -89,7 +91,7 @@ function OnTurn()
   end
 end
 
-mouse_c2d = get_mouse_pointed_at_coord2d();
+--mouse_c2d = get_mouse_pointed_at_coord2d();
 
 -- triggered on thing spawning
 function OnCreateThing(t_thing)
@@ -157,6 +159,7 @@ end
 PACKET_ROTATE_FORWARD = 0;
 PACKET_ROTATE_BACKWARD = 1;
 PACKET_ROTATE_RESTORE = 2;
+PACKET_START_GAME = 3;
 
 -- triggered on releasing pressed key
 function OnKeyUp(key)
@@ -165,6 +168,9 @@ function OnKeyUp(key)
   -- network based/online
   if (is_game_state(GM_STATE_SETUP)) then
     if (am_i_in_network_game() ~= 0) then
+      if (key == LB_KEY_SPACE) then
+        Send(PACKET_START_GAME, "0");
+      end
       -- for now rotating will be via hotkeys, later will do GUI
       
       -- FORWARD rotation
@@ -227,19 +233,25 @@ function OnPacket(player_num, packet_type, data)
   if (am_i_in_network_game() ~= 0) then
     if (ScrOnPacket ~= nil) then ScrOnPacket(player_num, packet_type, data); end
     
-    if (packet_type == PACKET_GIVE_SPELL_ADD) then
-      local key = tonumber(data);
-      
-      if (key == LB_KEY_1) then
-        increment_number_of_one_shots(player_num, M_SPELL_BLAST);
+    if (is_game_state(GM_STATE_SETUP)) then
+      if (packet_type == PACKET_START_GAME) then
+        GAME_STARTED = true;
       end
-    end
     
-    if (packet_type == PACKET_GIVE_SPELL_SUB) then
-      local key = tonumber(data);
+      if (packet_type == PACKET_GIVE_SPELL_ADD) then
+        local key = tonumber(data);
+        
+        if (key == LB_KEY_1) then
+          increment_number_of_one_shots(player_num, M_SPELL_BLAST);
+        end
+      end
       
-      if (key == LB_KEY_1) then
-        reduce_number_of_one_shots(player_num, M_SPELL_BLAST);
+      if (packet_type == PACKET_GIVE_SPELL_SUB) then
+        local key = tonumber(data);
+        
+        if (key == LB_KEY_1) then
+          reduce_number_of_one_shots(player_num, M_SPELL_BLAST);
+        end
       end
     end
   end
