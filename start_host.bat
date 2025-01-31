@@ -7,11 +7,17 @@ ECHO.
 
 SET NICK=Host
 SET PORT=7575
+SET IP=127.0.0.1
 SET PLAYER_NUM=1
 
 SET CURR_PATH="%~dp0..\..\"
 PUSHD %CURR_PATH%
 SET CURR_PATH=%CD%
+
+SET /p IP=Enter IPv4 address of the server (default: 127.0.0.1):
+
+Echo IPv4 address is set to: %IP%
+ECHO.
 
 SET /p PORT=Enter port for hosting (default: 7575):
 
