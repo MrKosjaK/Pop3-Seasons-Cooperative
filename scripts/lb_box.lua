@@ -30,6 +30,9 @@ function expand_rectangle_leftright(rect, value)
   rect.Right = rect.Right + value;
 end
 
+function is_point_on_rectangle(rect, x, y)
+  return (x >= rect.Left and x <= rect.Right and y >= rect.Top and y <= rect.Bottom);
+end
 
 
 function create_layout(sprite_index_start)

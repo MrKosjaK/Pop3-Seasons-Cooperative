@@ -42,8 +42,27 @@ function add_level_computer_start_pos(marker_idx)
 end
 
 function spawn_players_initial_stuff()
+  for i = 1, #HUMAN_PLAYERS do
+    log("spawn 1");
+    local p_num = HUMAN_PLAYERS[i];
+    log("Player num: " .. p_num);
+    
+    createThing(T_PERSON, M_PERSON_MEDICINE_MAN, p_num, HUMAN_START_POSITIONS[i], false, false);
+    
+    G_PLR[p_num].PlayerType = HUMAN_PLAYER;
+    G_PLR[p_num].DeadCount = 0;
+    G_PLR[p_num].ReincarnSiteCoord.Zpos = HUMAN_START_POSITIONS[i].Zpos;
+    G_PLR[p_num].ReincarnSiteCoord.Xpos = HUMAN_START_POSITIONS[i].Xpos;
+    
+    --set_player_reinc_site_on(G_PLR[p_num]);
+    --mark_reincarnation_site_mes(G_PLR[p_num].ReincarnSiteCoord, p_num, MARK);
+    --set_players_shaman_initial_command(G_PLR[p_num]);
+  end
+end
+
+function spawn_players_initial_stuff2()
   log("spawn 2");
-  for i = 1, HUMAN_PLAYERS_COUNT do
+  for i = 1, #HUMAN_PLAYERS do
     log("spawn 1");
     local p_num = HUMAN_PLAYERS[i];
     log("Player num: " .. p_num);

@@ -10,16 +10,7 @@ local SHAM_ORIG_POS = {};
 local SHAM_CURR_POS = {};
 local SHAM_ORDER = {};
 
---local BTN_CHECK_IN = create_button("Check In", 3, BTN_STYLE_GRAY, BTN_STYLE_GRAY_H, BTN_STYLE_GRAY_HP);
-local btns_idxs = {
-  create_button("Test 1", 3, BTN_STYLE_DEFAULT, BTN_STYLE_DEFAULT_H, BTN_STYLE_DEFAULT_HP),
-  create_button("Test 2", 3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP),
-  create_button("Test 3", 3, BTN_STYLE_DEFAULT3, BTN_STYLE_DEFAULT3_H, BTN_STYLE_DEFAULT3_HP)
-};
-
-for i = 1, #btns_idxs do
-  set_button_position(btns_idxs[i], 256, 64 + (i * 32));
-end
+BTN_CHECK_IN = create_button("Check in", 3, BTN_STYLE_DEFAULT, BTN_STYLE_DEFAULT_H, BTN_STYLE_DEFAULT_HP);
 
 -- main hooks
 
@@ -61,12 +52,26 @@ function OnLevelInit(level_id)
         SHAM_CURR_POS[#SHAM_CURR_POS].Ypos = getShaman(i).Pos.D3.Ypos;
       end
     end
+    
+    -- init buttons positions according to people's resolution
+    
   end
 end
 
 
 -- triggered every game turn
 function OnTurn()
+  if (getTurn() == 0) then
+    set_button_position(BTN_CHECK_IN, ScreenWidth() >> 1, ScreenHeight() - (ScreenHeight() >> 4));
+    if (am_i_in_network_game() ~= 0) then
+      set_button_function(BTN_CHECK_IN, function()
+        if (not i_am_checked_in()) then
+          check_myself_in();
+          set_button_inactive(BTN_CHECK_IN);
+        end
+      end);
+    end
+  end
   if (is_game_state(GM_STATE_SETUP)) then
     if (GAME_STARTED) then
       --get_info_on_players_count();
@@ -97,8 +102,9 @@ function OnTurn()
       
       set_level_able_to_complete();
       set_level_able_to_lose();
-      GAME_STARTED = false;
+      --GAME_STARTED = false;
       --create_log_event(EVENT_TYPE_INFO, "Game has been started!", 64);
+      --zoom_thing(getShaman(G_NSI.PlayerNum), 0)
       set_game_state(GM_STATE_GAME);
     end
   elseif (is_game_state(GM_STATE_GAME)) then
@@ -213,6 +219,15 @@ function OnPlayerDeath(player_num)
 end
 
 
+-- triggered on mouse input
+function OnMouseButton(key, is_down, x, y)
+  if (key == LB_KEY_MOUSE0) then
+    --log(string.format("%i %s %i %i", key, is_down, x, y));
+    process_buttons_input(is_down, x, y);
+  end
+end
+
+
 -- triggered on pressing down a key
 function OnKeyDown(key)
   if (ScrOnKeyDown ~= nil) then ScrOnKeyDown(key); end
@@ -228,7 +243,7 @@ function OnKeyUp(key)
       if (key == LB_KEY_SPACE) then
         log("space bar");
         if (not i_am_checked_in()) then
-          check_myself_in();
+          --check_myself_in();
           log("space bar 1");
         else
           Send(PACKET_START_GAME, "0");
