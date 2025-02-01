@@ -1,5 +1,6 @@
 -- includes
 include("globals.lua");
+include("assets.lua");
 include("game_lobby.lua");
 include("game_state.lua");
 include("event_logger.lua");
@@ -217,11 +218,6 @@ function OnKeyDown(key)
   if (ScrOnKeyDown ~= nil) then ScrOnKeyDown(key); end
 end
 
-PACKET_ROTATE_FORWARD = 0;
-PACKET_ROTATE_BACKWARD = 1;
-PACKET_ROTATE_RESTORE = 2;
-PACKET_START_GAME = 3;
-
 -- triggered on releasing pressed key
 function OnKeyUp(key)
   if (ScrOnKeyUp ~= nil) then ScrOnKeyUp(key); end
@@ -278,6 +274,8 @@ function OnKeyUp(key)
           SHAM_CURR_POS[i].Zpos = getShaman(SHAM_ORDER[i]).Pos.D3.Zpos;
           SHAM_CURR_POS[i].Ypos = getShaman(SHAM_ORDER[i]).Pos.D3.Ypos;
         end
+
+		zoom_thing(getShaman(G_NSI.PlayerNum), 0)
       end
       -- backward
       if (key == LB_KEY_Q) then

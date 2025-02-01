@@ -1,3 +1,21 @@
+-- ENUMS
+
+-- packets
+PACKET_ROTATE_FORWARD = 0;
+PACKET_ROTATE_BACKWARD = 1;
+PACKET_ROTATE_RESTORE = 2;
+PACKET_START_GAME = 3;
+
+-- game state
+GM_STATE_SETUP = 0;
+GM_STATE_GAME = 1;
+GM_STATE_END = 2;
+
+-- AI difficulty
+AI_EASY = 0;
+AI_MEDIUM = 1;
+AI_HARD = 2;
+
 -- module imports
 import(Module_Building);
 import(Module_Commands);
@@ -36,6 +54,7 @@ G_CONST = constants();
 G_SPELL_CONST = spells_type_info();
 G_BLDG_CONST = building_type_info();
 G_ENCY = encyclopedia_info();
+G_SI = gsi();
 G_NSI = gnsi();
 G_PLR = {
   [0] = getPlayer(0),
