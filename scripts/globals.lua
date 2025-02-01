@@ -28,6 +28,7 @@ import(Module_Table);
 
 -- lib
 include("lb_box.lua");
+include("lb_button.lua");
 
 
 -- global pointers

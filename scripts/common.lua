@@ -9,6 +9,17 @@ local SHAM_ORIG_POS = {};
 local SHAM_CURR_POS = {};
 local SHAM_ORDER = {};
 
+--local BTN_CHECK_IN = create_button("Check In", 3, BTN_STYLE_GRAY, BTN_STYLE_GRAY_H, BTN_STYLE_GRAY_HP);
+local btns_idxs = {
+  create_button("Test 1", 3, BTN_STYLE_DEFAULT, BTN_STYLE_DEFAULT_H, BTN_STYLE_DEFAULT_HP),
+  create_button("Test 2", 3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP),
+  create_button("Test 3", 3, BTN_STYLE_DEFAULT3, BTN_STYLE_DEFAULT3_H, BTN_STYLE_DEFAULT3_HP)
+};
+
+for i = 1, #btns_idxs do
+  set_button_position(btns_idxs[i], 256, 64 + (i * 32));
+end
+
 -- main hooks
 
 -- triggered on level initialization
@@ -190,6 +201,7 @@ function OnFrame()
     end
   end
   
+  draw_buttons();
   draw_log_events(w, h, guiW);
 end
 
