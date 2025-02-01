@@ -104,7 +104,7 @@ function OnTurn()
       set_level_able_to_lose();
       --GAME_STARTED = false;
       --create_log_event(EVENT_TYPE_INFO, "Game has been started!", 64);
-      --zoom_thing(getShaman(G_NSI.PlayerNum), 0)
+      zoom_thing(getShaman(G_NSI.PlayerNum), math.random(0, 2048));
       set_game_state(GM_STATE_GAME);
     end
   elseif (is_game_state(GM_STATE_GAME)) then
