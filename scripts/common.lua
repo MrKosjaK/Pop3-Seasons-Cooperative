@@ -28,7 +28,7 @@ function OnLevelInit(level_id)
   if (ScrOnLevelInit ~= nil) then ScrOnLevelInit(level_id); end
   
   local pos = MapPosXZ.new() 
-      pos.Pos = world_coord3d_to_map_idx(HUMAN_START_POSITIONS[1]);	
+      pos.Pos = world_coord3d_to_map_idx(HUMAN_INFO[1]._start_pos);	
       ZOOM_TO(pos.XZ.X,pos.XZ.Z, 256 * math.random(1, 8));
   
   if (is_game_state(GM_STATE_SETUP)) then
