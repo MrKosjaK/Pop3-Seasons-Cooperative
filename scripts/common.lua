@@ -10,9 +10,16 @@ local SHAM_ORIG_POS = {};
 local SHAM_CURR_POS = {};
 local SHAM_ORDER = {};
 
-BTN_PLR1_POS = create_button_array({"Position A", "Position B"}, 3, 2, BTN_STYLE_GRAY, BTN_STYLE_GRAY_H, BTN_STYLE_GRAY_HP);
-BTN_AI_DIFFICULTY = create_button_array({"Beginner", "Moderate", "Honour"}, 3, 3, BTN_STYLE_GRAY, BTN_STYLE_GRAY_H, BTN_STYLE_GRAY_HP);
-BTN_CHECK_IN = create_button("Check in", 3, BTN_STYLE_DEFAULT, BTN_STYLE_DEFAULT_H, BTN_STYLE_DEFAULT_HP);
+-- buttons
+BTN_PLR1_POS = create_button_array({"Position A", "Position B"}, 3, 2, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+BTN_AI_DIFFICULTY = create_button_array({"Beginner", "Moderate", "Honour"}, 3, 3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+BTN_CHECK_IN = create_button("Check in", 3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+
+-- menus
+MENU_CHECK_IN = create_menu("Check Phase", BTN_STYLE_GRAY);
+MENU_PLAYERS = create_menu("Player List", BTN_STYLE_GRAY);
+MENU_OPTIONS = create_menu("Game Options", BTN_STYLE_GRAY);
+MENU_AI = create_menu("AI Settings", BTN_STYLE_GRAY);
 
 -- main hooks
 
@@ -65,16 +72,28 @@ end
 
 -- triggered every game turn
 function OnTurn()
+  -- reason im doing it here is because OnLevelInit resolution is 640x480....
   if (getTurn() == 0) then
     disable_inputs(DIF_FLYBY);
     process_options(OPT_TOGGLE_PANEL, 0, 0);
     
-    set_array_button_position(BTN_AI_DIFFICULTY, ScreenWidth() >> 1, ScreenHeight() - 512);
-    set_array_button_curr_value(BTN_AI_DIFFICULTY, 2);
-    set_button_active(BTN_AI_DIFFICULTY);
+    -- button function defines
+    set_button_function(BTN_CHECK_IN, 
+    function(button)
+      if (not i_am_checked_in()) then
+        if (am_i_in_network_game() ~= 0) then
+          check_myself_in();
+        end
+        close_menu(MENU_CHECK_IN);
+        open_menu(MENU_PLAYERS);
+        open_menu(MENU_OPTIONS);
+        open_menu(MENU_AI);
+        set_button_inactive(BTN_CHECK_IN);
+      end
+    end);
     
-    set_array_button_position(BTN_PLR1_POS, ScreenWidth() >> 1, ScreenHeight() - 540);
-    set_button_active(BTN_PLR1_POS);
+    -- player 1 position button
+    set_array_button_curr_value(BTN_PLR1_POS, 2);
     set_button_function(BTN_PLR1_POS,
     function(button)
       local pos = MapPosXZ.new() 
@@ -82,17 +101,62 @@ function OnTurn()
       ZOOM_TO(pos.XZ.X,pos.XZ.Z, 256 * math.random(1, 8));
     end);
     
-    set_button_position(BTN_CHECK_IN, ScreenWidth() >> 1, ScreenHeight() - (ScreenHeight() >> 4));
-    set_button_active(BTN_CHECK_IN);
-    if (am_i_in_network_game() ~= 0) then
-      set_button_function(BTN_CHECK_IN, 
-      function(button)
-        if (not i_am_checked_in()) then
-          check_myself_in();
-          set_button_inactive(BTN_CHECK_IN);
-        end
-      end);
-    end
+    -- check in menu
+    set_menu_position_and_dimensions(MENU_CHECK_IN, (ScreenWidth() >> 1) - 98, (ScreenHeight() >> 1) - 15, 196, 30);
+    set_menu_open_function(MENU_CHECK_IN,
+    function(menu)
+      local b_data = get_button_pos_and_dimensions(BTN_CHECK_IN);
+      set_button_position(BTN_CHECK_IN, menu.Pos[1] + (menu.Size[1] >> 1) - (b_data[3] >> 1), menu.Pos[2] + (menu.Size[2] >> 1) - (b_data[4] >> 1));
+      set_button_active(BTN_CHECK_IN);
+    end);
+    set_menu_close_function(MENU_CHECK_IN,
+    function(menu)
+      set_button_inactive(BTN_CHECK_IN);
+    end);
+    open_menu(MENU_CHECK_IN);
+    
+    -- players menu
+    set_menu_dimensions(MENU_PLAYERS, math.floor(ScreenWidth() / 5), 256);
+    set_menu_open_function(MENU_PLAYERS,
+    function(menu)
+      local split_pos = (ScreenWidth() >> 2);
+      set_menu_position(MENU_PLAYERS, split_pos - (menu.Size[1] >> 1), (ScreenHeight() >> 1) - (menu.Size[2] >> 1));
+      local b_data = get_button_pos_and_dimensions(BTN_PLR1_POS);
+      set_array_button_position(BTN_PLR1_POS, menu.Pos[1] + (menu.Size[1] >> 1) - (b_data[3] >> 1), menu.Pos[2] + (menu.Size[2] >> 1) - (b_data[4] >> 1));
+      set_button_active(BTN_PLR1_POS);
+    end);
+    set_menu_close_function(MENU_PLAYERS,
+    function(menu)
+      set_button_inactive(BTN_PLR1_POS);
+    end);
+    
+    -- options menu
+    set_menu_dimensions(MENU_OPTIONS, math.floor(ScreenWidth() / 5), 256);
+    set_menu_open_function(MENU_OPTIONS,
+    function(menu)
+      local split_pos = (ScreenWidth() >> 2);
+      set_menu_position(MENU_OPTIONS, (split_pos * 2) - (menu.Size[1] >> 1), (ScreenHeight() >> 1) - (menu.Size[2] >> 1));
+    end);
+    set_menu_close_function(MENU_OPTIONS,
+    function(menu)
+    
+    end);
+    
+    -- ai menu
+    set_menu_dimensions(MENU_AI, math.floor(ScreenWidth() / 5), 256);
+    set_menu_open_function(MENU_AI,
+    function(menu)
+      local split_pos = (ScreenWidth() >> 2);
+      set_menu_position(MENU_AI, (split_pos * 3) - (menu.Size[1] >> 1), (ScreenHeight() >> 1) - (menu.Size[2] >> 1));
+    
+      local b_data = get_button_pos_and_dimensions(BTN_AI_DIFFICULTY);
+      set_array_button_position(BTN_AI_DIFFICULTY, menu.Pos[1] + (menu.Size[1] >> 1) - (b_data[3] >> 1), menu.Pos[2] + (menu.Size[2] >> 1) - (b_data[4] >> 1));
+      set_button_active(BTN_AI_DIFFICULTY);
+    end);
+    set_menu_close_function(MENU_AI,
+    function(menu)
+    
+    end);
   end
   if (is_game_state(GM_STATE_SETUP)) then
     if (GAME_STARTED) then
@@ -231,6 +295,7 @@ function OnFrame()
       end
     end
     
+    draw_menus();
     draw_buttons();
     draw_log_events(w, h, guiW);
   end

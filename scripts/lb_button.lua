@@ -1,25 +1,15 @@
 local btns = {};
 
--- button types
-BTN_TYPE_NORMAL = 0;
-BTN_TYPE_ARRAY = 1;
-
--- style defines
-BTN_STYLE_BLUE = create_layout(879);
-BTN_STYLE_BLUE_H = create_layout(888);
-BTN_STYLE_BLUE_HP = create_layout(897);
-BTN_STYLE_GRAY = create_layout(510); -- normal
-BTN_STYLE_GRAY_H = create_layout(519); -- highlight
-BTN_STYLE_GRAY_HP = create_layout(528); -- pressed
-BTN_STYLE_DEFAULT = create_layout(794); -- normal
-BTN_STYLE_DEFAULT_H = create_layout(803); -- highlight
-BTN_STYLE_DEFAULT_HP = create_layout(812); -- pressed
-BTN_STYLE_DEFAULT2 = create_layout(821); -- normal
-BTN_STYLE_DEFAULT2_H = create_layout(830); -- highlight
-BTN_STYLE_DEFAULT2_HP = create_layout(839); -- pressed
-BTN_STYLE_DEFAULT3 = create_layout(848); -- normal
-BTN_STYLE_DEFAULT3_H = create_layout(857); -- highlight
-BTN_STYLE_DEFAULT3_HP = create_layout(866); -- pressed
+function get_button_pos_and_dimensions(idx)
+  local b = btns[idx];
+  local data = {}
+  data[1] = b.Pos[1];
+  data[2] = b.Pos[2];
+  data[3] = b.Size[1];
+  data[4] = b.Size[2];
+  
+  return data;
+end
 
 function create_button_array(text_table, font_idx, max_num, ls_n, ls_h, ls_hp)
   local button =
