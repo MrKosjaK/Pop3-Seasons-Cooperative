@@ -56,10 +56,11 @@ function add_human_player_start_info(marker_idx, spells, bldgs)
   HUMAN_INFO[#HUMAN_INFO + 1] = data;
 end
 
-function add_ai_player_start_info(marker_idx, spells, bldgs)
+function add_ai_player_start_info(marker_idx, tribe_owner, spells, bldgs)
   local data = {
     _spells = {},
     _bldgs = {},
+    _forced_owner = tribe_owner or -1,
     _start_pos = marker_to_coord3d(marker_idx)
   };
   
@@ -73,10 +74,6 @@ function add_ai_player_start_info(marker_idx, spells, bldgs)
   
   centre_coord3d_on_block(data._start_pos);
   AI_INFO[#AI_INFO + 1] = data;
-end
-
-function add_level_computer_start_pos(marker_idx)
-  AI_START_POSITIONS[#AI_START_POSITIONS + 1] = marker_to_coord3d(marker_idx);
 end
 
 function spawn_players_initial_stuff()
@@ -110,18 +107,34 @@ function spawn_players_initial_stuff()
   end
   
   for i = 1, AI_COUNT do
-    local p_num = 0;
     local ai_data = AI_INFO[i];
-    local count = 8;
+    local p_num = ai_data._forced_owner;
     
-    while (count > 0) do
-      count = count - 1;
-      --log("Player num: " .. p_num);
-      if (G_PLR[p_num].PlayerType == NO_PLAYER) then
-        --log("wasnt human controlled");
-        break;
+    if (p_num ~= -1) then
+      -- check if existing human players dont match its owner
+      for i,k in ipairs(HUMAN_PLAYERS) do
+        if (p_num == k) then
+          -- found matching
+          p_num = -1;
+          break
+        end
       end
-      p_num = p_num + 1;
+    end
+    
+    if (p_num == -1) then
+      -- if found matching or defined to be random
+      p_num = 0;
+      local count = 8;
+      
+      while (count > 0) do
+        count = count - 1;
+        --log("Player num: " .. p_num);
+        if (G_PLR[p_num].PlayerType == NO_PLAYER) then
+          --log("wasnt human controlled");
+          break;
+        end
+        p_num = p_num + 1;
+      end
     end
     
     for i,k in ipairs(ai_data._spells) do
