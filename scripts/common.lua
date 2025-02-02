@@ -10,6 +10,8 @@ local SHAM_ORIG_POS = {};
 local SHAM_CURR_POS = {};
 local SHAM_ORDER = {};
 
+BTN_PLR1_POS = create_button_array({"Position A", "Position B"}, 3, 2, BTN_STYLE_GRAY, BTN_STYLE_GRAY_H, BTN_STYLE_GRAY_HP);
+BTN_AI_DIFFICULTY = create_button_array({"Beginner", "Moderate", "Honour"}, 3, 3, BTN_STYLE_GRAY, BTN_STYLE_GRAY_H, BTN_STYLE_GRAY_HP);
 BTN_CHECK_IN = create_button("Check in", 3, BTN_STYLE_DEFAULT, BTN_STYLE_DEFAULT_H, BTN_STYLE_DEFAULT_HP);
 
 -- main hooks
@@ -17,6 +19,10 @@ BTN_CHECK_IN = create_button("Check in", 3, BTN_STYLE_DEFAULT, BTN_STYLE_DEFAULT
 -- triggered on level initialization
 function OnLevelInit(level_id)
   if (ScrOnLevelInit ~= nil) then ScrOnLevelInit(level_id); end
+  
+  local pos = MapPosXZ.new() 
+      pos.Pos = world_coord3d_to_map_idx(HUMAN_START_POSITIONS[1]);	
+      ZOOM_TO(pos.XZ.X,pos.XZ.Z, 256 * math.random(1, 8));
   
   if (is_game_state(GM_STATE_SETUP)) then
     -- let's prepare level for lobby
@@ -53,8 +59,6 @@ function OnLevelInit(level_id)
       end
     end
     
-    -- init buttons positions according to people's resolution
-    
   end
 end
 
@@ -62,9 +66,27 @@ end
 -- triggered every game turn
 function OnTurn()
   if (getTurn() == 0) then
+    disable_inputs(DIF_FLYBY);
+    process_options(OPT_TOGGLE_PANEL, 0, 0);
+    
+    set_array_button_position(BTN_AI_DIFFICULTY, ScreenWidth() >> 1, ScreenHeight() - 512);
+    set_array_button_curr_value(BTN_AI_DIFFICULTY, 2);
+    set_button_active(BTN_AI_DIFFICULTY);
+    
+    set_array_button_position(BTN_PLR1_POS, ScreenWidth() >> 1, ScreenHeight() - 540);
+    set_button_active(BTN_PLR1_POS);
+    set_button_function(BTN_PLR1_POS,
+    function(button)
+      local pos = MapPosXZ.new() 
+      pos.Pos = world_coord3d_to_map_idx(HUMAN_START_POSITIONS[button.CurrData]);	
+      ZOOM_TO(pos.XZ.X,pos.XZ.Z, 256 * math.random(1, 8));
+    end);
+    
     set_button_position(BTN_CHECK_IN, ScreenWidth() >> 1, ScreenHeight() - (ScreenHeight() >> 4));
+    set_button_active(BTN_CHECK_IN);
     if (am_i_in_network_game() ~= 0) then
-      set_button_function(BTN_CHECK_IN, function()
+      set_button_function(BTN_CHECK_IN, 
+      function(button)
         if (not i_am_checked_in()) then
           check_myself_in();
           set_button_inactive(BTN_CHECK_IN);
@@ -133,83 +155,85 @@ function OnFrame()
   
   if (ScrOnFrame ~= nil) then ScrOnFrame(w, h, guiW); end
   
-  if (is_game_state(GM_STATE_SETUP)) then
-    local str = "";
-    local str_width = 0;
-    local x = 0;
-    local y = 0;
-    
-    if (am_i_in_network_game() ~= 0) then
-      if (not i_am_checked_in()) then
-        PopSetFont(3);
-        str = "Press [Space] to check in";
-        str_width = string_width(str);
-        x = (w >> 1) - (str_width >> 1) + (guiW >> 1);
-        y = (h - 96);
-        
-        LbDraw_Text(x, y, str, 0);
+  if (am_i_not_in_igm()) then
+    if (is_game_state(GM_STATE_SETUP)) then
+      local str = "";
+      local str_width = 0;
+      local x = 0;
+      local y = 0;
+      
+      if (am_i_in_network_game() ~= 0) then
+        if (not i_am_checked_in()) then
+          PopSetFont(3);
+          str = "Press [Space] to check in";
+          str_width = string_width(str);
+          x = (w >> 1) - (str_width >> 1) + (guiW >> 1);
+          y = (h - 96);
+          
+          LbDraw_Text(x, y, str, 0);
+        else
+          --LbDraw_VerticalLine((w >> 1) + (guiW >> 1), 0, h, clr);
+          str = "Press [Space] to start the game";
+          
+          PopSetFont(3);
+          
+          str_width = string_width(str);
+          x = (w >> 1) - (str_width >> 1) + (guiW >> 1);
+          y = (h - 96);
+          
+          LbDraw_Text(x, y, str, 0);
+          
+          str = "Press [Q] to rotate backward";
+          
+          PopSetFont(4);
+          str_width = string_width(str);
+          y = y - CharHeight2();
+          x = (w >> 1) - (str_width) - (str_width >> 2) + (guiW >> 1);
+          --LbDraw_VerticalLine(x + (str_width >> 1), 0, h, clr);
+          
+          LbDraw_Text(x, y, str, 0);
+          
+          str = "Press [E] to rotate forward"
+          str_width = string_width(str);
+          x = (w >> 1) + (str_width >> 1) - (str_width >> 2) + (guiW >> 1);
+          --LbDraw_VerticalLine(x + (str_width >> 1), 0, h, clr);
+          
+          LbDraw_Text(x, y, str, 0);
+        end
       else
         --LbDraw_VerticalLine((w >> 1) + (guiW >> 1), 0, h, clr);
         str = "Press [Space] to start the game";
-        
+          
         PopSetFont(3);
-        
+          
         str_width = string_width(str);
         x = (w >> 1) - (str_width >> 1) + (guiW >> 1);
         y = (h - 96);
-        
+          
         LbDraw_Text(x, y, str, 0);
-        
+          
         str = "Press [Q] to rotate backward";
-        
+          
         PopSetFont(4);
         str_width = string_width(str);
         y = y - CharHeight2();
         x = (w >> 1) - (str_width) - (str_width >> 2) + (guiW >> 1);
         --LbDraw_VerticalLine(x + (str_width >> 1), 0, h, clr);
-        
+          
         LbDraw_Text(x, y, str, 0);
-        
+          
         str = "Press [E] to rotate forward"
         str_width = string_width(str);
         x = (w >> 1) + (str_width >> 1) - (str_width >> 2) + (guiW >> 1);
         --LbDraw_VerticalLine(x + (str_width >> 1), 0, h, clr);
-        
+          
         LbDraw_Text(x, y, str, 0);
       end
-    else
-      --LbDraw_VerticalLine((w >> 1) + (guiW >> 1), 0, h, clr);
-      str = "Press [Space] to start the game";
-        
-      PopSetFont(3);
-        
-      str_width = string_width(str);
-      x = (w >> 1) - (str_width >> 1) + (guiW >> 1);
-      y = (h - 96);
-        
-      LbDraw_Text(x, y, str, 0);
-        
-      str = "Press [Q] to rotate backward";
-        
-      PopSetFont(4);
-      str_width = string_width(str);
-      y = y - CharHeight2();
-      x = (w >> 1) - (str_width) - (str_width >> 2) + (guiW >> 1);
-      --LbDraw_VerticalLine(x + (str_width >> 1), 0, h, clr);
-        
-      LbDraw_Text(x, y, str, 0);
-        
-      str = "Press [E] to rotate forward"
-      str_width = string_width(str);
-      x = (w >> 1) + (str_width >> 1) - (str_width >> 2) + (guiW >> 1);
-      --LbDraw_VerticalLine(x + (str_width >> 1), 0, h, clr);
-        
-      LbDraw_Text(x, y, str, 0);
     end
+    
+    draw_buttons();
+    draw_log_events(w, h, guiW);
   end
-  
-  draw_buttons();
-  draw_log_events(w, h, guiW);
 end
 
 
