@@ -106,6 +106,10 @@ function create_button(text_str, font_idx, ls_n, ls_h, ls_hp)
   return #btns;
 end
 
+function get_button_ptr(idx)
+  return btns[idx];
+end
+
 function set_button_position(idx, x, y)
   btns[idx].Pos[1] = x;
   btns[idx].Pos[2] = y;
@@ -223,15 +227,17 @@ function process_buttons_input(is_down, x, y)
         
         if (is_point_on_rectangle(b.LeftArrow, x, y)) then
           if (is_down) then
-            b.LAFunc(b);
-            --b.CurrData = math.min(math.max(b.CurrData - 1, 1), b.MaxData);
+            if (b.LAFunc) then
+              b.LAFunc(b);
+            end
           end
         end
         
         if (is_point_on_rectangle(b.RightArrow, x, y)) then
           if (is_down) then
-            b.RAFunc(b);
-            --b.CurrData = math.min(math.max(b.CurrData + 1, 1), b.MaxData);
+            if (b.RAFunc) then
+              b.RAFunc(b);
+            end
           end
         end
       end

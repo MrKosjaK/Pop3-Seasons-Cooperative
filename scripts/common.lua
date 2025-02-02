@@ -14,6 +14,7 @@ local SHAM_ORDER = {};
 BTN_PLR1_POS = create_button_array({"Position A", "Position B"}, 3, 2, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
 BTN_AI_DIFFICULTY = create_button_array({"Beginner", "Moderate", "Honour"}, 3, 3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
 BTN_CHECK_IN = create_button("Check in", 3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+BTN_START_GAME = create_button("Start Game", 3, BTN_STYLE_DEFAULT3, BTN_STYLE_DEFAULT3_H, BTN_STYLE_DEFAULT3_HP);
 
 -- menus
 MENU_CHECK_IN = create_menu("Check Phase", BTN_STYLE_GRAY);
@@ -83,17 +84,35 @@ function OnTurn()
       if (not i_am_checked_in()) then
         if (am_i_in_network_game() ~= 0) then
           check_myself_in();
-          open_menu(MENU_PLAYERS);
-          open_menu(MENU_OPTIONS);
-          open_menu(MENU_AI);
         else
           update_network_players_count(G_NSI.PlayerNum);
-          GAME_STARTED = true;
         end
         
         close_menu(MENU_CHECK_IN);
         set_button_inactive(BTN_CHECK_IN);
+        open_menu(MENU_PLAYERS);
+        open_menu(MENU_OPTIONS);
+        open_menu(MENU_AI);
+        
+        local b_data = get_button_pos_and_dimensions(BTN_START_GAME);
+        set_button_position(BTN_START_GAME, (ScreenWidth() >> 1) - (b_data[3] >> 1), (ScreenHeight() - 96));
+        set_button_active(BTN_START_GAME);
       end
+    end);
+    
+    -- start game button
+    set_button_function(BTN_START_GAME,
+    function(b)
+      if (am_i_in_network_game() ~= 0) then
+        Send(PACKET_START_GAME, "0");
+      else
+        GAME_STARTED = true;
+      end
+      
+      close_menu(MENU_PLAYERS);
+      close_menu(MENU_OPTIONS);
+      close_menu(MENU_AI);
+      set_button_inactive(BTN_START_GAME);
     end);
     
     -- player 1 position button
@@ -105,14 +124,14 @@ function OnTurn()
     end,
     function(b)
       if (am_i_in_network_game() ~= 0) then
-        Send(PACKET_BTN_ARRAY_DEC, BTN_PLR1_POS);
+        Send(PACKET_BTN_ARRAY_DEC, tostring(BTN_PLR1_POS));
       else
         b.CurrData = math.min(math.max(b.CurrData - 1, 1), b.MaxData);
       end
     end,
     function(b)
       if (am_i_in_network_game() ~= 0) then
-        Send(PACKET_BTN_ARRAY_INCR, BTN_PLR1_POS);
+        Send(PACKET_BTN_ARRAY_INCR, tostring(BTN_PLR1_POS));
       else
         b.CurrData = math.min(math.max(b.CurrData + 1, 1), b.MaxData);
       end
@@ -120,6 +139,21 @@ function OnTurn()
     
     -- ai difficulty button
     set_array_button_curr_value(BTN_AI_DIFFICULTY, 2);
+    set_array_button_functions(BTN_PLR1_POS, nil,
+    function(b)
+      if (am_i_in_network_game() ~= 0) then
+        Send(PACKET_BTN_ARRAY_DEC, tostring(BTN_AI_DIFFICULTY));
+      else
+        b.CurrData = math.min(math.max(b.CurrData - 1, 1), b.MaxData);
+      end
+    end,
+    function(b)
+      if (am_i_in_network_game() ~= 0) then
+        Send(PACKET_BTN_ARRAY_INCR, tostring(BTN_AI_DIFFICULTY));
+      else
+        b.CurrData = math.min(math.max(b.CurrData + 1, 1), b.MaxData);
+      end
+    end);
     
     -- check in menu
     set_menu_position_and_dimensions(MENU_CHECK_IN, (ScreenWidth() >> 1) - 98, (ScreenHeight() >> 1) - 15, 196, 30);
@@ -175,7 +209,7 @@ function OnTurn()
     end);
     set_menu_close_function(MENU_AI,
     function(menu)
-    
+      set_button_inactive(BTN_AI_DIFFICULTY);
     end);
   end
   if (is_game_state(GM_STATE_SETUP)) then
@@ -311,6 +345,17 @@ function OnPacket(player_num, packet_type, data)
       if (packet_type == 256) then
         --log("" .. data);
         update_network_players_count(tonumber(data));
+      end
+      
+      -- buttons packets
+      if (packet_type == PACKET_BTN_ARRAY_DEC) then
+        local b = get_button_ptr(tonumber(data));
+        b.CurrData = math.min(math.max(b.CurrData - 1, 1), b.MaxData);
+      end
+      
+      if (packet_type == PACKET_BTN_ARRAY_INCR) then
+        local b = get_button_ptr(tonumber(data));
+        b.CurrData = math.min(math.max(b.CurrData + 1, 1), b.MaxData);
       end
       
       if (packet_type == PACKET_START_GAME) then
