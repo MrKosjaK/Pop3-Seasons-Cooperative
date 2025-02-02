@@ -4,6 +4,7 @@ HUMAN_COUNT = 0;
 AI_COUNT = 0;
 
 -- global check in
+GAME_MASTER_ID = -1;
 HUMAN_PLAYERS = {};
 HUMAN_PLAYERS_COUNT = 0;
 
@@ -27,6 +28,10 @@ function check_myself_in()
     Send(256, tostring(G_NSI.PlayerNum));
     I_AM_NOT_CHECKED_IN = false;
   end
+end
+
+function i_am_game_master()
+  return (G_NSI.PlayerNum == GAME_MASTER_ID);
 end
 
 function set_level_human_count(n)
@@ -194,6 +199,11 @@ end
 
 function update_network_players_count(p_num)
   --log("test");
+  if (HUMAN_PLAYERS_COUNT == 0) then
+    GAME_MASTER_ID = p_num;
+    log(string.format("Game master is : %s", get_player_name(p_num, ntb(am_i_in_network_game()))));
+  end
+  
   HUMAN_PLAYERS[#HUMAN_PLAYERS + 1] = p_num;
   HUMAN_PLAYERS_COUNT = HUMAN_PLAYERS_COUNT + 1;
   log(string.format("Registered player num: %i", p_num));

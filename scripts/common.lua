@@ -104,16 +104,18 @@ function OnTurn()
     set_button_function(BTN_START_GAME,
     function(b)
       if (am_i_in_network_game() ~= 0) then
-        Send(PACKET_START_GAME, "0");
+        if (i_am_game_master()) then
+          Send(PACKET_START_GAME, "0");
+          set_button_inactive(BTN_START_GAME);
+        end
       else
         GAME_STARTED = true;
         
+        set_button_inactive(BTN_START_GAME);
         close_menu(MENU_PLAYERS);
         close_menu(MENU_OPTIONS);
         close_menu(MENU_AI);
       end
-      
-      set_button_inactive(BTN_START_GAME);
     end);
     
     -- player 1 position button
@@ -125,14 +127,18 @@ function OnTurn()
     end,
     function(b)
       if (am_i_in_network_game() ~= 0) then
-        Send(PACKET_BTN_ARRAY_DEC, tostring(BTN_PLR1_POS));
+        if (i_am_game_master()) then
+          Send(PACKET_BTN_ARRAY_DEC, tostring(BTN_PLR1_POS));
+        end
       else
         b.CurrData = math.min(math.max(b.CurrData - 1, 1), b.MaxData);
       end
     end,
     function(b)
       if (am_i_in_network_game() ~= 0) then
-        Send(PACKET_BTN_ARRAY_INCR, tostring(BTN_PLR1_POS));
+        if (i_am_game_master()) then
+          Send(PACKET_BTN_ARRAY_INCR, tostring(BTN_PLR1_POS));
+        end
       else
         b.CurrData = math.min(math.max(b.CurrData + 1, 1), b.MaxData);
       end
@@ -143,14 +149,18 @@ function OnTurn()
     set_array_button_functions(BTN_AI_DIFFICULTY, nil,
     function(b)
       if (am_i_in_network_game() ~= 0) then
-        Send(PACKET_BTN_ARRAY_DEC, tostring(BTN_AI_DIFFICULTY));
+        if (i_am_game_master()) then
+          Send(PACKET_BTN_ARRAY_DEC, tostring(BTN_AI_DIFFICULTY));
+        end
       else
         b.CurrData = math.min(math.max(b.CurrData - 1, 1), b.MaxData);
       end
     end,
     function(b)
       if (am_i_in_network_game() ~= 0) then
-        Send(PACKET_BTN_ARRAY_INCR, tostring(BTN_AI_DIFFICULTY));
+        if (i_am_game_master()) then
+          Send(PACKET_BTN_ARRAY_INCR, tostring(BTN_AI_DIFFICULTY));
+        end
       else
         b.CurrData = math.min(math.max(b.CurrData + 1, 1), b.MaxData);
       end
