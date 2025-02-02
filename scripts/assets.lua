@@ -43,7 +43,7 @@ function pause_if_unpaused()
 end
 
 function turn()
-	return gs.Counts.ProcessThings
+	return G_SI.Counts.ProcessThings
 end
 
 function LOG(msg)
@@ -57,6 +57,14 @@ end
 function ntb(num)
 	if num == 0 then return false end
 	return true
+end
+
+function clamp(value, minVal, maxVal)
+    return math.max(minVal, math.min(value, maxVal))
+end
+
+function mf(a, b)
+	return math.floor(a / b)
 end
 
 function everySeconds(n)
