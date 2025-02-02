@@ -107,11 +107,12 @@ function OnTurn()
         Send(PACKET_START_GAME, "0");
       else
         GAME_STARTED = true;
+        
+        close_menu(MENU_PLAYERS);
+        close_menu(MENU_OPTIONS);
+        close_menu(MENU_AI);
       end
       
-      close_menu(MENU_PLAYERS);
-      close_menu(MENU_OPTIONS);
-      close_menu(MENU_AI);
       set_button_inactive(BTN_START_GAME);
     end);
     
@@ -139,7 +140,7 @@ function OnTurn()
     
     -- ai difficulty button
     set_array_button_curr_value(BTN_AI_DIFFICULTY, 2);
-    set_array_button_functions(BTN_PLR1_POS, nil,
+    set_array_button_functions(BTN_AI_DIFFICULTY, nil,
     function(b)
       if (am_i_in_network_game() ~= 0) then
         Send(PACKET_BTN_ARRAY_DEC, tostring(BTN_AI_DIFFICULTY));
@@ -360,6 +361,12 @@ function OnPacket(player_num, packet_type, data)
       
       if (packet_type == PACKET_START_GAME) then
         GAME_STARTED = true;
+        
+        close_menu(MENU_PLAYERS);
+        close_menu(MENU_OPTIONS);
+        close_menu(MENU_AI);
+        
+        set_button_inactive(BTN_START_GAME);
         --log(string.format("Starting network game... Real players: %i", HUMAN_PLAYERS_COUNT));
       end
     end
