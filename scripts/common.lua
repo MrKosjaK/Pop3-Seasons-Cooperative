@@ -97,13 +97,29 @@ function OnTurn()
     end);
     
     -- player 1 position button
-    set_array_button_curr_value(BTN_PLR1_POS, 2);
-    set_button_function(BTN_PLR1_POS,
-    function(button)
+    set_array_button_functions(BTN_PLR1_POS,
+    function(b)
       local pos = MapPosXZ.new() 
-      pos.Pos = world_coord3d_to_map_idx(HUMAN_START_POSITIONS[button.CurrData]);	
+      pos.Pos = world_coord3d_to_map_idx(HUMAN_INFO[b.CurrData]._start_pos);	
       ZOOM_TO(pos.XZ.X,pos.XZ.Z, 256 * math.random(1, 8));
+    end,
+    function(b)
+      if (am_i_in_network_game() ~= 0) then
+        Send(PACKET_BTN_ARRAY_DEC, BTN_PLR1_POS);
+      else
+        b.CurrData = math.min(math.max(b.CurrData - 1, 1), b.MaxData);
+      end
+    end,
+    function(b)
+      if (am_i_in_network_game() ~= 0) then
+        Send(PACKET_BTN_ARRAY_INCR, BTN_PLR1_POS);
+      else
+        b.CurrData = math.min(math.max(b.CurrData + 1, 1), b.MaxData);
+      end
     end);
+    
+    -- ai difficulty button
+    set_array_button_curr_value(BTN_AI_DIFFICULTY, 2);
     
     -- check in menu
     set_menu_position_and_dimensions(MENU_CHECK_IN, (ScreenWidth() >> 1) - 98, (ScreenHeight() >> 1) - 15, 196, 30);

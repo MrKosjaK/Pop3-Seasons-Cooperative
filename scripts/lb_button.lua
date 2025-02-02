@@ -26,6 +26,8 @@ function create_button_array(text_table, font_idx, max_num, ls_n, ls_h, ls_hp)
     LeftArrow = TbRect.new(),
     RightArrow = TbRect.new(),
     Func = nil,
+    LAFunc = nil,
+    RAFunc = nil,
     isPressed = false,
     isActive = false
   };
@@ -72,6 +74,12 @@ function set_array_button_position(idx, x, y)
   btns[idx].RightArrow.Right = btns[idx].RightArrow.Left + CharWidth2();
   btns[idx].RightArrow.Top = y;
   btns[idx].RightArrow.Bottom = btns[idx].RightArrow.Top + btns[idx].Size[2];
+end
+
+function set_array_button_functions(idx, main_func, left_arrow_func, right_arrow_func)
+  btns[idx].Func = main_func;
+  btns[idx].LAFunc = left_arrow_func;
+  btns[idx].RAFunc = right_arrow_func;
 end
 
 function create_button(text_str, font_idx, ls_n, ls_h, ls_hp)
@@ -215,13 +223,15 @@ function process_buttons_input(is_down, x, y)
         
         if (is_point_on_rectangle(b.LeftArrow, x, y)) then
           if (is_down) then
-            b.CurrData = math.min(math.max(b.CurrData - 1, 1), b.MaxData);
+            b.LAFunc(b);
+            --b.CurrData = math.min(math.max(b.CurrData - 1, 1), b.MaxData);
           end
         end
         
         if (is_point_on_rectangle(b.RightArrow, x, y)) then
           if (is_down) then
-            b.CurrData = math.min(math.max(b.CurrData + 1, 1), b.MaxData);
+            b.RAFunc(b);
+            --b.CurrData = math.min(math.max(b.CurrData + 1, 1), b.MaxData);
           end
         end
       end
