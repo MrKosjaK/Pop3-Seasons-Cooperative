@@ -126,7 +126,7 @@ function spawn_players_initial_stuff()
 end
 
 function update_network_players_count(p_num)
-  log("test");
+  --log("test");
   HUMAN_PLAYERS[#HUMAN_PLAYERS + 1] = p_num;
   HUMAN_PLAYERS_COUNT = HUMAN_PLAYERS_COUNT + 1;
   log(string.format("Registered player num: %i", p_num));
