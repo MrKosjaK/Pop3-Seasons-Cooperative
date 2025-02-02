@@ -42,11 +42,11 @@ function add_level_computer_start_pos(marker_idx)
 end
 
 function spawn_players_initial_stuff()
-  log("spawn 2");
+  --log("spawn 2");
   for i = 1, #HUMAN_PLAYERS do
-    log("spawn 1");
+    --log("spawn 1");
     local p_num = HUMAN_PLAYERS[i];
-    log("Player num: " .. p_num);
+    --log("Player num: " .. p_num);
     createThing(T_PERSON, M_PERSON_MEDICINE_MAN, p_num, HUMAN_START_POSITIONS[i], false, false);
     
     G_PLR[p_num].PlayerType = HUMAN_PLAYER;
@@ -64,9 +64,9 @@ function spawn_players_initial_stuff()
     
     while (count > 0) do
       count = count - 1;
-      log("Player num: " .. p_num);
+      --log("Player num: " .. p_num);
       if (G_PLR[p_num].PlayerType == NO_PLAYER) then
-        log("wasnt human controlled");
+        --log("wasnt human controlled");
         break;
       end
       p_num = p_num + 1;

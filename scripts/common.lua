@@ -83,11 +83,15 @@ function OnTurn()
       if (not i_am_checked_in()) then
         if (am_i_in_network_game() ~= 0) then
           check_myself_in();
+          open_menu(MENU_PLAYERS);
+          open_menu(MENU_OPTIONS);
+          open_menu(MENU_AI);
+        else
+          update_network_players_count(G_NSI.PlayerNum);
+          GAME_STARTED = true;
         end
+        
         close_menu(MENU_CHECK_IN);
-        open_menu(MENU_PLAYERS);
-        open_menu(MENU_OPTIONS);
-        open_menu(MENU_AI);
         set_button_inactive(BTN_CHECK_IN);
       end
     end);
@@ -191,6 +195,9 @@ function OnTurn()
       --GAME_STARTED = false;
       --create_log_event(EVENT_TYPE_INFO, "Game has been started!", 64);
       zoom_thing(getShaman(G_NSI.PlayerNum), math.random(0, 2048));
+      
+      process_options(OPT_TOGGLE_PANEL, 1, 0);
+      enable_inputs(DIF_FLYBY);
       set_game_state(GM_STATE_GAME);
     end
   elseif (is_game_state(GM_STATE_GAME)) then
@@ -227,71 +234,9 @@ function OnFrame()
       local y = 0;
       
       if (am_i_in_network_game() ~= 0) then
-        if (not i_am_checked_in()) then
-          PopSetFont(3);
-          str = "Press [Space] to check in";
-          str_width = string_width(str);
-          x = (w >> 1) - (str_width >> 1) + (guiW >> 1);
-          y = (h - 96);
-          
-          LbDraw_Text(x, y, str, 0);
-        else
-          --LbDraw_VerticalLine((w >> 1) + (guiW >> 1), 0, h, clr);
-          str = "Press [Space] to start the game";
-          
-          PopSetFont(3);
-          
-          str_width = string_width(str);
-          x = (w >> 1) - (str_width >> 1) + (guiW >> 1);
-          y = (h - 96);
-          
-          LbDraw_Text(x, y, str, 0);
-          
-          str = "Press [Q] to rotate backward";
-          
-          PopSetFont(4);
-          str_width = string_width(str);
-          y = y - CharHeight2();
-          x = (w >> 1) - (str_width) - (str_width >> 2) + (guiW >> 1);
-          --LbDraw_VerticalLine(x + (str_width >> 1), 0, h, clr);
-          
-          LbDraw_Text(x, y, str, 0);
-          
-          str = "Press [E] to rotate forward"
-          str_width = string_width(str);
-          x = (w >> 1) + (str_width >> 1) - (str_width >> 2) + (guiW >> 1);
-          --LbDraw_VerticalLine(x + (str_width >> 1), 0, h, clr);
-          
-          LbDraw_Text(x, y, str, 0);
-        end
+        
       else
-        --LbDraw_VerticalLine((w >> 1) + (guiW >> 1), 0, h, clr);
-        str = "Press [Space] to start the game";
-          
-        PopSetFont(3);
-          
-        str_width = string_width(str);
-        x = (w >> 1) - (str_width >> 1) + (guiW >> 1);
-        y = (h - 96);
-          
-        LbDraw_Text(x, y, str, 0);
-          
-        str = "Press [Q] to rotate backward";
-          
-        PopSetFont(4);
-        str_width = string_width(str);
-        y = y - CharHeight2();
-        x = (w >> 1) - (str_width) - (str_width >> 2) + (guiW >> 1);
-        --LbDraw_VerticalLine(x + (str_width >> 1), 0, h, clr);
-          
-        LbDraw_Text(x, y, str, 0);
-          
-        str = "Press [E] to rotate forward"
-        str_width = string_width(str);
-        x = (w >> 1) + (str_width >> 1) - (str_width >> 2) + (guiW >> 1);
-        --LbDraw_VerticalLine(x + (str_width >> 1), 0, h, clr);
-          
-        LbDraw_Text(x, y, str, 0);
+        
       end
     end
     
@@ -329,67 +274,8 @@ function OnKeyUp(key)
   -- network based/online
   if (is_game_state(GM_STATE_SETUP)) then
     if (am_i_in_network_game() ~= 0) then
-      if (key == LB_KEY_SPACE) then
-        log("space bar");
-        if (not i_am_checked_in()) then
-          --check_myself_in();
-          log("space bar 1");
-        else
-          Send(PACKET_START_GAME, "0");
-          log("space bar 2");
-        end
-      end
-      -- for now rotating will be via hotkeys, later will do GUI
       
-      -- FORWARD rotation
-      if (key == LB_KEY_E) then
-        Send(PACKET_ROTATE_FORWARD, "0");
-        --elseif (_IsKeyDown(LB_KEY_LCONTROL) or _IsKeyDown(LB_KEY_RCONTROL)) then
-          --Send(PACKET_ROTATE_FORWARD, tostring(key));
-        --end
-      end
-      
-      -- BACKWARD rotation
-      if (key == LB_KEY_Q) then
-        Send(PACKET_ROTATE_BACKWARD, "0");
-      end
-      
-      -- RESTORE rotation
-      if (key == LB_KEY_W) then
-        Send(PACKET_ROTATE_RESTORE, "0");
-      end
     else
-      -- forward
-      if (key == LB_KEY_E) then
-        for i = 1, #SHAM_CURR_POS do
-          local value = (i % #SHAM_CURR_POS) + 1;
-          --if (value == 0) then value = 1; end
-          log(string.format("%i", value));
-          --set_person_standing_anim(getShaman(SHAM_ORDER[i]));
-          move_thing_within_mapwho(getShaman(SHAM_ORDER[i]), SHAM_CURR_POS[value]);
-          move_thing_within_mapwho(getShaman(SHAM_ORDER[i]), SHAM_CURR_POS[value]);
-          ensure_thing_on_ground(getShaman(SHAM_ORDER[i]));
-          --set_person_standing_anim(getShaman(SHAM_ORDER[i]));
-        end
-        
-        for i = 1, #SHAM_CURR_POS do
-          -- update positions
-          SHAM_CURR_POS[i].Xpos = getShaman(SHAM_ORDER[i]).Pos.D3.Xpos;
-          SHAM_CURR_POS[i].Zpos = getShaman(SHAM_ORDER[i]).Pos.D3.Zpos;
-          SHAM_CURR_POS[i].Ypos = getShaman(SHAM_ORDER[i]).Pos.D3.Ypos;
-        end
-
-		zoom_thing(getShaman(G_NSI.PlayerNum), 0)
-      end
-      -- backward
-      if (key == LB_KEY_Q) then
-      
-      end
-      -- restore
-      if (key == LB_KEY_W) then
-      
-      end
-      
       if (key == LB_KEY_SPACE) then
         GAME_STARTED = true;
       end
@@ -413,23 +299,7 @@ function OnPacket(player_num, packet_type, data)
       
       if (packet_type == PACKET_START_GAME) then
         GAME_STARTED = true;
-        log(string.format("Starting network game... Real players: %i", HUMAN_PLAYERS_COUNT));
-      end
-    
-      if (packet_type == PACKET_GIVE_SPELL_ADD) then
-        local key = tonumber(data);
-        
-        if (key == LB_KEY_1) then
-          increment_number_of_one_shots(player_num, M_SPELL_BLAST);
-        end
-      end
-      
-      if (packet_type == PACKET_GIVE_SPELL_SUB) then
-        local key = tonumber(data);
-        
-        if (key == LB_KEY_1) then
-          reduce_number_of_one_shots(player_num, M_SPELL_BLAST);
-        end
+        --log(string.format("Starting network game... Real players: %i", HUMAN_PLAYERS_COUNT));
       end
     end
   end
