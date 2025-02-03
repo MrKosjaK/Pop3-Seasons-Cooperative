@@ -1,6 +1,6 @@
 include("common.lua");
 include("pop_helper.lua");
-include("snow.lua");
+include("weather.lua");
 
 local turn = 0
 set_level_human_count(2);
@@ -22,11 +22,19 @@ end
 function ScrOnTurn(curr_turn)
 	turn = turn + 1
 	calculate_population_scores();
-	process_snow(curr_turn)
+	process_weather(curr_turn)
 	
 	if curr_turn == 60 then
-		LOG("snow")
-		start_snowing(2000, 200, 64, 60*10) -- amount, ~per_second_spawn, speed, duration_seconds
+		LOG("rain")
+		start_weather(WEATHER_RAIN, 600, 50, 100, 60*10) -- type, amount, ~per_second_spawn, speed, duration_seconds
+	elseif curr_turn == 260 then
+		LOG("test storm")
+		set_weather_particles_amt(2000)
+		increase_weather_speed_by(50)
+	elseif curr_turn == 320 then LOG("storm2")
+		increase_weather_speed_by(50)
+	elseif curr_turn == 400 then LOG("storm3")
+		increase_weather_speed_by(50)
 	end
 end
 

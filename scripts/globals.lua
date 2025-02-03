@@ -20,6 +20,13 @@ AI_EASY = 0;
 AI_MEDIUM = 1;
 AI_HARD = 2;
 
+-- weather
+WEATHER_NONE = 0;
+WEATHER_SNOW = 1;
+WEATHER_ASH_PARTICLES = 2;
+WEATHER_RAIN = 3;
+
+
 -- module imports
 import(Module_Building);
 import(Module_Commands);

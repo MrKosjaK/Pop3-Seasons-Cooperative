@@ -76,7 +76,7 @@ function rndb(a, b)
 end
 
 function chance(a)
-	return rndb(0, 100) < chance
+	return rndb(0, 100) < a
 end
 
 function random_item_from_table(t)
@@ -124,6 +124,13 @@ function zoom_thing(thing, angle)
 		pos.Pos = world_coord3d_to_map_idx(thing.Pos.D3)	
 		ZOOM_TO(pos.XZ.X,pos.XZ.Z, angle)
 	end
+end
+
+function CopyC2d(c2d)
+	local nc2d = Coord2D.new()
+	nc2d.Xpos = c2d.Xpos
+	nc2d.Zpos = c2d.Zpos
+	return nc2d
 end
 
 function CopyC3d(c3d)
@@ -179,6 +186,30 @@ function isMkWater(mk)
 	return true end)
 	
 	return is
+end
+
+function thing_flying(t)
+	return HasFlag(t.Flags2, TF2_THING_IN_AIR) > 0
+end
+
+function thing_over_water(t)
+	local water = false
+	SearchMapCells(SQUARE ,0, 0, 0, world_coord3d_to_map_idx(t.Pos.D3), function(me)
+		ProcessMapWho(me, function(t)
+			water = is_map_elem_all_sea(me) > 0
+		return true end)
+	return true end)
+	
+	return water
+end
+
+function is_c3d_water(c3d)
+	local water = false
+	SearchMapCells(SQUARE ,0, 0, 0, world_coord3d_to_map_idx(c3d), function(me)
+		water = is_map_elem_all_sea(me) > 0
+	return false end)
+	
+	return water
 end
 
 ----------------------------------------------------------------------------------------------------------------

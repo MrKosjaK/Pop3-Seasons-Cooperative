@@ -104,8 +104,10 @@ end
 
 -- triggered every game turn
 function OnTurn()
+  local turn = getTurn()
+  
   -- reason im doing it here is because OnLevelInit resolution is 640x480....
-  if (getTurn() == 0) then
+  if (turn == 0) then
     disable_inputs(DIF_FLYBY);
     process_options(OPT_TOGGLE_PANEL, 0, 0);
     
@@ -323,7 +325,7 @@ function OnTurn()
     end
   elseif (is_game_state(GM_STATE_GAME)) then
     -- main entry
-    if (ScrOnTurn ~= nil) then ScrOnTurn(getTurn()); end
+    if (ScrOnTurn ~= nil) then ScrOnTurn(turn); end
   end
 end
 
