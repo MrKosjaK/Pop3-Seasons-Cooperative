@@ -1,4 +1,81 @@
 local btns = {};
+local text_fields = {};
+local icons = {};
+
+function create_icon(bank_idx, sprite_idx)
+  local i = {
+    Pos = {0, 0},
+    Spr = sprite_idx,
+    BankNum = bank_idx,
+    isActive = false
+  }
+  
+  icons[#icons + 1] = i;
+  
+  return #icons;
+end
+
+function set_icon_active(idx)
+  icons[idx].isActive = true;
+end
+
+function set_icon_position(idx, x, y)
+  icons[idx].Pos[1] = x - (get_sprite(icons[idx].BankNum, icons[idx].Spr).Width >> 1);
+  icons[idx].Pos[2] = y;
+end
+
+function draw_icons()
+  for i = 1, #icons do
+    local icon = icons[i];
+    
+    if (icon.isActive) then
+      LbDraw_Sprite(icon.Pos[1], icon.Pos[2], get_sprite(icon.BankNum, icon.Spr));
+    end
+  end
+end
+
+function create_text_field(text, font_idx)
+  local t = {
+    Pos = {0, 0},
+    Str = text,
+    FontIdx = font_idx,
+    isActive = false
+  };
+  
+  text_fields[#text_fields + 1] = t;
+  
+  return #text_fields;
+end
+
+function set_text_field_position(idx, x, y)
+  PopSetFont(text_fields[idx].FontIdx);
+  local str_w = string_width(text_fields[idx].Str);
+  text_fields[idx].Pos[1] = x - (str_w >> 1);
+  text_fields[idx].Pos[2] = y;
+end
+
+function set_text_field_text(idx, text)
+  text_fields[idx].Str = text;
+end
+
+function set_text_field_active(idx)
+  text_fields[idx].isActive = true;
+end
+
+function set_text_field_inactive(idx)
+  text_fields[idx].isActive = false;
+end
+
+function draw_text_fields()
+  for i = 1, #text_fields do
+    local t = text_fields[i];
+    
+    if (t.isActive) then
+      PopSetFont(t.FontIdx);
+      LbDraw_Text(t.Pos[1], t.Pos[2], t.Str, 0);
+    end
+  end
+end
 
 function get_button_pos_and_dimensions(idx)
   local b = btns[idx];
@@ -11,7 +88,7 @@ function get_button_pos_and_dimensions(idx)
   return data;
 end
 
-function create_button_array(text_table, font_idx, max_num, ls_n, ls_h, ls_hp)
+function create_button_array(font_idx, ls_n, ls_h, ls_hp)
   local button =
   {
     Type = BTN_TYPE_ARRAY,
@@ -22,7 +99,7 @@ function create_button_array(text_table, font_idx, max_num, ls_n, ls_h, ls_hp)
     Styles = {ls_n, ls_h, ls_hp},
     Rect = TbRect.new(),
     CurrData = 1,
-    MaxData = max_num;
+    MaxData = 1;
     LeftArrow = TbRect.new(),
     RightArrow = TbRect.new(),
     Func = nil,
@@ -32,20 +109,23 @@ function create_button_array(text_table, font_idx, max_num, ls_n, ls_h, ls_hp)
     isActive = false
   };
   
-  PopSetFont(font_idx);
-  local biggest_width = 0;
-  
-  for i = 1, #text_table do
-    button.Strs[i] = text_table[i];
-    biggest_width = math.max(biggest_width, string_width(text_table[i]));
-  end
-  
-  button.Size[1] = biggest_width;
-  button.Size[2] = CharHeight2();
-  
   btns[#btns + 1] = button;
   
   return #btns;
+end
+
+function set_array_button_text_table(idx, text_table)
+  PopSetFont(btns[idx].FontIdx);
+  local biggest_width = 0;
+  
+  for i = 1, #text_table do
+    btns[idx].Strs[i] = text_table[i];
+    biggest_width = math.max(biggest_width, string_width(text_table[i]));
+  end
+  
+  btns[idx].Size[1] = biggest_width;
+  btns[idx].Size[2] = CharHeight2();
+  btns[idx].MaxData = #text_table;
 end
 
 function set_array_button_curr_value(idx, value)
