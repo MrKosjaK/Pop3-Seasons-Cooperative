@@ -128,7 +128,8 @@ end
 function spawn_players_initial_stuff();
   for i = 1, #HUMAN_PLAYERS do
     local p_num = HUMAN_PLAYERS[i];
-    local h_data = HUMAN_INFO[i];
+    local b_data = get_button_ptr(BTN_PLR1_POS + p_num);
+    local h_data = HUMAN_INFO[b_data.CurrData];
     
     for i,k in ipairs(h_data._spells) do
       set_player_can_cast(k, p_num);
