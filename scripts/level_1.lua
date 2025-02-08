@@ -8,6 +8,10 @@ add_human_player_start_info(0, {M_SPELL_BLAST, M_SPELL_CONVERT_WILD, M_SPELL_INS
 add_human_player_start_info(1, {M_SPELL_BLAST, M_SPELL_CONVERT_WILD, M_SPELL_HYPNOTISM}, {M_BUILDING_TEPEE, M_BUILDING_DRUM_TOWER});
 add_ai_player_start_info(2, 3, {M_SPELL_BLAST, M_SPELL_CONVERT_WILD}, {M_BUILDING_TEPEE, M_BUILDING_DRUM_TOWER, M_BUILDING_WARRIOR_TRAIN, M_BUILDING_SUPER_WARRIOR_TRAIN});
 
+function OnInit()
+  
+end
+
 function ScrOnLevelInit(level_id)
   calculate_population_scores();
 end
