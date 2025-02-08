@@ -1,5 +1,50 @@
 -- game lobby stuff
 
+-- MENU: PLAYERS
+MENU_PLAYERS = create_menu("Player List", BTN_STYLE_GRAY);
+TXT_PLR1_NAME = create_text_field("", 3);
+TXT_PLR2_NAME = create_text_field("", 3);
+TXT_PLR3_NAME = create_text_field("", 3);
+TXT_PLR4_NAME = create_text_field("", 3);
+TXT_PLR5_NAME = create_text_field("", 3);
+TXT_PLR6_NAME = create_text_field("", 3);
+TXT_PLR7_NAME = create_text_field("", 3);
+TXT_PLR8_NAME = create_text_field("", 3);
+ICON_PLR1 = create_icon(0, 887);
+ICON_PLR2 = create_icon(0, 914);
+ICON_PLR3 = create_icon(0, 941);
+ICON_PLR4 = create_icon(0, 968);
+ICON_PLR5 = create_icon(0, 1623);
+ICON_PLR6 = create_icon(0, 1650);
+ICON_PLR7 = create_icon(0, 1677);
+ICON_PLR8 = create_icon(0, 1704);
+TXT_FIELD_TRIBE = create_text_field("Tribe", 4);
+TXT_FIELD_PLR_NAME = create_text_field("Name", 4);
+TXT_FIELD_START_POS = create_text_field("Start Pos", 4);
+BTN_PLR1_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+BTN_PLR2_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+BTN_PLR3_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+BTN_PLR4_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+BTN_PLR5_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+BTN_PLR6_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+BTN_PLR7_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+BTN_PLR8_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+
+-- ai buttons
+BTN_AI_DIFFICULTY = create_button_array({"Beginner", "Moderate", "Honour"}, 3, 3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+
+-- misc buttons
+BTN_CHECK_IN = create_button("Check in", 3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+BTN_START_GAME = create_button("Start Game", 3, BTN_STYLE_DEFAULT3, BTN_STYLE_DEFAULT3_H, BTN_STYLE_DEFAULT3_HP);
+
+-- menus
+MENU_CHECK_IN = create_menu("Check Phase", BTN_STYLE_GRAY);
+
+MENU_OPTIONS = create_menu("Game Options", BTN_STYLE_GRAY);
+MENU_AI = create_menu("AI Settings", BTN_STYLE_GRAY);
+
+
+
 HUMAN_COUNT = 0;
 AI_COUNT = 0;
 
@@ -24,7 +69,6 @@ end
 
 function check_myself_in()
   if (I_AM_NOT_CHECKED_IN) then
-    log("checking in");
     Send(256, tostring(G_NSI.PlayerNum));
     I_AM_NOT_CHECKED_IN = false;
   end
@@ -81,10 +125,8 @@ function add_ai_player_start_info(marker_idx, tribe_owner, spells, bldgs)
   AI_INFO[#AI_INFO + 1] = data;
 end
 
-function spawn_players_initial_stuff()
-  --log("spawn 2");
+function spawn_players_initial_stuff());
   for i = 1, #HUMAN_PLAYERS do
-    --log("spawn 1");
     local p_num = HUMAN_PLAYERS[i];
     local h_data = HUMAN_INFO[i];
     
@@ -99,7 +141,7 @@ function spawn_players_initial_stuff()
     for i,k in ipairs(h_data._bldgs) do
       set_player_can_build(k, p_num);
     end
-    --log("Player num: " .. p_num);
+
     createThing(T_PERSON, M_PERSON_MEDICINE_MAN, p_num, h_data._start_pos, false, false);
     
     G_PLR[p_num].PlayerType = HUMAN_PLAYER;
@@ -133,11 +175,11 @@ function spawn_players_initial_stuff()
       
       while (count > 0) do
         count = count - 1;
-        --log("Player num: " .. p_num);
+        
         if (G_PLR[p_num].PlayerType == NO_PLAYER) then
-          --log("wasnt human controlled");
           break;
         end
+        
         p_num = p_num + 1;
       end
     end
@@ -201,23 +243,13 @@ function update_network_players_count(p_num)
   --log("test");
   if (HUMAN_PLAYERS_COUNT == 0) then
     GAME_MASTER_ID = p_num;
-    log(string.format("Game master is : %s", get_player_name(p_num, ntb(am_i_in_network_game()))));
   end
   
   HUMAN_PLAYERS[#HUMAN_PLAYERS + 1] = p_num;
   HUMAN_PLAYERS_COUNT = HUMAN_PLAYERS_COUNT + 1;
-  log(string.format("Registered player num: %i", p_num));
 end
 
 function get_info_on_players_count()
-  -- for i = 0, 7 do
-    -- log(string.format("%i", G_PLR[i].PlayerActive));
-    -- if (G_PLR[i].PlayerType == HUMAN_PLAYER) then
-      -- HUMAN_PLAYERS[#HUMAN_PLAYERS + 1] = i;
-      -- HUMAN_PLAYERS_COUNT = HUMAN_PLAYERS_COUNT + 1;
-    -- end
-  -- end
-  
   if (HUMAN_PLAYERS_COUNT > HUMAN_COUNT) then
     log(string.format("Amount of players exceed defined amount in level. Defined %i, actual %i", HUMAN_COUNT, HUMAN_PLAYERS_COUNT));
   end

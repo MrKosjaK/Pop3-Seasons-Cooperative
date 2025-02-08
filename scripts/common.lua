@@ -6,52 +6,6 @@ include("game_state.lua");
 include("event_logger.lua");
 
 local GAME_STARTED = false;
-local SHAM_ORIG_POS = {};
-local SHAM_CURR_POS = {};
-local SHAM_ORDER = {};
-
--- MENU: PLAYERS
-MENU_PLAYERS = create_menu("Player List", BTN_STYLE_GRAY);
-TXT_PLR1_NAME = create_text_field("", 3);
-TXT_PLR2_NAME = create_text_field("", 3);
-TXT_PLR3_NAME = create_text_field("", 3);
-TXT_PLR4_NAME = create_text_field("", 3);
-TXT_PLR5_NAME = create_text_field("", 3);
-TXT_PLR6_NAME = create_text_field("", 3);
-TXT_PLR7_NAME = create_text_field("", 3);
-TXT_PLR8_NAME = create_text_field("", 3);
-ICON_PLR1 = create_icon(0, 887);
-ICON_PLR2 = create_icon(0, 914);
-ICON_PLR3 = create_icon(0, 941);
-ICON_PLR4 = create_icon(0, 968);
-ICON_PLR5 = create_icon(0, 1623);
-ICON_PLR6 = create_icon(0, 1650);
-ICON_PLR7 = create_icon(0, 1677);
-ICON_PLR8 = create_icon(0, 1704);
-TXT_FIELD_TRIBE = create_text_field("Tribe", 4);
-TXT_FIELD_PLR_NAME = create_text_field("Name", 4);
-TXT_FIELD_START_POS = create_text_field("Start Pos", 4);
-BTN_PLR1_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-BTN_PLR2_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-BTN_PLR3_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-BTN_PLR4_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-BTN_PLR5_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-BTN_PLR6_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-BTN_PLR7_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-BTN_PLR8_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-
--- ai buttons
-BTN_AI_DIFFICULTY = create_button_array({"Beginner", "Moderate", "Honour"}, 3, 3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-
--- misc buttons
-BTN_CHECK_IN = create_button("Check in", 3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-BTN_START_GAME = create_button("Start Game", 3, BTN_STYLE_DEFAULT3, BTN_STYLE_DEFAULT3_H, BTN_STYLE_DEFAULT3_HP);
-
--- menus
-MENU_CHECK_IN = create_menu("Check Phase", BTN_STYLE_GRAY);
-
-MENU_OPTIONS = create_menu("Game Options", BTN_STYLE_GRAY);
-MENU_AI = create_menu("AI Settings", BTN_STYLE_GRAY);
 
 -- main hooks
 
@@ -59,45 +13,25 @@ MENU_AI = create_menu("AI Settings", BTN_STYLE_GRAY);
 function OnLevelInit(level_id)
   if (ScrOnLevelInit ~= nil) then ScrOnLevelInit(level_id); end
   
-  local pos = MapPosXZ.new() 
-      pos.Pos = world_coord3d_to_map_idx(HUMAN_INFO[1]._start_pos);	
-      ZOOM_TO(pos.XZ.X,pos.XZ.Z, 256 * math.random(1, 8));
-  
   if (is_game_state(GM_STATE_SETUP)) then
     -- let's prepare level for lobby
     set_level_unable_to_complete();
     set_level_unable_to_lose();
-    --create_log_event(EVENT_TYPE_INFO, "Welcome to the Seasons Lobby!", 64);
     
     -- freeze all units and make them unselectable
     ProcessGlobalTypeList(T_PERSON, function(t_thing)
       remove_all_persons_commands(t_thing);
-      --if (t_thing.Model ~= M_PERSON_MEDICINE_MAN) then
-        set_person_new_state(t_thing, S_PERSON_NONE);
-      --end
+      set_person_new_state(t_thing, S_PERSON_NONE);
       t_thing.Flags2 = t_thing.Flags2 | TF2_PERSON_NOT_SELECTABLE;
       return true;
     end);
     
+    -- mark all players as NO_PLAYER.
     for i = 0, 7 do
       if (G_PLR[i].DeadCount > 0) then
         G_PLR[i].PlayerType = NO_PLAYER;
       end
-      if (getPlayer(i).NumPeople > 0 and getShaman(i)) then
-        set_player_reinc_site_off(getPlayer(i));
-        mark_reincarnation_site_mes(getPlayer(i).ReincarnSiteCoord, OWNER_NONE, UNMARK);
-        SHAM_ORDER[#SHAM_ORDER + 1] = i;
-        SHAM_ORIG_POS[#SHAM_ORIG_POS + 1] = Coord3D.new();
-        SHAM_CURR_POS[#SHAM_CURR_POS + 1] = Coord3D.new();
-        SHAM_ORIG_POS[#SHAM_ORIG_POS].Xpos = getShaman(i).Pos.D3.Xpos;
-        SHAM_ORIG_POS[#SHAM_ORIG_POS].Zpos = getShaman(i).Pos.D3.Zpos;
-        SHAM_ORIG_POS[#SHAM_ORIG_POS].Ypos = getShaman(i).Pos.D3.Ypos;
-        SHAM_CURR_POS[#SHAM_CURR_POS].Xpos = getShaman(i).Pos.D3.Xpos;
-        SHAM_CURR_POS[#SHAM_CURR_POS].Zpos = getShaman(i).Pos.D3.Zpos;
-        SHAM_CURR_POS[#SHAM_CURR_POS].Ypos = getShaman(i).Pos.D3.Ypos;
-      end
     end
-    
   end
 end
 
@@ -106,7 +40,7 @@ end
 function OnTurn()
   local turn = getTurn()
   
-  -- reason im doing it here is because OnLevelInit resolution is 640x480....
+  -- reason im doing it here is because OnLevelInit resolution is still 640x480....
   if (turn == 0) then
     disable_inputs(DIF_FLYBY);
     process_options(OPT_TOGGLE_PANEL, 0, 0);
@@ -114,9 +48,7 @@ function OnTurn()
     local table_str = {};
     
     -- 65 = "A";
-    log("" .. #HUMAN_INFO);
     for i = 1, #HUMAN_INFO do
-      --table_str[i] = string.format("%s", string.char(65 + (i - 1)));
       table_str[i] = string.char(65 + (i - 1));
     end
     
@@ -284,6 +216,8 @@ function OnTurn()
     function(menu)
       set_button_inactive(BTN_AI_DIFFICULTY);
     end);
+    
+    if (OnInit ~= nil) then OnInit(); end
   end
   if (is_game_state(GM_STATE_SETUP)) then
     if (GAME_STARTED) then
@@ -300,23 +234,11 @@ function OnTurn()
         return true;
       end);
       
-      for i = 1, #SHAM_CURR_POS do
-        local n = SHAM_ORDER[i];
-        if (getPlayer(n).NumPeople > 0) then
-          set_player_reinc_site_on(getPlayer(n));
-          getPlayer(n).ReincarnSiteCoord.Xpos = SHAM_CURR_POS[i].Xpos;
-          getPlayer(n).ReincarnSiteCoord.Zpos = SHAM_CURR_POS[i].Zpos;
-          mark_reincarnation_site_mes(getPlayer(n).ReincarnSiteCoord, n, MARK);
-          set_players_shaman_initial_command(getPlayer(n));
-        end
-      end
-      
       spawn_players_initial_stuff();
       
       set_level_able_to_complete();
       set_level_able_to_lose();
-      --GAME_STARTED = false;
-      --create_log_event(EVENT_TYPE_INFO, "Game has been started!", 64);
+      
       zoom_thing(getShaman(G_NSI.PlayerNum), math.random(0, 2048));
       
       process_options(OPT_TOGGLE_PANEL, 1, 0);
@@ -329,8 +251,6 @@ function OnTurn()
   end
 end
 
---mouse_c2d = get_mouse_pointed_at_coord2d();
-
 -- triggered on thing spawning
 function OnCreateThing(t_thing)
   -- check if t_thing isn't local
@@ -342,7 +262,6 @@ function OnCreateThing(t_thing)
 end
 
 
-local clr = TbColour.new();
 -- triggered on every frame
 function OnFrame()
   local w,h,guiW = ScreenWidth(), ScreenHeight(), GFGetGuiWidth();
@@ -351,11 +270,6 @@ function OnFrame()
   
   if (am_i_not_in_igm()) then
     if (is_game_state(GM_STATE_SETUP)) then
-      local str = "";
-      local str_width = 0;
-      local x = 0;
-      local y = 0;
-      
       if (am_i_in_network_game() ~= 0) then
         
       else
@@ -381,7 +295,6 @@ end
 -- triggered on mouse input
 function OnMouseButton(key, is_down, x, y)
   if (key == LB_KEY_MOUSE0) then
-    --log(string.format("%i %s %i %i", key, is_down, x, y));
     process_buttons_input(is_down, x, y);
   end
 end
@@ -411,14 +324,11 @@ end
 
 -- triggered on receiving a network packet
 function OnPacket(player_num, packet_type, data)
-  --log(string.format("%i %i %s", player_num, packet_type, data));
   if (am_i_in_network_game() ~= 0) then
     if (ScrOnPacket ~= nil) then ScrOnPacket(player_num, packet_type, data); end
-    --log(string.format("%i %i %s", player_num, packet_type, data));
+    
     if (is_game_state(GM_STATE_SETUP)) then
-      --log(string.format("%i %i %s", player_num, packet_type, data));
       if (packet_type == 256) then
-        --log("" .. data);
         update_network_players_count(tonumber(data));
       end
       
@@ -441,7 +351,6 @@ function OnPacket(player_num, packet_type, data)
         close_menu(MENU_AI);
         
         set_button_inactive(BTN_START_GAME);
-        --log(string.format("Starting network game... Real players: %i", HUMAN_PLAYERS_COUNT));
       end
     end
   end
