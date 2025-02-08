@@ -10,14 +10,14 @@ TXT_PLR5_NAME = create_text_field("", 3);
 TXT_PLR6_NAME = create_text_field("", 3);
 TXT_PLR7_NAME = create_text_field("", 3);
 TXT_PLR8_NAME = create_text_field("", 3);
-ICON_PLR1 = create_icon(0, 887);
-ICON_PLR2 = create_icon(0, 914);
-ICON_PLR3 = create_icon(0, 941);
-ICON_PLR4 = create_icon(0, 968);
-ICON_PLR5 = create_icon(0, 1623);
-ICON_PLR6 = create_icon(0, 1650);
-ICON_PLR7 = create_icon(0, 1677);
-ICON_PLR8 = create_icon(0, 1704);
+ICON_PLR1 = create_icon(1, 6883);
+ICON_PLR2 = create_icon(1, 6903);
+ICON_PLR3 = create_icon(1, 6923);
+ICON_PLR4 = create_icon(1, 6943);
+ICON_PLR5 = create_icon(2, 6883);
+ICON_PLR6 = create_icon(2, 6903);
+ICON_PLR7 = create_icon(2, 6923);
+ICON_PLR8 = create_icon(2, 6943);
 TXT_FIELD_TRIBE = create_text_field("Tribe", 4);
 TXT_FIELD_PLR_NAME = create_text_field("Name", 4);
 TXT_FIELD_START_POS = create_text_field("Start Pos", 4);
@@ -49,6 +49,7 @@ AI_COUNT = 0;
 
 -- global check in
 GAME_MASTER_ID = -1;
+HUMAN_CHECK_IN = {[0] = false, false, false, false, false, false, false, false};
 HUMAN_PLAYERS = {};
 HUMAN_PLAYERS_COUNT = 0;
 
@@ -244,6 +245,7 @@ function update_network_players_count(p_num)
     GAME_MASTER_ID = p_num;
   end
   
+  HUMAN_CHECK_IN[p_num] = true;
   HUMAN_PLAYERS[#HUMAN_PLAYERS + 1] = p_num;
   HUMAN_PLAYERS_COUNT = HUMAN_PLAYERS_COUNT + 1;
 end
@@ -381,12 +383,12 @@ function init_game_lobbys_menus_and_elements()
     for i = 1, 8 do
       local b_data = get_button_pos_and_dimensions(BTN_PLR1_POS);
       set_array_button_position(BTN_PLR1_POS + (i - 1), menu.Pos[1] + (menu.Size[1] - 68), menu.Pos[2] + 24 + ((i - 1) * 28));
-      if (true) then
+      if (HUMAN_CHECK_IN[i - 1]) then
         set_button_active(BTN_PLR1_POS + (i - 1));
         set_text_field_text(TXT_PLR1_NAME + (i - 1), get_player_name(i - 1, ntb(am_i_in_network_game())));
         set_text_field_position(TXT_PLR1_NAME + (i - 1), menu.Pos[1] + 110, menu.Pos[2] + 24 + ((i - 1) * 28));
         set_text_field_active(TXT_PLR1_NAME + (i - 1));
-        set_icon_position(ICON_PLR1 + (i - 1), menu.Pos[1] + 40, menu.Pos[2] + 24 + ((i - 1) * 28));
+        set_icon_position(ICON_PLR1 + (i - 1), menu.Pos[1] + 40, menu.Pos[2] + 18 + ((i - 1) * 28));
         set_icon_active(ICON_PLR1 + (i - 1));
       end
     end
@@ -424,4 +426,28 @@ function init_game_lobbys_menus_and_elements()
   function(menu)
     set_button_inactive(BTN_AI_DIFFICULTY);
   end);
+end
+
+function process_game_lobby_packets(pn, p_type, data)
+  if (packet_type == 256) then
+    update_network_players_count(tonumber(data));
+  end
+  
+  -- buttons packets
+  if (p_type == PACKET_BTN_ARRAY_DEC) then
+    local b = get_button_ptr(tonumber(data));
+    b.CurrData = math.min(math.max(b.CurrData - 1, 1), b.MaxData);
+  end
+  
+  if (p_type == PACKET_BTN_ARRAY_INCR) then
+    local b = get_button_ptr(tonumber(data));
+    b.CurrData = math.min(math.max(b.CurrData + 1, 1), b.MaxData);
+  end
+  
+  if (p_type == PACKET_START_GAME) then
+    GAME_STARTED = true;
+    
+    close_all_menus();
+    set_all_elements_inactive();
+  end
 end

@@ -158,27 +158,7 @@ function OnPacket(player_num, packet_type, data)
     if (ScrOnPacket ~= nil) then ScrOnPacket(player_num, packet_type, data); end
     
     if (is_game_state(GM_STATE_SETUP)) then
-      if (packet_type == 256) then
-        update_network_players_count(tonumber(data));
-      end
-      
-      -- buttons packets
-      if (packet_type == PACKET_BTN_ARRAY_DEC) then
-        local b = get_button_ptr(tonumber(data));
-        b.CurrData = math.min(math.max(b.CurrData - 1, 1), b.MaxData);
-      end
-      
-      if (packet_type == PACKET_BTN_ARRAY_INCR) then
-        local b = get_button_ptr(tonumber(data));
-        b.CurrData = math.min(math.max(b.CurrData + 1, 1), b.MaxData);
-      end
-      
-      if (packet_type == PACKET_START_GAME) then
-        GAME_STARTED = true;
-        
-        close_all_menus();
-        set_all_elements_inactive();
-      end
+      process_game_lobby_packets(player_num, packet_type, data);
     end
   end
 end
