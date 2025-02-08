@@ -15,6 +15,7 @@ SET DATA_PATH=%CURR_PATH%data
 :: Data
 ECHO.
 ECHO Copying data files...
+COPY "%DATA_PATH%\hfx0-0.dat" "%WORK_DIR%\data"
 
 :: Language
 ECHO.
@@ -82,11 +83,13 @@ COPY "%SCR_PATH%\lb_box.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\lb_button.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\lb_menu.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\assets.lua" "%WORK_DIR%\scripts"
+COPY "%SCR_PATH%\weather.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\pop_helper.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\event_logger.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\game_lobby.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\game_state.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\level_1.lua" "%WORK_DIR%\scripts"
+COPY "%SCR_PATH%\level_2.lua" "%WORK_DIR%\scripts"
 
 :: Sound
 ECHO.

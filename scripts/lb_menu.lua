@@ -31,6 +31,10 @@ function draw_menus()
   end
 end
 
+function is_menu_open(idx)
+  return (_menus[idx].isOpen == true);
+end
+
 function get_menu_pos_and_dimensions(idx)
   local m = _menus[idx];
   local data = {}

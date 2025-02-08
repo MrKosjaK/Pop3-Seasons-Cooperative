@@ -12,7 +12,7 @@ add_ai_player_start_info(3, -1, {M_SPELL_BLAST, M_SPELL_CONVERT_WILD}, {M_BUILDI
 
 -- triggers at turn 0, at that point client's resolution is set to correct one instead of 640x480.
 function OnInit()
-  start_weather(WEATHER_SNOW, 750, 75, 35, 60*10) -- type, amount, ~per_second_spawn, speed, duration_seconds
+  --start_weather(WEATHER_SNOW, 750, 75, 35, 60*10) -- type, amount, ~per_second_spawn, speed, duration_seconds
 end
 
 -- triggers after GAME MASTER starts game.
@@ -27,7 +27,7 @@ function ScrOnLevelInit(level_id)
 end
 
 function ScrOnTurn(curr_turn)
-  process_weather(curr_turn);
+  --process_weather(curr_turn);
   calculate_population_scores();
 end
 
