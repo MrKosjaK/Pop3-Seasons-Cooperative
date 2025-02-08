@@ -324,3 +324,17 @@ function process_buttons_input(is_down, x, y)
     end
   end
 end
+
+function set_all_elements_inactive()
+  for i,k in ipairs(btns) do
+    k.isActive = false;
+  end
+  
+  for i,k in ipairs(icons) do
+    k.isActive = false;
+  end
+  
+  for i,k in ipairs(text_fields) do
+    k.isActive = false;
+  end
+end

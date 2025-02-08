@@ -105,3 +105,13 @@ end
 function set_menu_close_function(idx, func)
   _menus[idx].CloseFunc = func;
 end
+
+function close_all_menus()
+  for i,k in ipairs(_menus) do
+    k.isOpen = false;
+    
+    if (k.CloseFunc ~= nil) then
+    k.CloseFunc(k);
+  end
+  end
+end
