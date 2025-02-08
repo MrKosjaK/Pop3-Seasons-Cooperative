@@ -125,7 +125,7 @@ function add_ai_player_start_info(marker_idx, tribe_owner, spells, bldgs)
   AI_INFO[#AI_INFO + 1] = data;
 end
 
-function spawn_players_initial_stuff());
+function spawn_players_initial_stuff();
   for i = 1, #HUMAN_PLAYERS do
     local p_num = HUMAN_PLAYERS[i];
     local h_data = HUMAN_INFO[i];
