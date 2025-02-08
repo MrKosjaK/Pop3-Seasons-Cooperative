@@ -16,9 +16,10 @@ GM_STATE_GAME = 1;
 GM_STATE_END = 2;
 
 -- AI difficulty
-AI_EASY = 0;
-AI_MEDIUM = 1;
-AI_HARD = 2;
+AI_EASY = 1;
+AI_MEDIUM = 2;
+AI_HARD = 3;
+AI_VERY_HARD = 4;
 
 -- weather
 WEATHER_NONE = 0;

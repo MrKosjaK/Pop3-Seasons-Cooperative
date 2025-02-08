@@ -24,6 +24,11 @@ function set_icon_position(idx, x, y)
   icons[idx].Pos[2] = y;
 end
 
+function set_icon_sprite_and_bank(idx, bank_idx, sprite_idx)
+  icons[idx].BankNum = bank_idx;
+  icons[idx].Spr = sprite_idx;
+end
+
 function draw_icons()
   for i = 1, #icons do
     local icon = icons[i];

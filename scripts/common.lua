@@ -71,6 +71,9 @@ function OnTurn()
       
       process_options(OPT_TOGGLE_PANEL, 1, 0);
       enable_inputs(DIF_FLYBY);
+      
+      if (OnGameStart ~= nil) then OnGameStart(); end
+      
       set_game_state(GM_STATE_GAME);
     end
   elseif (is_game_state(GM_STATE_GAME)) then
