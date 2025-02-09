@@ -90,6 +90,10 @@ function process_all_ai_info(func)
   end
 end
 
+function get_ai_player_info(slot)
+  return (AI_PLAYERS[slot]);
+end
+
 -- spells and bldgs info
 -- since we're making players able to swap positions
 -- we have to define restrictions in a weird way
