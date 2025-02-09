@@ -26,7 +26,7 @@ function ScrOnTurn(curr_turn)
 	
 	if curr_turn == 60 then
 		LOG("rain")
-		start_weather(WEATHER_RAIN, 600, 50, 100, 60*10) -- type, amount, ~per_second_spawn, speed, duration_seconds
+		start_weather(WEATHER_RAIN, 600, 50, 150, 60*10) -- type, amount, ~per_second_spawn, speed, duration_seconds
 	elseif curr_turn == 260 then
 		LOG("test storm")
 		set_weather_particles_amt(2000)

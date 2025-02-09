@@ -72,7 +72,11 @@ function everySeconds(n)
 end
 
 function rndb(a, b)
-	return math.random(a, b)
+	return a + G_RANDOM(b - a + 1)
+end
+
+function random_float()
+    return G_RANDOM(1000000) / 1000000
 end
 
 function chance(a)

@@ -115,7 +115,7 @@ function process_weather(turn)
 	if state == _WEATHER_STARTING then
 		if every1 then
 			if items < weather_table.amount then
-				local spawn_amt_max = math.floor(weather_table.per_second_spawn * (0.5 + math.random()))
+				local spawn_amt_max = math.floor(weather_table.per_second_spawn * (0.5 + random_float()))
 				local spawn_amt = math.min(spawn_amt_max, weather_table.amount - items)
 				local pos = marker_to_coord3d(0)
 				local dur = 12 * weather_table.duration_seconds
@@ -123,6 +123,7 @@ function process_weather(turn)
 				
 				for _ = 1, spawn_amt do
 					local drop = createThing(T_EFFECT, M_EFFECT_LIGHTNING_ELEM, 8, pos, false, false)
+					drop.Flags2 = EnableFlag(drop.Flags2, TF2_DONT_DRAW_IN_WORLD_VIEW)
 					drop.u.Effect.Duration = dur + 12 * rndb(5, 15)
 					local c3d = CopyC3d(drop.Pos.D3)
 					c3d.Ypos = rndb(1500, 2000)
