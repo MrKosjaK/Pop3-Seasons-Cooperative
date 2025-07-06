@@ -370,16 +370,31 @@ function init_game_lobbys_menus_and_elements()
   -- start game button
   set_button_function(BTN_START_GAME,
   function(b)
-    if (am_i_in_network_game() ~= 0) then
-      if (i_am_game_master()) then
-        Send(PACKET_START_GAME, "0");
-        set_button_inactive(BTN_START_GAME);
+    -- first check player setup indexes to see if there are duplicates
+    local found_duplicate = false;
+    local setup_ptr = GAME_LOBBY_SETTINGS[GLS_PLAYER_SETUP_IDX];
+    local compare_t = {false, false, false, false, false, false, false, false};
+    for i = 0, #setup_ptr do
+      if (compare_t[setup_ptr[i][1]] == false) then
+        compare_t[setup_ptr[i][1]] = true;
+      else
+        found_duplicate = true;
+        break;
       end
-    else
-      GAME_STARTED = true;
-      
-      set_all_elements_inactive();
-      close_all_menus();
+    end
+    
+    if (not found_duplicate) then
+      if (am_i_in_network_game() ~= 0) then
+        if (i_am_game_master()) then
+          Send(PACKET_START_GAME, "0");
+          set_button_inactive(BTN_START_GAME);
+        end
+      else
+        GAME_STARTED = true;
+        
+        set_all_elements_inactive();
+        close_all_menus();
+      end
     end
   end);
   
@@ -491,7 +506,7 @@ function init_game_lobbys_menus_and_elements()
     for i = 1, 8 do
       local b_data = get_button_pos_and_dimensions(BTN_PLR1_POS + (i - 1));
       set_array_button_position(BTN_PLR1_POS + (i - 1), menu.Pos[1] + (menu.Size[1] - 68), menu.Pos[2] + 24 + ((i - 1) * 28));
-      if (HUMAN_CHECK_IN[i - 1]) then
+      if (HUMAN_CHECK_IN[i - 1] or i < 3) then
         set_button_active(BTN_PLR1_POS + (i - 1));
         set_text_field_text(TXT_PLR1_NAME + (i - 1), get_player_name(i - 1, ntb(am_i_in_network_game())));
         set_text_field_position(TXT_PLR1_NAME + (i - 1), menu.Pos[1] + 110, menu.Pos[2] + 24 + ((i - 1) * 28));
