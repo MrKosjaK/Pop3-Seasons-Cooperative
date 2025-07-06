@@ -60,6 +60,7 @@ import(Module_Table);
 include("lb_box.lua");
 include("lb_button.lua");
 include("lb_menu.lua");
+include("lb_textbox.lua");
 
 -- style defines
 BTN_STYLE_BLUE = create_layout(879);
@@ -77,6 +78,7 @@ BTN_STYLE_DEFAULT2_HP = create_layout(839); -- pressed
 BTN_STYLE_DEFAULT3 = create_layout(848); -- normal
 BTN_STYLE_DEFAULT3_H = create_layout(857); -- highlight
 BTN_STYLE_DEFAULT3_HP = create_layout(866); -- pressed
+BTN_STYLE_LOG = create_layout(1794); -- For msg log
 
 -- global pointers
 G_CONST = constants();

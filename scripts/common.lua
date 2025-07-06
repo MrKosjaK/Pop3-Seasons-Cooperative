@@ -109,9 +109,11 @@ function OnFrame()
     end
     
     draw_menus();
+    draw_text_boxes();
     draw_buttons();
     draw_text_fields();
     draw_icons();
+    
     draw_log_events(w, h, guiW);
   end
 end

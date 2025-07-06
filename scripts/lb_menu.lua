@@ -14,7 +14,7 @@ function create_menu(header_text, ls)
   };
   
   _menus[#_menus + 1] = menu;
-  return #_menus
+  return #_menus;
 end
 
 function draw_menus()
