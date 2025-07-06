@@ -375,11 +375,13 @@ function init_game_lobbys_menus_and_elements()
     local setup_ptr = GAME_LOBBY_SETTINGS[GLS_PLAYER_SETUP_IDX];
     local compare_t = {false, false, false, false, false, false, false, false};
     for i = 0, #setup_ptr do
-      if (compare_t[setup_ptr[i][1]] == false) then
-        compare_t[setup_ptr[i][1]] = true;
-      else
-        found_duplicate = true;
-        break;
+      if (HUMAN_CHECK_IN[i]) then
+        if (compare_t[setup_ptr[i][1]] == false) then
+          compare_t[setup_ptr[i][1]] = true;
+        else
+          found_duplicate = true;
+          break;
+        end
       end
     end
     
@@ -506,7 +508,7 @@ function init_game_lobbys_menus_and_elements()
     for i = 1, 8 do
       local b_data = get_button_pos_and_dimensions(BTN_PLR1_POS + (i - 1));
       set_array_button_position(BTN_PLR1_POS + (i - 1), menu.Pos[1] + (menu.Size[1] - 68), menu.Pos[2] + 24 + ((i - 1) * 28));
-      if (HUMAN_CHECK_IN[i - 1] or i < 3) then
+      if (HUMAN_CHECK_IN[i - 1]) then
         set_button_active(BTN_PLR1_POS + (i - 1));
         set_text_field_text(TXT_PLR1_NAME + (i - 1), get_player_name(i - 1, ntb(am_i_in_network_game())));
         set_text_field_position(TXT_PLR1_NAME + (i - 1), menu.Pos[1] + 110, menu.Pos[2] + 24 + ((i - 1) * 28));
