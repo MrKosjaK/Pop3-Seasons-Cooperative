@@ -19,6 +19,10 @@ function set_icon_active(idx)
   icons[idx].isActive = true;
 end
 
+function set_icon_inactive(idx)
+  icons[idx].isActive = false;
+end
+
 function set_icon_position(idx, x, y)
   icons[idx].Pos[1] = x - (get_sprite(icons[idx].BankNum, icons[idx].Spr).Width >> 1);
   icons[idx].Pos[2] = y;
@@ -103,7 +107,7 @@ function create_button_array(font_idx, ls_n, ls_h, ls_hp)
     FontIdx = font_idx,
     Styles = {ls_n, ls_h, ls_hp},
     Rect = TbRect.new(),
-    CurrData = 1,
+    CurrData = nil,
     MaxData = 1;
     LeftArrow = TbRect.new(),
     RightArrow = TbRect.new(),
@@ -133,8 +137,8 @@ function set_array_button_text_table(idx, text_table)
   btns[idx].MaxData = #text_table;
 end
 
-function set_array_button_curr_value(idx, value)
-  btns[idx].CurrData = value;
+function set_array_button_data_ptr(idx, _data)
+  btns[idx].CurrData = _data;
 end
 
 function set_array_button_position(idx, x, y)
@@ -242,36 +246,37 @@ function draw_buttons()
       end
       
       if (b.Type == BTN_TYPE_ARRAY) then
-      
-        PopSetFont(b.FontIdx);
-        
-        if (is_point_on_rectangle(b.Rect, mx, my)) then
-          if (b.isPressed) then
-            DrawStretchyButtonBox(b.Rect, b.Styles[3]);
+        if (b.CurrData ~= nil) then
+          PopSetFont(b.FontIdx);
+          
+          if (is_point_on_rectangle(b.Rect, mx, my)) then
+            if (b.isPressed) then
+              DrawStretchyButtonBox(b.Rect, b.Styles[3]);
+            else
+              DrawStretchyButtonBox(b.Rect, b.Styles[2]);
+            end
           else
-            DrawStretchyButtonBox(b.Rect, b.Styles[2]);
+            DrawStretchyButtonBox(b.Rect, b.Styles[1]);
           end
-        else
-          DrawStretchyButtonBox(b.Rect, b.Styles[1]);
-        end
-        
-        if (is_point_on_rectangle(b.LeftArrow, mx, my)) then
-          LbDraw_SetFlagsOn(LB_DRAW_FLAG_GLASS);
-        end
-        
-        LbDraw_Text(b.LeftArrow.Left, b.Pos[2], "<", 0);
-        LbDraw_SetFlagsOff(LB_DRAW_FLAG_GLASS);
-        
-        if (is_point_on_rectangle(b.RightArrow, mx, my)) then
-          LbDraw_SetFlagsOn(LB_DRAW_FLAG_GLASS);
+          
+          if (is_point_on_rectangle(b.LeftArrow, mx, my)) then
+            LbDraw_SetFlagsOn(LB_DRAW_FLAG_GLASS);
+          end
+          
+          LbDraw_Text(b.LeftArrow.Left, b.Pos[2], "<", 0);
+          LbDraw_SetFlagsOff(LB_DRAW_FLAG_GLASS);
+          
+          if (is_point_on_rectangle(b.RightArrow, mx, my)) then
+            LbDraw_SetFlagsOn(LB_DRAW_FLAG_GLASS);
+            LbDraw_Text(b.RightArrow.Left, b.Pos[2], ">", 0);
+          end
+          
           LbDraw_Text(b.RightArrow.Left, b.Pos[2], ">", 0);
+          LbDraw_SetFlagsOff(LB_DRAW_FLAG_GLASS);
+          
+          --log("" .. b.Str);
+          LbDraw_Text(b.Pos[1] + (b.Size[1] >> 1) - (string_width(b.Strs[b.CurrData[1]]) >> 1), b.Pos[2], b.Strs[b.CurrData[1]], 0);
         end
-        
-        LbDraw_Text(b.RightArrow.Left, b.Pos[2], ">", 0);
-        LbDraw_SetFlagsOff(LB_DRAW_FLAG_GLASS);
-        
-        --log("" .. b.Str);
-        LbDraw_Text(b.Pos[1] + (b.Size[1] >> 1) - (string_width(b.Strs[b.CurrData]) >> 1), b.Pos[2], b.Strs[b.CurrData], 0);
       end
     end
   end

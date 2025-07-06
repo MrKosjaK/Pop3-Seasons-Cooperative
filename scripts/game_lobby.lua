@@ -55,10 +55,14 @@ ICON_AI_PLR6 = create_icon(0, 1056);
 -- misc buttons
 BTN_CHECK_IN = create_button("Check in", 3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
 BTN_START_GAME = create_button("Start Game", 3, BTN_STYLE_DEFAULT3, BTN_STYLE_DEFAULT3_H, BTN_STYLE_DEFAULT3_HP);
+BTN_OM_PLAYERS = create_button("Players", 3, BTN_STYLE_DEFAULT3, BTN_STYLE_DEFAULT3_H, BTN_STYLE_DEFAULT3_HP);
+BTN_OM_SETTINGS = create_button("Settings", 3, BTN_STYLE_DEFAULT3, BTN_STYLE_DEFAULT3_H, BTN_STYLE_DEFAULT3_HP);
+BTN_OM_AI = create_button("Computer", 3, BTN_STYLE_DEFAULT3, BTN_STYLE_DEFAULT3_H, BTN_STYLE_DEFAULT3_HP);
 
 -- menus
 MENU_CHECK_IN = create_menu("Check Phase", BTN_STYLE_GRAY);
 
+local AI_DIFFICULTY_STR_TABLE = {"Easy", "Normal", "Hard", "Honour"};
 
 local ICON_DATA_BASE = {
   [0] = {1, 6883},
@@ -69,6 +73,34 @@ local ICON_DATA_BASE = {
   {2, 6903},
   {2, 6923},
   {2, 6943}
+}
+
+-- Stores all settings of lobby
+local GLS_PLAYER_SETUP_IDX = 0;
+local GLS_COMPUTER_DIFFICULTY = 1;
+GAME_LOBBY_SETTINGS =
+{
+  [GLS_PLAYER_SETUP_IDX] =
+  {
+    [TRIBE_BLUE] = {1},
+    [TRIBE_RED] = {2},
+    [TRIBE_YELLOW] = {3},
+    [TRIBE_GREEN] = {4},
+    [TRIBE_CYAN] = {5},
+    [TRIBE_PINK] = {6},
+    [TRIBE_BLACK] = {7},
+    [TRIBE_ORANGE] = {8}
+  },
+  
+  [GLS_COMPUTER_DIFFICULTY] =
+  {
+    [1] = {AI_EASY},
+    [2] = {AI_EASY},
+    [3] = {AI_EASY},
+    [4] = {AI_EASY},
+    [5] = {AI_EASY},
+    [6] = {AI_EASY},
+  }
 }
 
 GAME_STARTED = false;
@@ -169,8 +201,8 @@ end
 function spawn_players_initial_stuff();
   for i = 1, #HUMAN_PLAYERS do
     local p_num = HUMAN_PLAYERS[i];
-    local b_data = get_button_ptr(BTN_PLR1_POS + p_num);
-    local h_data = HUMAN_INFO[b_data.CurrData];
+   -- local b_data = get_button_ptr(BTN_PLR1_POS + p_num);
+    local h_data = HUMAN_INFO[GAME_LOBBY_SETTINGS[GLS_PLAYER_SETUP_IDX][p_num][1]];
     
     for i,k in ipairs(h_data._spells) do
       set_player_can_cast(k, p_num);
@@ -198,7 +230,7 @@ function spawn_players_initial_stuff();
   for i = 1, AI_COUNT do
     local ai_data = AI_INFO[i];
     local p_num = ai_data._forced_owner;
-    local b_data = get_button_ptr(BTN_AI_PLR1_DIFF + (i - 1));
+    --local b_data = get_button_ptr(BTN_AI_PLR1_DIFF + (i - 1));
     
     if (p_num ~= -1) then
       -- check if existing human players dont match its owner
@@ -231,7 +263,7 @@ function spawn_players_initial_stuff();
     {
       Owner = p_num,
       Coord = ai_data._start_pos,
-      Difficulty = b_data.CurrData
+      Difficulty = GAME_LOBBY_SETTINGS[GLS_COMPUTER_DIFFICULTY][p_num][1]
     };
     
     for i,k in ipairs(ai_data._spells) do
@@ -279,6 +311,27 @@ function init_game_lobbys_menus_and_elements()
   end
   
   -- button function defines
+  set_button_function(BTN_OM_AI,
+  function(button)
+    close_menu(MENU_PLAYERS);
+    close_menu(MENU_OPTIONS);
+    open_menu(MENU_AI);
+  end);
+  
+  set_button_function(BTN_OM_PLAYERS,
+  function(button)
+    close_menu(MENU_AI);
+    close_menu(MENU_OPTIONS);
+    open_menu(MENU_PLAYERS);
+  end);
+  
+  set_button_function(BTN_OM_SETTINGS,
+  function(button)
+    close_menu(MENU_AI);
+    close_menu(MENU_PLAYERS);
+    open_menu(MENU_OPTIONS);
+  end);
+  
   set_button_function(BTN_CHECK_IN, 
   function(button)
     if (not i_am_checked_in()) then
@@ -289,13 +342,27 @@ function init_game_lobbys_menus_and_elements()
         
         close_menu(MENU_CHECK_IN);
         set_button_inactive(BTN_CHECK_IN);
-        open_menu(MENU_PLAYERS);
-        open_menu(MENU_OPTIONS);
-        open_menu(MENU_AI);
         
+        
+        open_menu(MENU_PLAYERS);
+        --open_menu(MENU_OPTIONS);
+        --open_menu(MENU_AI);
+         
         local b_data = get_button_pos_and_dimensions(BTN_START_GAME);
         set_button_position(BTN_START_GAME, (ScreenWidth() >> 1) - (b_data[3] >> 1), (ScreenHeight() - 96));
+        
+        local middle_x = (ScreenWidth() >> 1);
+        local b_data = get_button_pos_and_dimensions(BTN_OM_PLAYERS);
+        set_button_position(BTN_OM_PLAYERS, middle_x - (b_data[3] >> 1) - 128, (ScreenHeight() - 200));
+        local b_data = get_button_pos_and_dimensions(BTN_OM_SETTINGS);
+        set_button_position(BTN_OM_SETTINGS, middle_x - (b_data[3] >> 1), (ScreenHeight() - 200));
+        local b_data = get_button_pos_and_dimensions(BTN_OM_AI);
+        set_button_position(BTN_OM_AI, middle_x - (b_data[3] >> 1) + 128, (ScreenHeight() - 200));
+        
         set_button_active(BTN_START_GAME);
+        set_button_active(BTN_OM_PLAYERS);
+        set_button_active(BTN_OM_SETTINGS);
+        set_button_active(BTN_OM_AI);
       end
     end
   end);
@@ -319,10 +386,11 @@ function init_game_lobbys_menus_and_elements()
   -- players pos buttons
   for i = 1, 8 do
     set_array_button_text_table(BTN_PLR1_POS + (i - 1), table_str);
+    set_array_button_data_ptr(BTN_PLR1_POS + (i - 1), GAME_LOBBY_SETTINGS[GLS_PLAYER_SETUP_IDX][i-1]);
     set_array_button_functions(BTN_PLR1_POS + (i - 1),
     function(b)
       local pos = MapPosXZ.new() 
-      pos.Pos = world_coord3d_to_map_idx(HUMAN_INFO[b.CurrData]._start_pos);	
+      pos.Pos = world_coord3d_to_map_idx(HUMAN_INFO[b.CurrData[1]]._start_pos);	
       ZOOM_TO(pos.XZ.X,pos.XZ.Z, 256 * math.random(1, 8));
     end,
     function(b)
@@ -331,7 +399,7 @@ function init_game_lobbys_menus_and_elements()
           Send(PACKET_BTN_ARRAY_DEC, tostring(BTN_PLR1_POS + (i - 1)));
         end
       else
-        b.CurrData = math.min(math.max(b.CurrData - 1, 1), b.MaxData);
+        b.CurrData[1] = math.min(math.max(b.CurrData[1] - 1, 1), b.MaxData);
       end
     end,
     function(b)
@@ -340,14 +408,14 @@ function init_game_lobbys_menus_and_elements()
           Send(PACKET_BTN_ARRAY_INCR, tostring(BTN_PLR1_POS + (i - 1)));
         end
       else
-        b.CurrData = math.min(math.max(b.CurrData + 1, 1), b.MaxData);
+        b.CurrData[1] = math.min(math.max(b.CurrData[1] + 1, 1), b.MaxData);
       end
     end);
   end
   
   -- ai difficulty button
-  set_array_button_text_table(BTN_AI_DIFFICULTY, {"BEGINNER", "EXPERIENCED", "PROFESSIONAL", "SHAMAN"});
-  set_array_button_curr_value(BTN_AI_DIFFICULTY, AI_MEDIUM);
+  set_array_button_text_table(BTN_AI_DIFFICULTY, AI_DIFFICULTY_STR_TABLE);
+  --set_array_button_data_ptr(BTN_AI_DIFFICULTY, AI_MEDIUM);
   set_array_button_functions(BTN_AI_DIFFICULTY, nil,
   function(b)
     if (am_i_in_network_game() ~= 0) then
@@ -355,7 +423,7 @@ function init_game_lobbys_menus_and_elements()
         Send(PACKET_BTN_ARRAY_DEC, tostring(BTN_AI_DIFFICULTY));
       end
     else
-      b.CurrData = math.min(math.max(b.CurrData - 1, 1), b.MaxData);
+      b.CurrData[1] = math.min(math.max(b.CurrData[1] - 1, 1), b.MaxData);
     end
   end,
   function(b)
@@ -364,14 +432,14 @@ function init_game_lobbys_menus_and_elements()
         Send(PACKET_BTN_ARRAY_INCR, tostring(BTN_AI_DIFFICULTY));
       end
     else
-      b.CurrData = math.min(math.max(b.CurrData + 1, 1), b.MaxData);
+      b.CurrData[1] = math.min(math.max(b.CurrData[1] + 1, 1), b.MaxData);
     end
   end);
   
   -- AI BUTTONS
   for i = 1, 6 do
-    set_array_button_curr_value(BTN_AI_PLR1_DIFF + (i - 1), AI_EASY);
-    set_array_button_text_table(BTN_AI_PLR1_DIFF + (i - 1), {"EASY", "MEDIUM", "HARD", "VERY HARD"});
+    set_array_button_data_ptr(BTN_AI_PLR1_DIFF + (i - 1), GAME_LOBBY_SETTINGS[GLS_COMPUTER_DIFFICULTY][i]);
+    set_array_button_text_table(BTN_AI_PLR1_DIFF + (i - 1), AI_DIFFICULTY_STR_TABLE);
     set_array_button_functions(BTN_AI_PLR1_DIFF + (i - 1), nil,
     function(b)
       if (am_i_in_network_game() ~= 0) then
@@ -379,7 +447,7 @@ function init_game_lobbys_menus_and_elements()
           Send(PACKET_BTN_ARRAY_DEC, tostring(BTN_AI_PLR1_DIFF + (i - 1)));
         end
       else
-        b.CurrData = math.min(math.max(b.CurrData - 1, 1), b.MaxData);
+        b.CurrData[1] = math.min(math.max(b.CurrData[1] - 1, 1), b.MaxData);
       end
     end,
     function(b)
@@ -388,7 +456,7 @@ function init_game_lobbys_menus_and_elements()
           Send(PACKET_BTN_ARRAY_INCR, tostring(BTN_AI_PLR1_DIFF + (i - 1)));
         end
       else
-        b.CurrData = math.min(math.max(b.CurrData + 1, 1), b.MaxData);
+        b.CurrData[1] = math.min(math.max(b.CurrData[1] + 1, 1), b.MaxData);
       end
     end);
   end
@@ -411,7 +479,7 @@ function init_game_lobbys_menus_and_elements()
   set_menu_dimensions(MENU_PLAYERS, 256, 256);
   set_menu_open_function(MENU_PLAYERS,
   function(menu)
-    local split_pos = (ScreenWidth() >> 2);
+    local split_pos = (ScreenWidth() >> 1);
     set_menu_position(MENU_PLAYERS, split_pos - (menu.Size[1] >> 1), (ScreenHeight() >> 1) - (menu.Size[2] >> 1));
     
     set_text_field_position(TXT_FIELD_TRIBE, menu.Pos[1] + 40, menu.Pos[2]);
@@ -436,27 +504,34 @@ function init_game_lobbys_menus_and_elements()
   end);
   set_menu_close_function(MENU_PLAYERS,
   function(menu)
-    set_button_inactive(BTN_PLR1_POS);
+    set_text_field_inactive(TXT_FIELD_TRIBE);
+    set_text_field_inactive(TXT_FIELD_PLR_NAME);
+    set_text_field_inactive(TXT_FIELD_START_POS);
+    for i = 1, 8 do
+      set_button_inactive(BTN_PLR1_POS + (i - 1));
+      set_text_field_inactive(TXT_PLR1_NAME + (i - 1));
+      set_icon_inactive(ICON_PLR1 + (i - 1));
+    end
   end);
   
   -- options menu
   set_menu_dimensions(MENU_OPTIONS, 256, 256);
   set_menu_open_function(MENU_OPTIONS,
   function(menu)
-    local split_pos = (ScreenWidth() >> 2);
-    set_menu_position(MENU_OPTIONS, (split_pos * 2) - (menu.Size[1] >> 1), (ScreenHeight() >> 1) - (menu.Size[2] >> 1));
+    local split_pos = (ScreenWidth() >> 1);
+    set_menu_position(MENU_OPTIONS, split_pos - (menu.Size[1] >> 1), (ScreenHeight() >> 1) - (menu.Size[2] >> 1));
   end);
   set_menu_close_function(MENU_OPTIONS,
   function(menu)
-  
+    
   end);
   
   -- ai menu
   set_menu_dimensions(MENU_AI, 256, 256);
   set_menu_open_function(MENU_AI,
   function(menu)
-    local split_pos = (ScreenWidth() >> 2);
-    set_menu_position(MENU_AI, (split_pos * 3) - (menu.Size[1] >> 1), (ScreenHeight() >> 1) - (menu.Size[2] >> 1));
+    local split_pos = (ScreenWidth() >> 1);
+    set_menu_position(MENU_AI, split_pos - (menu.Size[1] >> 1), (ScreenHeight() >> 1) - (menu.Size[2] >> 1));
   
     set_text_field_position(TXT_FIELD_AI_TRIBE, menu.Pos[1] + 40, menu.Pos[2]);
     set_text_field_position(TXT_FIELD_AI_DIFFICULTY, menu.Pos[1] + 160, menu.Pos[2]);
@@ -483,7 +558,13 @@ function init_game_lobbys_menus_and_elements()
   end);
   set_menu_close_function(MENU_AI,
   function(menu)
-    set_button_inactive(BTN_AI_DIFFICULTY);
+    set_text_field_inactive(TXT_FIELD_AI_TRIBE);
+    set_text_field_inactive(TXT_FIELD_AI_DIFFICULTY);
+  
+    for i = 1, 6 do
+      set_button_inactive(BTN_AI_PLR1_DIFF + (i - 1));
+      set_icon_inactive(ICON_AI_PLR1 + (i - 1));
+    end
   end);
 end
 
@@ -507,25 +588,38 @@ function process_game_lobby_packets(pn, p_type, data)
       close_menu(MENU_CHECK_IN);
       set_button_inactive(BTN_CHECK_IN);
       
+      
       open_menu(MENU_PLAYERS);
-      open_menu(MENU_OPTIONS);
-      open_menu(MENU_AI);
+      --open_menu(MENU_OPTIONS);
+      --open_menu(MENU_AI);
        
       local b_data = get_button_pos_and_dimensions(BTN_START_GAME);
       set_button_position(BTN_START_GAME, (ScreenWidth() >> 1) - (b_data[3] >> 1), (ScreenHeight() - 96));
+      
+      local middle_x = (ScreenWidth() >> 1);
+      local b_data = get_button_pos_and_dimensions(BTN_OM_PLAYERS);
+      set_button_position(BTN_OM_PLAYERS, middle_x - (b_data[3] >> 1) - 128, (ScreenHeight() - 200));
+      local b_data = get_button_pos_and_dimensions(BTN_OM_SETTINGS);
+      set_button_position(BTN_OM_SETTINGS, middle_x - (b_data[3] >> 1), (ScreenHeight() - 200));
+      local b_data = get_button_pos_and_dimensions(BTN_OM_AI);
+      set_button_position(BTN_OM_AI, middle_x - (b_data[3] >> 1) + 128, (ScreenHeight() - 200));
+      
       set_button_active(BTN_START_GAME);
+      set_button_active(BTN_OM_PLAYERS);
+      set_button_active(BTN_OM_SETTINGS);
+      set_button_active(BTN_OM_AI);
     end
   end
   
   -- buttons packets
   if (p_type == PACKET_BTN_ARRAY_DEC) then
     local b = get_button_ptr(tonumber(data));
-    b.CurrData = math.min(math.max(b.CurrData - 1, 1), b.MaxData);
+    b.CurrData[1] = math.min(math.max(b.CurrData[1] - 1, 1), b.MaxData);
   end
   
   if (p_type == PACKET_BTN_ARRAY_INCR) then
     local b = get_button_ptr(tonumber(data));
-    b.CurrData = math.min(math.max(b.CurrData + 1, 1), b.MaxData);
+    b.CurrData[1] = math.min(math.max(b.CurrData[1] + 1, 1), b.MaxData);
   end
   
   if (p_type == PACKET_START_GAME) then
