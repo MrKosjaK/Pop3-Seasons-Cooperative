@@ -373,11 +373,11 @@ function init_game_lobbys_menus_and_elements()
     -- first check player setup indexes to see if there are duplicates
     local found_duplicate = false;
     local setup_ptr = GAME_LOBBY_SETTINGS[GLS_PLAYER_SETUP_IDX];
-    local compare_t = {false, false, false, false, false, false, false, false};
+    local table_check = {false, false, false, false, false, false, false, false};
     for i = 0, #setup_ptr do
       if (HUMAN_CHECK_IN[i]) then
-        if (compare_t[setup_ptr[i][1]] == false) then
-          compare_t[setup_ptr[i][1]] = true;
+        if (table_check[setup_ptr[i][1]] == false) then
+          table_check[setup_ptr[i][1]] = true;
         else
           found_duplicate = true;
           break;
