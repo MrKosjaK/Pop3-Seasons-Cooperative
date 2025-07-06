@@ -145,11 +145,7 @@ function OnKeyUp(key)
     if (am_i_in_network_game() ~= 0) then
       
     else
-      if (key == LB_KEY_SPACE) then
-        GAME_STARTED = true;
-        set_all_elements_inactive();
-        close_all_menus();
-      end
+    
     end
   end
 end
