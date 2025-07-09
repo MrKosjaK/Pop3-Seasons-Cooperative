@@ -1,7 +1,7 @@
 -- game lobby stuff
 
 -- MENU: PLAYERS
-MENU_PLAYERS = create_menu("Player List", BTN_STYLE_GRAY);
+MENU_PLAYERS = create_menu("Player List", BTN_STYLE_LOG);
 TXT_PLR1_NAME = create_text_field("", 3);
 TXT_PLR2_NAME = create_text_field("", 3);
 TXT_PLR3_NAME = create_text_field("", 3);
@@ -31,11 +31,11 @@ BTN_PLR7_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, 
 BTN_PLR8_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
 
 -- MENU: OPTIONS
-MENU_OPTIONS = create_menu("Game Options", BTN_STYLE_GRAY);
+MENU_OPTIONS = create_menu("Game Options", BTN_STYLE_LOG);
 BTN_AI_DIFFICULTY = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
 
 -- MENU: AI SETTINGS
-MENU_AI = create_menu("AI Settings", BTN_STYLE_GRAY);
+MENU_AI = create_menu("AI Settings", BTN_STYLE_LOG);
 BTN_AI_PLR1_DIFF = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
 BTN_AI_PLR2_DIFF = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
 BTN_AI_PLR3_DIFF = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
@@ -51,10 +51,6 @@ ICON_AI_PLR4 = create_icon(0, 1056);
 ICON_AI_PLR5 = create_icon(0, 1056);
 ICON_AI_PLR6 = create_icon(0, 1056);
 
--- MENU: LOG MSG
-MENU_LOG_MSG = create_menu("Message Log", BTN_STYLE_GRAY);
-TEXT_BOX_LOG = create_text_box(4, BTN_STYLE_LOG);
-
 
 -- misc buttons
 BTN_CHECK_IN = create_button("Check in", 3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
@@ -64,7 +60,7 @@ BTN_OM_SETTINGS = create_button("Settings", 3, BTN_STYLE_DEFAULT3, BTN_STYLE_DEF
 BTN_OM_AI = create_button("Computer", 3, BTN_STYLE_DEFAULT3, BTN_STYLE_DEFAULT3_H, BTN_STYLE_DEFAULT3_HP);
 
 -- menus
-MENU_CHECK_IN = create_menu("Check Phase", BTN_STYLE_GRAY);
+MENU_CHECK_IN = create_menu("Check Phase", BTN_STYLE_LOG);
 
 local AI_DIFFICULTY_STR_TABLE = {"Easy", "Normal", "Hard", "Honour"};
 
@@ -349,12 +345,12 @@ function init_game_lobbys_menus_and_elements()
         
         
         open_menu(MENU_PLAYERS);
-        open_menu(MENU_LOG_MSG);
+        --open_menu(MENU_LOG_MSG);
         --open_menu(MENU_OPTIONS);
         --open_menu(MENU_AI);
          
         local b_data = get_button_pos_and_dimensions(BTN_START_GAME);
-        set_button_position(BTN_START_GAME, (ScreenWidth() >> 1) - (b_data[3] >> 1), (ScreenHeight() - 96));
+        set_button_position(BTN_START_GAME, (ScreenWidth() >> 1) - (b_data[3] >> 1), (ScreenHeight() - (b_data[4] << 1)));
         
         local m_data = get_menu_pos_and_dimensions(MENU_PLAYERS);
         local middle_x = m_data[1] + (m_data[3] >> 1);
@@ -485,25 +481,8 @@ function init_game_lobbys_menus_and_elements()
     end);
   end
   
-  -- message log menu
-  set_menu_position_and_dimensions(MENU_LOG_MSG, ScreenWidth() >> 1, ScreenHeight() >> 1, 256, 256);
-  set_menu_open_function(MENU_LOG_MSG,
-  function(menu)
-    local split_pos = (ScreenWidth() >> 1);
-    set_menu_position(MENU_LOG_MSG, split_pos + (split_pos >> 2) - (menu.Size[1] >> 1), (ScreenHeight() >> 1) - (menu.Size[2] >> 1));
-    
-    local log_width = menu.Size[1] - (menu.Size[1] >> 2);
-    local log_height = menu.Size[2] - (menu.Size[2] >> 2);
-    set_text_box_pos_and_dimensions(TEXT_BOX_LOG, menu.Pos[1] + (menu.Size[1] >> 1) - (log_width >> 1), menu.Pos[2] + 12, log_width, log_height);
-    set_text_box_active(TEXT_BOX_LOG);
-  end);
-  set_menu_close_function(MENU_LOG_MSG,
-  function(menu)
-    set_text_box_inactive(TEXT_BOX_LOG);
-  end);
-  
   -- check in menu
-  set_menu_position_and_dimensions(MENU_CHECK_IN, (ScreenWidth() >> 1) - 98, (ScreenHeight() >> 1) - 15, 196, 30);
+  set_menu_position_and_dimensions(MENU_CHECK_IN, (ScreenWidth() >> 1) - 48, (ScreenHeight() >> 1) - 45, 96, 90);
   set_menu_open_function(MENU_CHECK_IN,
   function(menu)
     local b_data = get_button_pos_and_dimensions(BTN_CHECK_IN);
@@ -521,11 +500,11 @@ function init_game_lobbys_menus_and_elements()
   set_menu_open_function(MENU_PLAYERS,
   function(menu)
     local split_pos = (ScreenWidth() >> 1);
-    set_menu_position(MENU_PLAYERS, split_pos - (split_pos >> 2) - (menu.Size[1] >> 1), (ScreenHeight() >> 1) - (menu.Size[2] >> 1));
+    set_menu_position(MENU_PLAYERS, split_pos - (menu.Size[1] >> 1), (ScreenHeight() >> 1) - (menu.Size[2] >> 1));
     
-    set_text_field_position(TXT_FIELD_TRIBE, menu.Pos[1] + 40, menu.Pos[2]);
-    set_text_field_position(TXT_FIELD_PLR_NAME, menu.Pos[1] + 110, menu.Pos[2]);
-    set_text_field_position(TXT_FIELD_START_POS, menu.Pos[1] + 192, menu.Pos[2]);
+    set_text_field_position(TXT_FIELD_TRIBE, menu.Pos[1] + 40, menu.Pos[2] + 8);
+    set_text_field_position(TXT_FIELD_PLR_NAME, menu.Pos[1] + 110, menu.Pos[2] + 8);
+    set_text_field_position(TXT_FIELD_START_POS, menu.Pos[1] + 192, menu.Pos[2] + 8);
     set_text_field_active(TXT_FIELD_TRIBE);
     set_text_field_active(TXT_FIELD_PLR_NAME);
     set_text_field_active(TXT_FIELD_START_POS);
@@ -560,7 +539,7 @@ function init_game_lobbys_menus_and_elements()
   set_menu_open_function(MENU_OPTIONS,
   function(menu)
     local split_pos = (ScreenWidth() >> 1);
-    set_menu_position(MENU_OPTIONS, split_pos - (split_pos >> 2) - (menu.Size[1] >> 1), (ScreenHeight() >> 1) - (menu.Size[2] >> 1));
+    set_menu_position(MENU_OPTIONS, split_pos - (menu.Size[1] >> 1), (ScreenHeight() >> 1) - (menu.Size[2] >> 1));
   end);
   set_menu_close_function(MENU_OPTIONS,
   function(menu)
@@ -572,10 +551,10 @@ function init_game_lobbys_menus_and_elements()
   set_menu_open_function(MENU_AI,
   function(menu)
     local split_pos = (ScreenWidth() >> 1);
-    set_menu_position(MENU_AI, split_pos - (split_pos >> 2) - (menu.Size[1] >> 1), (ScreenHeight() >> 1) - (menu.Size[2] >> 1));
+    set_menu_position(MENU_AI, split_pos - (menu.Size[1] >> 1), (ScreenHeight() >> 1) - (menu.Size[2] >> 1));
   
-    set_text_field_position(TXT_FIELD_AI_TRIBE, menu.Pos[1] + 40, menu.Pos[2]);
-    set_text_field_position(TXT_FIELD_AI_DIFFICULTY, menu.Pos[1] + 160, menu.Pos[2]);
+    set_text_field_position(TXT_FIELD_AI_TRIBE, menu.Pos[1] + 40, menu.Pos[2] + 8);
+    set_text_field_position(TXT_FIELD_AI_DIFFICULTY, menu.Pos[1] + 160, menu.Pos[2] + 8);
     set_text_field_active(TXT_FIELD_AI_TRIBE);
     set_text_field_active(TXT_FIELD_AI_DIFFICULTY);
     for i = 1, 6 do
@@ -631,12 +610,12 @@ function process_game_lobby_packets(pn, p_type, data)
       
       
       open_menu(MENU_PLAYERS);
-      open_menu(MENU_LOG_MSG);
+      --open_menu(MENU_LOG_MSG);
       --open_menu(MENU_OPTIONS);
       --open_menu(MENU_AI);
        
       local b_data = get_button_pos_and_dimensions(BTN_START_GAME);
-      set_button_position(BTN_START_GAME, (ScreenWidth() >> 1) - (b_data[3] >> 1), (ScreenHeight() - 96));
+      set_button_position(BTN_START_GAME, (ScreenWidth() >> 1) - (b_data[3] >> 1), (ScreenHeight() - (b_data[4] << 1)));
       
       local m_data = get_menu_pos_and_dimensions(MENU_PLAYERS);
       local middle_x = m_data[1] + (m_data[3] >> 1);
