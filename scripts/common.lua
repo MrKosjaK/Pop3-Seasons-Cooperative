@@ -108,7 +108,7 @@ function OnFrame()
     -- reapply resolution
       CURR_RES_HEIGHT = ScreenHeight();
       CURR_RES_WIDTH = ScreenWidth();
-      log("res changed");
+      --log("res changed");
       
       if (CURR_RES_WIDTH >= 1920 and CURR_RES_HEIGHT >= 1080) then
         GUI_TEXT_FONT = 9;
@@ -120,7 +120,7 @@ function OnFrame()
       
       -- go through all created menus and trigger their OnRes function
       for i,menu in ipairs(_GUI_MENUS) do
-        log("is type: " .. type(menu.OnRes));
+        --log("is type: " .. type(menu.OnRes));
         if (menu.OnRes ~= nil) then
           menu.OnRes(menu);
         end

@@ -183,9 +183,9 @@ local function gui_auto_scale_menu(menu)
   local sc_w = ScreenWidth();
   local sc_h = ScreenHeight();
   
-  log(string.format("Width: %i, Height: %i", sc_w, sc_h));
+  --log(string.format("Width: %i, Height: %i", sc_w, sc_h));
   
-  log("Auto scale in process");
+  --log("Auto scale in process");
   
   local init_menu = _GUI_INIT_MENUS[menu.ID];
   
@@ -232,7 +232,7 @@ local function gui_auto_scale_menu(menu)
     end
   end
   
-  log("Auto scale finished");
+  log("Auto scaled menu elements");
 end
 
 local function _gui_draw_basic_background(_elem)
@@ -868,7 +868,6 @@ function set_elem_text_string(_elem_idx, _str)
       
       if (txt.FuncMaintain ~= nil) then
         txt.FuncMaintain(txt);
-        log("maintain");
       end
     end
   end
