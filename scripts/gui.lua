@@ -25,7 +25,130 @@ import(Module_String);
 import(Module_System);
 import(Module_Table);
 
+local GUI_MOUSE_POS = get_display_mouse_xy();
+GUI_HOVERING_ID = -1;
+GUI_LEFT_MOUSE_DOWN = false;
+GUI_RIGHT_MOUSE_DOWN = false;
+GUI_LEFT_MOUSE_UP = false;
+GUI_RIGHT_MOUSE_UP = false;
+GUI_TEXT_FONT = 4;
+
 local FLOOR = math.floor;
+local BOX_STYLE_SPRITE_INDEX =
+{
+  794,
+  803,
+  812,
+  510,
+  519,
+  528,
+  821,
+  830,
+  839,
+  848,
+  857,
+  866,
+  879,
+  888,
+  897,
+  906,
+  915,
+  924,
+  933,
+  942,
+  951,
+  960,
+  969,
+  978,
+  987,
+  996,
+  1005,
+  1014,
+  1615,
+  1624,
+  1633,
+  1642,
+  1651,
+  1660,
+  1669,
+  1678,
+  1687,
+  1696,
+  1705,
+  1714,
+  1794
+}
+
+BOX_STYLE = {
+  DEFAULT_N = 1, -- 794 start
+  DEFAULT_H = 2, -- 803 start
+  DEFAULT_P = 3, -- 812 start 
+  DEFAULT_GRAY_N = 4, -- 510 start
+  DEFAULT_GRAY_H = 5, -- 519 start
+  DEFAULT_GRAY_P = 6, -- 528 start
+  DEFAULT2_N = 7, -- 821 start
+  DEFAULT2_H = 8, -- 830 START
+  DEFAULT2_P = 9, -- 839 START
+  DEFAULT3_N = 10, -- 848 START
+  DEFAULT3_H = 11, -- 857 START
+  DEFAULT3_P = 12, -- 866 START
+  BLUE_N = 13, -- 879 START
+  BLUE_H = 14, -- 888 START
+  BLUE_P = 15, -- 897 START
+  RED_N = 16, -- 906 START
+  RED_H = 17, -- 915 START
+  RED_P = 18, -- 924 START
+  YELLOW_N = 19, -- 933 START
+  YELLOW_H = 20, -- 942 START
+  YELLOW_P = 21, -- 951 START
+  GREEN_N = 22, -- 960 START
+  GREEN_H = 23, -- 969 START
+  GREEN_P = 24, -- 978 START
+  INNER_GREEN = 25, -- 987 START
+  DEFAULT_SIMPLE_N = 26, -- 996 START
+  DEFAULT_SIMPLE_H = 27, -- 1005 START
+  DEFAULT_SIMPLE_P = 28, -- 1014 START
+  CYAN_N = 29, -- 1615 START
+  CYAN_H = 30, -- 1624 START
+  CYAN_P = 31, -- 1633 START
+  PURPLE_N = 32, -- 1642 START
+  PURPLE_H = 33, -- 1651 START
+  PURPLE_P = 34, -- 1660 START
+  DARK_N = 35, -- 1669 START
+  DARK_H = 36, -- 1678 START
+  DARK_P = 37, -- 1687 START
+  ORANGE_N = 38, -- 1696 START
+  ORANGE_H = 39, -- 1705 START
+  ORANGE_P = 40, -- 1714 START
+  INNER_DARK = 41 -- 1794 START
+}
+
+local NUM_STYLES = 41;
+
+local _BOX_LAYOUTS = {};
+
+local function create_all_layouts()
+  
+  local function _apply_sprites(t, sprite_index_start)
+    t.TopLeft = sprite_index_start;
+    t.TopRight = t.TopLeft + 1;
+    t.BottomLeft = t.TopLeft + 2;
+    t.BottomRight = t.TopLeft + 3;
+    t.Top = t.TopLeft + 4;
+    t.Bottom = t.TopLeft + 5;
+    t.Left = t.TopLeft + 6;
+    t.Right = t.TopLeft + 7;
+    t.Centre = t.TopLeft + 8;
+  end
+  
+  for i = 1, NUM_STYLES do
+    _BOX_LAYOUTS[i] = BorderLayout.new();
+    _apply_sprites(_BOX_LAYOUTS[i], BOX_STYLE_SPRITE_INDEX[i]);
+  end
+  log("Registered layouts");
+end
+
+create_all_layouts();
 
 ELEM_TYPE_NONE = 1;
 ELEM_TYPE_PANEL = 2;
@@ -97,7 +220,36 @@ end
 
 local function _gui_draw_basic_background(_elem)
   if (_elem.isActive) then
-    LbDraw_Rectangle(_elem.Box, 130);
+    local mx = GUI_MOUSE_POS.X;
+    local my = GUI_MOUSE_POS.Y;
+    
+    if (mx >= _elem.Box.Left and mx < _elem.Box.Right and my >= _elem.Box.Top and my < _elem.Box.Bottom) then
+      GUI_HOVERING_ID = _elem.ElemID;
+    end
+    
+    DrawStretchyButtonBox(_elem.Box, _elem.Style);
+  end
+end
+
+local function _gui_draw_basic_button(_elem)
+  if (_elem.isActive) then
+    local mx = GUI_MOUSE_POS.X;
+    local my = GUI_MOUSE_POS.Y;
+    
+    if (is_point_on_rectangle(_elem.Box, mx, my)) then
+      GUI_HOVERING_ID = _elem.ElemID;
+      if (_elem.Pressed) then
+        DrawStretchyButtonBox(_elem.Box,_elem.Style.P);
+      else
+        DrawStretchyButtonBox(_elem.Box, _elem.Style.H);
+      end
+    else
+      DrawStretchyButtonBox(_elem.Box, _elem.Style.N);
+    end
+    
+    PopSetFont(GUI_TEXT_FONT);
+    
+    LbDraw_Text(_elem.Box.Left + (_elem.Data.W >> 1) - (string_width(_elem.Text) >> 1), _elem.Box.Top + (_elem.Data.H >> 1) - (CharHeight2() >> 1), _elem.Text, 0);
   end
 end
 
@@ -109,13 +261,18 @@ _GUI_INIT_ELEMENTS =
     Data = {X = 0.5, Y = 0.5, W = 0.21, H = 0.12},
     JustData = {H = HJ_CENTER, V = VJ_CENTER},
     FuncDraw = _gui_draw_basic_background,
+    StyleData = BOX_STYLE.INNER_DARK;
     OnRes = nil,
   }, -- 1
   
   [MY_ELEM_BTN_CHECK_IN] = 
   {
-    Data = {X = 0.5, Y = 0.5, W = 0.09, H = 0.04},
+    Data = {X = 0.5, Y = 0.5, W = 0.12, H = 0.04},
     JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    StyleData = {N = BOX_STYLE.DEFAULT2_N, H = BOX_STYLE.DEFAULT2_H, P = BOX_STYLE.DEFAULT2_P},
+    Text = "Check In",
+    FuncDraw = _gui_draw_basic_button,
+    FuncClick = nil,
     OnRes = nil,
   }, -- 2
 }
@@ -170,18 +327,10 @@ function OnTurn()
     
     gui_open_menu(MY_MENU_CHECK_IN);
   end
-  
-  if ((turn + 1) % 2 == 0) then
-    if G_RANDOM(2) == 0 then
-      gui_close_menu(MY_MENU_CHECK_IN);
-    else
-      gui_open_menu(MY_MENU_CHECK_IN);
-    end
-  end
 end
 
-local function _create_elem_panel(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh, _mx, _my, _mw, _mh)
--- now convert position & scale data into actual pixels and transform it into correct position
+local function _create_elem_button(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh, _mx, _my, _mw, _mh)
+  -- now convert position & scale data into actual pixels and transform it into correct position
   local elem_x = FLOOR(_mx + (_elem_ptr.Data.X * _sw));
   local elem_y = FLOOR(_my + (_elem_ptr.Data.Y * _sh));
   local elem_w = FLOOR(_elem_ptr.Data.W * _sw);
@@ -202,10 +351,59 @@ local function _create_elem_panel(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh,
   
   _GUI_ELEMENTS[_elem_ptr_idx] = 
   {
+    ElemType = ELEM_TYPE_BUTTON,
+    ElemID = _elem_ptr_idx,
+    MenuID = _menu_ptr.ID,
+    Data = { X = elem_x, Y = elem_y, W = elem_w, H = elem_h},
+    Style = {N = _BOX_LAYOUTS[_elem_ptr.StyleData.N], H = _BOX_LAYOUTS[_elem_ptr.StyleData.H], P = _BOX_LAYOUTS[_elem_ptr.StyleData.P]},
+    Text = _elem_ptr.Text,
+    FuncDraw = _elem_ptr.FuncDraw,
+    FuncClick = _elem_ptr.FuncClick,
+    Pressed = false,
+    Box = TbRect.new(),
+    isActive = true
+  };
+  
+  local e_b = _GUI_ELEMENTS[_elem_ptr_idx].Box;
+  e_b.Left = elem_x;
+  e_b.Right = e_b.Left + elem_w;
+  e_b.Top = elem_y;
+  e_b.Bottom = e_b.Top + elem_h;
+  
+  -- add element to menu
+  local actual_menu_elements = _GUI_MENUS[_menu_ptr.ID].Elements;
+  actual_menu_elements[#actual_menu_elements + 1] = _GUI_ELEMENTS[_elem_ptr_idx];
+  
+  log("Created button element");
+end
+local function _create_elem_panel(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh, _mx, _my, _mw, _mh)
+  -- now convert position & scale data into actual pixels and transform it into correct position
+  local elem_x = FLOOR(_mx + (_elem_ptr.Data.X * _sw));
+  local elem_y = FLOOR(_my + (_elem_ptr.Data.Y * _sh));
+  local elem_w = FLOOR(_elem_ptr.Data.W * _sw);
+  local elem_h = FLOOR(_elem_ptr.Data.H * _sh);
+  
+  -- check justification data
+  if (_elem_ptr.JustData.H == HJ_CENTER) then
+    elem_x = elem_x - (elem_w >> 1);
+  elseif (_elem_ptr.JustData.H == HJ_RIGHT) then
+    elem_x = elem_x - elem_w;
+  end
+  
+  if (_elem_ptr.JustData.V == VJ_CENTER) then
+    elem_y = elem_y - (elem_h >> 1);
+  elseif (_elem_ptr.JustData.V == VJ_BOTTOM) then
+    elem_y = elem_y - elem_h;
+  end
+  
+  _GUI_ELEMENTS[_elem_ptr_idx] = 
+  {
+    ElemType = ELEM_TYPE_PANEL,
     ElemID = _elem_ptr_idx,
     MenuID = _menu_ptr.ID,
     Data = { X = elem_x, Y = elem_y, W = elem_w, H = elem_h},
     FuncDraw =  _elem_ptr.FuncDraw,
+    Style = _BOX_LAYOUTS[_elem_ptr.StyleData];
     Box = TbRect.new(),
     isActive = true
   };
@@ -292,7 +490,7 @@ function gui_open_menu(_menu_id)
             elseif (elem_type == ELEM_TYPE_PANEL) then
               _create_elem_panel(menu, elem_ptr, elem_ptr_idx, sc_w, sc_h, m_x, m_y, m_w, m_h);
             elseif (elem_type == ELEM_TYPE_BUTTON) then
-            
+              _create_elem_button(menu, elem_ptr, elem_ptr_idx, sc_w, sc_h, m_x, m_y, m_w, m_h);
             end
             
           end
@@ -326,32 +524,39 @@ function gui_draw_menus()
   end
 end
 
-function gui_init_all()
-  local current_screen_width = ScreenWidth();
-  local current_screen_height = ScreenHeight();
-  
-  --log(string.format("W: %.2f H: %.2f", percent_w, percent_h));
-  
-  for i,elem in ipairs(_GUI_INIT_ELEMENTS) do
-    local e_x = FLOOR((elem[1] * current_screen_width));
-    local e_y = FLOOR((elem[2] * current_screen_height));
-    local e_w = FLOOR((elem[3] * current_screen_width));
-    local e_h = FLOOR((elem[4] * current_screen_height));
-    local rect = TbRect.new();
-    rect.Left = e_x;
-    rect.Right = rect.Left + e_w;
-    rect.Top = e_y;
-    rect.Bottom = rect.Top + e_h;
-    
-     log(string.format("X: %d, Y: %d, W: %d H: %d", e_x, e_y, e_w, e_h));
-     _GUI_ELEMENTS[i] = 
-     {
-      Data = {X = e_x, Y = e_y, W = e_w, H = e_h, Rect = rect}
-     };
-  end
+function is_point_on_rectangle(rect, x, y)
+  return (x >= rect.Left and x <= rect.Right and y >= rect.Top and y <= rect.Bottom);
 end
 
-
+function OnMouseButton(key, is_down, x, y)
+  if (key == LB_KEY_MOUSE0) then
+    -- left click
+    for i,menu in ipairs(_GUI_MENUS) do
+      if (menu.isActive) then
+        for j,elem in ipairs(menu.Elements) do
+          if (elem.isActive) then
+            if (elem.ElemType == ELEM_TYPE_BUTTON) then
+              elem.Pressed = false;
+              if (is_point_on_rectangle(elem.Box, x, y)) then
+                if (is_down) then
+                  elem.Pressed = true;
+                else
+                  elem.Pressed = false;
+                  --log("clicked");
+                  if (elem.FuncClick ~= nil) then
+                    elem.FuncClick();
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+  
+  GUI_LEFT_MOUSE_UP = false;
+end
 
 
 function OnFrame()
@@ -360,6 +565,14 @@ function OnFrame()
     CURR_RES_HEIGHT = ScreenHeight();
     CURR_RES_WIDTH = ScreenWidth();
     log("res changed");
+    
+    if (CURR_RES_WIDTH >= 1920 and CURR_RES_HEIGHT >= 1080) then
+      GUI_TEXT_FONT = 9;
+    elseif (CURR_RES_WIDTH >= 1280 and CURR_RES_HEIGHT >= 720) then
+      GUI_TEXT_FONT = 3;
+    else
+      GUI_TEXT_FONT = 4;
+    end
     
     -- go through all created menus and trigger their OnRes function
     for i,menu in ipairs(_GUI_MENUS) do
@@ -383,5 +596,12 @@ function OnFrame()
     --end
   end
   
+  local gui_width = GFGetGuiWidth();
+  
   gui_draw_menus();
+  
+  PopSetFont(GUI_TEXT_FONT);
+  LbDraw_Text(gui_width, ScreenHeight() - CharHeight2(), string.format("GUI ID: %i", GUI_HOVERING_ID), 0);
+  
+  GUI_HOVERING_ID = -1;
 end
