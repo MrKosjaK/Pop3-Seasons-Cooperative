@@ -219,6 +219,7 @@ function spawn_players_initial_stuff();
     createThing(T_PERSON, M_PERSON_MEDICINE_MAN, p_num, h_data._start_pos, false, false);
     
     G_PLR[p_num].PlayerType = HUMAN_PLAYER;
+    G_PLR[p_num].PlayerActive = TRUE;
     G_PLR[p_num].DeadCount = 0;
     set_player_reinc_site_on(G_PLR[p_num]);
     G_PLR[p_num].ReincarnSiteCoord.Xpos = h_data._start_pos.Xpos;
@@ -278,6 +279,7 @@ function spawn_players_initial_stuff();
     
     computer_init_player(G_PLR[p_num]);
     G_PLR[p_num].DeadCount = 0;
+    G_PLR[p_num].PlayerActive = TRUE;
     set_player_reinc_site_on(G_PLR[p_num]);
     G_PLR[p_num].ReincarnSiteCoord.Xpos = ai_data._start_pos.Xpos;
     G_PLR[p_num].ReincarnSiteCoord.Zpos = ai_data._start_pos.Zpos;
