@@ -415,7 +415,7 @@ local function _create_elem_button(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh
     FuncClick = _elem_ptr.FuncClick,
     Pressed = false,
     Box = TbRect.new(),
-    isActive = true
+    isActive = false
   };
   
   local e_b = _GUI_ELEMENTS[_elem_ptr_idx].Box;
@@ -464,7 +464,7 @@ local function _create_elem_text(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh, 
     Text = _elem_ptr.Text,
     FuncDraw =  _elem_ptr.FuncDraw,
     Box = TbRect.new(),
-    isActive = true
+    isActive = false
   };
   
   local e_b = _GUI_ELEMENTS[_elem_ptr_idx].Box;
@@ -509,7 +509,7 @@ local function _create_elem_panel(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh,
     FuncDraw =  _elem_ptr.FuncDraw,
     Style = _BOX_LAYOUTS[_elem_ptr.StyleData];
     Box = TbRect.new(),
-    isActive = true
+    isActive = false
   };
   
   local e_b = _GUI_ELEMENTS[_elem_ptr_idx].Box;
@@ -541,71 +541,68 @@ function gui_close_menu(_menu_id)
   end
 end
 
+function gui_init_all_menus()
+  for i,menu in ipairs(_GUI_INIT_MENUS) do
+    local sc_w = ScreenWidth();
+    local sc_h = ScreenHeight();
+    
+    local m_x = FLOOR(menu.Data.X * sc_w);
+    local m_y = FLOOR(menu.Data.Y * sc_h);
+    local m_w = FLOOR(menu.Data.W * sc_w);
+    local m_h = FLOOR(menu.Data.H * sc_h);
+    
+    
+    
+    _GUI_MENUS[menu.ID] = 
+    {
+      ID = menu.ID,
+      Data = { X = m_x, Y = m_y, W = m_w, H = m_h},
+      Elements = {}, -- Pointers to elements
+      FuncOpen = menu.FuncOpen,
+      FuncClose = menu.FuncClose,
+      FuncMaintain = menu.FuncMaintain,
+      OnRes = menu.OnRes,
+      isActive = false
+    };
+    
+    log("Created Menu");
+    
+    -- now go through elements that menu consists of and see if they need to be created/binded
+    local init_menu_elems = _GUI_MENU_INIT_ELEMENTS[menu.ID];
+    
+    for index,elem_entry in ipairs(init_menu_elems) do
+      local elem_type = elem_entry[1];
+      local elem_ptr_idx = elem_entry[2];
+      
+      local elem_ptr = _GUI_ELEMENTS[elem_ptr_idx];
+      
+      if (elem_ptr == nil) then
+        -- create it.
+        elem_ptr = _GUI_INIT_ELEMENTS[elem_ptr_idx];
+        
+        if (elem_ptr ~= nil) then
+          -- now check it's type and create stuff accordingly
+          
+          if (elem_type == ELEM_TYPE_NONE) then
+          
+          elseif (elem_type == ELEM_TYPE_PANEL) then
+            _create_elem_panel(menu, elem_ptr, elem_ptr_idx, sc_w, sc_h, m_x, m_y, m_w, m_h);
+          elseif (elem_type == ELEM_TYPE_BUTTON) then
+            _create_elem_button(menu, elem_ptr, elem_ptr_idx, sc_w, sc_h, m_x, m_y, m_w, m_h);
+          elseif (elem_type == ELEM_TYPE_TEXT) then
+            _create_elem_text(menu, elem_ptr, elem_ptr_idx, sc_w, sc_h, m_x, m_y, m_w, m_h);
+          end
+          
+        end
+      end
+    end
+  end
+end
+
 function gui_open_menu(_menu_id)
   local menu = _GUI_MENUS[_menu_id];
   
-  if (menu == nil) then
-    -- create elements
-    local menu = _GUI_INIT_MENUS[_menu_id];
-    
-    if (menu ~= nil) then
-      local sc_w = ScreenWidth();
-      local sc_h = ScreenHeight();
-      
-      local m_x = FLOOR(menu.Data.X * sc_w);
-      local m_y = FLOOR(menu.Data.Y * sc_h);
-      local m_w = FLOOR(menu.Data.W * sc_w);
-      local m_h = FLOOR(menu.Data.H * sc_h);
-      
-      
-      
-      _GUI_MENUS[_menu_id] = 
-      {
-        ID = menu.ID,
-        Data = { X = m_x, Y = m_y, W = m_w, H = m_h},
-        Elements = {}, -- Pointers to elements
-        FuncOpen = menu.FuncOpen,
-        FuncClose = menu.FuncClose,
-        FuncMaintain = menu.FuncMaintain,
-        OnRes = menu.OnRes,
-        isActive = true
-      };
-      
-      log("Created Menu");
-      
-      -- now go through elements that menu consists of and see if they need to be created/binded
-      local init_menu_elems = _GUI_MENU_INIT_ELEMENTS[menu.ID];
-      
-      for index,elem_entry in ipairs(init_menu_elems) do
-        local elem_type = elem_entry[1];
-        local elem_ptr_idx = elem_entry[2];
-        
-        local elem_ptr = _GUI_ELEMENTS[elem_ptr_idx];
-        
-        if (elem_ptr == nil) then
-          -- create it.
-          elem_ptr = _GUI_INIT_ELEMENTS[elem_ptr_idx];
-          
-          if (elem_ptr ~= nil) then
-            -- now check it's type and create stuff accordingly
-            
-            if (elem_type == ELEM_TYPE_NONE) then
-            
-            elseif (elem_type == ELEM_TYPE_PANEL) then
-              _create_elem_panel(menu, elem_ptr, elem_ptr_idx, sc_w, sc_h, m_x, m_y, m_w, m_h);
-            elseif (elem_type == ELEM_TYPE_BUTTON) then
-              _create_elem_button(menu, elem_ptr, elem_ptr_idx, sc_w, sc_h, m_x, m_y, m_w, m_h);
-            elseif (elem_type == ELEM_TYPE_TEXT) then
-              _create_elem_text(menu, elem_ptr, elem_ptr_idx, sc_w, sc_h, m_x, m_y, m_w, m_h);
-            end
-            
-          end
-        end
-      end
-    else
-      log("TRIED TO CREATE UNKNOWN MENU");
-    end
-  else
+  if (menu ~= nil) then
     menu.isActive = true;
     
     if (menu.FuncOpen ~= nil) then
@@ -630,28 +627,21 @@ function gui_draw_menus()
   end
 end
 
-function is_point_on_rectangle(rect, x, y)
-  return (x >= rect.Left and x <= rect.Right and y >= rect.Top and y <= rect.Bottom);
-end
-
-function OnMouseButton(key, is_down, x, y)
-  if (key == LB_KEY_MOUSE0) then
-    -- left click
-    for i,menu in ipairs(_GUI_MENUS) do
-      if (menu.isActive) then
-        for j,elem in ipairs(menu.Elements) do
-          if (elem.isActive) then
-            if (elem.ElemType == ELEM_TYPE_BUTTON) then
-              elem.Pressed = false;
-              if (is_point_on_rectangle(elem.Box, x, y)) then
-                if (is_down) then
-                  elem.Pressed = true;
-                else
-                  elem.Pressed = false;
-                  --log("clicked");
-                  if (elem.FuncClick ~= nil) then
-                    elem.FuncClick();
-                  end
+function process_gui_mouse_inputs(key, is_down, x, y)
+  for i,menu in ipairs(_GUI_MENUS) do
+    if (menu.isActive) then
+      for j,elem in ipairs(menu.Elements) do
+        if (elem.isActive) then
+          if (elem.ElemType == ELEM_TYPE_BUTTON) then
+            elem.Pressed = false;
+            if (is_point_on_rectangle(elem.Box, x, y)) then
+              if (is_down) then
+                elem.Pressed = true;
+              else
+                elem.Pressed = false;
+                --log("clicked");
+                if (elem.FuncClick ~= nil) then
+                  elem.FuncClick();
                 end
               end
             end
@@ -661,6 +651,34 @@ function OnMouseButton(key, is_down, x, y)
     end
   end
 end
+
+-- function OnMouseButton(key, is_down, x, y)
+  -- if (key == LB_KEY_MOUSE0) then
+    -- -- left click
+    -- for i,menu in ipairs(_GUI_MENUS) do
+      -- if (menu.isActive) then
+        -- for j,elem in ipairs(menu.Elements) do
+          -- if (elem.isActive) then
+            -- if (elem.ElemType == ELEM_TYPE_BUTTON) then
+              -- elem.Pressed = false;
+              -- if (is_point_on_rectangle(elem.Box, x, y)) then
+                -- if (is_down) then
+                  -- elem.Pressed = true;
+                -- else
+                  -- elem.Pressed = false;
+                  -- --log("clicked");
+                  -- if (elem.FuncClick ~= nil) then
+                    -- elem.FuncClick();
+                  -- end
+                -- end
+              -- end
+            -- end
+          -- end
+        -- end
+      -- end
+    -- end
+  -- end
+-- end
 
 
 function OnFrame()
@@ -685,19 +703,6 @@ function OnFrame()
         menu.OnRes(menu);
       end
     end
-    
-    -- go through all elements and resize accordingly
-    --for i,elem in ipairs(_GUI_ELEMENTS) do
-      --elem.Data.X = FLOOR(_GUI_INIT_ELEMENTS[i][1] * CURR_RES_WIDTH);
-      --elem.Data.Y = FLOOR(_GUI_INIT_ELEMENTS[i][2] * CURR_RES_HEIGHT);
-      --elem.Data.W = FLOOR(_GUI_INIT_ELEMENTS[i][3] * CURR_RES_WIDTH);
-      --elem.Data.H = FLOOR(_GUI_INIT_ELEMENTS[i][4] * CURR_RES_HEIGHT);
-      
-      --elem.Data.Rect.Left = elem.Data.X;
-      --elem.Data.Rect.Right = elem.Data.Rect.Left + elem.Data.W;
-      --elem.Data.Rect.Top = elem.Data.Y;
-      --elem.Data.Rect.Bottom = elem.Data.Rect.Top + elem.Data.H;
-    --end
   end
   
   local gui_width = GFGetGuiWidth();
@@ -710,4 +715,8 @@ function OnFrame()
   LbDraw_Text(gui_width, ScreenHeight() - CharHeight2(), string.format("GUI ID: %i", GUI_HOVERING_ID), 0);
   
   GUI_HOVERING_ID = -1;
+end
+
+function get_elem_ptr(_elem_idx)
+  return _GUI_ELEMENTS[_elem_idx];
 end

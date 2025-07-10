@@ -1,66 +1,66 @@
 -- game lobby stuff
 
 -- MENU: PLAYERS
-MENU_PLAYERS = create_menu("Player List", BTN_STYLE_LOG);
-TXT_PLR1_NAME = create_text_field("", 3);
-TXT_PLR2_NAME = create_text_field("", 3);
-TXT_PLR3_NAME = create_text_field("", 3);
-TXT_PLR4_NAME = create_text_field("", 3);
-TXT_PLR5_NAME = create_text_field("", 3);
-TXT_PLR6_NAME = create_text_field("", 3);
-TXT_PLR7_NAME = create_text_field("", 3);
-TXT_PLR8_NAME = create_text_field("", 3);
-ICON_PLR1 = create_icon(1, 6883);
-ICON_PLR2 = create_icon(1, 6903);
-ICON_PLR3 = create_icon(1, 6923);
-ICON_PLR4 = create_icon(1, 6943);
-ICON_PLR5 = create_icon(2, 6883);
-ICON_PLR6 = create_icon(2, 6903);
-ICON_PLR7 = create_icon(2, 6923);
-ICON_PLR8 = create_icon(2, 6943);
-TXT_FIELD_TRIBE = create_text_field("Tribe", 4);
-TXT_FIELD_PLR_NAME = create_text_field("Name", 4);
-TXT_FIELD_START_POS = create_text_field("Start Pos", 4);
-BTN_PLR1_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-BTN_PLR2_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-BTN_PLR3_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-BTN_PLR4_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-BTN_PLR5_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-BTN_PLR6_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-BTN_PLR7_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-BTN_PLR8_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+-- MENU_PLAYERS = create_menu("Player List", BTN_STYLE_LOG);
+-- TXT_PLR1_NAME = create_text_field("", 3);
+-- TXT_PLR2_NAME = create_text_field("", 3);
+-- TXT_PLR3_NAME = create_text_field("", 3);
+-- TXT_PLR4_NAME = create_text_field("", 3);
+-- TXT_PLR5_NAME = create_text_field("", 3);
+-- TXT_PLR6_NAME = create_text_field("", 3);
+-- TXT_PLR7_NAME = create_text_field("", 3);
+-- TXT_PLR8_NAME = create_text_field("", 3);
+-- ICON_PLR1 = create_icon(1, 6883);
+-- ICON_PLR2 = create_icon(1, 6903);
+-- ICON_PLR3 = create_icon(1, 6923);
+-- ICON_PLR4 = create_icon(1, 6943);
+-- ICON_PLR5 = create_icon(2, 6883);
+-- ICON_PLR6 = create_icon(2, 6903);
+-- ICON_PLR7 = create_icon(2, 6923);
+-- ICON_PLR8 = create_icon(2, 6943);
+-- TXT_FIELD_TRIBE = create_text_field("Tribe", 4);
+-- TXT_FIELD_PLR_NAME = create_text_field("Name", 4);
+-- TXT_FIELD_START_POS = create_text_field("Start Pos", 4);
+-- BTN_PLR1_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+-- BTN_PLR2_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+-- BTN_PLR3_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+-- BTN_PLR4_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+-- BTN_PLR5_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+-- BTN_PLR6_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+-- BTN_PLR7_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+-- BTN_PLR8_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
 
 -- MENU: OPTIONS
-MENU_OPTIONS = create_menu("Game Options", BTN_STYLE_LOG);
-BTN_AI_DIFFICULTY = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+--MENU_OPTIONS = create_menu("Game Options", BTN_STYLE_LOG);
+--BTN_AI_DIFFICULTY = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
 
 -- MENU: AI SETTINGS
-MENU_AI = create_menu("AI Settings", BTN_STYLE_LOG);
-BTN_AI_PLR1_DIFF = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-BTN_AI_PLR2_DIFF = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-BTN_AI_PLR3_DIFF = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-BTN_AI_PLR4_DIFF = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-BTN_AI_PLR5_DIFF = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-BTN_AI_PLR6_DIFF = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-TXT_FIELD_AI_TRIBE = create_text_field("Tribe", 4);
-TXT_FIELD_AI_DIFFICULTY = create_text_field("Difficulty", 4);
-ICON_AI_PLR1 = create_icon(0, 1056);
-ICON_AI_PLR2 = create_icon(0, 1056);
-ICON_AI_PLR3 = create_icon(0, 1056);
-ICON_AI_PLR4 = create_icon(0, 1056);
-ICON_AI_PLR5 = create_icon(0, 1056);
-ICON_AI_PLR6 = create_icon(0, 1056);
+-- MENU_AI = create_menu("AI Settings", BTN_STYLE_LOG);
+-- BTN_AI_PLR1_DIFF = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+-- BTN_AI_PLR2_DIFF = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+-- BTN_AI_PLR3_DIFF = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+-- BTN_AI_PLR4_DIFF = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+-- BTN_AI_PLR5_DIFF = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+-- BTN_AI_PLR6_DIFF = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+-- TXT_FIELD_AI_TRIBE = create_text_field("Tribe", 4);
+-- TXT_FIELD_AI_DIFFICULTY = create_text_field("Difficulty", 4);
+-- ICON_AI_PLR1 = create_icon(0, 1056);
+-- ICON_AI_PLR2 = create_icon(0, 1056);
+-- ICON_AI_PLR3 = create_icon(0, 1056);
+-- ICON_AI_PLR4 = create_icon(0, 1056);
+-- ICON_AI_PLR5 = create_icon(0, 1056);
+-- ICON_AI_PLR6 = create_icon(0, 1056);
 
 
 -- misc buttons
-BTN_CHECK_IN = create_button("Check in", 3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-BTN_START_GAME = create_button("Start Game", 3, BTN_STYLE_DEFAULT3, BTN_STYLE_DEFAULT3_H, BTN_STYLE_DEFAULT3_HP);
-BTN_OM_PLAYERS = create_button("Players", 3, BTN_STYLE_DEFAULT3, BTN_STYLE_DEFAULT3_H, BTN_STYLE_DEFAULT3_HP);
-BTN_OM_SETTINGS = create_button("Settings", 3, BTN_STYLE_DEFAULT3, BTN_STYLE_DEFAULT3_H, BTN_STYLE_DEFAULT3_HP);
-BTN_OM_AI = create_button("Computer", 3, BTN_STYLE_DEFAULT3, BTN_STYLE_DEFAULT3_H, BTN_STYLE_DEFAULT3_HP);
+--BTN_CHECK_IN = create_button("Check in", 3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
+--BTN_START_GAME = create_button("Start Game", 3, BTN_STYLE_DEFAULT3, BTN_STYLE_DEFAULT3_H, BTN_STYLE_DEFAULT3_HP);
+--BTN_OM_PLAYERS = create_button("Players", 3, BTN_STYLE_DEFAULT3, BTN_STYLE_DEFAULT3_H, BTN_STYLE_DEFAULT3_HP);
+--BTN_OM_SETTINGS = create_button("Settings", 3, BTN_STYLE_DEFAULT3, BTN_STYLE_DEFAULT3_H, BTN_STYLE_DEFAULT3_HP);
+--BTN_OM_AI = create_button("Computer", 3, BTN_STYLE_DEFAULT3, BTN_STYLE_DEFAULT3_H, BTN_STYLE_DEFAULT3_HP);
 
 -- menus
-MENU_CHECK_IN = create_menu("Check Phase", BTN_STYLE_LOG);
+--MENU_CHECK_IN = create_menu("Check Phase", BTN_STYLE_LOG);
 
 local AI_DIFFICULTY_STR_TABLE = {"Easy", "Normal", "Hard", "Honour"};
 
@@ -301,6 +301,16 @@ end
 function get_info_on_players_count()
   if (HUMAN_PLAYERS_COUNT > HUMAN_COUNT) then
     log(string.format("Amount of players exceed defined amount in level. Defined %i, actual %i", HUMAN_COUNT, HUMAN_PLAYERS_COUNT));
+  end
+end
+
+function link_stuff_to_gui()
+  local check_in_btn = get_elem_ptr(MY_ELEM_BTN_CHECK_IN);
+  
+  check_in_btn.FuncClick = function()
+    update_network_players_count(G_NSI.PlayerNum);
+    GAME_STARTED = true; 
+    gui_close_menu(MY_MENU_CHECK_IN);
   end
 end
 

@@ -1,6 +1,7 @@
 -- includes
 include("globals.lua");
 include("assets.lua");
+include("gui.lua");
 include("game_lobby.lua");
 include("game_state.lua");
 include("event_logger.lua");
@@ -43,7 +44,10 @@ function OnTurn()
     disable_inputs(DIF_FLYBY);
     process_options(OPT_TOGGLE_PANEL, 0, 0);
     
-    init_game_lobbys_menus_and_elements();
+    gui_init_all_menus();
+    link_stuff_to_gui();
+    gui_open_menu(MY_MENU_CHECK_IN);
+    --init_game_lobbys_menus_and_elements();
     
     if (OnInit ~= nil) then OnInit(); end
   end
@@ -100,6 +104,31 @@ function OnFrame()
   if (ScrOnFrame ~= nil) then ScrOnFrame(w, h, guiW); end
   
   if (am_i_not_in_igm()) then
+    if (CURR_RES_HEIGHT ~= ScreenHeight() or CURR_RES_WIDTH ~= ScreenWidth()) then
+    -- reapply resolution
+      CURR_RES_HEIGHT = ScreenHeight();
+      CURR_RES_WIDTH = ScreenWidth();
+      log("res changed");
+      
+      if (CURR_RES_WIDTH >= 1920 and CURR_RES_HEIGHT >= 1080) then
+        GUI_TEXT_FONT = 9;
+      elseif (CURR_RES_WIDTH >= 1280 and CURR_RES_HEIGHT >= 720) then
+        GUI_TEXT_FONT = 3;
+      else
+        GUI_TEXT_FONT = 4;
+      end
+      
+      -- go through all created menus and trigger their OnRes function
+      for i,menu in ipairs(_GUI_MENUS) do
+        log("is type: " .. type(menu.OnRes));
+        if (menu.OnRes ~= nil) then
+          menu.OnRes(menu);
+        end
+      end
+    end
+    
+    gui_draw_menus();
+    
     if (is_game_state(GM_STATE_SETUP)) then
       if (am_i_in_network_game() ~= 0) then
         
@@ -108,13 +137,13 @@ function OnFrame()
       end
     end
     
-    draw_menus();
-    draw_text_boxes();
-    draw_buttons();
-    draw_text_fields();
-    draw_icons();
+    --draw_menus();
+    --draw_text_boxes();
+    --draw_buttons();
+    --draw_text_fields();
+    --draw_icons();
     
-    draw_log_events(w, h, guiW);
+    --draw_log_events(w, h, guiW);
   end
 end
 
@@ -128,7 +157,8 @@ end
 -- triggered on mouse input
 function OnMouseButton(key, is_down, x, y)
   if (key == LB_KEY_MOUSE0) then
-    process_buttons_input(is_down, x, y);
+    process_gui_mouse_inputs(key, is_down, x, y);
+    --process_buttons_input(is_down, x, y);
   end
 end
 
@@ -159,7 +189,7 @@ function OnPacket(player_num, packet_type, data)
     if (ScrOnPacket ~= nil) then ScrOnPacket(player_num, packet_type, data); end
     
     if (is_game_state(GM_STATE_SETUP)) then
-      process_game_lobby_packets(player_num, packet_type, data);
+      --process_game_lobby_packets(player_num, packet_type, data);
     end
   end
 end
