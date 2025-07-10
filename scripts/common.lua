@@ -144,6 +144,10 @@ function OnFrame()
     --draw_icons();
     
     --draw_log_events(w, h, guiW);
+    PopSetFont(GUI_TEXT_FONT);
+    LbDraw_Text(guiW, ScreenHeight() - CharHeight2(), string.format("GUI ID: %i", GUI_HOVERING_ID), 0);
+    
+    GUI_HOVERING_ID = -1;
   end
 end
 

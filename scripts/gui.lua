@@ -371,17 +371,17 @@ local start_turn = getTurn();
 CURR_RES_WIDTH = 0;
 CURR_RES_HEIGHT = 0;
 
-function OnTurn()
-  local turn = getTurn();
+-- function OnTurn()
+  -- local turn = getTurn();
   
-  if (turn == (start_turn + 1)) then
-    -- cache width and height res
-    CURR_RES_HEIGHT = ScreenHeight();
-    CURR_RES_WIDTH = ScreenWidth();
+  -- if (turn == (start_turn + 1)) then
+    -- -- cache width and height res
+    -- CURR_RES_HEIGHT = ScreenHeight();
+    -- CURR_RES_WIDTH = ScreenWidth();
     
-    gui_open_menu(MY_MENU_CHECK_IN);
-  end
-end
+    -- gui_open_menu(MY_MENU_CHECK_IN);
+  -- end
+-- end
 
 local function _create_elem_button(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh, _mx, _my, _mw, _mh)
   -- now convert position & scale data into actual pixels and transform it into correct position
@@ -681,41 +681,41 @@ end
 -- end
 
 
-function OnFrame()
-  if (CURR_RES_HEIGHT ~= ScreenHeight() or CURR_RES_WIDTH ~= ScreenWidth()) then
-    -- reapply resolution
-    CURR_RES_HEIGHT = ScreenHeight();
-    CURR_RES_WIDTH = ScreenWidth();
-    log("res changed");
+-- function OnFrame()
+  -- if (CURR_RES_HEIGHT ~= ScreenHeight() or CURR_RES_WIDTH ~= ScreenWidth()) then
+    -- -- reapply resolution
+    -- CURR_RES_HEIGHT = ScreenHeight();
+    -- CURR_RES_WIDTH = ScreenWidth();
+    -- log("res changed");
     
-    if (CURR_RES_WIDTH >= 1920 and CURR_RES_HEIGHT >= 1080) then
-      GUI_TEXT_FONT = 9;
-    elseif (CURR_RES_WIDTH >= 1280 and CURR_RES_HEIGHT >= 720) then
-      GUI_TEXT_FONT = 3;
-    else
-      GUI_TEXT_FONT = 4;
-    end
+    -- if (CURR_RES_WIDTH >= 1920 and CURR_RES_HEIGHT >= 1080) then
+      -- GUI_TEXT_FONT = 9;
+    -- elseif (CURR_RES_WIDTH >= 1280 and CURR_RES_HEIGHT >= 720) then
+      -- GUI_TEXT_FONT = 3;
+    -- else
+      -- GUI_TEXT_FONT = 4;
+    -- end
     
-    -- go through all created menus and trigger their OnRes function
-    for i,menu in ipairs(_GUI_MENUS) do
-      log("is type: " .. type(menu.OnRes));
-      if (menu.OnRes ~= nil) then
-        menu.OnRes(menu);
-      end
-    end
-  end
+    -- -- go through all created menus and trigger their OnRes function
+    -- for i,menu in ipairs(_GUI_MENUS) do
+      -- log("is type: " .. type(menu.OnRes));
+      -- if (menu.OnRes ~= nil) then
+        -- menu.OnRes(menu);
+      -- end
+    -- end
+  -- end
   
-  local gui_width = GFGetGuiWidth();
+  -- local gui_width = GFGetGuiWidth();
   
-  if (am_i_not_in_igm()) then
-    gui_draw_menus();
-  end
+  -- if (am_i_not_in_igm()) then
+    -- gui_draw_menus();
+  -- end
   
-  PopSetFont(GUI_TEXT_FONT);
-  LbDraw_Text(gui_width, ScreenHeight() - CharHeight2(), string.format("GUI ID: %i", GUI_HOVERING_ID), 0);
+  -- PopSetFont(GUI_TEXT_FONT);
+  -- LbDraw_Text(gui_width, ScreenHeight() - CharHeight2(), string.format("GUI ID: %i", GUI_HOVERING_ID), 0);
   
-  GUI_HOVERING_ID = -1;
-end
+  -- GUI_HOVERING_ID = -1;
+-- end
 
 function get_elem_ptr(_elem_idx)
   return _GUI_ELEMENTS[_elem_idx];
