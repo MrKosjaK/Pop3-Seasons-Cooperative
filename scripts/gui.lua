@@ -160,6 +160,7 @@ MY_ELEM_TXT_CHECK_IN3 = 5;
 MY_ELEM_HUMAN_PLAYERS_BACK = 6;
 MY_ELEM_COMP_PLAYERS_BACK = 7;
 MY_ELEM_BTN_START_GAME = 8;
+MY_ELEM_TXT_GAME_MASTER = 9;
 
 -- Element justification
 HJ_LEFT = 0;
@@ -282,6 +283,43 @@ local function _gui_draw_basic_text(_elem)
   end
 end
 
+local function _gui_maintain_basic_text(elem)
+  local init_elem = _GUI_INIT_ELEMENTS[elem.ElemID];
+  local menu = _GUI_MENUS[elem.MenuID];
+  local sc_w = ScreenWidth();
+  local sc_h = ScreenHeight();
+  
+  elem.Data.X = FLOOR(menu.Data.X + (init_elem.Data.X * sc_w));
+  elem.Data.Y = FLOOR(menu.Data.Y + (init_elem.Data.Y * sc_h));
+  elem.Data.W = FLOOR(init_elem.Data.W * sc_w);
+  elem.Data.H = FLOOR(init_elem.Data.H * sc_h);
+  
+  if (elem.ElemType == ELEM_TYPE_TEXT) then
+    PopSetFont(GUI_TEXT_FONT);
+    elem.Data.W = string_width(elem.Text);
+    elem.Data.H = CharHeight2();
+  end
+  
+  -- check justification data
+  if (init_elem.JustData.H == HJ_CENTER) then
+    elem.Data.X = elem.Data.X - (elem.Data.W >> 1);
+  elseif (init_elem.JustData.H == HJ_RIGHT) then
+    elem.Data.X = elem.Data.X - elem.Data.W;
+  end
+  
+  if (init_elem.JustData.V == VJ_CENTER) then
+    elem.Data.Y = elem.Data.Y - (elem.Data.H >> 1);
+  elseif (init_elem.JustData.V == VJ_BOTTOM) then
+    elem.Data.Y = elem.Data.Y - elem.Data.H;
+  end
+  
+  -- adjust box as well
+  elem.Box.Left = elem.Data.X;
+  elem.Box.Right = elem.Box.Left + elem.Data.W;
+  elem.Box.Top = elem.Data.Y;
+  elem.Box.Bottom = elem.Box.Top + elem.Data.H;
+end
+
 _GUI_INIT_ELEMENTS =
 {
   -- Name -> X -> Y -> W -> H -> Horizontal Just -> Vertical Just
@@ -311,6 +349,7 @@ _GUI_INIT_ELEMENTS =
     JustData = {H = HJ_CENTER, V = VJ_CENTER},
     Text = "Welcome to Seasons Cooperative!",
     FuncDraw = _gui_draw_basic_text,
+    FuncMaintain = nil,
     OnRes = nil
   }, -- 3
   
@@ -320,6 +359,7 @@ _GUI_INIT_ELEMENTS =
     JustData = {H = HJ_CENTER, V = VJ_CENTER},
     Text = "Click on 'Check In' button to sign in",
     FuncDraw = _gui_draw_basic_text,
+    FuncMaintain = nil,
     OnRes = nil
   }, -- 4
   
@@ -329,12 +369,13 @@ _GUI_INIT_ELEMENTS =
     JustData = {H = HJ_CENTER, V = VJ_CENTER},
     Text = "as a player for this mission.",
     FuncDraw = _gui_draw_basic_text,
+    FuncMaintain = nil,
     OnRes = nil
   }, -- 5
   
   [MY_ELEM_HUMAN_PLAYERS_BACK] =
   {
-    Data = {X = 0.25, Y = 0.5, W = 0.4, H = 0.6},
+    Data = {X = 0.0, Y = 0.0, W = 0.4, H = 0.6},
     JustData = {H = HJ_CENTER, V = VJ_CENTER},
     FuncDraw = _gui_draw_basic_background,
     StyleData = BOX_STYLE.INNER_DARK;
@@ -343,7 +384,7 @@ _GUI_INIT_ELEMENTS =
   
   [MY_ELEM_COMP_PLAYERS_BACK] =
   {
-    Data = {X = 0.75, Y = 0.5, W = 0.4, H = 0.6},
+    Data = {X = 0.0, Y = 0.0, W = 0.4, H = 0.6},
     JustData = {H = HJ_CENTER, V = VJ_CENTER},
     FuncDraw = _gui_draw_basic_background,
     StyleData = BOX_STYLE.INNER_DARK;
@@ -359,7 +400,17 @@ _GUI_INIT_ELEMENTS =
     FuncDraw = _gui_draw_basic_button,
     FuncClick = nil,
     OnRes = nil,
-  } -- 8
+  }, -- 8
+  
+  [MY_ELEM_TXT_GAME_MASTER] =
+  {
+    Data = {X = 0.5, Y = 0.16, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    Text = "Game Master",
+    FuncDraw = _gui_draw_basic_text,
+    FuncMaintain = _gui_maintain_basic_text,
+    OnRes = nil
+  }, -- 9
 }
 
 _GUI_MENU_INIT_ELEMENTS =
@@ -386,6 +437,7 @@ _GUI_MENU_INIT_ELEMENTS =
   [MY_MENU_SETUP_GENERAL] =
   {
    {ELEM_TYPE_BUTTON, MY_ELEM_BTN_START_GAME}, 
+   {ELEM_TYPE_TEXT, MY_ELEM_TXT_GAME_MASTER},
   }
 }
 
@@ -403,7 +455,7 @@ _GUI_INIT_MENUS =
   [MY_MENU_HUMAN_PLAYERS] =
   {
     ID = MY_MENU_HUMAN_PLAYERS,
-    Data = {X = 0.0, Y = 0.0, W = 1.0, H = 1.0},
+    Data = {X = 0.25, Y = 0.5, W = 0.4, H = 0.6},
     FuncOpen = nil,
     FuncClose = nil,
     OnRes = gui_auto_scale_menu,
@@ -412,7 +464,7 @@ _GUI_INIT_MENUS =
   [MY_MENU_COMP_PLAYERS] =
   {
     ID = MY_MENU_COMP_PLAYERS,
-    Data = {X = 0.0, Y = 0.0, W = 1.0, H = 1.0},
+    Data = {X = 0.75, Y = 0.5, W = 0.4, H = 0.6},
     FuncOpen = nil,
     FuncClose = nil,
     OnRes = gui_auto_scale_menu,
@@ -521,6 +573,7 @@ local function _create_elem_text(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh, 
     Data = { X = elem_x, Y = elem_y, W = elem_w, H = elem_h},
     Text = _elem_ptr.Text,
     FuncDraw =  _elem_ptr.FuncDraw,
+    FuncMaintain = _elem_ptr.FuncMaintain,
     Box = TbRect.new(),
     isActive = false
   };
@@ -675,11 +728,15 @@ end
 function gui_draw_menus()
   for i,menu in ipairs(_GUI_MENUS) do
     if (menu.isActive) then
+      LbDraw_SetViewPort(menu.Box);
+      LbDraw_SetClipRect(menu.Box);
       for j,elem in ipairs(menu.Elements) do
         if (elem.FuncDraw ~= nil) then
           elem.FuncDraw(elem);
         end
       end
+      LbDraw_ReleaseViewPort();
+      LbDraw_ReleaseClipRect();
     end
   end
 end
@@ -776,6 +833,21 @@ end
 
 function get_elem_ptr(_elem_idx)
   return _GUI_ELEMENTS[_elem_idx];
+end
+
+function set_elem_text_string(_elem_idx, _str)
+  local txt = _GUI_ELEMENTS[_elem_idx];
+  
+  if (txt ~= nil) then
+    if (txt.ElemType == ELEM_TYPE_TEXT) then
+      txt.Text = _str;
+      
+      if (txt.FuncMaintain ~= nil) then
+        txt.FuncMaintain(txt);
+        log("maintain");
+      end
+    end
+  end
 end
 
 function set_elem_btn_function(_elem_idx, _func)

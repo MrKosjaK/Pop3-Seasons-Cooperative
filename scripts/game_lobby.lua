@@ -291,6 +291,8 @@ end
 function update_network_players_count(p_num)
   if (HUMAN_PLAYERS_COUNT == 0) then
     GAME_MASTER_ID = p_num;
+    --set_player_name(p_num, "ORE_GAMMAMON", ntb(am_i_in_network_game()));
+    set_elem_text_string(MY_ELEM_TXT_GAME_MASTER, string.format("Game Master: %s", get_player_name(p_num, ntb(am_i_in_network_game()))));
   end
   
   HUMAN_CHECK_IN[p_num] = true;
