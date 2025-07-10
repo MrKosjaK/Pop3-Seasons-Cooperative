@@ -152,11 +152,14 @@ ELEM_TYPE_BUTTON = 3;
 ELEM_TYPE_TEXT = 4;
 
 -- Element enums
-MY_ELEM_BACKGROUND = 1;
+MY_ELEM_CHECK_IN_BACK = 1;
 MY_ELEM_BTN_CHECK_IN = 2;
 MY_ELEM_TXT_CHECK_IN1 = 3;
 MY_ELEM_TXT_CHECK_IN2 = 4;
 MY_ELEM_TXT_CHECK_IN3 = 5;
+MY_ELEM_HUMAN_PLAYERS_BACK = 6;
+MY_ELEM_COMP_PLAYERS_BACK = 7;
+MY_ELEM_BTN_START_GAME = 8;
 
 -- Element justification
 HJ_LEFT = 0;
@@ -169,7 +172,9 @@ VJ_BOTTOM = 2;
 
 -- Menu enums
 MY_MENU_CHECK_IN = 1;
-MY_MENU_PLAYERS = 2;
+MY_MENU_HUMAN_PLAYERS = 2;
+MY_MENU_COMP_PLAYERS = 3;
+MY_MENU_SETUP_GENERAL = 4;
 
 local function gui_auto_scale_menu(menu)
   local sc_w = ScreenWidth();
@@ -280,7 +285,7 @@ end
 _GUI_INIT_ELEMENTS =
 {
   -- Name -> X -> Y -> W -> H -> Horizontal Just -> Vertical Just
-  [MY_ELEM_BACKGROUND] = 
+  [MY_ELEM_CHECK_IN_BACK] = 
   {
     Data = {X = 0.5, Y = 0.5, W = 0.32, H = 0.30},
     JustData = {H = HJ_CENTER, V = VJ_CENTER},
@@ -307,7 +312,7 @@ _GUI_INIT_ELEMENTS =
     Text = "Welcome to Seasons Cooperative!",
     FuncDraw = _gui_draw_basic_text,
     OnRes = nil
-  },
+  }, -- 3
   
   [MY_ELEM_TXT_CHECK_IN2] = 
   {
@@ -316,7 +321,7 @@ _GUI_INIT_ELEMENTS =
     Text = "Click on 'Check In' button to sign in",
     FuncDraw = _gui_draw_basic_text,
     OnRes = nil
-  },
+  }, -- 4
   
   [MY_ELEM_TXT_CHECK_IN3] = 
   {
@@ -325,18 +330,62 @@ _GUI_INIT_ELEMENTS =
     Text = "as a player for this mission.",
     FuncDraw = _gui_draw_basic_text,
     OnRes = nil
-  }
+  }, -- 5
+  
+  [MY_ELEM_HUMAN_PLAYERS_BACK] =
+  {
+    Data = {X = 0.25, Y = 0.5, W = 0.4, H = 0.6},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    FuncDraw = _gui_draw_basic_background,
+    StyleData = BOX_STYLE.INNER_DARK;
+    OnRes = nil,
+  }, -- 6
+  
+  [MY_ELEM_COMP_PLAYERS_BACK] =
+  {
+    Data = {X = 0.75, Y = 0.5, W = 0.4, H = 0.6},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    FuncDraw = _gui_draw_basic_background,
+    StyleData = BOX_STYLE.INNER_DARK;
+    OnRes = nil,
+  }, -- 7
+  
+  [MY_ELEM_BTN_START_GAME] =
+  {
+    Data = {X = 0.5, Y = 0.9, W = 0.12, H = 0.04},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    StyleData = {N = BOX_STYLE.DEFAULT2_N, H = BOX_STYLE.DEFAULT2_H, P = BOX_STYLE.DEFAULT2_P},
+    Text = "Start Game",
+    FuncDraw = _gui_draw_basic_button,
+    FuncClick = nil,
+    OnRes = nil,
+  } -- 8
 }
 
 _GUI_MENU_INIT_ELEMENTS =
 {
   [MY_MENU_CHECK_IN] = 
   {
-    {ELEM_TYPE_PANEL, MY_ELEM_BACKGROUND},
+    {ELEM_TYPE_PANEL, MY_ELEM_CHECK_IN_BACK},
     {ELEM_TYPE_BUTTON, MY_ELEM_BTN_CHECK_IN},
     {ELEM_TYPE_TEXT, MY_ELEM_TXT_CHECK_IN1},
     {ELEM_TYPE_TEXT, MY_ELEM_TXT_CHECK_IN2},
     {ELEM_TYPE_TEXT, MY_ELEM_TXT_CHECK_IN3},
+  },
+  
+  [MY_MENU_HUMAN_PLAYERS] = 
+  {
+    {ELEM_TYPE_PANEL, MY_ELEM_HUMAN_PLAYERS_BACK},
+  },
+  
+  [MY_MENU_COMP_PLAYERS] = 
+  {
+    {ELEM_TYPE_PANEL, MY_ELEM_COMP_PLAYERS_BACK},
+  },
+  
+  [MY_MENU_SETUP_GENERAL] =
+  {
+   {ELEM_TYPE_BUTTON, MY_ELEM_BTN_START_GAME}, 
   }
 }
 
@@ -346,9 +395,35 @@ _GUI_INIT_MENUS =
   {
     ID = MY_MENU_CHECK_IN,
     Data = {X = 0.0, Y = 0.0, W = 1.0, H = 1.0},
-    FuncOpen = gui_open_main_menu,
-    FuncClose = gui_close_main_menu,
-    FuncMaintain = gui_maintain_main_menu,
+    FuncOpen = nil,
+    FuncClose = nil,
+    OnRes = gui_auto_scale_menu,
+  },
+  
+  [MY_MENU_HUMAN_PLAYERS] =
+  {
+    ID = MY_MENU_HUMAN_PLAYERS,
+    Data = {X = 0.0, Y = 0.0, W = 1.0, H = 1.0},
+    FuncOpen = nil,
+    FuncClose = nil,
+    OnRes = gui_auto_scale_menu,
+  },
+  
+  [MY_MENU_COMP_PLAYERS] =
+  {
+    ID = MY_MENU_COMP_PLAYERS,
+    Data = {X = 0.0, Y = 0.0, W = 1.0, H = 1.0},
+    FuncOpen = nil,
+    FuncClose = nil,
+    OnRes = gui_auto_scale_menu,
+  },
+  
+  [MY_MENU_SETUP_GENERAL] =
+  {
+    ID = MY_MENU_SETUP_GENERAL,
+    Data = {X = 0.0, Y = 0.0, W = 1.0, H = 1.0},
+    FuncOpen = nil,
+    FuncClose = nil,
     OnRes = gui_auto_scale_menu,
   }
 }
@@ -363,25 +438,8 @@ _GUI_ELEMENTS =
 
 }
 
-
-
-
-local start_turn = getTurn();
-
 CURR_RES_WIDTH = 0;
 CURR_RES_HEIGHT = 0;
-
--- function OnTurn()
-  -- local turn = getTurn();
-  
-  -- if (turn == (start_turn + 1)) then
-    -- -- cache width and height res
-    -- CURR_RES_HEIGHT = ScreenHeight();
-    -- CURR_RES_WIDTH = ScreenWidth();
-    
-    -- gui_open_menu(MY_MENU_CHECK_IN);
-  -- end
--- end
 
 local function _create_elem_button(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh, _mx, _my, _mw, _mh)
   -- now convert position & scale data into actual pixels and transform it into correct position
@@ -560,7 +618,6 @@ function gui_init_all_menus()
       Elements = {}, -- Pointers to elements
       FuncOpen = menu.FuncOpen,
       FuncClose = menu.FuncClose,
-      FuncMaintain = menu.FuncMaintain,
       OnRes = menu.OnRes,
       isActive = false
     };
@@ -719,4 +776,14 @@ end
 
 function get_elem_ptr(_elem_idx)
   return _GUI_ELEMENTS[_elem_idx];
+end
+
+function set_elem_btn_function(_elem_idx, _func)
+  local btn = _GUI_ELEMENTS[_elem_idx];
+  
+  if (btn ~= nil) then
+    if (btn.ElemType == ELEM_TYPE_BUTTON) then
+      btn.FuncClick = _func;
+    end
+  end
 end

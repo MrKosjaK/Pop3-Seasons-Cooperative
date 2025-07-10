@@ -305,13 +305,52 @@ function get_info_on_players_count()
 end
 
 function link_stuff_to_gui()
-  local check_in_btn = get_elem_ptr(MY_ELEM_BTN_CHECK_IN);
+  set_elem_btn_function(MY_ELEM_BTN_CHECK_IN, function()
+    if (not i_am_checked_in()) then
+      if (am_i_in_network_game() ~= 0) then
+        check_myself_in();
+      else
+        update_network_players_count(G_NSI.PlayerNum);
+        
+        gui_close_menu(MY_MENU_CHECK_IN);
+        gui_open_menu(MY_MENU_HUMAN_PLAYERS);
+        gui_open_menu(MY_MENU_COMP_PLAYERS);
+        gui_open_menu(MY_MENU_SETUP_GENERAL);
+      end
+    end
+  end);
   
-  check_in_btn.FuncClick = function()
-    update_network_players_count(G_NSI.PlayerNum);
-    GAME_STARTED = true; 
-    gui_close_menu(MY_MENU_CHECK_IN);
-  end
+  set_elem_btn_function(MY_ELEM_BTN_START_GAME, function()
+    -- first check player setup indexes to see if there are duplicates
+    local found_duplicate = false;
+    local setup_ptr = GAME_LOBBY_SETTINGS[GLS_PLAYER_SETUP_IDX];
+    local table_check = {false, false, false, false, false, false, false, false};
+    for i = 0, #setup_ptr do
+      if (HUMAN_CHECK_IN[i]) then
+        if (table_check[setup_ptr[i][1]] == false) then
+          table_check[setup_ptr[i][1]] = true;
+        else
+          found_duplicate = true;
+          break;
+        end
+      end
+    end
+    
+    if (not found_duplicate) then
+      if (am_i_in_network_game() ~= 0) then
+        if (i_am_game_master()) then
+          Send(PACKET_START_GAME, "0");
+          gui_close_menu(MY_MENU_SETUP_GENERAL);
+        end
+      else
+        GAME_STARTED = true;
+        
+        gui_close_menu(MY_MENU_HUMAN_PLAYERS);
+        gui_close_menu(MY_MENU_COMP_PLAYERS);
+        gui_close_menu(MY_MENU_SETUP_GENERAL);
+      end
+    end
+  end);
 end
 
 function init_game_lobbys_menus_and_elements()
@@ -344,76 +383,6 @@ function init_game_lobbys_menus_and_elements()
     open_menu(MENU_OPTIONS);
   end);
   
-  set_button_function(BTN_CHECK_IN, 
-  function(button)
-    if (not i_am_checked_in()) then
-      if (am_i_in_network_game() ~= 0) then
-        check_myself_in();
-      else
-        update_network_players_count(G_NSI.PlayerNum);
-        
-        close_menu(MENU_CHECK_IN);
-        set_button_inactive(BTN_CHECK_IN);
-        
-        
-        open_menu(MENU_PLAYERS);
-        --open_menu(MENU_LOG_MSG);
-        --open_menu(MENU_OPTIONS);
-        --open_menu(MENU_AI);
-         
-        local b_data = get_button_pos_and_dimensions(BTN_START_GAME);
-        set_button_position(BTN_START_GAME, (ScreenWidth() >> 1) - (b_data[3] >> 1), (ScreenHeight() - (b_data[4] << 1)));
-        
-        local m_data = get_menu_pos_and_dimensions(MENU_PLAYERS);
-        local middle_x = m_data[1] + (m_data[3] >> 1);
-        local pos_y = m_data[2] + m_data[4];
-        local b_data = get_button_pos_and_dimensions(BTN_OM_PLAYERS);
-        set_button_position(BTN_OM_PLAYERS, middle_x - (b_data[3] >> 1) - 128, pos_y + 12);
-        local b_data = get_button_pos_and_dimensions(BTN_OM_SETTINGS);
-        set_button_position(BTN_OM_SETTINGS, middle_x - (b_data[3] >> 1), pos_y + 12);
-        local b_data = get_button_pos_and_dimensions(BTN_OM_AI);
-        set_button_position(BTN_OM_AI, middle_x - (b_data[3] >> 1) + 128, pos_y + 12);
-        
-        set_button_active(BTN_START_GAME);
-        set_button_active(BTN_OM_PLAYERS);
-        set_button_active(BTN_OM_SETTINGS);
-        set_button_active(BTN_OM_AI);
-      end
-    end
-  end);
-  
-  -- start game button
-  set_button_function(BTN_START_GAME,
-  function(b)
-    -- first check player setup indexes to see if there are duplicates
-    local found_duplicate = false;
-    local setup_ptr = GAME_LOBBY_SETTINGS[GLS_PLAYER_SETUP_IDX];
-    local table_check = {false, false, false, false, false, false, false, false};
-    for i = 0, #setup_ptr do
-      if (HUMAN_CHECK_IN[i]) then
-        if (table_check[setup_ptr[i][1]] == false) then
-          table_check[setup_ptr[i][1]] = true;
-        else
-          found_duplicate = true;
-          break;
-        end
-      end
-    end
-    
-    if (not found_duplicate) then
-      if (am_i_in_network_game() ~= 0) then
-        if (i_am_game_master()) then
-          Send(PACKET_START_GAME, "0");
-          set_button_inactive(BTN_START_GAME);
-        end
-      else
-        GAME_STARTED = true;
-        
-        set_all_elements_inactive();
-        close_all_menus();
-      end
-    end
-  end);
   
   -- players pos buttons
   for i = 1, 8 do
@@ -660,7 +629,8 @@ function process_game_lobby_packets(pn, p_type, data)
   if (p_type == PACKET_START_GAME) then
     GAME_STARTED = true;
     
-    close_all_menus();
-    set_all_elements_inactive();
+    gui_close_menu(MY_MENU_HUMAN_PLAYERS);
+    gui_close_menu(MY_MENU_COMP_PLAYERS);
+    gui_close_menu(MY_MENU_SETUP_GENERAL);
   end
 end
