@@ -282,7 +282,7 @@ _GUI_INIT_ELEMENTS =
   -- Name -> X -> Y -> W -> H -> Horizontal Just -> Vertical Just
   [MY_ELEM_BACKGROUND] = 
   {
-    Data = {X = 0.5, Y = 0.5, W = 0.21, H = 0.12},
+    Data = {X = 0.5, Y = 0.5, W = 0.32, H = 0.30},
     JustData = {H = HJ_CENTER, V = VJ_CENTER},
     FuncDraw = _gui_draw_basic_background,
     StyleData = BOX_STYLE.INNER_DARK;
@@ -291,7 +291,7 @@ _GUI_INIT_ELEMENTS =
   
   [MY_ELEM_BTN_CHECK_IN] = 
   {
-    Data = {X = 0.5, Y = 0.5, W = 0.12, H = 0.04},
+    Data = {X = 0.5, Y = 0.6, W = 0.12, H = 0.04},
     JustData = {H = HJ_CENTER, V = VJ_CENTER},
     StyleData = {N = BOX_STYLE.DEFAULT2_N, H = BOX_STYLE.DEFAULT2_H, P = BOX_STYLE.DEFAULT2_P},
     Text = "Check In",
@@ -302,7 +302,7 @@ _GUI_INIT_ELEMENTS =
   
   [MY_ELEM_TXT_CHECK_IN1] = 
   {
-    Data = {X = 0.5, Y = 0.30, W = 0.0, H = 0.0},
+    Data = {X = 0.5, Y = 0.40, W = 0.0, H = 0.0},
     JustData = {H = HJ_CENTER, V = VJ_CENTER},
     Text = "Welcome to Seasons Cooperative!",
     FuncDraw = _gui_draw_basic_text,
@@ -311,7 +311,7 @@ _GUI_INIT_ELEMENTS =
   
   [MY_ELEM_TXT_CHECK_IN2] = 
   {
-    Data = {X = 0.5, Y = 0.34, W = 0.0, H = 0.0},
+    Data = {X = 0.5, Y = 0.44, W = 0.0, H = 0.0},
     JustData = {H = HJ_CENTER, V = VJ_CENTER},
     Text = "Click on 'Check In' button to sign in",
     FuncDraw = _gui_draw_basic_text,
@@ -320,7 +320,7 @@ _GUI_INIT_ELEMENTS =
   
   [MY_ELEM_TXT_CHECK_IN3] = 
   {
-    Data = {X = 0.5, Y = 0.38, W = 0.0, H = 0.0},
+    Data = {X = 0.5, Y = 0.48, W = 0.0, H = 0.0},
     JustData = {H = HJ_CENTER, V = VJ_CENTER},
     Text = "as a player for this mission.",
     FuncDraw = _gui_draw_basic_text,
