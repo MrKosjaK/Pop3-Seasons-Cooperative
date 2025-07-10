@@ -161,6 +161,8 @@ MY_ELEM_HUMAN_PLAYERS_BACK = 6;
 MY_ELEM_COMP_PLAYERS_BACK = 7;
 MY_ELEM_BTN_START_GAME = 8;
 MY_ELEM_TXT_GAME_MASTER = 9;
+MY_ELEM_TXT_HUMAN_PLAYERS = 10;
+MY_ELEM_TXT_COMP_PLAYERS = 11;
 
 -- Element justification
 HJ_LEFT = 0;
@@ -198,8 +200,8 @@ local function gui_auto_scale_menu(menu)
     else
       local init_elem = _GUI_INIT_ELEMENTS[elem.ElemID];
       
-      elem.Data.X = FLOOR(menu.Data.X + (init_elem.Data.X * sc_w));
-      elem.Data.Y = FLOOR(menu.Data.Y + (init_elem.Data.Y * sc_h));
+      elem.Data.X = FLOOR(menu.Data.X + (init_elem.Data.X * menu.Data.W));
+      elem.Data.Y = FLOOR(menu.Data.Y + (init_elem.Data.Y * menu.Data.H));
       elem.Data.W = FLOOR(init_elem.Data.W * sc_w);
       elem.Data.H = FLOOR(init_elem.Data.H * sc_h);
       
@@ -289,8 +291,8 @@ local function _gui_maintain_basic_text(elem)
   local sc_w = ScreenWidth();
   local sc_h = ScreenHeight();
   
-  elem.Data.X = FLOOR(menu.Data.X + (init_elem.Data.X * sc_w));
-  elem.Data.Y = FLOOR(menu.Data.Y + (init_elem.Data.Y * sc_h));
+  elem.Data.X = FLOOR(menu.Data.X + (init_elem.Data.X * menu.Data.W));
+  elem.Data.Y = FLOOR(menu.Data.Y + (init_elem.Data.Y * menu.Data.H));
   elem.Data.W = FLOOR(init_elem.Data.W * sc_w);
   elem.Data.H = FLOOR(init_elem.Data.H * sc_h);
   
@@ -411,6 +413,26 @@ _GUI_INIT_ELEMENTS =
     FuncMaintain = _gui_maintain_basic_text,
     OnRes = nil
   }, -- 9
+  
+  [MY_ELEM_TXT_HUMAN_PLAYERS] =
+  {
+    Data = {X = 0.0, Y = -0.40, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    Text = "Player Squad",
+    FuncDraw = _gui_draw_basic_text,
+    FuncMaintain = nil,
+    OnRes = nil
+  }, -- 10
+  
+  [MY_ELEM_TXT_COMP_PLAYERS] =
+  {
+    Data = {X = 0.0, Y = -0.40, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    Text = "Stupid Bots",
+    FuncDraw = _gui_draw_basic_text,
+    FuncMaintain = nil,
+    OnRes = nil
+  }, -- 11
 }
 
 _GUI_MENU_INIT_ELEMENTS =
@@ -427,11 +449,13 @@ _GUI_MENU_INIT_ELEMENTS =
   [MY_MENU_HUMAN_PLAYERS] = 
   {
     {ELEM_TYPE_PANEL, MY_ELEM_HUMAN_PLAYERS_BACK},
+    {ELEM_TYPE_TEXT, MY_ELEM_TXT_HUMAN_PLAYERS},
   },
   
   [MY_MENU_COMP_PLAYERS] = 
   {
     {ELEM_TYPE_PANEL, MY_ELEM_COMP_PLAYERS_BACK},
+    {ELEM_TYPE_TEXT, MY_ELEM_TXT_COMP_PLAYERS},
   },
   
   [MY_MENU_SETUP_GENERAL] =
@@ -495,8 +519,8 @@ CURR_RES_HEIGHT = 0;
 
 local function _create_elem_button(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh, _mx, _my, _mw, _mh)
   -- now convert position & scale data into actual pixels and transform it into correct position
-  local elem_x = FLOOR(_mx + (_elem_ptr.Data.X * _sw));
-  local elem_y = FLOOR(_my + (_elem_ptr.Data.Y * _sh));
+  local elem_x = FLOOR(_mx + (_elem_ptr.Data.X * _mw));
+  local elem_y = FLOOR(_my + (_elem_ptr.Data.Y * _mh));
   local elem_w = FLOOR(_elem_ptr.Data.W * _sw);
   local elem_h = FLOOR(_elem_ptr.Data.H * _sh);
   
@@ -543,8 +567,8 @@ end
 
 local function _create_elem_text(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh, _mx, _my, _mw, _mh)
   -- now convert position & scale data into actual pixels and transform it into correct position
-  local elem_x = FLOOR(_mx + (_elem_ptr.Data.X * _sw));
-  local elem_y = FLOOR(_my + (_elem_ptr.Data.Y * _sh));
+  local elem_x = FLOOR(_mx + (_elem_ptr.Data.X * _mw));
+  local elem_y = FLOOR(_my + (_elem_ptr.Data.Y * _mh));
   
   -- width and height are dynamically calculated depending on current font.
   PopSetFont(GUI_TEXT_FONT);
@@ -593,8 +617,8 @@ end
 
 local function _create_elem_panel(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh, _mx, _my, _mw, _mh)
   -- now convert position & scale data into actual pixels and transform it into correct position
-  local elem_x = FLOOR(_mx + (_elem_ptr.Data.X * _sw));
-  local elem_y = FLOOR(_my + (_elem_ptr.Data.Y * _sh));
+  local elem_x = FLOOR(_mx + (_elem_ptr.Data.X * _mw));
+  local elem_y = FLOOR(_my + (_elem_ptr.Data.Y * _mh));
   local elem_w = FLOOR(_elem_ptr.Data.W * _sw);
   local elem_h = FLOOR(_elem_ptr.Data.H * _sh);
   
