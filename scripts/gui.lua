@@ -27,10 +27,6 @@ import(Module_Table);
 
 local GUI_MOUSE_POS = get_display_mouse_xy();
 GUI_HOVERING_ID = -1;
-GUI_LEFT_MOUSE_DOWN = false;
-GUI_RIGHT_MOUSE_DOWN = false;
-GUI_LEFT_MOUSE_UP = false;
-GUI_RIGHT_MOUSE_UP = false;
 GUI_TEXT_FONT = 4;
 
 local FLOOR = math.floor;
@@ -148,15 +144,21 @@ local function create_all_layouts()
   log("Registered layouts");
 end
 
-create_all_layouts();
+create_all_layouts(); -- registers layouts
 
 ELEM_TYPE_NONE = 1;
 ELEM_TYPE_PANEL = 2;
 ELEM_TYPE_BUTTON = 3;
+ELEM_TYPE_TEXT = 4;
 
+-- Element enums
 MY_ELEM_BACKGROUND = 1;
 MY_ELEM_BTN_CHECK_IN = 2;
+MY_ELEM_TXT_CHECK_IN1 = 3;
+MY_ELEM_TXT_CHECK_IN2 = 4;
+MY_ELEM_TXT_CHECK_IN3 = 5;
 
+-- Element justification
 HJ_LEFT = 0;
 HJ_CENTER = 1;
 HJ_RIGHT = 2;
@@ -165,6 +167,7 @@ VJ_TOP = 0;
 VJ_CENTER = 1;
 VJ_BOTTOM = 2;
 
+-- Menu enums
 MY_MENU_CHECK_IN = 1;
 MY_MENU_PLAYERS = 2;
 
@@ -193,6 +196,12 @@ local function gui_auto_scale_menu(menu)
       elem.Data.Y = FLOOR(menu.Data.Y + (init_elem.Data.Y * sc_h));
       elem.Data.W = FLOOR(init_elem.Data.W * sc_w);
       elem.Data.H = FLOOR(init_elem.Data.H * sc_h);
+      
+      if (elem.ElemType == ELEM_TYPE_TEXT) then
+        PopSetFont(GUI_TEXT_FONT);
+        elem.Data.W = string_width(elem.Text);
+        elem.Data.H = CharHeight2();
+      end
       
       -- check justification data
       if (init_elem.JustData.H == HJ_CENTER) then
@@ -253,6 +262,21 @@ local function _gui_draw_basic_button(_elem)
   end
 end
 
+local function _gui_draw_basic_text(_elem)
+  if (_elem.isActive) then
+    local mx = GUI_MOUSE_POS.X;
+    local my = GUI_MOUSE_POS.Y;
+    
+    if (is_point_on_rectangle(_elem.Box, mx, my)) then
+      GUI_HOVERING_ID = _elem.ElemID;
+    end
+    
+    PopSetFont(GUI_TEXT_FONT);
+    
+    LbDraw_Text(_elem.Data.X, _elem.Data.Y, _elem.Text, 0);
+  end
+end
+
 _GUI_INIT_ELEMENTS =
 {
   -- Name -> X -> Y -> W -> H -> Horizontal Just -> Vertical Just
@@ -275,6 +299,33 @@ _GUI_INIT_ELEMENTS =
     FuncClick = nil,
     OnRes = nil,
   }, -- 2
+  
+  [MY_ELEM_TXT_CHECK_IN1] = 
+  {
+    Data = {X = 0.5, Y = 0.30, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    Text = "Welcome to Seasons Cooperative!",
+    FuncDraw = _gui_draw_basic_text,
+    OnRes = nil
+  },
+  
+  [MY_ELEM_TXT_CHECK_IN2] = 
+  {
+    Data = {X = 0.5, Y = 0.34, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    Text = "Click on 'Check In' button to sign in",
+    FuncDraw = _gui_draw_basic_text,
+    OnRes = nil
+  },
+  
+  [MY_ELEM_TXT_CHECK_IN3] = 
+  {
+    Data = {X = 0.5, Y = 0.38, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    Text = "as a player for this mission.",
+    FuncDraw = _gui_draw_basic_text,
+    OnRes = nil
+  }
 }
 
 _GUI_MENU_INIT_ELEMENTS =
@@ -282,7 +333,10 @@ _GUI_MENU_INIT_ELEMENTS =
   [MY_MENU_CHECK_IN] = 
   {
     {ELEM_TYPE_PANEL, MY_ELEM_BACKGROUND},
-    {ELEM_TYPE_BUTTON, MY_ELEM_BTN_CHECK_IN}
+    {ELEM_TYPE_BUTTON, MY_ELEM_BTN_CHECK_IN},
+    {ELEM_TYPE_TEXT, MY_ELEM_TXT_CHECK_IN1},
+    {ELEM_TYPE_TEXT, MY_ELEM_TXT_CHECK_IN2},
+    {ELEM_TYPE_TEXT, MY_ELEM_TXT_CHECK_IN3},
   }
 }
 
@@ -376,6 +430,56 @@ local function _create_elem_button(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh
   
   log("Created button element");
 end
+
+local function _create_elem_text(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh, _mx, _my, _mw, _mh)
+  -- now convert position & scale data into actual pixels and transform it into correct position
+  local elem_x = FLOOR(_mx + (_elem_ptr.Data.X * _sw));
+  local elem_y = FLOOR(_my + (_elem_ptr.Data.Y * _sh));
+  
+  -- width and height are dynamically calculated depending on current font.
+  PopSetFont(GUI_TEXT_FONT);
+  local text_width = string_width(_elem_ptr.Text);
+  local elem_w = text_width;
+  local elem_h = CharHeight2();
+  
+  -- check justification data
+  if (_elem_ptr.JustData.H == HJ_CENTER) then
+    elem_x = elem_x - (elem_w >> 1);
+  elseif (_elem_ptr.JustData.H == HJ_RIGHT) then
+    elem_x = elem_x - elem_w;
+  end
+  
+  if (_elem_ptr.JustData.V == VJ_CENTER) then
+    elem_y = elem_y - (elem_h >> 1);
+  elseif (_elem_ptr.JustData.V == VJ_BOTTOM) then
+    elem_y = elem_y - elem_h;
+  end
+  
+  _GUI_ELEMENTS[_elem_ptr_idx] = 
+  {
+    ElemType = ELEM_TYPE_TEXT,
+    ElemID = _elem_ptr_idx,
+    MenuID = _menu_ptr.ID,
+    Data = { X = elem_x, Y = elem_y, W = elem_w, H = elem_h},
+    Text = _elem_ptr.Text,
+    FuncDraw =  _elem_ptr.FuncDraw,
+    Box = TbRect.new(),
+    isActive = true
+  };
+  
+  local e_b = _GUI_ELEMENTS[_elem_ptr_idx].Box;
+  e_b.Left = elem_x;
+  e_b.Right = e_b.Left + elem_w;
+  e_b.Top = elem_y;
+  e_b.Bottom = e_b.Top + elem_h;
+  
+  -- add element to menu
+  local actual_menu_elements = _GUI_MENUS[_menu_ptr.ID].Elements;
+  actual_menu_elements[#actual_menu_elements + 1] = _GUI_ELEMENTS[_elem_ptr_idx];
+  
+  log("Created text element");
+end
+
 local function _create_elem_panel(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh, _mx, _my, _mw, _mh)
   -- now convert position & scale data into actual pixels and transform it into correct position
   local elem_x = FLOOR(_mx + (_elem_ptr.Data.X * _sw));
@@ -491,6 +595,8 @@ function gui_open_menu(_menu_id)
               _create_elem_panel(menu, elem_ptr, elem_ptr_idx, sc_w, sc_h, m_x, m_y, m_w, m_h);
             elseif (elem_type == ELEM_TYPE_BUTTON) then
               _create_elem_button(menu, elem_ptr, elem_ptr_idx, sc_w, sc_h, m_x, m_y, m_w, m_h);
+            elseif (elem_type == ELEM_TYPE_TEXT) then
+              _create_elem_text(menu, elem_ptr, elem_ptr_idx, sc_w, sc_h, m_x, m_y, m_w, m_h);
             end
             
           end
@@ -554,8 +660,6 @@ function OnMouseButton(key, is_down, x, y)
       end
     end
   end
-  
-  GUI_LEFT_MOUSE_UP = false;
 end
 
 
@@ -598,7 +702,9 @@ function OnFrame()
   
   local gui_width = GFGetGuiWidth();
   
-  gui_draw_menus();
+  if (am_i_not_in_igm()) then
+    gui_draw_menus();
+  end
   
   PopSetFont(GUI_TEXT_FONT);
   LbDraw_Text(gui_width, ScreenHeight() - CharHeight2(), string.format("GUI ID: %i", GUI_HOVERING_ID), 0);
