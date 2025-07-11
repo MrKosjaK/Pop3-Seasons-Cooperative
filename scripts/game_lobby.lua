@@ -246,7 +246,7 @@ function spawn_players_initial_stuff();
     
     if (p_num == -1) then
       -- if found matching or defined to be random
-      p_num = 0;
+      p_num = 2;
       local count = 8;
       
       while (count > 0) do
