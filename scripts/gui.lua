@@ -777,7 +777,7 @@ local function _create_elem_s_panel(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _s
   
   _GUI_ELEMENTS[_elem_ptr_idx] = 
   {
-    ElemType = ELEM_TYPE_PANEL,
+    ElemType = ELEM_TYPE_S_PANEL,
     ElemID = _elem_ptr_idx,
     MenuID = _menu_ptr.ID,
     Data = { X = elem_x, Y = elem_y, W = elem_w, H = elem_h},
@@ -879,11 +879,11 @@ function gui_open_menu(_menu_id)
   local menu = _GUI_MENUS[_menu_id];
   
   if (menu ~= nil) then
-    menu.isActive = true;
-    
     if (menu.FuncOpen ~= nil) then
       menu.FuncOpen(menu);
     else
+      menu.isActive = true;
+       
       for i,elem_entry in ipairs(menu.Elements) do
         elem_entry.isActive = true;
       end
@@ -1012,6 +1012,14 @@ function set_elem_text_string(_elem_idx, _str)
         txt.FuncMaintain(txt);
       end
     end
+  end
+end
+
+function set_menu_open_func(_menu_id, _func)
+  local menu = _GUI_MENUS[_menu_id];
+  
+  if (menu ~= nil) then
+    menu.FuncOpen = _func;
   end
 end
 
