@@ -1179,6 +1179,18 @@ function get_elem_ptr(_elem_idx)
   return _GUI_ELEMENTS[_elem_idx];
 end
 
+function is_my_menu_open(_menu_id)
+  local menu = _GUI_MENUS[_menu_id];
+  
+  if (menu ~= nil) then
+    if (menu.isActive) then
+      return true;
+    end
+  end
+  
+  return false;
+end
+
 function set_elem_text_string(_elem_idx, _str)
   local txt = _GUI_ELEMENTS[_elem_idx];
   

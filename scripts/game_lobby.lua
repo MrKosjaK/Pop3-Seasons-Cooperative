@@ -311,11 +311,13 @@ function link_stuff_to_gui()
     if (not i_am_checked_in()) then
       if (am_i_in_network_game() ~= 0) then
         check_myself_in();
+        log("Checking in");
       else
         update_network_players_count(G_NSI.PlayerNum);
         
         gui_close_menu(MY_MENU_CHECK_IN);
         trigger_menu_maintain(MY_MENU_HUMAN_PLAYERS);
+        trigger_menu_maintain(MY_MENU_COMP_PLAYERS);
         gui_open_menu(MY_MENU_HUMAN_PLAYERS);
         gui_open_menu(MY_MENU_COMP_PLAYERS);
         gui_open_menu(MY_MENU_SETUP_GENERAL);
@@ -755,44 +757,53 @@ function process_game_lobby_packets(pn, p_type, data)
     update_network_players_count(tonumber(data));
     
     -- add current player to the list
-    if (is_menu_open(MENU_PLAYERS)) then
-      local m_data = get_menu_pos_and_dimensions(MENU_PLAYERS);
-      set_array_button_position(BTN_PLR1_POS + pn, m_data[1] + (m_data[3] - 68), m_data[2] + 24 + ((pn * 28)));
-      set_button_active(BTN_PLR1_POS + pn);
-      set_text_field_text(TXT_PLR1_NAME + pn, get_player_name(pn, ntb(am_i_in_network_game())));
-      set_text_field_position(TXT_PLR1_NAME + pn, m_data[1] + 110, m_data[2] + 24 + (pn * 28));
-      set_text_field_active(TXT_PLR1_NAME + pn);
-      set_icon_position(ICON_PLR1 + pn, m_data[1] + 40, m_data[2] + 18 + (pn * 28));
-      set_icon_active(ICON_PLR1 + pn);
+    if (is_my_menu_open(MY_MENU_HUMAN_PLAYERS)) then
+      gui_close_menu(MY_MENU_HUMAN_PLAYERS);
+      trigger_menu_maintain(MY_MENU_HUMAN_PLAYERS);
+      gui_open_menu(MY_MENU_HUMAN_PLAYERS);
+      -- local m_data = get_menu_pos_and_dimensions(MENU_PLAYERS);
+      -- set_array_button_position(BTN_PLR1_POS + pn, m_data[1] + (m_data[3] - 68), m_data[2] + 24 + ((pn * 28)));
+      -- set_button_active(BTN_PLR1_POS + pn);
+      -- set_text_field_text(TXT_PLR1_NAME + pn, get_player_name(pn, ntb(am_i_in_network_game())));
+      -- set_text_field_position(TXT_PLR1_NAME + pn, m_data[1] + 110, m_data[2] + 24 + (pn * 28));
+      -- set_text_field_active(TXT_PLR1_NAME + pn);
+      -- set_icon_position(ICON_PLR1 + pn, m_data[1] + 40, m_data[2] + 18 + (pn * 28));
+      -- set_icon_active(ICON_PLR1 + pn);
     end
     
     if (pn == G_NSI.PlayerNum) then
-      close_menu(MENU_CHECK_IN);
-      set_button_inactive(BTN_CHECK_IN);
+      gui_close_menu(MY_MENU_CHECK_IN);
+      trigger_menu_maintain(MY_MENU_HUMAN_PLAYERS);
+      trigger_menu_maintain(MY_MENU_COMP_PLAYERS);
+      gui_open_menu(MY_MENU_HUMAN_PLAYERS);
+      gui_open_menu(MY_MENU_COMP_PLAYERS);
+      gui_open_menu(MY_MENU_SETUP_GENERAL);
+      --close_menu(MENU_CHECK_IN);
+      --set_button_inactive(BTN_CHECK_IN);
       
       
-      open_menu(MENU_PLAYERS);
+      --open_menu(MENU_PLAYERS);
       --open_menu(MENU_LOG_MSG);
       --open_menu(MENU_OPTIONS);
       --open_menu(MENU_AI);
        
-      local b_data = get_button_pos_and_dimensions(BTN_START_GAME);
-      set_button_position(BTN_START_GAME, (ScreenWidth() >> 1) - (b_data[3] >> 1), (ScreenHeight() - (b_data[4] << 1)));
+      -- local b_data = get_button_pos_and_dimensions(BTN_START_GAME);
+      -- set_button_position(BTN_START_GAME, (ScreenWidth() >> 1) - (b_data[3] >> 1), (ScreenHeight() - (b_data[4] << 1)));
       
-      local m_data = get_menu_pos_and_dimensions(MENU_PLAYERS);
-      local middle_x = m_data[1] + (m_data[3] >> 1);
-      local pos_y = m_data[2] + m_data[4];
-      local b_data = get_button_pos_and_dimensions(BTN_OM_PLAYERS);
-      set_button_position(BTN_OM_PLAYERS, middle_x - (b_data[3] >> 1) - 128, pos_y + 12);
-      local b_data = get_button_pos_and_dimensions(BTN_OM_SETTINGS);
-      set_button_position(BTN_OM_SETTINGS, middle_x - (b_data[3] >> 1), pos_y + 12);
-      local b_data = get_button_pos_and_dimensions(BTN_OM_AI);
-      set_button_position(BTN_OM_AI, middle_x - (b_data[3] >> 1) + 128, pos_y + 12);
+      -- local m_data = get_menu_pos_and_dimensions(MENU_PLAYERS);
+      -- local middle_x = m_data[1] + (m_data[3] >> 1);
+      -- local pos_y = m_data[2] + m_data[4];
+      -- local b_data = get_button_pos_and_dimensions(BTN_OM_PLAYERS);
+      -- set_button_position(BTN_OM_PLAYERS, middle_x - (b_data[3] >> 1) - 128, pos_y + 12);
+      -- local b_data = get_button_pos_and_dimensions(BTN_OM_SETTINGS);
+      -- set_button_position(BTN_OM_SETTINGS, middle_x - (b_data[3] >> 1), pos_y + 12);
+      -- local b_data = get_button_pos_and_dimensions(BTN_OM_AI);
+      -- set_button_position(BTN_OM_AI, middle_x - (b_data[3] >> 1) + 128, pos_y + 12);
       
-      set_button_active(BTN_START_GAME);
-      set_button_active(BTN_OM_PLAYERS);
-      set_button_active(BTN_OM_SETTINGS);
-      set_button_active(BTN_OM_AI);
+      -- set_button_active(BTN_START_GAME);
+      -- set_button_active(BTN_OM_PLAYERS);
+      -- set_button_active(BTN_OM_SETTINGS);
+      -- set_button_active(BTN_OM_AI);
     end
   end
   

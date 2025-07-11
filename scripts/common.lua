@@ -197,7 +197,7 @@ function OnPacket(player_num, packet_type, data)
     if (ScrOnPacket ~= nil) then ScrOnPacket(player_num, packet_type, data); end
     
     if (is_game_state(GM_STATE_SETUP)) then
-      --process_game_lobby_packets(player_num, packet_type, data);
+      process_game_lobby_packets(player_num, packet_type, data);
     end
   end
 end
