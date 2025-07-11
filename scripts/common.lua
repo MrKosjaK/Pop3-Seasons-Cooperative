@@ -164,7 +164,7 @@ end
 
 -- triggered on mouse input
 function OnMouseButton(key, is_down, x, y)
-  if (key == LB_KEY_MOUSE0) then
+  if (key == LB_KEY_MOUSE0 or key == LB_KEY_MOUSE1) then
     process_gui_mouse_inputs(key, is_down, x, y);
     --process_buttons_input(is_down, x, y);
   end

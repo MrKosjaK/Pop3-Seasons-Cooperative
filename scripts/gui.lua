@@ -152,6 +152,7 @@ ELEM_TYPE_BUTTON = 3;
 ELEM_TYPE_TEXT = 4;
 ELEM_TYPE_S_PANEL = 5; -- SIMPLE PANEL
 ELEM_TYPE_SPRITE = 6;
+ELEM_TYPE_MULTI_BUTTON = 7;
 
 -- Element enums
 MY_ELEM_CHECK_IN_BACK = 1;
@@ -181,6 +182,12 @@ MY_ELEM_SPR_COMP_PLR3 = 24;
 MY_ELEM_SPR_COMP_PLR4 = 25;
 MY_ELEM_SPR_COMP_PLR5 = 26;
 MY_ELEM_SPR_COMP_PLR6 = 27; -- End
+MY_ELEM_COMP_PLR1_DIFF = 28; -- Starting from here elements will be manually maintained by the script
+MY_ELEM_COMP_PLR2_DIFF = 29;
+MY_ELEM_COMP_PLR3_DIFF = 30;
+MY_ELEM_COMP_PLR4_DIFF = 31;
+MY_ELEM_COMP_PLR5_DIFF = 32;
+MY_ELEM_COMP_PLR6_DIFF = 33;
 
 -- Element justification
 HJ_LEFT = 0;
@@ -308,6 +315,30 @@ local function _gui_draw_basic_button(_elem)
   end
 end
 
+local function _gui_draw_basic_multi_button(_elem)
+  if (_elem.isActive) then
+    local mx = GUI_MOUSE_POS.X;
+    local my = GUI_MOUSE_POS.Y;
+    
+    if (is_point_on_rectangle(_elem.Box, mx, my)) then
+      GUI_HOVERING_ID = _elem.ElemID;
+      if (_elem.Pressed) then
+        DrawStretchyButtonBox(_elem.Box,_elem.Style.P);
+      else
+        DrawStretchyButtonBox(_elem.Box, _elem.Style.H);
+      end
+    else
+      DrawStretchyButtonBox(_elem.Box, _elem.Style.N);
+    end
+    
+    if (_elem.DataPtr ~= nil) then
+      PopSetFont(GUI_TEXT_FONT);
+      
+      LbDraw_Text(_elem.Box.Left + (_elem.Data.W >> 1) - (string_width(_elem.TextData[_elem.DataPtr[1]]) >> 1), _elem.Box.Top + (_elem.Data.H >> 1) - (CharHeight2() >> 1), _elem.TextData[_elem.DataPtr[1]], 0);
+    end
+  end
+end
+
 local function _gui_draw_basic_text(_elem)
   if (_elem.isActive) then
     local mx = GUI_MOUSE_POS.X;
@@ -382,6 +413,18 @@ local function _gui_maintain_basic_text(elem)
   elem.Box.Right = elem.Box.Left + elem.Data.W;
   elem.Box.Top = elem.Data.Y;
   elem.Box.Bottom = elem.Box.Top + elem.Data.H;
+end
+
+local function gui_multi_button_left_click(elem)
+  if (elem.DataPtr ~= nil) then
+    elem.DataPtr[1] = math.min(math.max(elem.DataPtr[1] + 1, 1), elem.MaxValue);
+  end
+end
+
+local function gui_multi_button_right_click(elem)
+  if (elem.DataPtr ~= nil) then
+    elem.DataPtr[1] = math.min(math.max(elem.DataPtr[1] - 1, 1), elem.MaxValue);
+  end
 end
 
 _GUI_INIT_ELEMENTS =
@@ -631,6 +674,84 @@ _GUI_INIT_ELEMENTS =
     AnimationData = {Animate = true, NumFrames = 4, FramesToAdvance = 8},
     FuncDraw = _gui_draw_animated_sprite
   }, -- 27
+  
+  [MY_ELEM_COMP_PLR1_DIFF] =
+  {
+    Data = {X = 0.0, Y = 0.0, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    StyleData = {N = BOX_STYLE.DEFAULT2_N, H = BOX_STYLE.DEFAULT2_H, P = BOX_STYLE.DEFAULT2_P},
+    TextData = nil,
+    DataPtr = nil,
+    FuncDraw = _gui_draw_basic_multi_button,
+    FuncLeftClick = gui_multi_button_left_click,
+    FuncRightClick = gui_multi_button_right_click,
+    OnRes = nil,
+  }, -- 28
+  
+  [MY_ELEM_COMP_PLR2_DIFF] =
+  {
+    Data = {X = 0.0, Y = 0.0, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    StyleData = {N = BOX_STYLE.DEFAULT2_N, H = BOX_STYLE.DEFAULT2_H, P = BOX_STYLE.DEFAULT2_P},
+    TextData = nil,
+    DataPtr = nil,
+    FuncDraw = _gui_draw_basic_multi_button,
+    FuncLeftClick = gui_multi_button_left_click,
+    FuncRightClick = gui_multi_button_right_click,
+    OnRes = nil,
+  }, -- 29
+  
+  [MY_ELEM_COMP_PLR3_DIFF] =
+  {
+    Data = {X = 0.0, Y = 0.0, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    StyleData = {N = BOX_STYLE.DEFAULT2_N, H = BOX_STYLE.DEFAULT2_H, P = BOX_STYLE.DEFAULT2_P},
+    TextData = nil,
+    DataPtr = nil,
+    FuncDraw = _gui_draw_basic_multi_button,
+    FuncLeftClick = gui_multi_button_left_click,
+    FuncRightClick = gui_multi_button_right_click,
+    OnRes = nil,
+  }, -- 30
+  
+  [MY_ELEM_COMP_PLR4_DIFF] =
+  {
+    Data = {X = 0.0, Y = 0.0, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    StyleData = {N = BOX_STYLE.DEFAULT2_N, H = BOX_STYLE.DEFAULT2_H, P = BOX_STYLE.DEFAULT2_P},
+    TextData = nil,
+    DataPtr = nil,
+    FuncDraw = _gui_draw_basic_multi_button,
+    FuncLeftClick = gui_multi_button_left_click,
+    FuncRightClick = gui_multi_button_right_click,
+    OnRes = nil,
+  }, -- 31
+  
+  [MY_ELEM_COMP_PLR5_DIFF] =
+  {
+    Data = {X = 0.0, Y = 0.0, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    StyleData = {N = BOX_STYLE.DEFAULT2_N, H = BOX_STYLE.DEFAULT2_H, P = BOX_STYLE.DEFAULT2_P},
+    TextData = nil,
+    DataPtr = nil,
+    FuncDraw = _gui_draw_basic_multi_button,
+    FuncLeftClick = gui_multi_button_left_click,
+    FuncRightClick = gui_multi_button_right_click,
+    OnRes = nil,
+  }, -- 32
+  
+  [MY_ELEM_COMP_PLR6_DIFF] =
+  {
+    Data = {X = 0.0, Y = 0.0, W = 0.1, H = 0.1},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    StyleData = {N = BOX_STYLE.DEFAULT2_N, H = BOX_STYLE.DEFAULT2_H, P = BOX_STYLE.DEFAULT2_P},
+    TextData = nil,
+    DataPtr = nil,
+    FuncDraw = _gui_draw_basic_multi_button,
+    FuncLeftClick = gui_multi_button_left_click,
+    FuncRightClick = gui_multi_button_right_click,
+    OnRes = nil,
+  }, -- 33
 }
 
 _GUI_MENU_INIT_ELEMENTS =
@@ -670,6 +791,12 @@ _GUI_MENU_INIT_ELEMENTS =
     {ELEM_TYPE_SPRITE, MY_ELEM_SPR_COMP_PLR4},
     {ELEM_TYPE_SPRITE, MY_ELEM_SPR_COMP_PLR5},
     {ELEM_TYPE_SPRITE, MY_ELEM_SPR_COMP_PLR6},
+    {ELEM_TYPE_MULTI_BUTTON, MY_ELEM_COMP_PLR1_DIFF},
+    {ELEM_TYPE_MULTI_BUTTON, MY_ELEM_COMP_PLR2_DIFF},
+    {ELEM_TYPE_MULTI_BUTTON, MY_ELEM_COMP_PLR3_DIFF},
+    {ELEM_TYPE_MULTI_BUTTON, MY_ELEM_COMP_PLR4_DIFF},
+    {ELEM_TYPE_MULTI_BUTTON, MY_ELEM_COMP_PLR5_DIFF},
+    {ELEM_TYPE_MULTI_BUTTON, MY_ELEM_COMP_PLR6_DIFF},
   },
   
   [MY_MENU_SETUP_GENERAL] =
@@ -777,6 +904,62 @@ local function _create_elem_button(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh
   actual_menu_elements[#actual_menu_elements + 1] = _GUI_ELEMENTS[_elem_ptr_idx];
   
   log("Created button element");
+end
+
+local function _create_elem_multi_button(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh, _mx, _my, _mw, _mh)
+  -- now convert position & scale data into actual pixels and transform it into correct position
+  local elem_x = FLOOR(_mx + (_elem_ptr.Data.X * _mw));
+  local elem_y = FLOOR(_my + (_elem_ptr.Data.Y * _mh));
+  local elem_w = FLOOR(_elem_ptr.Data.W * _sw);
+  local elem_h = FLOOR(_elem_ptr.Data.H * _sh);
+  local max_value = 0;
+  
+  if (_elem_ptr.TextData ~= nil) then
+    max_value = #_elem_ptr.TextData;
+  end
+  
+  -- check justification data
+  if (_elem_ptr.JustData.H == HJ_CENTER) then
+    elem_x = elem_x - (elem_w >> 1);
+  elseif (_elem_ptr.JustData.H == HJ_RIGHT) then
+    elem_x = elem_x - elem_w;
+  end
+  
+  if (_elem_ptr.JustData.V == VJ_CENTER) then
+    elem_y = elem_y - (elem_h >> 1);
+  elseif (_elem_ptr.JustData.V == VJ_BOTTOM) then
+    elem_y = elem_y - elem_h;
+  end
+  
+  _GUI_ELEMENTS[_elem_ptr_idx] = 
+  {
+    ElemType = ELEM_TYPE_MULTI_BUTTON,
+    ElemID = _elem_ptr_idx,
+    MenuID = _menu_ptr.ID,
+    Data = { X = elem_x, Y = elem_y, W = elem_w, H = elem_h},
+    Style = {N = _BOX_LAYOUTS[_elem_ptr.StyleData.N], H = _BOX_LAYOUTS[_elem_ptr.StyleData.H], P = _BOX_LAYOUTS[_elem_ptr.StyleData.P]},
+    TextTable = _elem_ptr.TextData,
+    FuncDraw = _elem_ptr.FuncDraw,
+    DataPtr = _elem_ptr.DataPtr,
+    MaxValue = max_value;
+    FuncLeftClick = _elem_ptr.FuncLeftClick,
+    FuncRightClick = _elem_ptr.FuncRightClick,
+    Pressed = false,
+    Box = TbRect.new(),
+    isActive = false
+  };
+  
+  local e_b = _GUI_ELEMENTS[_elem_ptr_idx].Box;
+  e_b.Left = elem_x;
+  e_b.Right = e_b.Left + elem_w;
+  e_b.Top = elem_y;
+  e_b.Bottom = e_b.Top + elem_h;
+  
+  -- add element to menu
+  local actual_menu_elements = _GUI_MENUS[_menu_ptr.ID].Elements;
+  actual_menu_elements[#actual_menu_elements + 1] = _GUI_ELEMENTS[_elem_ptr_idx];
+  
+  log("Created multi button element");
 end
 
 local function _create_elem_text(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh, _mx, _my, _mw, _mh)
@@ -1034,7 +1217,7 @@ function gui_init_all_menus()
           -- now check it's type and create stuff accordingly
           
           if (elem_type == ELEM_TYPE_NONE) then
-          
+            
           elseif (elem_type == ELEM_TYPE_PANEL) then
             _create_elem_panel(menu, elem_ptr, elem_ptr_idx, sc_w, sc_h, m_x, m_y, m_w, m_h);
           elseif (elem_type == ELEM_TYPE_BUTTON) then
@@ -1045,6 +1228,8 @@ function gui_init_all_menus()
             _create_elem_s_panel(menu, elem_ptr, elem_ptr_idx, sc_w, sc_h, m_x, m_y, m_w, m_h);
           elseif (elem_type == ELEM_TYPE_SPRITE) then
             _create_elem_sprite(menu, elem_ptr, elem_ptr_idx, sc_w, sc_h, m_x, m_y, m_w, m_h);
+          elseif (elem_type == ELEM_TYPE_MULTI_BUTTON) then
+            _create_elem_multi_button(menu, elem_ptr, elem_ptr_idx, sc_w, sc_h, m_x, m_y, m_w, m_h);
           end
           
         end
@@ -1090,16 +1275,37 @@ function process_gui_mouse_inputs(key, is_down, x, y)
     if (menu.isActive) then
       for j,elem in ipairs(menu.Elements) do
         if (elem.isActive) then
-          if (elem.ElemType == ELEM_TYPE_BUTTON) then
+          if (elem.ElemType == ELEM_TYPE_MULTI_BUTTON) then
             elem.Pressed = false;
+            
             if (is_point_on_rectangle(elem.Box, x, y)) then
               if (is_down) then
                 elem.Pressed = true;
               else
                 elem.Pressed = false;
                 --log("clicked");
-                if (elem.FuncClick ~= nil) then
-                  elem.FuncClick();
+                if (elem.FuncLeftClick ~= nil and key == LB_KEY_MOUSE0) then
+                  elem.FuncLeftClick(elem);
+                end
+                
+                if (elem.FuncRightClick ~= nil and key == LB_KEY_MOUSE1) then
+                  elem.FuncRightClick(elem);
+                end
+              end
+            end
+          end
+          
+          if (elem.ElemType == ELEM_TYPE_BUTTON) then
+            elem.Pressed = false;
+            
+            if (is_point_on_rectangle(elem.Box, x, y)) then
+              if (is_down) then
+                elem.Pressed = true;
+              else
+                elem.Pressed = false;
+                --log("clicked");
+                if (elem.FuncClick ~= nil and key == LB_KEY_MOUSE0) then
+                  elem.FuncClick(elem);
                 end
               end
             end

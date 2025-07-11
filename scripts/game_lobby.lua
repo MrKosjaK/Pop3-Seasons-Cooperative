@@ -307,6 +307,14 @@ function get_info_on_players_count()
 end
 
 function link_stuff_to_gui()
+  for i = 0, 5 do
+    local ai_diff_btn = get_elem_ptr(MY_ELEM_COMP_PLR1_DIFF + i);
+    
+    ai_diff_btn.TextData = AI_DIFFICULTY_STR_TABLE;
+    ai_diff_btn.DataPtr = GAME_LOBBY_SETTINGS[GLS_COMPUTER_DIFFICULTY][i + 1];
+    ai_diff_btn.MaxValue = #AI_DIFFICULTY_STR_TABLE;
+  end
+
   set_elem_btn_function(MY_ELEM_BTN_CHECK_IN, function()
     if (not i_am_checked_in()) then
       if (am_i_in_network_game() ~= 0) then
@@ -330,6 +338,7 @@ function link_stuff_to_gui()
     
     local num_rows = math.min(AI_COUNT, 6);
     local num_icons = math.min(AI_COUNT, 6);
+    local num_diff = math.min(AI_COUNT, 6);
     
     for i,elem_entry in ipairs(menu.Elements) do
       elem_entry.isActive = false;
@@ -343,7 +352,12 @@ function link_stuff_to_gui()
         num_icons = num_icons - 1;
       end
       
-      if (elem_entry.ElemType ~= ELEM_TYPE_S_PANEL and elem_entry.ElemType ~= ELEM_TYPE_SPRITE) then
+      if (elem_entry.ElemType == ELEM_TYPE_MULTI_BUTTON and num_diff > 0) then
+        elem_entry.isActive = true;
+        num_diff = num_diff - 1;
+      end
+      
+      if (elem_entry.ElemType ~= ELEM_TYPE_S_PANEL and elem_entry.ElemType ~= ELEM_TYPE_SPRITE and elem_entry.ElemType ~= ELEM_TYPE_MULTI_BUTTON) then
         elem_entry.isActive = true;
       end
     end
@@ -408,6 +422,31 @@ function link_stuff_to_gui()
         curr_icon.Box.Right = curr_icon.Box.Left + curr_icon.Data.W;
         curr_icon.Box.Top = curr_icon.Data.Y;
         curr_icon.Box.Bottom = curr_icon.Box.Top + curr_icon.Data.H;
+        
+        local curr_m_button = get_elem_ptr(MY_ELEM_COMP_PLR1_DIFF + i);
+        local init_m_button = _GUI_INIT_ELEMENTS[curr_m_button.ElemID];
+        
+        curr_m_button.Data.X = math.floor(init_menu.Data.X * CURR_RES_WIDTH);
+        curr_m_button.Data.Y = math.floor((init_menu.Data.Y + v_offset + (space * i)) * menu.Data.H)
+        curr_m_button.Data.W = math.floor(0.08 * CURR_RES_WIDTH);
+        curr_m_button.Data.H = math.floor(0.05 * menu.Data.H);
+        
+        if (init_m_button.JustData.H == HJ_CENTER) then
+          curr_m_button.Data.X =  curr_m_button.Data.X - (curr_m_button.Data.W >> 1);
+        elseif (init_m_button.JustData.H == HJ_RIGHT) then
+          curr_m_button.Data.X =  curr_m_button.Data.X - curr_m_button.Data.W;
+        end
+        
+        if (init_m_button.JustData.V == VJ_CENTER) then
+          curr_m_button.Data.Y = curr_m_button.Data.Y - (curr_m_button.Data.H >> 1);
+        elseif (init_m_button.JustData.V == VJ_BOTTOM) then
+          curr_m_button.Data.Y = curr_m_button.Data.Y - curr_m_button.Data.H;
+        end
+        
+        curr_m_button.Box.Left = curr_m_button.Data.X;
+        curr_m_button.Box.Right = curr_m_button.Box.Left + curr_m_button.Data.W;
+        curr_m_button.Box.Top = curr_m_button.Data.Y;
+        curr_m_button.Box.Bottom = curr_m_button.Box.Top + curr_m_button.Data.H;
       end
     end
   end);
