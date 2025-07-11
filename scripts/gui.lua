@@ -151,6 +151,7 @@ ELEM_TYPE_PANEL = 2;
 ELEM_TYPE_BUTTON = 3;
 ELEM_TYPE_TEXT = 4;
 ELEM_TYPE_S_PANEL = 5; -- SIMPLE PANEL
+ELEM_TYPE_SPRITE = 6;
 
 -- Element enums
 MY_ELEM_CHECK_IN_BACK = 1;
@@ -172,6 +173,14 @@ MY_ELEM_SP_COMP_PLR3 = 16;
 MY_ELEM_SP_COMP_PLR4 = 17;
 MY_ELEM_SP_COMP_PLR5 = 18;
 MY_ELEM_SP_COMP_PLR6 = 19; -- End
+MY_ELEM_SPR_HUMAN_PLR1 = 20; -- Starting from here elements will be manually maintained by the script
+MY_ELEM_SPR_HUMAN_PLR2 = 21;
+MY_ELEM_SPR_COMP_PLR1 = 22;
+MY_ELEM_SPR_COMP_PLR2 = 23;
+MY_ELEM_SPR_COMP_PLR3 = 24;
+MY_ELEM_SPR_COMP_PLR4 = 25;
+MY_ELEM_SPR_COMP_PLR5 = 26;
+MY_ELEM_SPR_COMP_PLR6 = 27; -- End
 
 -- Element justification
 HJ_LEFT = 0;
@@ -218,6 +227,12 @@ local function gui_auto_scale_menu(menu)
         PopSetFont(GUI_TEXT_FONT);
         elem.Data.W = string_width(elem.Text);
         elem.Data.H = CharHeight2();
+      end
+      
+      if (elem.ElemType == ELEM_TYPE_SPRITE) then
+        local sprite_t = get_sprite(elem.DrawInfo.BankIdx, elem.DrawInfo.SpriteIdx);
+        elem.Data.W = sprite_t.Width;
+        elem.Data.H = sprite_t.Height;
       end
       
       -- check justification data
@@ -305,6 +320,30 @@ local function _gui_draw_basic_text(_elem)
     PopSetFont(GUI_TEXT_FONT);
     
     LbDraw_Text(_elem.Data.X, _elem.Data.Y, _elem.Text, 0);
+  end
+end
+
+local function _gui_draw_animated_sprite(_elem)
+  local di = _elem.DrawInfo;
+  
+  if (_elem.isActive) then
+    if (di.Animate) then
+      if (di.Count <= 0) then
+        di.CurrFrame = (di.CurrFrame + 1) % di.MaxFrames;
+        di.Count = di.FramesToAdvance;
+      else
+        di.Count = di.Count - 1
+      end
+    end 
+    
+    local mx = GUI_MOUSE_POS.X;
+    local my = GUI_MOUSE_POS.Y;
+    
+    if (is_point_on_rectangle(_elem.Box, mx, my)) then
+      GUI_HOVERING_ID = _elem.ElemID;
+    end
+    
+    LbDraw_Sprite(_elem.Data.X, _elem.Data.Y, get_sprite(di.BankIdx, di.SpriteIdx + di.CurrFrame));
   end
 end
 
@@ -520,6 +559,78 @@ _GUI_INIT_ELEMENTS =
     ColorData = 175,
     FuncDraw = _gui_draw_basic_rectangle,
   }, -- 19
+  
+  [MY_ELEM_SPR_HUMAN_PLR1] =
+  {
+    Data = {X = 0.0, Y = 0.0, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    SpriteData = {BankIdx = 1, SpriteIdx = 6883},
+    AnimationData = {Animate = true, NumFrames = 4, FramesToAdvance = 8},
+    FuncDraw = _gui_draw_animated_sprite
+  }, -- 20
+  
+  [MY_ELEM_SPR_HUMAN_PLR2] =
+  {
+    Data = {X = 0.0, Y = 0.2, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    SpriteData = {BankIdx = 1, SpriteIdx = 6903},
+    AnimationData = {Animate = true, NumFrames = 4, FramesToAdvance = 8},
+    FuncDraw = _gui_draw_animated_sprite
+  }, -- 21
+  
+  [MY_ELEM_SPR_COMP_PLR1] =
+  {
+    Data = {X = 0.0, Y = 0.2, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    SpriteData = {BankIdx = 1, SpriteIdx = 6923},
+    AnimationData = {Animate = true, NumFrames = 4, FramesToAdvance = 8},
+    FuncDraw = _gui_draw_animated_sprite
+  }, -- 22
+  
+  [MY_ELEM_SPR_COMP_PLR2] =
+  {
+    Data = {X = 0.0, Y = 0.2, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    SpriteData = {BankIdx = 1, SpriteIdx = 6943},
+    AnimationData = {Animate = true, NumFrames = 4, FramesToAdvance = 8},
+    FuncDraw = _gui_draw_animated_sprite
+  }, -- 23
+  
+  [MY_ELEM_SPR_COMP_PLR3] =
+  {
+    Data = {X = 0.0, Y = 0.2, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    SpriteData = {BankIdx = 2, SpriteIdx = 6883},
+    AnimationData = {Animate = true, NumFrames = 4, FramesToAdvance = 8},
+    FuncDraw = _gui_draw_animated_sprite
+  }, -- 24
+  
+  [MY_ELEM_SPR_COMP_PLR4] =
+  {
+    Data = {X = 0.0, Y = 0.2, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    SpriteData = {BankIdx = 2, SpriteIdx = 6903},
+    AnimationData = {Animate = true, NumFrames = 4, FramesToAdvance = 8},
+    FuncDraw = _gui_draw_animated_sprite
+  }, -- 25
+  
+  [MY_ELEM_SPR_COMP_PLR5] =
+  {
+    Data = {X = 0.0, Y = 0.2, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    SpriteData = {BankIdx = 2, SpriteIdx = 6923},
+    AnimationData = {Animate = true, NumFrames = 4, FramesToAdvance = 8},
+    FuncDraw = _gui_draw_animated_sprite
+  }, -- 26
+  
+  [MY_ELEM_SPR_COMP_PLR6] =
+  {
+    Data = {X = 0.0, Y = 0.2, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    SpriteData = {BankIdx = 2, SpriteIdx = 6943},
+    AnimationData = {Animate = true, NumFrames = 4, FramesToAdvance = 8},
+    FuncDraw = _gui_draw_animated_sprite
+  }, -- 27
 }
 
 _GUI_MENU_INIT_ELEMENTS =
@@ -539,6 +650,8 @@ _GUI_MENU_INIT_ELEMENTS =
     {ELEM_TYPE_TEXT, MY_ELEM_TXT_HUMAN_PLAYERS},
     {ELEM_TYPE_S_PANEL, MY_ELEM_SP_HUMAN_PLR1},
     {ELEM_TYPE_S_PANEL, MY_ELEM_SP_HUMAN_PLR2},
+    {ELEM_TYPE_SPRITE, MY_ELEM_SPR_HUMAN_PLR1},
+    {ELEM_TYPE_SPRITE, MY_ELEM_SPR_HUMAN_PLR2},
   },
   
   [MY_MENU_COMP_PLAYERS] = 
@@ -551,6 +664,12 @@ _GUI_MENU_INIT_ELEMENTS =
     {ELEM_TYPE_S_PANEL, MY_ELEM_SP_COMP_PLR4},
     {ELEM_TYPE_S_PANEL, MY_ELEM_SP_COMP_PLR5},
     {ELEM_TYPE_S_PANEL, MY_ELEM_SP_COMP_PLR6},
+    {ELEM_TYPE_SPRITE, MY_ELEM_SPR_COMP_PLR1},
+    {ELEM_TYPE_SPRITE, MY_ELEM_SPR_COMP_PLR2},
+    {ELEM_TYPE_SPRITE, MY_ELEM_SPR_COMP_PLR3},
+    {ELEM_TYPE_SPRITE, MY_ELEM_SPR_COMP_PLR4},
+    {ELEM_TYPE_SPRITE, MY_ELEM_SPR_COMP_PLR5},
+    {ELEM_TYPE_SPRITE, MY_ELEM_SPR_COMP_PLR6},
   },
   
   [MY_MENU_SETUP_GENERAL] =
@@ -755,6 +874,63 @@ local function _create_elem_panel(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh,
   log("Created panel element");
 end
 
+local function _create_elem_sprite(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh, _mx, _my, _mw, _mh)
+  -- now convert position & scale data into actual pixels and transform it into correct position
+  local elem_x = FLOOR(_mx + (_elem_ptr.Data.X * _mw));
+  local elem_y = FLOOR(_my + (_elem_ptr.Data.Y * _mh));
+  
+  -- width and height are dynamically calculated depending on current sprite data.
+  local sprite_t = get_sprite(_elem_ptr.SpriteData.BankIdx, _elem_ptr.SpriteData.SpriteIdx);
+  local elem_w = sprite_t.Width
+  local elem_h = sprite_t.Height;
+  
+  -- check justification data
+  if (_elem_ptr.JustData.H == HJ_CENTER) then
+    elem_x = elem_x - (elem_w >> 1);
+  elseif (_elem_ptr.JustData.H == HJ_RIGHT) then
+    elem_x = elem_x - elem_w;
+  end
+  
+  if (_elem_ptr.JustData.V == VJ_CENTER) then
+    elem_y = elem_y - (elem_h >> 1);
+  elseif (_elem_ptr.JustData.V == VJ_BOTTOM) then
+    elem_y = elem_y - elem_h;
+  end
+  
+  _GUI_ELEMENTS[_elem_ptr_idx] = 
+  {
+    ElemType = ELEM_TYPE_SPRITE,
+    ElemID = _elem_ptr_idx,
+    MenuID = _menu_ptr.ID,
+    Data = { X = elem_x, Y = elem_y, W = elem_w, H = elem_h},
+    DrawInfo = 
+    {
+      BankIdx = _elem_ptr.SpriteData.BankIdx,
+      SpriteIdx = _elem_ptr.SpriteData.SpriteIdx,
+      CurrFrame = 0,
+      Count = 0,
+      MaxFrames = _elem_ptr.AnimationData.NumFrames,
+      Animate = _elem_ptr.AnimationData.Animate,
+      FramesToAdvance = _elem_ptr.AnimationData.FramesToAdvance,
+    },
+    FuncDraw =  _elem_ptr.FuncDraw,
+    Box = TbRect.new(),
+    isActive = false
+  };
+  
+  local e_b = _GUI_ELEMENTS[_elem_ptr_idx].Box;
+  e_b.Left = elem_x;
+  e_b.Right = e_b.Left + elem_w;
+  e_b.Top = elem_y;
+  e_b.Bottom = e_b.Top + elem_h;
+  
+  -- add element to menu
+  local actual_menu_elements = _GUI_MENUS[_menu_ptr.ID].Elements;
+  actual_menu_elements[#actual_menu_elements + 1] = _GUI_ELEMENTS[_elem_ptr_idx];
+  
+  log("Created sprite element");
+end
+
 local function _create_elem_s_panel(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh, _mx, _my, _mw, _mh)
   -- now convert position & scale data into actual pixels and transform it into correct position
   local elem_x = FLOOR(_mx + (_elem_ptr.Data.X * _mw));
@@ -867,6 +1043,8 @@ function gui_init_all_menus()
             _create_elem_text(menu, elem_ptr, elem_ptr_idx, sc_w, sc_h, m_x, m_y, m_w, m_h);
           elseif (elem_type == ELEM_TYPE_S_PANEL) then
             _create_elem_s_panel(menu, elem_ptr, elem_ptr_idx, sc_w, sc_h, m_x, m_y, m_w, m_h);
+          elseif (elem_type == ELEM_TYPE_SPRITE) then
+            _create_elem_sprite(menu, elem_ptr, elem_ptr_idx, sc_w, sc_h, m_x, m_y, m_w, m_h);
           end
           
         end

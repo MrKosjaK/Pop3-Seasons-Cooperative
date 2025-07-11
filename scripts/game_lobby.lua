@@ -323,8 +323,32 @@ function link_stuff_to_gui()
     end
   end);
   
+  set_menu_open_func(MY_MENU_COMP_PLAYERS, function(menu)
+    menu.isActive = true;
+    
+    local num_rows = math.min(AI_COUNT, 6);
+    local num_icons = math.min(AI_COUNT, 6);
+    
+    for i,elem_entry in ipairs(menu.Elements) do
+      elem_entry.isActive = false;
+      if (elem_entry.ElemType == ELEM_TYPE_S_PANEL and num_rows > 0) then
+        elem_entry.isActive = true;
+        num_rows = num_rows - 1;
+      end
+      
+      if (elem_entry.ElemType == ELEM_TYPE_SPRITE and num_icons > 0) then
+        elem_entry.isActive = true;
+        num_icons = num_icons - 1;
+      end
+      
+      if (elem_entry.ElemType ~= ELEM_TYPE_S_PANEL and elem_entry.ElemType ~= ELEM_TYPE_SPRITE) then
+        elem_entry.isActive = true;
+      end
+    end
+  end);
+  
   set_menu_maintain_func(MY_MENU_COMP_PLAYERS, function(menu)
-    local num_comp_players = AI_COUNT;
+    local num_comp_players = math.min(AI_COUNT, 6); -- hardcode to 6 max ais.
     
     if (num_comp_players > 0) then
       local space = 0.12;
@@ -356,6 +380,32 @@ function link_stuff_to_gui()
         curr_plate.Box.Right = curr_plate.Box.Left + curr_plate.Data.W;
         curr_plate.Box.Top = curr_plate.Data.Y;
         curr_plate.Box.Bottom = curr_plate.Box.Top + curr_plate.Data.H;
+        
+        local curr_icon = get_elem_ptr(MY_ELEM_SPR_COMP_PLR1 + i);
+        local init_icon = _GUI_INIT_ELEMENTS[curr_icon.ElemID];
+        local sprite_t = get_sprite(init_icon.SpriteData.BankIdx, init_icon.SpriteData.SpriteIdx);
+        
+        curr_icon.Data.X = math.floor((init_menu.Data.X - 0.15) * CURR_RES_WIDTH);
+        curr_icon.Data.Y = math.floor((init_menu.Data.Y + v_offset + (space * i)) * menu.Data.H)
+        curr_icon.Data.W = sprite_t.Width;
+        curr_icon.Data.H = sprite_t.Height;
+        
+        if (init_icon.JustData.H == HJ_CENTER) then
+          curr_icon.Data.X =  curr_icon.Data.X - (curr_icon.Data.W >> 1);
+        elseif (init_icon.JustData.H == HJ_RIGHT) then
+          curr_icon.Data.X =  curr_icon.Data.X - curr_icon.Data.W;
+        end
+        
+        if (init_icon.JustData.V == VJ_CENTER) then
+          curr_icon.Data.Y = curr_icon.Data.Y - (curr_icon.Data.H >> 1);
+        elseif (init_icon.JustData.V == VJ_BOTTOM) then
+          curr_icon.Data.Y = curr_icon.Data.Y - curr_icon.Data.H;
+        end
+        
+        curr_icon.Box.Left = curr_icon.Data.X;
+        curr_icon.Box.Right = curr_icon.Box.Left + curr_icon.Data.W;
+        curr_icon.Box.Top = curr_icon.Data.Y;
+        curr_icon.Box.Bottom = curr_icon.Box.Top + curr_icon.Data.H;
       end
     end
   end);
@@ -363,16 +413,22 @@ function link_stuff_to_gui()
   set_menu_open_func(MY_MENU_HUMAN_PLAYERS, function(menu)
     menu.isActive = true;
     
-    local num_human_players = HUMAN_PLAYERS_COUNT
+    local num_rows = math.min(HUMAN_PLAYERS_COUNT, 2);
+    local num_icons = math.min(HUMAN_PLAYERS_COUNT, 2);
     
     for i,elem_entry in ipairs(menu.Elements) do
       elem_entry.isActive = false;
-      if (elem_entry.ElemType == ELEM_TYPE_S_PANEL and num_human_players > 0) then
+      if (elem_entry.ElemType == ELEM_TYPE_S_PANEL and num_rows > 0) then
         elem_entry.isActive = true;
-        num_human_players = num_human_players - 1;
+        num_rows = num_rows - 1;
       end
       
-      if (elem_entry.ElemType ~= ELEM_TYPE_S_PANEL) then
+      if (elem_entry.ElemType == ELEM_TYPE_SPRITE and num_icons > 0) then
+        elem_entry.isActive = true;
+        num_icons = num_icons - 1;
+      end
+      
+      if (elem_entry.ElemType ~= ELEM_TYPE_S_PANEL and elem_entry.ElemType ~= ELEM_TYPE_SPRITE) then
         elem_entry.isActive = true;
       end
     end
@@ -381,7 +437,7 @@ function link_stuff_to_gui()
   set_menu_maintain_func(MY_MENU_HUMAN_PLAYERS, function(menu)
     -- need to check how many human players registered
     
-    local num_human_players = HUMAN_PLAYERS_COUNT;
+    local num_human_players = math.min(HUMAN_PLAYERS_COUNT, 2); -- hardcode num players to 2
     
     if (num_human_players > 0) then
       -- now let's get elements arranged properly
@@ -415,6 +471,32 @@ function link_stuff_to_gui()
         curr_plate.Box.Right = curr_plate.Box.Left + curr_plate.Data.W;
         curr_plate.Box.Top = curr_plate.Data.Y;
         curr_plate.Box.Bottom = curr_plate.Box.Top + curr_plate.Data.H;
+        
+        local curr_icon = get_elem_ptr(MY_ELEM_SPR_HUMAN_PLR1 + i);
+        local init_icon = _GUI_INIT_ELEMENTS[curr_icon.ElemID];
+        local sprite_t = get_sprite(init_icon.SpriteData.BankIdx, init_icon.SpriteData.SpriteIdx);
+        
+        curr_icon.Data.X = math.floor((init_menu.Data.X - 0.15) * CURR_RES_WIDTH);
+        curr_icon.Data.Y = math.floor((init_menu.Data.Y + v_offset + (space * i)) * menu.Data.H)
+        curr_icon.Data.W = sprite_t.Width;
+        curr_icon.Data.H = sprite_t.Height;
+        
+        if (init_icon.JustData.H == HJ_CENTER) then
+          curr_icon.Data.X =  curr_icon.Data.X - (curr_icon.Data.W >> 1);
+        elseif (init_icon.JustData.H == HJ_RIGHT) then
+          curr_icon.Data.X =  curr_icon.Data.X - curr_icon.Data.W;
+        end
+        
+        if (init_icon.JustData.V == VJ_CENTER) then
+          curr_icon.Data.Y = curr_icon.Data.Y - (curr_icon.Data.H >> 1);
+        elseif (init_icon.JustData.V == VJ_BOTTOM) then
+          curr_icon.Data.Y = curr_icon.Data.Y - curr_icon.Data.H;
+        end
+        
+        curr_icon.Box.Left = curr_icon.Data.X;
+        curr_icon.Box.Right = curr_icon.Box.Left + curr_icon.Data.W;
+        curr_icon.Box.Top = curr_icon.Data.Y;
+        curr_icon.Box.Bottom = curr_icon.Box.Top + curr_icon.Data.H;
       end
     end
   end);
