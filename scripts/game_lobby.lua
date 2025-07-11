@@ -315,10 +315,110 @@ function link_stuff_to_gui()
         update_network_players_count(G_NSI.PlayerNum);
         
         gui_close_menu(MY_MENU_CHECK_IN);
+        trigger_menu_maintain(MY_MENU_HUMAN_PLAYERS);
         gui_open_menu(MY_MENU_HUMAN_PLAYERS);
         gui_open_menu(MY_MENU_COMP_PLAYERS);
         gui_open_menu(MY_MENU_SETUP_GENERAL);
       end
+    end
+  end);
+  
+  set_menu_maintain_func(MY_MENU_COMP_PLAYERS, function(menu)
+    local num_comp_players = AI_COUNT;
+    
+    if (num_comp_players > 0) then
+      local space = 0.12;
+      local v_offset = (space / 2);
+      local init_menu = _GUI_INIT_MENUS[menu.ID];
+      
+      for i = 0, num_comp_players - 1 do
+        local curr_plate = get_elem_ptr(MY_ELEM_SP_COMP_PLR1 + i);
+        local init_plate = _GUI_INIT_ELEMENTS[curr_plate.ElemID];
+        
+        curr_plate.Data.X = math.floor(init_menu.Data.X * CURR_RES_WIDTH);
+        curr_plate.Data.Y = math.floor((init_menu.Data.Y + v_offset + (space * i)) * menu.Data.H)
+        curr_plate.Data.W = math.floor(init_menu.Data.W * CURR_RES_WIDTH) - 2;
+        curr_plate.Data.H = math.floor(space * menu.Data.H);
+        
+        if (init_plate.JustData.H == HJ_CENTER) then
+          curr_plate.Data.X =  curr_plate.Data.X - (curr_plate.Data.W >> 1);
+        elseif (init_plate.JustData.H == HJ_RIGHT) then
+          curr_plate.Data.X =  curr_plate.Data.X - curr_plate.Data.W;
+        end
+        
+        if (init_plate.JustData.V == VJ_CENTER) then
+          curr_plate.Data.Y = curr_plate.Data.Y - (curr_plate.Data.H >> 1);
+        elseif (init_plate.JustData.V == VJ_BOTTOM) then
+          curr_plate.Data.Y = curr_plate.Data.Y - curr_plate.Data.H;
+        end
+        
+        curr_plate.Box.Left = curr_plate.Data.X;
+        curr_plate.Box.Right = curr_plate.Box.Left + curr_plate.Data.W;
+        curr_plate.Box.Top = curr_plate.Data.Y;
+        curr_plate.Box.Bottom = curr_plate.Box.Top + curr_plate.Data.H;
+      end
+    end
+  end);
+  
+  set_menu_maintain_func(MY_MENU_HUMAN_PLAYERS, function(menu)
+    -- need to check how many human players registered
+    
+    local num_human_players = HUMAN_PLAYERS_COUNT;
+    
+    if (num_human_players > 0) then
+      -- now let's get elements arranged properly
+      local plate_1 = get_elem_ptr(MY_ELEM_SP_HUMAN_PLR1);
+      local plate_2 = get_elem_ptr(MY_ELEM_SP_HUMAN_PLR2);
+      local init_plate_1 = _GUI_INIT_ELEMENTS[plate_1.ElemID];
+      local init_plate_2 = _GUI_INIT_ELEMENTS[plate_2.ElemID];
+      local init_menu = _GUI_INIT_MENUS[menu.ID];
+      
+      local space = 0.25;
+      local v_offset = (space / 2);
+      
+      plate_1.Data.X = math.floor(init_menu.Data.X * CURR_RES_WIDTH);
+      plate_1.Data.Y = math.floor((init_menu.Data.Y + v_offset) * menu.Data.H)
+      plate_1.Data.W = math.floor(init_menu.Data.W * CURR_RES_WIDTH) - 2;
+      plate_1.Data.H = math.floor(space * menu.Data.H);
+      
+      if (init_plate_1.JustData.H == HJ_CENTER) then
+         plate_1.Data.X =  plate_1.Data.X - (plate_1.Data.W >> 1);
+      elseif (init_plate_1.JustData.H == HJ_RIGHT) then
+         plate_1.Data.X =  plate_1.Data.X - plate_1.Data.W;
+      end
+      
+      if (init_plate_1.JustData.V == VJ_CENTER) then
+        plate_1.Data.Y = plate_1.Data.Y - (plate_1.Data.H >> 1);
+      elseif (init_plate_1.JustData.V == VJ_BOTTOM) then
+        plate_1.Data.Y = plate_1.Data.Y - plate_1.Data.H;
+      end
+      
+      plate_1.Box.Left = plate_1.Data.X;
+      plate_1.Box.Right = plate_1.Box.Left + plate_1.Data.W;
+      plate_1.Box.Top = plate_1.Data.Y;
+      plate_1.Box.Bottom = plate_1.Box.Top + plate_1.Data.H;
+      
+      plate_2.Data.X = math.floor(init_menu.Data.X * CURR_RES_WIDTH);
+      plate_2.Data.Y = math.floor((init_menu.Data.Y + v_offset + space) * menu.Data.H)
+      plate_2.Data.W = math.floor(init_menu.Data.W * CURR_RES_WIDTH) - 2;
+      plate_2.Data.H = math.floor(space * menu.Data.H);
+      
+      if (init_plate_2.JustData.H == HJ_CENTER) then
+         plate_2.Data.X =  plate_2.Data.X - (plate_2.Data.W >> 1);
+      elseif (init_plate_2.JustData.H == HJ_RIGHT) then
+         plate_2.Data.X =  plate_2.Data.X - plate_2.Data.W;
+      end
+      
+      if (init_plate_2.JustData.V == VJ_CENTER) then
+        plate_2.Data.Y = plate_2.Data.Y - (plate_2.Data.H >> 1);
+      elseif (init_plate_2.JustData.V == VJ_BOTTOM) then
+        plate_2.Data.Y = plate_2.Data.Y - plate_2.Data.H;
+      end
+      
+      plate_2.Box.Left = plate_2.Data.X;
+      plate_2.Box.Right = plate_2.Box.Left + plate_2.Data.W;
+      plate_2.Box.Top = plate_2.Data.Y;
+      plate_2.Box.Bottom = plate_2.Box.Top + plate_2.Data.H;
     end
   end);
   

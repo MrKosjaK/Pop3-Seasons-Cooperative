@@ -41,7 +41,7 @@ function OnTurn()
   
   -- reason im doing it here is because OnLevelInit resolution is still 640x480....
   if (turn == 0) then
-    disable_inputs(DIF_FLYBY);
+    --disable_inputs(DIF_FLYBY);
     process_options(OPT_TOGGLE_PANEL, 0, 0);
     
     gui_init_all_menus();
@@ -123,6 +123,10 @@ function OnFrame()
         --log("is type: " .. type(menu.OnRes));
         if (menu.OnRes ~= nil) then
           menu.OnRes(menu);
+        end
+        
+        if (menu.FuncMaintain ~= nil) then
+          menu.FuncMaintain(menu);
         end
       end
     end

@@ -150,6 +150,7 @@ ELEM_TYPE_NONE = 1;
 ELEM_TYPE_PANEL = 2;
 ELEM_TYPE_BUTTON = 3;
 ELEM_TYPE_TEXT = 4;
+ELEM_TYPE_S_PANEL = 5; -- SIMPLE PANEL
 
 -- Element enums
 MY_ELEM_CHECK_IN_BACK = 1;
@@ -163,6 +164,14 @@ MY_ELEM_BTN_START_GAME = 8;
 MY_ELEM_TXT_GAME_MASTER = 9;
 MY_ELEM_TXT_HUMAN_PLAYERS = 10;
 MY_ELEM_TXT_COMP_PLAYERS = 11;
+MY_ELEM_SP_HUMAN_PLR1 = 12; -- Starting from here elements will be manually maintained by the script
+MY_ELEM_SP_HUMAN_PLR2 = 13;
+MY_ELEM_SP_COMP_PLR1 = 14;
+MY_ELEM_SP_COMP_PLR2 = 15;
+MY_ELEM_SP_COMP_PLR3 = 16;
+MY_ELEM_SP_COMP_PLR4 = 17;
+MY_ELEM_SP_COMP_PLR5 = 18;
+MY_ELEM_SP_COMP_PLR6 = 19; -- End
 
 -- Element justification
 HJ_LEFT = 0;
@@ -245,6 +254,20 @@ local function _gui_draw_basic_background(_elem)
     end
     
     DrawStretchyButtonBox(_elem.Box, _elem.Style);
+  end
+end
+
+local function _gui_draw_basic_rectangle(_elem)
+  if (_elem.isActive) then
+    local mx = GUI_MOUSE_POS.X;
+    local my = GUI_MOUSE_POS.Y;
+    
+    if (mx >= _elem.Box.Left and mx < _elem.Box.Right and my >= _elem.Box.Top and my < _elem.Box.Bottom) then
+      GUI_HOVERING_ID = _elem.ElemID;
+      LbDraw_SetFlagsOn(8);
+      LbDraw_Rectangle(_elem.Box, _elem.Color);
+      LbDraw_SetFlagsOff(8);
+    end
   end
 end
 
@@ -416,7 +439,7 @@ _GUI_INIT_ELEMENTS =
   
   [MY_ELEM_TXT_HUMAN_PLAYERS] =
   {
-    Data = {X = 0.0, Y = -0.40, W = 0.0, H = 0.0},
+    Data = {X = 0.0, Y = -0.42, W = 0.0, H = 0.0},
     JustData = {H = HJ_CENTER, V = VJ_CENTER},
     Text = "Player Squad",
     FuncDraw = _gui_draw_basic_text,
@@ -426,13 +449,77 @@ _GUI_INIT_ELEMENTS =
   
   [MY_ELEM_TXT_COMP_PLAYERS] =
   {
-    Data = {X = 0.0, Y = -0.40, W = 0.0, H = 0.0},
+    Data = {X = 0.0, Y = -0.42, W = 0.0, H = 0.0},
     JustData = {H = HJ_CENTER, V = VJ_CENTER},
     Text = "Stupid Bots",
     FuncDraw = _gui_draw_basic_text,
     FuncMaintain = nil,
     OnRes = nil
   }, -- 11
+  
+  [MY_ELEM_SP_HUMAN_PLR1] =
+  {
+    Data = {X = 0.0, Y = 0.20, W = 0.2, H = 0.2},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    ColorData = 175,
+    FuncDraw = _gui_draw_basic_rectangle,
+  }, -- 12
+  
+  [MY_ELEM_SP_HUMAN_PLR2] = 
+  {
+    Data = {X = 0.0, Y = -0.20, W = 0.2, H = 0.2},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    ColorData = 175,
+    FuncDraw = _gui_draw_basic_rectangle,
+  }, -- 13
+  
+  [MY_ELEM_SP_COMP_PLR1] =
+  {
+    Data = {X = 0.0, Y = 0.0, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    ColorData = 175,
+    FuncDraw = _gui_draw_basic_rectangle,
+  }, -- 14
+  
+  [MY_ELEM_SP_COMP_PLR2] =
+  {
+    Data = {X = 0.0, Y = 0.0, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    ColorData = 175,
+    FuncDraw = _gui_draw_basic_rectangle,
+  }, -- 15
+  
+  [MY_ELEM_SP_COMP_PLR3] =
+  {
+    Data = {X = 0.0, Y = 0.0, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    ColorData = 175,
+    FuncDraw = _gui_draw_basic_rectangle,
+  }, -- 16
+  
+  [MY_ELEM_SP_COMP_PLR4] =
+  {
+    Data = {X = 0.0, Y = 0.0, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    ColorData = 175,
+    FuncDraw = _gui_draw_basic_rectangle,
+  }, -- 17
+  
+  [MY_ELEM_SP_COMP_PLR5] =
+  {
+    Data = {X = 0.0, Y = 0.0, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    ColorData = 175,
+    FuncDraw = _gui_draw_basic_rectangle,
+  }, -- 18
+  
+  [MY_ELEM_SP_COMP_PLR6] =
+  {
+    Data = {X = 0.0, Y = 0.0, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    ColorData = 175,
+    FuncDraw = _gui_draw_basic_rectangle,
+  }, -- 19
 }
 
 _GUI_MENU_INIT_ELEMENTS =
@@ -450,12 +537,20 @@ _GUI_MENU_INIT_ELEMENTS =
   {
     {ELEM_TYPE_PANEL, MY_ELEM_HUMAN_PLAYERS_BACK},
     {ELEM_TYPE_TEXT, MY_ELEM_TXT_HUMAN_PLAYERS},
+    {ELEM_TYPE_S_PANEL, MY_ELEM_SP_HUMAN_PLR1},
+    {ELEM_TYPE_S_PANEL, MY_ELEM_SP_HUMAN_PLR2},
   },
   
   [MY_MENU_COMP_PLAYERS] = 
   {
     {ELEM_TYPE_PANEL, MY_ELEM_COMP_PLAYERS_BACK},
     {ELEM_TYPE_TEXT, MY_ELEM_TXT_COMP_PLAYERS},
+    {ELEM_TYPE_S_PANEL, MY_ELEM_SP_COMP_PLR1},
+    {ELEM_TYPE_S_PANEL, MY_ELEM_SP_COMP_PLR2},
+    {ELEM_TYPE_S_PANEL, MY_ELEM_SP_COMP_PLR3},
+    {ELEM_TYPE_S_PANEL, MY_ELEM_SP_COMP_PLR4},
+    {ELEM_TYPE_S_PANEL, MY_ELEM_SP_COMP_PLR5},
+    {ELEM_TYPE_S_PANEL, MY_ELEM_SP_COMP_PLR6},
   },
   
   [MY_MENU_SETUP_GENERAL] =
@@ -660,6 +755,51 @@ local function _create_elem_panel(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh,
   log("Created panel element");
 end
 
+local function _create_elem_s_panel(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh, _mx, _my, _mw, _mh)
+  -- now convert position & scale data into actual pixels and transform it into correct position
+  local elem_x = FLOOR(_mx + (_elem_ptr.Data.X * _mw));
+  local elem_y = FLOOR(_my + (_elem_ptr.Data.Y * _mh));
+  local elem_w = FLOOR(_elem_ptr.Data.W * _sw);
+  local elem_h = FLOOR(_elem_ptr.Data.H * _sh);
+  
+  -- check justification data
+  if (_elem_ptr.JustData.H == HJ_CENTER) then
+    elem_x = elem_x - (elem_w >> 1);
+  elseif (_elem_ptr.JustData.H == HJ_RIGHT) then
+    elem_x = elem_x - elem_w;
+  end
+  
+  if (_elem_ptr.JustData.V == VJ_CENTER) then
+    elem_y = elem_y - (elem_h >> 1);
+  elseif (_elem_ptr.JustData.V == VJ_BOTTOM) then
+    elem_y = elem_y - elem_h;
+  end
+  
+  _GUI_ELEMENTS[_elem_ptr_idx] = 
+  {
+    ElemType = ELEM_TYPE_PANEL,
+    ElemID = _elem_ptr_idx,
+    MenuID = _menu_ptr.ID,
+    Data = { X = elem_x, Y = elem_y, W = elem_w, H = elem_h},
+    FuncDraw =  _elem_ptr.FuncDraw,
+    Color = _elem_ptr.ColorData,
+    Box = TbRect.new(),
+    isActive = false
+  };
+  
+  local e_b = _GUI_ELEMENTS[_elem_ptr_idx].Box;
+  e_b.Left = elem_x;
+  e_b.Right = e_b.Left + elem_w;
+  e_b.Top = elem_y;
+  e_b.Bottom = e_b.Top + elem_h;
+  
+  -- add element to menu
+  local actual_menu_elements = _GUI_MENUS[_menu_ptr.ID].Elements;
+  actual_menu_elements[#actual_menu_elements + 1] = _GUI_ELEMENTS[_elem_ptr_idx];
+  
+  log("Created simple panel element");
+end
+
 function gui_close_menu(_menu_id)
   local menu = _GUI_MENUS[_menu_id];
   
@@ -725,6 +865,8 @@ function gui_init_all_menus()
             _create_elem_button(menu, elem_ptr, elem_ptr_idx, sc_w, sc_h, m_x, m_y, m_w, m_h);
           elseif (elem_type == ELEM_TYPE_TEXT) then
             _create_elem_text(menu, elem_ptr, elem_ptr_idx, sc_w, sc_h, m_x, m_y, m_w, m_h);
+          elseif (elem_type == ELEM_TYPE_S_PANEL) then
+            _create_elem_s_panel(menu, elem_ptr, elem_ptr_idx, sc_w, sc_h, m_x, m_y, m_w, m_h);
           end
           
         end
@@ -869,6 +1011,24 @@ function set_elem_text_string(_elem_idx, _str)
       if (txt.FuncMaintain ~= nil) then
         txt.FuncMaintain(txt);
       end
+    end
+  end
+end
+
+function set_menu_maintain_func(_menu_id, _func)
+  local menu = _GUI_MENUS[_menu_id];
+  
+  if (menu ~= nil) then
+    menu.FuncMaintain = _func;
+  end
+end
+
+function trigger_menu_maintain(_menu_id)
+  local menu = _GUI_MENUS[_menu_id];
+  
+  if (menu ~= nil) then
+    if (menu.FuncMaintain ~= nil) then
+      menu.FuncMaintain(menu);
     end
   end
 end
