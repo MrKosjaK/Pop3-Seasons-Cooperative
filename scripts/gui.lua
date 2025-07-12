@@ -25,7 +25,7 @@ import(Module_String);
 import(Module_System);
 import(Module_Table);
 
-local GUI_MOUSE_POS = get_display_mouse_xy();
+GUI_MOUSE_POS = get_display_mouse_xy();
 GUI_HOVERING_ID = -1;
 GUI_TEXT_FONT = 4;
 
@@ -121,7 +121,7 @@ BOX_STYLE = {
 
 local NUM_STYLES = 41;
 
-local _BOX_LAYOUTS = {};
+_BOX_LAYOUTS = {};
 
 local function create_all_layouts()
   
@@ -188,6 +188,14 @@ MY_ELEM_COMP_PLR3_DIFF = 30;
 MY_ELEM_COMP_PLR4_DIFF = 31;
 MY_ELEM_COMP_PLR5_DIFF = 32;
 MY_ELEM_COMP_PLR6_DIFF = 33;
+MY_ELEM_TXT_DIFF_LABEL = 34;
+MY_ELEM_TXT_COMP_TRIBE = 35;
+MY_ELEM_TXT_CPLR_NAME1 = 36;
+MY_ELEM_TXT_CPLR_NAME2 = 37;
+MY_ELEM_TXT_CPLR_NAME3 = 38;
+MY_ELEM_TXT_CPLR_NAME4 = 39;
+MY_ELEM_TXT_CPLR_NAME5 = 40;
+MY_ELEM_TXT_CPLR_NAME6 = 41;
 
 -- Element justification
 HJ_LEFT = 0;
@@ -521,7 +529,7 @@ _GUI_INIT_ELEMENTS =
   
   [MY_ELEM_TXT_HUMAN_PLAYERS] =
   {
-    Data = {X = 0.0, Y = -0.42, W = 0.0, H = 0.0},
+    Data = {X = 0.0, Y = -0.43, W = 0.0, H = 0.0},
     JustData = {H = HJ_CENTER, V = VJ_CENTER},
     Text = "Player Squad",
     FuncDraw = _gui_draw_basic_text,
@@ -531,7 +539,7 @@ _GUI_INIT_ELEMENTS =
   
   [MY_ELEM_TXT_COMP_PLAYERS] =
   {
-    Data = {X = 0.0, Y = -0.42, W = 0.0, H = 0.0},
+    Data = {X = 0.0, Y = -0.43, W = 0.0, H = 0.0},
     JustData = {H = HJ_CENTER, V = VJ_CENTER},
     Text = "Stupid Bots",
     FuncDraw = _gui_draw_basic_text,
@@ -752,6 +760,86 @@ _GUI_INIT_ELEMENTS =
     FuncRightClick = gui_multi_button_right_click,
     OnRes = nil,
   }, -- 33
+  
+  [MY_ELEM_TXT_DIFF_LABEL] =
+  {
+    Data = {X = 0.295, Y = -0.38, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    Text = "AI Difficulty",
+    FuncDraw = _gui_draw_basic_text,
+    FuncMaintain = nil,
+    OnRes = nil
+  }, -- 34
+  
+  [MY_ELEM_TXT_COMP_TRIBE] =
+  {
+    Data = {X = -0.155, Y = -0.38, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    Text = "Tribe Name",
+    FuncDraw = _gui_draw_basic_text,
+    FuncMaintain = nil,
+    OnRes = nil
+  }, -- 35
+  
+  [MY_ELEM_TXT_CPLR_NAME1] =
+  {
+    Data = {X = -0.155, Y = -0.38, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    Text = "",
+    FuncDraw = _gui_draw_basic_text,
+    FuncMaintain = nil,
+    OnRes = nil
+  }, -- 37
+  
+  [MY_ELEM_TXT_CPLR_NAME2] =
+  {
+    Data = {X = -0.155, Y = -0.38, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    Text = "",
+    FuncDraw = _gui_draw_basic_text,
+    FuncMaintain = nil,
+    OnRes = nil
+  }, -- 38
+  
+  [MY_ELEM_TXT_CPLR_NAME3] =
+  {
+    Data = {X = -0.155, Y = -0.38, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    Text = "",
+    FuncDraw = _gui_draw_basic_text,
+    FuncMaintain = nil,
+    OnRes = nil
+  }, -- 39
+  
+  [MY_ELEM_TXT_CPLR_NAME4] =
+  {
+    Data = {X = -0.155, Y = -0.38, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    Text = "",
+    FuncDraw = _gui_draw_basic_text,
+    FuncMaintain = nil,
+    OnRes = nil
+  }, -- 40
+  
+  [MY_ELEM_TXT_CPLR_NAME5] =
+  {
+    Data = {X = -0.155, Y = -0.38, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    Text = "",
+    FuncDraw = _gui_draw_basic_text,
+    FuncMaintain = nil,
+    OnRes = nil
+  }, -- 41
+  
+  [MY_ELEM_TXT_CPLR_NAME6] =
+  {
+    Data = {X = -0.155, Y = -0.38, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    Text = "",
+    FuncDraw = _gui_draw_basic_text,
+    FuncMaintain = nil,
+    OnRes = nil
+  }, -- 42
 }
 
 _GUI_MENU_INIT_ELEMENTS =
@@ -797,6 +885,14 @@ _GUI_MENU_INIT_ELEMENTS =
     {ELEM_TYPE_MULTI_BUTTON, MY_ELEM_COMP_PLR4_DIFF},
     {ELEM_TYPE_MULTI_BUTTON, MY_ELEM_COMP_PLR5_DIFF},
     {ELEM_TYPE_MULTI_BUTTON, MY_ELEM_COMP_PLR6_DIFF},
+    {ELEM_TYPE_TEXT, MY_ELEM_TXT_DIFF_LABEL},
+    {ELEM_TYPE_TEXT, MY_ELEM_TXT_COMP_TRIBE},
+    {ELEM_TYPE_TEXT, MY_ELEM_TXT_CPLR_NAME1},
+    {ELEM_TYPE_TEXT, MY_ELEM_TXT_CPLR_NAME2},
+    {ELEM_TYPE_TEXT, MY_ELEM_TXT_CPLR_NAME3},
+    {ELEM_TYPE_TEXT, MY_ELEM_TXT_CPLR_NAME4},
+    {ELEM_TYPE_TEXT, MY_ELEM_TXT_CPLR_NAME5},
+    {ELEM_TYPE_TEXT, MY_ELEM_TXT_CPLR_NAME6},
   },
   
   [MY_MENU_SETUP_GENERAL] =

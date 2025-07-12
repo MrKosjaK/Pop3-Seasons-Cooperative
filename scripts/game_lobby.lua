@@ -1,68 +1,6 @@
 -- game lobby stuff
 
--- MENU: PLAYERS
--- MENU_PLAYERS = create_menu("Player List", BTN_STYLE_LOG);
--- TXT_PLR1_NAME = create_text_field("", 3);
--- TXT_PLR2_NAME = create_text_field("", 3);
--- TXT_PLR3_NAME = create_text_field("", 3);
--- TXT_PLR4_NAME = create_text_field("", 3);
--- TXT_PLR5_NAME = create_text_field("", 3);
--- TXT_PLR6_NAME = create_text_field("", 3);
--- TXT_PLR7_NAME = create_text_field("", 3);
--- TXT_PLR8_NAME = create_text_field("", 3);
--- ICON_PLR1 = create_icon(1, 6883);
--- ICON_PLR2 = create_icon(1, 6903);
--- ICON_PLR3 = create_icon(1, 6923);
--- ICON_PLR4 = create_icon(1, 6943);
--- ICON_PLR5 = create_icon(2, 6883);
--- ICON_PLR6 = create_icon(2, 6903);
--- ICON_PLR7 = create_icon(2, 6923);
--- ICON_PLR8 = create_icon(2, 6943);
--- TXT_FIELD_TRIBE = create_text_field("Tribe", 4);
--- TXT_FIELD_PLR_NAME = create_text_field("Name", 4);
--- TXT_FIELD_START_POS = create_text_field("Start Pos", 4);
--- BTN_PLR1_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
--- BTN_PLR2_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
--- BTN_PLR3_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
--- BTN_PLR4_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
--- BTN_PLR5_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
--- BTN_PLR6_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
--- BTN_PLR7_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
--- BTN_PLR8_POS = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-
--- MENU: OPTIONS
---MENU_OPTIONS = create_menu("Game Options", BTN_STYLE_LOG);
---BTN_AI_DIFFICULTY = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
-
--- MENU: AI SETTINGS
--- MENU_AI = create_menu("AI Settings", BTN_STYLE_LOG);
--- BTN_AI_PLR1_DIFF = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
--- BTN_AI_PLR2_DIFF = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
--- BTN_AI_PLR3_DIFF = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
--- BTN_AI_PLR4_DIFF = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
--- BTN_AI_PLR5_DIFF = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
--- BTN_AI_PLR6_DIFF = create_button_array(3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
--- TXT_FIELD_AI_TRIBE = create_text_field("Tribe", 4);
--- TXT_FIELD_AI_DIFFICULTY = create_text_field("Difficulty", 4);
--- ICON_AI_PLR1 = create_icon(0, 1056);
--- ICON_AI_PLR2 = create_icon(0, 1056);
--- ICON_AI_PLR3 = create_icon(0, 1056);
--- ICON_AI_PLR4 = create_icon(0, 1056);
--- ICON_AI_PLR5 = create_icon(0, 1056);
--- ICON_AI_PLR6 = create_icon(0, 1056);
-
-
--- misc buttons
---BTN_CHECK_IN = create_button("Check in", 3, BTN_STYLE_DEFAULT2, BTN_STYLE_DEFAULT2_H, BTN_STYLE_DEFAULT2_HP);
---BTN_START_GAME = create_button("Start Game", 3, BTN_STYLE_DEFAULT3, BTN_STYLE_DEFAULT3_H, BTN_STYLE_DEFAULT3_HP);
---BTN_OM_PLAYERS = create_button("Players", 3, BTN_STYLE_DEFAULT3, BTN_STYLE_DEFAULT3_H, BTN_STYLE_DEFAULT3_HP);
---BTN_OM_SETTINGS = create_button("Settings", 3, BTN_STYLE_DEFAULT3, BTN_STYLE_DEFAULT3_H, BTN_STYLE_DEFAULT3_HP);
---BTN_OM_AI = create_button("Computer", 3, BTN_STYLE_DEFAULT3, BTN_STYLE_DEFAULT3_H, BTN_STYLE_DEFAULT3_HP);
-
--- menus
---MENU_CHECK_IN = create_menu("Check Phase", BTN_STYLE_LOG);
-
-local AI_DIFFICULTY_STR_TABLE = {"Easy", "Normal", "Hard", "Honour"};
+local AI_DIFFICULTY_STR_TABLE = {"Easy", "Normal", "Hard", "Extreme"};
 
 local ICON_DATA_BASE = {
   [0] = {1, 6883},
@@ -73,6 +11,17 @@ local ICON_DATA_BASE = {
   {2, 6903},
   {2, 6923},
   {2, 6943}
+}
+
+local TRIBE_NAME_DATA_BASE = {
+  [0] = "The Ikani",
+  "The Dakini",
+  "The Chumara",
+  "The Matak",
+  "The Tiyao",
+  "The Toktai",
+  "The Duscol",
+  "The Tangerine"
 }
 
 -- Stores all settings of lobby
@@ -264,7 +213,7 @@ function spawn_players_initial_stuff();
     {
       Owner = p_num,
       Coord = ai_data._start_pos,
-      Difficulty = GAME_LOBBY_SETTINGS[GLS_COMPUTER_DIFFICULTY][p_num][1]
+      Difficulty = GAME_LOBBY_SETTINGS[GLS_COMPUTER_DIFFICULTY][i][1]
     };
     
     for i,k in ipairs(ai_data._spells) do
@@ -319,7 +268,6 @@ function link_stuff_to_gui()
     if (not i_am_checked_in()) then
       if (am_i_in_network_game() ~= 0) then
         check_myself_in();
-        log("Checking in");
       else
         update_network_players_count(G_NSI.PlayerNum);
         
@@ -399,7 +347,18 @@ function link_stuff_to_gui()
         
         local curr_icon = get_elem_ptr(MY_ELEM_SPR_COMP_PLR1 + i);
         local init_icon = _GUI_INIT_ELEMENTS[curr_icon.ElemID];
-        local sprite_t = get_sprite(init_icon.SpriteData.BankIdx, init_icon.SpriteData.SpriteIdx);
+        
+        local sprite_t = get_sprite(0, 1056);
+        curr_icon.DrawInfo.SpriteIdx = 1056;
+        curr_icon.DrawInfo.BankIdx = 0;
+        curr_icon.DrawInfo.Animate = false;
+        
+        if (AI_INFO[i + 1]._forced_owner ~= -1) then
+          sprite_t = get_sprite(ICON_DATA_BASE[AI_INFO[i + 1]._forced_owner][1], ICON_DATA_BASE[AI_INFO[i + 1]._forced_owner][2]);
+          curr_icon.DrawInfo.SpriteIdx = ICON_DATA_BASE[AI_INFO[i + 1]._forced_owner][2];
+          curr_icon.DrawInfo.BankIdx = ICON_DATA_BASE[AI_INFO[i + 1]._forced_owner][1];
+          curr_icon.DrawInfo.Animate = true;
+        end
         
         curr_icon.Data.X = math.floor((init_menu.Data.X - 0.15) * CURR_RES_WIDTH);
         curr_icon.Data.Y = math.floor((init_menu.Data.Y + v_offset + (space * i)) * menu.Data.H)
@@ -426,7 +385,7 @@ function link_stuff_to_gui()
         local curr_m_button = get_elem_ptr(MY_ELEM_COMP_PLR1_DIFF + i);
         local init_m_button = _GUI_INIT_ELEMENTS[curr_m_button.ElemID];
         
-        curr_m_button.Data.X = math.floor(init_menu.Data.X * CURR_RES_WIDTH);
+        curr_m_button.Data.X = math.floor((init_menu.Data.X + 0.12) * CURR_RES_WIDTH);
         curr_m_button.Data.Y = math.floor((init_menu.Data.Y + v_offset + (space * i)) * menu.Data.H)
         curr_m_button.Data.W = math.floor(0.08 * CURR_RES_WIDTH);
         curr_m_button.Data.H = math.floor(0.05 * menu.Data.H);
@@ -447,6 +406,37 @@ function link_stuff_to_gui()
         curr_m_button.Box.Right = curr_m_button.Box.Left + curr_m_button.Data.W;
         curr_m_button.Box.Top = curr_m_button.Data.Y;
         curr_m_button.Box.Bottom = curr_m_button.Box.Top + curr_m_button.Data.H;
+        
+        local curr_comp_name = get_elem_ptr(MY_ELEM_TXT_CPLR_NAME1 + i);
+        local curr_comp_init = _GUI_INIT_ELEMENTS[curr_comp_name.ElemID];
+        
+        if (AI_INFO[i + 1]._forced_owner ~= -1) then
+          curr_comp_name.Text = TRIBE_NAME_DATA_BASE[AI_INFO[i + 1]._forced_owner];
+        else
+          curr_comp_name.Text = "Unknown Tribe";
+        end
+        
+        curr_comp_name.Data.X = math.floor((init_menu.Data.X - 0.06) * CURR_RES_WIDTH);
+        curr_comp_name.Data.Y = math.floor((init_menu.Data.Y + v_offset + (space * i)) * menu.Data.H)
+        curr_comp_name.Data.W = string_width(curr_comp_name.Text);
+        curr_comp_name.Data.H = CharHeight2();
+        
+        if (curr_comp_init.JustData.H == HJ_CENTER) then
+          curr_comp_name.Data.X =  curr_comp_name.Data.X - (curr_comp_name.Data.W >> 1);
+        elseif (curr_comp_init.JustData.H == HJ_RIGHT) then
+          curr_comp_name.Data.X =  curr_comp_name.Data.X - curr_comp_name.Data.W;
+        end
+        
+        if (curr_comp_init.JustData.V == VJ_CENTER) then
+          curr_comp_name.Data.Y = curr_comp_name.Data.Y - (curr_comp_name.Data.H >> 1);
+        elseif (curr_comp_init.JustData.V == VJ_BOTTOM) then
+          curr_comp_name.Data.Y = curr_comp_name.Data.Y - curr_comp_name.Data.H;
+        end
+        
+        curr_comp_name.Box.Left = curr_comp_name.Data.X;
+        curr_comp_name.Box.Right = curr_comp_name.Box.Left + curr_comp_name.Data.W;
+        curr_comp_name.Box.Top = curr_comp_name.Data.Y;
+        curr_comp_name.Box.Bottom = curr_comp_name.Box.Top + curr_comp_name.Data.H;
       end
     end
   end);
