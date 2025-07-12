@@ -531,7 +531,7 @@ _GUI_INIT_ELEMENTS =
   {
     Data = {X = 0.0, Y = -0.43, W = 0.0, H = 0.0},
     JustData = {H = HJ_CENTER, V = VJ_CENTER},
-    Text = "Player Squad",
+    Text = "Descendents",
     FuncDraw = _gui_draw_basic_text,
     FuncMaintain = nil,
     OnRes = nil
@@ -541,7 +541,7 @@ _GUI_INIT_ELEMENTS =
   {
     Data = {X = 0.0, Y = -0.43, W = 0.0, H = 0.0},
     JustData = {H = HJ_CENTER, V = VJ_CENTER},
-    Text = "Stupid Bots",
+    Text = "Opposing Forces",
     FuncDraw = _gui_draw_basic_text,
     FuncMaintain = nil,
     OnRes = nil
