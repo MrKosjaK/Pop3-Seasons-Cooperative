@@ -148,6 +148,7 @@ function add_ai_player_start_info(marker_idx, tribe_owner, spells, bldgs)
 end
 
 function spawn_players_initial_stuff();
+  local occupied_p_nums = {};
   for i = 1, #HUMAN_PLAYERS do
     local p_num = HUMAN_PLAYERS[i];
    -- local b_data = get_button_ptr(BTN_PLR1_POS + p_num);
@@ -175,6 +176,25 @@ function spawn_players_initial_stuff();
     G_PLR[p_num].ReincarnSiteCoord.Zpos = h_data._start_pos.Zpos;
     mark_reincarnation_site_mes(G_PLR[p_num].ReincarnSiteCoord, p_num, MARK);
     set_players_shaman_initial_command(G_PLR[p_num]);
+    
+    occupied_p_nums[#occupied_p_nums + 1] = p_num;
+  end
+  
+  for i,ai_data in ipairs(AI_INFO) do
+    occupied_p_nums[#occupied_p_nums + 1] = ai_data._forced_owner;
+  end
+  
+  local free_pn_slots = {}
+  
+  for i = 0, 7 do
+    for j,p_num in ipairs(occupied_p_nums) do
+      if (i == p_num) then
+        goto continue;
+      end
+    end
+    
+    free_pn_slots[#free_pn_slots + 1] = i;
+    ::continue::
   end
   
   for i = 1, AI_COUNT do
@@ -195,17 +215,13 @@ function spawn_players_initial_stuff();
     
     if (p_num == -1) then
       -- if found matching or defined to be random
-      p_num = 2;
-      local count = 8;
+      p_num = free_pn_slots[G_RANDOM(#free_pn_slots) + 1];
       
-      while (count > 0) do
-        count = count - 1;
-        
-        if (G_PLR[p_num].PlayerType == NO_PLAYER) then
+      for i,pn in ipairs(free_pn_slots) do
+        if (pn == p_num) then
+          table.remove(free_pn_slots, i);
           break;
         end
-        
-        p_num = p_num + 1;
       end
     end
     
