@@ -279,6 +279,14 @@ function link_stuff_to_gui()
     ai_diff_btn.DataPtr = GAME_LOBBY_SETTINGS[GLS_COMPUTER_DIFFICULTY][i + 1];
     ai_diff_btn.MaxValue = #AI_DIFFICULTY_STR_TABLE;
   end
+  
+  for i = 0, 1 do
+    local plr_pos_btn = get_elem_ptr(MY_ELEM_HUMAN_PLR1_INFO + i);
+    
+    plr_pos_btn.TextData = {"First", "Second"};
+    plr_pos_btn.DataPtr = GAME_LOBBY_SETTINGS[GLS_PLAYER_SETUP_IDX][i];
+    plr_pos_btn.MaxValue = 2;
+  end
 
   set_elem_btn_function(MY_ELEM_BTN_CHECK_IN, function()
     if (not i_am_checked_in()) then
@@ -462,6 +470,7 @@ function link_stuff_to_gui()
     
     local num_rows = math.min(HUMAN_PLAYERS_COUNT, 2);
     local num_icons = math.min(HUMAN_PLAYERS_COUNT, 2);
+    local num_pos = math.min(HUMAN_PLAYERS_COUNT, 2);
     
     for i,elem_entry in ipairs(menu.Elements) do
       elem_entry.isActive = false;
@@ -475,7 +484,12 @@ function link_stuff_to_gui()
         num_icons = num_icons - 1;
       end
       
-      if (elem_entry.ElemType ~= ELEM_TYPE_S_PANEL and elem_entry.ElemType ~= ELEM_TYPE_SPRITE) then
+      if (elem_entry.ElemType == ELEM_TYPE_MULTI_BUTTON and num_pos > 0) then
+        elem_entry.isActive = true;
+        num_pos = num_pos - 1;
+      end
+      
+      if (elem_entry.ElemType ~= ELEM_TYPE_S_PANEL and elem_entry.ElemType ~= ELEM_TYPE_SPRITE and elem_entry.ElemType ~= ELEM_TYPE_MULTI_BUTTON) then
         elem_entry.isActive = true;
       end
     end
@@ -521,8 +535,10 @@ function link_stuff_to_gui()
         
         local curr_icon = get_elem_ptr(MY_ELEM_SPR_HUMAN_PLR1 + i);
         local init_icon = _GUI_INIT_ELEMENTS[curr_icon.ElemID];
-        local sprite_t = get_sprite(init_icon.SpriteData.BankIdx, init_icon.SpriteData.SpriteIdx);
+        local sprite_t = get_sprite(ICON_DATA_BASE[HUMAN_PLAYERS[i + 1]][1], ICON_DATA_BASE[HUMAN_PLAYERS[i + 1]][2]);
         
+        curr_icon.DrawInfo.BankIdx = ICON_DATA_BASE[HUMAN_PLAYERS[i + 1]][1];
+        curr_icon.DrawInfo.SpriteIdx = ICON_DATA_BASE[HUMAN_PLAYERS[i + 1]][2];
         curr_icon.Data.X = math.floor((init_menu.Data.X - 0.15) * CURR_RES_WIDTH);
         curr_icon.Data.Y = math.floor((init_menu.Data.Y + v_offset + (space * i)) * menu.Data.H)
         curr_icon.Data.W = sprite_t.Width;
@@ -544,6 +560,58 @@ function link_stuff_to_gui()
         curr_icon.Box.Right = curr_icon.Box.Left + curr_icon.Data.W;
         curr_icon.Box.Top = curr_icon.Data.Y;
         curr_icon.Box.Bottom = curr_icon.Box.Top + curr_icon.Data.H;
+        
+        local curr_comp_name = get_elem_ptr(MY_ELEM_TXT_HPLR_NAME1 + i);
+        local curr_comp_init = _GUI_INIT_ELEMENTS[curr_comp_name.ElemID];
+        
+        curr_comp_name.Text = get_player_name(HUMAN_PLAYERS[i + 1], ntb(am_i_in_network_game()));
+        
+        curr_comp_name.Data.X = math.floor((init_menu.Data.X - 0.0625) * CURR_RES_WIDTH);
+        curr_comp_name.Data.Y = math.floor((init_menu.Data.Y + v_offset + (space * i)) * menu.Data.H)
+        curr_comp_name.Data.W = string_width(curr_comp_name.Text);
+        curr_comp_name.Data.H = CharHeight2();
+        
+        if (curr_comp_init.JustData.H == HJ_CENTER) then
+          curr_comp_name.Data.X =  curr_comp_name.Data.X - (curr_comp_name.Data.W >> 1);
+        elseif (curr_comp_init.JustData.H == HJ_RIGHT) then
+          curr_comp_name.Data.X =  curr_comp_name.Data.X - curr_comp_name.Data.W;
+        end
+        
+        if (curr_comp_init.JustData.V == VJ_CENTER) then
+          curr_comp_name.Data.Y = curr_comp_name.Data.Y - (curr_comp_name.Data.H >> 1);
+        elseif (curr_comp_init.JustData.V == VJ_BOTTOM) then
+          curr_comp_name.Data.Y = curr_comp_name.Data.Y - curr_comp_name.Data.H;
+        end
+        
+        curr_comp_name.Box.Left = curr_comp_name.Data.X;
+        curr_comp_name.Box.Right = curr_comp_name.Box.Left + curr_comp_name.Data.W;
+        curr_comp_name.Box.Top = curr_comp_name.Data.Y;
+        curr_comp_name.Box.Bottom = curr_comp_name.Box.Top + curr_comp_name.Data.H;
+        
+        local curr_m_button = get_elem_ptr(MY_ELEM_HUMAN_PLR1_INFO + i);
+        local init_m_button = _GUI_INIT_ELEMENTS[curr_m_button.ElemID];
+        
+        curr_m_button.Data.X = math.floor((init_menu.Data.X + 0.12) * CURR_RES_WIDTH);
+        curr_m_button.Data.Y = math.floor((init_menu.Data.Y + v_offset + (space * i)) * menu.Data.H)
+        curr_m_button.Data.W = math.floor(0.08 * CURR_RES_WIDTH);
+        curr_m_button.Data.H = math.floor(0.05 * menu.Data.H);
+        
+        if (init_m_button.JustData.H == HJ_CENTER) then
+          curr_m_button.Data.X =  curr_m_button.Data.X - (curr_m_button.Data.W >> 1);
+        elseif (init_m_button.JustData.H == HJ_RIGHT) then
+          curr_m_button.Data.X =  curr_m_button.Data.X - curr_m_button.Data.W;
+        end
+        
+        if (init_m_button.JustData.V == VJ_CENTER) then
+          curr_m_button.Data.Y = curr_m_button.Data.Y - (curr_m_button.Data.H >> 1);
+        elseif (init_m_button.JustData.V == VJ_BOTTOM) then
+          curr_m_button.Data.Y = curr_m_button.Data.Y - curr_m_button.Data.H;
+        end
+        
+        curr_m_button.Box.Left = curr_m_button.Data.X;
+        curr_m_button.Box.Right = curr_m_button.Box.Left + curr_m_button.Data.W;
+        curr_m_button.Box.Top = curr_m_button.Data.Y;
+        curr_m_button.Box.Bottom = curr_m_button.Box.Top + curr_m_button.Data.H;
       end
     end
   end);
@@ -853,14 +921,14 @@ function process_game_lobby_packets(pn, p_type, data)
   end
   
   -- buttons packets
-  if (p_type == PACKET_BTN_ARRAY_DEC) then
-    local b = get_button_ptr(tonumber(data));
-    b.CurrData[1] = math.min(math.max(b.CurrData[1] - 1, 1), b.MaxData);
+  if (p_type == PACKET_MULTI_BUTTON_RIGHT) then
+    local b = get_elem_ptr(tonumber(data));
+    b.DataPtr[1] = math.min(math.max(b.DataPtr[1] - 1, 1), b.MaxValue);
   end
   
-  if (p_type == PACKET_BTN_ARRAY_INCR) then
-    local b = get_button_ptr(tonumber(data));
-    b.CurrData[1] = math.min(math.max(b.CurrData[1] + 1, 1), b.MaxData);
+  if (p_type == PACKET_MULTI_BUTTON_LEFT) then
+    local b = get_elem_ptr(tonumber(data));
+    b.DataPtr[1] = math.min(math.max(b.DataPtr[1] + 1, 1), b.MaxValue);
   end
   
   if (p_type == PACKET_START_GAME) then

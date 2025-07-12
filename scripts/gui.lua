@@ -196,6 +196,12 @@ MY_ELEM_TXT_CPLR_NAME3 = 38;
 MY_ELEM_TXT_CPLR_NAME4 = 39;
 MY_ELEM_TXT_CPLR_NAME5 = 40;
 MY_ELEM_TXT_CPLR_NAME6 = 41;
+MY_ELEM_TXT_POSITION_LABEL = 42;
+MY_ELEM_TXT_HUMAN_TRIBE = 43;
+MY_ELEM_TXT_HPLR_NAME1 = 44;
+MY_ELEM_TXT_HPLR_NAME2 = 45;
+MY_ELEM_HUMAN_PLR1_INFO = 46;
+MY_ELEM_HUMAN_PLR2_INFO = 47;
 
 -- Element justification
 HJ_LEFT = 0;
@@ -425,13 +431,25 @@ end
 
 local function gui_multi_button_left_click(elem)
   if (elem.DataPtr ~= nil) then
-    elem.DataPtr[1] = math.min(math.max(elem.DataPtr[1] + 1, 1), elem.MaxValue);
+    if (am_i_in_network_game() ~= 0) then
+      if (i_am_game_master()) then
+        Send(PACKET_MULTI_BUTTON_LEFT, tostring(elem.ElemID));
+      end
+    else
+      elem.DataPtr[1] = math.min(math.max(elem.DataPtr[1] + 1, 1), elem.MaxValue);
+    end
   end
 end
 
 local function gui_multi_button_right_click(elem)
   if (elem.DataPtr ~= nil) then
-    elem.DataPtr[1] = math.min(math.max(elem.DataPtr[1] - 1, 1), elem.MaxValue);
+    if (am_i_in_network_game() ~= 0) then
+      if (i_am_game_master()) then
+        Send(PACKET_MULTI_BUTTON_RIGHT, tostring(elem.ElemID));
+      end
+    else
+      elem.DataPtr[1] = math.min(math.max(elem.DataPtr[1] - 1, 1), elem.MaxValue);
+    end
   end
 end
 
@@ -789,7 +807,7 @@ _GUI_INIT_ELEMENTS =
     FuncDraw = _gui_draw_basic_text,
     FuncMaintain = nil,
     OnRes = nil
-  }, -- 37
+  }, -- 36
   
   [MY_ELEM_TXT_CPLR_NAME2] =
   {
@@ -799,7 +817,7 @@ _GUI_INIT_ELEMENTS =
     FuncDraw = _gui_draw_basic_text,
     FuncMaintain = nil,
     OnRes = nil
-  }, -- 38
+  }, -- 37
   
   [MY_ELEM_TXT_CPLR_NAME3] =
   {
@@ -809,7 +827,7 @@ _GUI_INIT_ELEMENTS =
     FuncDraw = _gui_draw_basic_text,
     FuncMaintain = nil,
     OnRes = nil
-  }, -- 39
+  }, -- 38
   
   [MY_ELEM_TXT_CPLR_NAME4] =
   {
@@ -819,7 +837,7 @@ _GUI_INIT_ELEMENTS =
     FuncDraw = _gui_draw_basic_text,
     FuncMaintain = nil,
     OnRes = nil
-  }, -- 40
+  }, -- 39
   
   [MY_ELEM_TXT_CPLR_NAME5] =
   {
@@ -829,7 +847,7 @@ _GUI_INIT_ELEMENTS =
     FuncDraw = _gui_draw_basic_text,
     FuncMaintain = nil,
     OnRes = nil
-  }, -- 41
+  }, -- 40
   
   [MY_ELEM_TXT_CPLR_NAME6] =
   {
@@ -839,7 +857,73 @@ _GUI_INIT_ELEMENTS =
     FuncDraw = _gui_draw_basic_text,
     FuncMaintain = nil,
     OnRes = nil
+  }, -- 41
+  
+  [MY_ELEM_TXT_POSITION_LABEL] =
+  {
+    Data = {X = 0.295, Y = -0.38, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    Text = "Position",
+    FuncDraw = _gui_draw_basic_text,
+    FuncMaintain = nil,
+    OnRes = nil
   }, -- 42
+  
+  [MY_ELEM_TXT_HUMAN_TRIBE] =
+  {
+    Data = {X = -0.155, Y = -0.38, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    Text = "Acolyte Name",
+    FuncDraw = _gui_draw_basic_text,
+    FuncMaintain = nil,
+    OnRes = nil
+  }, -- 43
+  
+  [MY_ELEM_TXT_HPLR_NAME1] =
+  {
+    Data = {X = -0.155, Y = -0.38, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    Text = "",
+    FuncDraw = _gui_draw_basic_text,
+    FuncMaintain = nil,
+    OnRes = nil
+  }, -- 44
+  
+  [MY_ELEM_TXT_HPLR_NAME2] =
+  {
+    Data = {X = -0.155, Y = -0.38, W = 0.0, H = 0.0},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    Text = "",
+    FuncDraw = _gui_draw_basic_text,
+    FuncMaintain = nil,
+    OnRes = nil
+  }, -- 45
+  
+  [MY_ELEM_HUMAN_PLR1_INFO] =
+  {
+    Data = {X = 0.0, Y = 0.0, W = 0.1, H = 0.1},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    StyleData = {N = BOX_STYLE.DEFAULT2_N, H = BOX_STYLE.DEFAULT2_H, P = BOX_STYLE.DEFAULT2_P},
+    TextData = nil,
+    DataPtr = nil,
+    FuncDraw = _gui_draw_basic_multi_button,
+    FuncLeftClick = gui_multi_button_left_click,
+    FuncRightClick = gui_multi_button_right_click,
+    OnRes = nil,
+  }, -- 46
+  
+  [MY_ELEM_HUMAN_PLR2_INFO] =
+  {
+    Data = {X = 0.0, Y = 0.0, W = 0.1, H = 0.1},
+    JustData = {H = HJ_CENTER, V = VJ_CENTER},
+    StyleData = {N = BOX_STYLE.DEFAULT2_N, H = BOX_STYLE.DEFAULT2_H, P = BOX_STYLE.DEFAULT2_P},
+    TextData = nil,
+    DataPtr = nil,
+    FuncDraw = _gui_draw_basic_multi_button,
+    FuncLeftClick = gui_multi_button_left_click,
+    FuncRightClick = gui_multi_button_right_click,
+    OnRes = nil,
+  }, -- 47
 }
 
 _GUI_MENU_INIT_ELEMENTS =
@@ -861,6 +945,12 @@ _GUI_MENU_INIT_ELEMENTS =
     {ELEM_TYPE_S_PANEL, MY_ELEM_SP_HUMAN_PLR2},
     {ELEM_TYPE_SPRITE, MY_ELEM_SPR_HUMAN_PLR1},
     {ELEM_TYPE_SPRITE, MY_ELEM_SPR_HUMAN_PLR2},
+    {ELEM_TYPE_TEXT, MY_ELEM_TXT_POSITION_LABEL},
+    {ELEM_TYPE_TEXT, MY_ELEM_TXT_HUMAN_TRIBE},
+    {ELEM_TYPE_TEXT, MY_ELEM_TXT_HPLR_NAME1},
+    {ELEM_TYPE_TEXT, MY_ELEM_TXT_HPLR_NAME2},
+    {ELEM_TYPE_MULTI_BUTTON, MY_ELEM_HUMAN_PLR1_INFO},
+    {ELEM_TYPE_MULTI_BUTTON, MY_ELEM_HUMAN_PLR2_INFO},
   },
   
   [MY_MENU_COMP_PLAYERS] = 
