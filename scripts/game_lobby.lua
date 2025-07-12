@@ -429,7 +429,7 @@ function link_stuff_to_gui()
         if (AI_INFO[i + 1]._forced_owner ~= -1) then
           curr_comp_name.Text = TRIBE_NAME_DATA_BASE[AI_INFO[i + 1]._forced_owner];
         else
-          curr_comp_name.Text = "Unknown Tribe";
+          curr_comp_name.Text = "Randomized";
         end
         
         curr_comp_name.Data.X = math.floor((init_menu.Data.X - 0.06) * CURR_RES_WIDTH);
