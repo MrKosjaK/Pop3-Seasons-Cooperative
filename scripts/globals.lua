@@ -19,7 +19,7 @@ GM_STATE_END = 2;
 AI_EASY = 1;
 AI_MEDIUM = 2;
 AI_HARD = 3;
-AI_VERY_HARD = 4;
+AI_EXTREME = 4;
 
 -- weather
 WEATHER_NONE = 0;

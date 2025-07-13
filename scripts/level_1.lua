@@ -1,4 +1,5 @@
 include("common.lua");
+include("lvl1_ai_func.lua");
 --include("pop_helper.lua");
 --include("weather.lua");
 
@@ -29,56 +30,13 @@ function OnGameStart()
     --log(string.format("Owner: %i, Difficulty: %i", ai.Owner, ai.Difficulty));
     set_player_check_surround_slopes(G_PLR[ai.Owner], FALSE);
     reduce_computer_players_sprogging_time_by_percent(G_PLR[ai.Owner], 0 + ((ai.Difficulty - 1) * 15));
+    spawn_computer_addons(ai.Owner, ai.Difficulty);
   end);
   
   AI_PLR1_TRIBE = get_ai_player_info(1).Owner;
   AI_PLR1_DIFF = get_ai_player_info(1).Difficulty;
   AI_PLR2_TRIBE = get_ai_player_info(2).Owner;
   AI_PLR2_DIFF = get_ai_player_info(2).Difficulty;
-  
-  -- spawn extra small huts
-  if (AI_PLR1_DIFF >= AI_MEDIUM) then
-    create_building(M_BUILDING_TEPEE, AI_PLR1_TRIBE, 130, 52, G_RANDOM(4));
-    create_building(M_BUILDING_TEPEE, AI_PLR1_TRIBE, 176, 48, G_RANDOM(4));
-    create_building(M_BUILDING_TEPEE_2, AI_PLR1_TRIBE, 126, 82, G_RANDOM(4));
-    create_building(M_BUILDING_TEPEE_2, AI_PLR1_TRIBE, 134, 82, G_RANDOM(4));
-    create_building(M_BUILDING_WARRIOR_TRAIN, AI_PLR1_TRIBE, 156, 90, G_RANDOM(4));
-    create_building(M_BUILDING_SUPER_TRAIN, AI_PLR1_TRIBE, 136, 94, G_RANDOM(4));
-    -- spawn extra medium huts + warrior train
-    if (AI_PLR1_DIFF >= AI_HARD) then
-      create_building(M_BUILDING_TEPEE_3, AI_PLR1_TRIBE, 132, 44, G_RANDOM(4));
-      create_building(M_BUILDING_TEPEE_3, AI_PLR1_TRIBE, 124, 90, G_RANDOM(4));
-      create_building(M_BUILDING_TEPEE_2, AI_PLR1_TRIBE, 148, 90, G_RANDOM(4));
-      create_building(M_BUILDING_TEPEE_2, AI_PLR1_TRIBE, 152, 82, G_RANDOM(4));
-      -- spawn firewarrior train + defense + troops
-      if (AI_PLR1_DIFF == AI_VERY_HARD) then
-        create_building(M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, 192, 110, G_RANDOM(4));
-        create_building(M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, 180, 110, G_RANDOM(4));
-        create_building(M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, 180, 102, G_RANDOM(4));
-        create_building(M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, 154, 108, G_RANDOM(4));
-        create_building(M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, 168, 92, G_RANDOM(4));
-        create_building(M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, 170, 74, G_RANDOM(4));
-        create_building(M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, 128, 104, G_RANDOM(4));
-      end
-    end
-  end
-  
-  if (AI_PLR2_DIFF >= AI_MEDIUM) then
-    create_building(M_BUILDING_TEPEE_2, AI_PLR2_TRIBE, 44, 60, G_RANDOM(4));
-    create_building(M_BUILDING_TEPEE_2, AI_PLR2_TRIBE, 36, 60, G_RANDOM(4));
-    create_building(M_BUILDING_TEPEE, AI_PLR2_TRIBE, 44, 68, G_RANDOM(4));
-    create_building(M_BUILDING_TEPEE, AI_PLR2_TRIBE, 36, 68, G_RANDOM(4));
-    create_building(M_BUILDING_SUPER_TRAIN, AI_PLR2_TRIBE, 16, 82, G_RANDOM(4));
-    create_building(M_BUILDING_WARRIOR_TRAIN, AI_PLR2_TRIBE, 16, 94, G_RANDOM(4));
-    
-    if (AI_PLR2_DIFF >= AI_HARD) then
-      create_building(M_BUILDING_TEPEE_3, AI_PLR2_TRIBE, 34, 114, G_RANDOM(4));
-      create_building(M_BUILDING_TEPEE_3, AI_PLR2_TRIBE, 26, 114, G_RANDOM(4));
-      create_building(M_BUILDING_TEPEE_3, AI_PLR2_TRIBE, 26, 106, G_RANDOM(4));
-      create_building(M_BUILDING_TEPEE_3, AI_PLR2_TRIBE, 34, 106, G_RANDOM(4));
-      create_building(M_BUILDING_TEPEE_3, AI_PLR2_TRIBE, 42, 108, G_RANDOM(4));
-    end
-  end
   
   -- ai player 1 stuff
   ai_main_drum_tower_info(AI_PLR1_TRIBE, true, 122, 66);
