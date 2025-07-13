@@ -1,5 +1,9 @@
 -- misc assets
 
+function is_point_on_rectangle(rect, x, y)
+  return (x >= rect.Left and x <= rect.Right and y >= rect.Top and y <= rect.Bottom);
+end
+
 function EnableFlag(_f1, _f2)
     if (_f1 & _f2 == 0) then
         _f1 = _f1 | _f2
