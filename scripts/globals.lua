@@ -58,28 +58,10 @@ import(Module_Table);
 
 -- lib
 include("popscript.lua");
-include("lb_box.lua");
-include("lb_button.lua");
-include("lb_menu.lua");
-include("lb_textbox.lua");
-
--- style defines
-BTN_STYLE_BLUE = create_layout(879);
-BTN_STYLE_BLUE_H = create_layout(888);
-BTN_STYLE_BLUE_HP = create_layout(897);
-BTN_STYLE_GRAY = create_layout(510); -- normal
-BTN_STYLE_GRAY_H = create_layout(519); -- highlight
-BTN_STYLE_GRAY_HP = create_layout(528); -- pressed
-BTN_STYLE_DEFAULT = create_layout(794); -- normal
-BTN_STYLE_DEFAULT_H = create_layout(803); -- highlight
-BTN_STYLE_DEFAULT_HP = create_layout(812); -- pressed
-BTN_STYLE_DEFAULT2 = create_layout(821); -- normal
-BTN_STYLE_DEFAULT2_H = create_layout(830); -- highlight
-BTN_STYLE_DEFAULT2_HP = create_layout(839); -- pressed
-BTN_STYLE_DEFAULT3 = create_layout(848); -- normal
-BTN_STYLE_DEFAULT3_H = create_layout(857); -- highlight
-BTN_STYLE_DEFAULT3_HP = create_layout(866); -- pressed
-BTN_STYLE_LOG = create_layout(1794); -- For msg log
+--include("lb_box.lua");
+--include("lb_button.lua");
+--include("lb_menu.lua");
+--include("lb_textbox.lua");
 
 -- global pointers
 G_CONST = constants();
