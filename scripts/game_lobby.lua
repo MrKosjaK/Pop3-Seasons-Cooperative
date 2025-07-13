@@ -1,6 +1,6 @@
 -- game lobby stuff
 
-local AI_DIFFICULTY_STR_TABLE = {"Easy", "Normal", "Hard", "Extreme"};
+local AI_DIFFICULTY_STR_TABLE = {"Easy", "Medium", "Hard", "Extreme"};
 
 local ICON_DATA_BASE = {
   [0] = {1, 6883},
