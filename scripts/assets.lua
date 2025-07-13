@@ -341,3 +341,18 @@ end
 function thing_has_flag(thing, flag)
 	return thing.Flags2 & TF2_THING_IN_AIR ~= 0
 end
+
+-- utils for creating things
+-- ACCEPTABLE ORIENTS ARE: 0, 1, 2, 3
+function create_building(model, owner, x, z, orient)
+  CREATE_THING_WITH_PARAMS5(T_BUILDING, model, owner, MAP_XZ_2_WORLD_XYZ(x, z), orient, 0, S_BUILDING_STAND, -1, 0);
+end
+
+function create_people(model, owner, x, z, amount)
+  local num = math.max(1, amount);
+  local _c3d_pos = MAP_XZ_2_WORLD_XYZ(x, z);
+  
+  for i = 1, num do
+    createThing(T_PERSON, model, owner, _c3d_pos, false, false);
+  end
+end
