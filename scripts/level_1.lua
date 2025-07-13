@@ -38,28 +38,45 @@ function OnGameStart()
   
   -- spawn extra small huts
   if (AI_PLR1_DIFF >= AI_MEDIUM) then
-    CREATE_THING_WITH_PARAMS5(T_BUILDING, M_BUILDING_TEPEE, AI_PLR1_TRIBE, MAP_XZ_2_WORLD_XYZ(130, 52), math.floor(G_RANDOM(2048) / 512), 0, S_BUILDING_STAND, -1, 0);
-    CREATE_THING_WITH_PARAMS5(T_BUILDING, M_BUILDING_TEPEE, AI_PLR1_TRIBE, MAP_XZ_2_WORLD_XYZ(176, 48), math.floor(G_RANDOM(2048) / 512), 0, S_BUILDING_STAND, -1, 0);
-    CREATE_THING_WITH_PARAMS5(T_BUILDING, M_BUILDING_TEPEE, AI_PLR1_TRIBE, MAP_XZ_2_WORLD_XYZ(126, 82), math.floor(G_RANDOM(2048) / 512), 0, S_BUILDING_STAND, -1, 0);
-    CREATE_THING_WITH_PARAMS5(T_BUILDING, M_BUILDING_TEPEE, AI_PLR1_TRIBE, MAP_XZ_2_WORLD_XYZ(134, 82), math.floor(G_RANDOM(2048) / 512), 0, S_BUILDING_STAND, -1, 0);
+    create_building(M_BUILDING_TEPEE, AI_PLR1_TRIBE, 130, 52, G_RANDOM(4));
+    create_building(M_BUILDING_TEPEE, AI_PLR1_TRIBE, 176, 48, G_RANDOM(4));
+    create_building(M_BUILDING_TEPEE_2, AI_PLR1_TRIBE, 126, 82, G_RANDOM(4));
+    create_building(M_BUILDING_TEPEE_2, AI_PLR1_TRIBE, 134, 82, G_RANDOM(4));
+    create_building(M_BUILDING_WARRIOR_TRAIN, AI_PLR1_TRIBE, 156, 90, G_RANDOM(4));
+    create_building(M_BUILDING_SUPER_TRAIN, AI_PLR1_TRIBE, 136, 94, G_RANDOM(4));
     -- spawn extra medium huts + warrior train
     if (AI_PLR1_DIFF >= AI_HARD) then
-      CREATE_THING_WITH_PARAMS5(T_BUILDING, M_BUILDING_TEPEE_2, AI_PLR1_TRIBE, MAP_XZ_2_WORLD_XYZ(132, 44), math.floor(G_RANDOM(2048) / 512), 0, S_BUILDING_STAND, -1, 0);
-      CREATE_THING_WITH_PARAMS5(T_BUILDING, M_BUILDING_TEPEE_2, AI_PLR1_TRIBE, MAP_XZ_2_WORLD_XYZ(124, 90), math.floor(G_RANDOM(2048) / 512), 0, S_BUILDING_STAND, -1, 0);
-      CREATE_THING_WITH_PARAMS5(T_BUILDING, M_BUILDING_TEPEE_2, AI_PLR1_TRIBE, MAP_XZ_2_WORLD_XYZ(148, 90), math.floor(G_RANDOM(2048) / 512), 0, S_BUILDING_STAND, -1, 0);
-      CREATE_THING_WITH_PARAMS5(T_BUILDING, M_BUILDING_WARRIOR_TRAIN, AI_PLR1_TRIBE, MAP_XZ_2_WORLD_XYZ(156, 90), math.floor(G_RANDOM(2048) / 512), 0, S_BUILDING_STAND, -1, 0);
-      CREATE_THING_WITH_PARAMS5(T_BUILDING, M_BUILDING_TEPEE_2, AI_PLR1_TRIBE, MAP_XZ_2_WORLD_XYZ(152, 82), math.floor(G_RANDOM(2048) / 512), 0, S_BUILDING_STAND, -1, 0);
+      create_building(M_BUILDING_TEPEE_3, AI_PLR1_TRIBE, 132, 44, G_RANDOM(4));
+      create_building(M_BUILDING_TEPEE_3, AI_PLR1_TRIBE, 124, 90, G_RANDOM(4));
+      create_building(M_BUILDING_TEPEE_2, AI_PLR1_TRIBE, 148, 90, G_RANDOM(4));
+      create_building(M_BUILDING_TEPEE_2, AI_PLR1_TRIBE, 152, 82, G_RANDOM(4));
       -- spawn firewarrior train + defense + troops
       if (AI_PLR1_DIFF == AI_VERY_HARD) then
-        CREATE_THING_WITH_PARAMS5(T_BUILDING, M_BUILDING_SUPER_TRAIN, AI_PLR1_TRIBE, MAP_XZ_2_WORLD_XYZ(136, 94), math.floor(G_RANDOM(2048) / 512), 0, S_BUILDING_STAND, -1, 0);
-        CREATE_THING_WITH_PARAMS5(T_BUILDING, M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, MAP_XZ_2_WORLD_XYZ(192, 110), math.floor(G_RANDOM(2048) / 512), 0, S_BUILDING_STAND, -1, 0);
-        CREATE_THING_WITH_PARAMS5(T_BUILDING, M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, MAP_XZ_2_WORLD_XYZ(180, 110), math.floor(G_RANDOM(2048) / 512), 0, S_BUILDING_STAND, -1, 0);
-        CREATE_THING_WITH_PARAMS5(T_BUILDING, M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, MAP_XZ_2_WORLD_XYZ(180, 102), math.floor(G_RANDOM(2048) / 512), 0, S_BUILDING_STAND, -1, 0);
-        CREATE_THING_WITH_PARAMS5(T_BUILDING, M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, MAP_XZ_2_WORLD_XYZ(154, 108), math.floor(G_RANDOM(2048) / 512), 0, S_BUILDING_STAND, -1, 0);
-        CREATE_THING_WITH_PARAMS5(T_BUILDING, M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, MAP_XZ_2_WORLD_XYZ(168, 92), math.floor(G_RANDOM(2048) / 512), 0, S_BUILDING_STAND, -1, 0);
-        CREATE_THING_WITH_PARAMS5(T_BUILDING, M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, MAP_XZ_2_WORLD_XYZ(170, 74), math.floor(G_RANDOM(2048) / 512), 0, S_BUILDING_STAND, -1, 0);
-        CREATE_THING_WITH_PARAMS5(T_BUILDING, M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, MAP_XZ_2_WORLD_XYZ(128, 104), math.floor(G_RANDOM(2048) / 512), 0, S_BUILDING_STAND, -1, 0);
+        create_building(M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, 192, 110, G_RANDOM(4));
+        create_building(M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, 180, 110, G_RANDOM(4));
+        create_building(M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, 180, 102, G_RANDOM(4));
+        create_building(M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, 154, 108, G_RANDOM(4));
+        create_building(M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, 168, 92, G_RANDOM(4));
+        create_building(M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, 170, 74, G_RANDOM(4));
+        create_building(M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, 128, 104, G_RANDOM(4));
       end
+    end
+  end
+  
+  if (AI_PLR2_DIFF >= AI_MEDIUM) then
+    create_building(M_BUILDING_TEPEE_2, AI_PLR2_TRIBE, 44, 60, G_RANDOM(4));
+    create_building(M_BUILDING_TEPEE_2, AI_PLR2_TRIBE, 36, 60, G_RANDOM(4));
+    create_building(M_BUILDING_TEPEE, AI_PLR2_TRIBE, 44, 68, G_RANDOM(4));
+    create_building(M_BUILDING_TEPEE, AI_PLR2_TRIBE, 36, 68, G_RANDOM(4));
+    create_building(M_BUILDING_SUPER_TRAIN, AI_PLR2_TRIBE, 16, 82, G_RANDOM(4));
+    create_building(M_BUILDING_WARRIOR_TRAIN, AI_PLR2_TRIBE, 16, 94, G_RANDOM(4));
+    
+    if (AI_PLR2_DIFF >= AI_HARD) then
+      create_building(M_BUILDING_TEPEE_3, AI_PLR2_TRIBE, 34, 114, G_RANDOM(4));
+      create_building(M_BUILDING_TEPEE_3, AI_PLR2_TRIBE, 26, 114, G_RANDOM(4));
+      create_building(M_BUILDING_TEPEE_3, AI_PLR2_TRIBE, 26, 106, G_RANDOM(4));
+      create_building(M_BUILDING_TEPEE_3, AI_PLR2_TRIBE, 34, 106, G_RANDOM(4));
+      create_building(M_BUILDING_TEPEE_3, AI_PLR2_TRIBE, 42, 108, G_RANDOM(4));
     end
   end
   
@@ -74,7 +91,14 @@ function OnGameStart()
   ai_set_training_huts(AI_PLR1_TRIBE, 1, 0, 1, 0);
   ai_set_training_people(AI_PLR1_TRIBE, true, 10, 0, 12, 0, 0 + AI_PLR1_DIFF);
   ai_set_populating_info(AI_PLR1_TRIBE, true, true);
+  
+  -- ai player 1 spells
   ai_enable_buckets(AI_PLR1_TRIBE);
+  ai_set_spell_bucket_count(AI_PLR1_TRIBE, M_SPELL_BLAST, 4);
+  ai_set_spell_bucket_count(AI_PLR1_TRIBE, M_SPELL_CONVERT_WILD, 1);
+  ai_set_spell_bucket_count(AI_PLR1_TRIBE, M_SPELL_INSECT_PLAGUE, 8);
+  ai_set_spell_bucket_count(AI_PLR1_TRIBE, M_SPELL_LIGHTNING_BOLT, 10);
+  ai_set_spell_bucket_count(AI_PLR1_TRIBE, M_SPELL_WHIRLWIND, 16);
   
   -- ai player 2 stuff
   ai_main_drum_tower_info(AI_PLR2_TRIBE, true, 36, 88);
@@ -87,7 +111,14 @@ function OnGameStart()
   ai_set_training_huts(AI_PLR2_TRIBE, 1, 0, 1, 0);
   ai_set_training_people(AI_PLR2_TRIBE, true, 10, 0, 12, 0, 0 + AI_PLR2_DIFF);
   ai_set_populating_info(AI_PLR2_TRIBE, true, true);
+  
+  -- ai player 2 spells
   ai_enable_buckets(AI_PLR2_TRIBE);
+  ai_set_spell_bucket_count(AI_PLR2_TRIBE, M_SPELL_BLAST, 4);
+  ai_set_spell_bucket_count(AI_PLR2_TRIBE, M_SPELL_CONVERT_WILD, 1);
+  ai_set_spell_bucket_count(AI_PLR2_TRIBE, M_SPELL_INSECT_PLAGUE, 8);
+  ai_set_spell_bucket_count(AI_PLR2_TRIBE, M_SPELL_LIGHTNING_BOLT, 10);
+  ai_set_spell_bucket_count(AI_PLR2_TRIBE, M_SPELL_WHIRLWIND, 16);
 end
 
 function ScrOnLevelInit(level_id)
