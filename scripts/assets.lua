@@ -375,6 +375,7 @@ function create_random_plant_at_marker(marker, season)
 	centre_coord3d_on_block(p.Pos.D3)
 	p.DrawInfo.DrawNum = spr
 	p.DrawInfo.Alpha = -16
+	-- add plant shadow i forgot flag name
 end
 
 function plants_at_markers(start, ending, season)
