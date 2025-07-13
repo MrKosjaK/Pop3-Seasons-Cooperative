@@ -92,6 +92,7 @@ COPY "%SCR_PATH%\game_state.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\level_1.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\level_2.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\gui.lua" "%WORK_DIR%\scripts"
+COPY "%SCR_PATH%\popscript.lua" "%WORK_DIR%\scripts"
 
 :: Sound
 ECHO.
