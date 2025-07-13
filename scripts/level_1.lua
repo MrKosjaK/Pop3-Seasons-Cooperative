@@ -1,6 +1,6 @@
 include("common.lua");
-include("pop_helper.lua");
-include("weather.lua");
+--include("pop_helper.lua");
+--include("weather.lua");
 
 -- level 1 specific stuff
 set_level_human_count(2);
@@ -26,7 +26,9 @@ end
 -- triggers after GAME MASTER starts game.
 function OnGameStart()
   process_all_ai_info(function(ai)
-    log(string.format("Owner: %i, Difficulty: %i", ai.Owner, ai.Difficulty));
+    --log(string.format("Owner: %i, Difficulty: %i", ai.Owner, ai.Difficulty));
+    set_player_check_surround_slopes(G_PLR[ai.Owner], FALSE);
+    reduce_computer_players_sprogging_time_by_percent(G_PLR[ai.Owner], 0 + ((ai.Difficulty - 1) * 15));
   end);
   
   AI_PLR1_TRIBE = get_ai_player_info(1).Owner;
@@ -56,20 +58,45 @@ function OnGameStart()
         CREATE_THING_WITH_PARAMS5(T_BUILDING, M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, MAP_XZ_2_WORLD_XYZ(154, 108), math.floor(G_RANDOM(2048) / 512), 0, S_BUILDING_STAND, -1, 0);
         CREATE_THING_WITH_PARAMS5(T_BUILDING, M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, MAP_XZ_2_WORLD_XYZ(168, 92), math.floor(G_RANDOM(2048) / 512), 0, S_BUILDING_STAND, -1, 0);
         CREATE_THING_WITH_PARAMS5(T_BUILDING, M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, MAP_XZ_2_WORLD_XYZ(170, 74), math.floor(G_RANDOM(2048) / 512), 0, S_BUILDING_STAND, -1, 0);
-        CREATE_THING_WITH_PARAMS5(T_BUILDING, M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, MAP_XZ_2_WORLD_XYZ(122, 66), math.floor(G_RANDOM(2048) / 512), 0, S_BUILDING_STAND, -1, 0);
         CREATE_THING_WITH_PARAMS5(T_BUILDING, M_BUILDING_DRUM_TOWER, AI_PLR1_TRIBE, MAP_XZ_2_WORLD_XYZ(128, 104), math.floor(G_RANDOM(2048) / 512), 0, S_BUILDING_STAND, -1, 0);
       end
     end
   end
+  
+  -- ai player 1 stuff
+  ai_main_drum_tower_info(AI_PLR1_TRIBE, true, 122, 66);
+  ai_set_shaman_info(AI_PLR1_TRIBE, 168, 74, true, 56 - ((AI_PLR1_DIFF - 1) * 16), 12);
+  ai_set_converting_info(AI_PLR1_TRIBE, true, true, 24);
+  ai_set_defensive_info(AI_PLR1_TRIBE, true, true, true, true, 3, 3, 1);
+  ai_set_fetch_info(AI_PLR1_TRIBE, true, false, false, true);
+  ai_set_attack_info(AI_PLR1_TRIBE, true, 1 + (AI_PLR1_DIFF), 30 - ((AI_PLR1_DIFF - 1) * 10), 12);
+  ai_set_bldg_info(AI_PLR1_TRIBE, true, 15 + (AI_PLR1_DIFF * 15), 1 + ((AI_PLR1_DIFF - 1) * 2));
+  ai_set_training_huts(AI_PLR1_TRIBE, 1, 0, 1, 0);
+  ai_set_training_people(AI_PLR1_TRIBE, true, 10, 0, 12, 0, 0 + AI_PLR1_DIFF);
+  ai_set_populating_info(AI_PLR1_TRIBE, true, true);
+  ai_enable_buckets(AI_PLR1_TRIBE);
+  
+  -- ai player 2 stuff
+  ai_main_drum_tower_info(AI_PLR2_TRIBE, true, 36, 88);
+  ai_set_shaman_info(AI_PLR2_TRIBE, 22, 110, true, 56 - ((AI_PLR2_DIFF - 1) * 16), 12);
+  ai_set_converting_info(AI_PLR2_TRIBE, true, true, 24);
+  ai_set_defensive_info(AI_PLR2_TRIBE, true, true, true, true, 3, 3, 1);
+  ai_set_fetch_info(AI_PLR2_TRIBE, true, false, false, true);
+  ai_set_attack_info(AI_PLR2_TRIBE, true, 1 + (AI_PLR2_DIFF), 30 - ((AI_PLR2_DIFF - 1) * 10), 12);
+  ai_set_bldg_info(AI_PLR2_TRIBE, true, 20 + (AI_PLR2_DIFF * 15), 1 + ((AI_PLR2_DIFF - 1) * 2));
+  ai_set_training_huts(AI_PLR2_TRIBE, 1, 0, 1, 0);
+  ai_set_training_people(AI_PLR2_TRIBE, true, 10, 0, 12, 0, 0 + AI_PLR2_DIFF);
+  ai_set_populating_info(AI_PLR2_TRIBE, true, true);
+  ai_enable_buckets(AI_PLR2_TRIBE);
 end
 
 function ScrOnLevelInit(level_id)
-  calculate_population_scores();
+  --calculate_population_scores();
 end
 
 function ScrOnTurn(curr_turn)
   --process_weather(curr_turn);
-  calculate_population_scores();
+  --calculate_population_scores();
 end
 
 function ScrOnCreateThing(t_thing)
@@ -77,5 +104,5 @@ function ScrOnCreateThing(t_thing)
 end
 
 function ScrOnFrame(w, h, guiW)
-  draw_population_scores();
+  --draw_population_scores();
 end

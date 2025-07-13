@@ -57,6 +57,7 @@ import(Module_System);
 import(Module_Table);
 
 -- lib
+include("popscript.lua");
 include("lb_box.lua");
 include("lb_button.lua");
 include("lb_menu.lua");
@@ -113,4 +114,18 @@ end
 
 function set_level_able_to_lose()
   G_NSI.GameParams.Flags3 = G_NSI.GameParams.Flags3 & ~GPF3_NO_GAME_OVER_PROCESS;
+end
+
+function set_player_check_surround_slopes(t_player, toggle)
+  t_player.LimitsBuilding.CheckForSurroundSlopes = toggle;
+end
+
+function reduce_computer_players_sprogging_time_by_percent(t_player, percent)
+  local one_percent_1 = math.floor(t_player.LimitsBuilding.SproggingTime[M_BUILDING_TEPEE] / 100);
+  local one_percent_2 = math.floor(t_player.LimitsBuilding.SproggingTime[M_BUILDING_TEPEE_2] / 100);
+  local one_percent_3 = math.floor(t_player.LimitsBuilding.SproggingTime[M_BUILDING_TEPEE_3] / 100);
+
+  t_player.LimitsBuilding.SproggingTime[M_BUILDING_TEPEE] = t_player.LimitsBuilding.SproggingTime[M_BUILDING_TEPEE] - (one_percent_1 * percent);
+  t_player.LimitsBuilding.SproggingTime[M_BUILDING_TEPEE_2] = t_player.LimitsBuilding.SproggingTime[M_BUILDING_TEPEE_2] - (one_percent_2 * percent);
+  t_player.LimitsBuilding.SproggingTime[M_BUILDING_TEPEE_3] = t_player.LimitsBuilding.SproggingTime[M_BUILDING_TEPEE_3] - (one_percent_3 * percent);
 end
