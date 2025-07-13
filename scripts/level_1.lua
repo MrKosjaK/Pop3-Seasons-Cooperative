@@ -87,7 +87,7 @@ function OnGameStart()
   ai_set_defensive_info(AI_PLR1_TRIBE, true, true, true, true, 3, 3, 1);
   ai_set_fetch_info(AI_PLR1_TRIBE, true, false, false, true);
   ai_set_attack_info(AI_PLR1_TRIBE, true, 1 + (AI_PLR1_DIFF), 30 - ((AI_PLR1_DIFF - 1) * 10), 12);
-  ai_set_bldg_info(AI_PLR1_TRIBE, true, 15 + (AI_PLR1_DIFF * 15), 1 + ((AI_PLR1_DIFF - 1) * 2));
+  ai_set_bldg_info(AI_PLR1_TRIBE, true, 15 + (AI_PLR1_DIFF * 25), 2 + ((AI_PLR1_DIFF - 1) * 2));
   ai_set_training_huts(AI_PLR1_TRIBE, 1, 0, 1, 0);
   ai_set_training_people(AI_PLR1_TRIBE, true, 10, 0, 12, 0, 0 + AI_PLR1_DIFF);
   ai_set_populating_info(AI_PLR1_TRIBE, true, true);
@@ -107,7 +107,7 @@ function OnGameStart()
   ai_set_defensive_info(AI_PLR2_TRIBE, true, true, true, true, 3, 3, 1);
   ai_set_fetch_info(AI_PLR2_TRIBE, true, false, false, true);
   ai_set_attack_info(AI_PLR2_TRIBE, true, 1 + (AI_PLR2_DIFF), 30 - ((AI_PLR2_DIFF - 1) * 10), 12);
-  ai_set_bldg_info(AI_PLR2_TRIBE, true, 20 + (AI_PLR2_DIFF * 15), 1 + ((AI_PLR2_DIFF - 1) * 2));
+  ai_set_bldg_info(AI_PLR2_TRIBE, true, 20 + (AI_PLR2_DIFF * 25), 2 + ((AI_PLR2_DIFF - 1) * 2));
   ai_set_training_huts(AI_PLR2_TRIBE, 1, 0, 1, 0);
   ai_set_training_people(AI_PLR2_TRIBE, true, 10, 0, 12, 0, 0 + AI_PLR2_DIFF);
   ai_set_populating_info(AI_PLR2_TRIBE, true, true);
