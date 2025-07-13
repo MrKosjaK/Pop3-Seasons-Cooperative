@@ -46,12 +46,12 @@ function pause_if_unpaused()
 	end
 end
 
-function turn()
+function get_turn()
 	return G_SI.Counts.ProcessThings
 end
 
 function LOG(msg)
-	log_msg(8, "turn: " .. turn() .. " |   " .. tostring(msg))
+	log_msg(8, "turn: " .. turn .. " |   " .. tostring(msg))
 end
 
 function btn(bool)

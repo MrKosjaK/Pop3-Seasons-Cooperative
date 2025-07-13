@@ -83,7 +83,7 @@ function ScrOnLevelInit(level_id)
   --calculate_population_scores();
 end
 
-function ScrOnTurn(curr_turn)
+function ScrOnTurn()
   --process_weather(curr_turn);
   --calculate_population_scores();
 end

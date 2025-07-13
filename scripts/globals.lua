@@ -81,6 +81,10 @@ G_PLR = {
   getPlayer(7)
 };
 
+-- global vars
+
+turn = 0
+
 -- global function
 function set_level_unable_to_complete()
   G_NSI.GameParams.Flags2 = G_NSI.GameParams.Flags2 | GPF2_GAME_NO_WIN;
@@ -103,11 +107,12 @@ function set_player_check_surround_slopes(t_player, toggle)
 end
 
 function reduce_computer_players_sprogging_time_by_percent(t_player, percent)
-  local one_percent_1 = math.floor(t_player.LimitsBuilding.SproggingTime[M_BUILDING_TEPEE] / 100);
-  local one_percent_2 = math.floor(t_player.LimitsBuilding.SproggingTime[M_BUILDING_TEPEE_2] / 100);
-  local one_percent_3 = math.floor(t_player.LimitsBuilding.SproggingTime[M_BUILDING_TEPEE_3] / 100);
+  local p_sprog_time = t_player.LimitsBuilding.SproggingTime
+  local one_percent_1 = math.floor(p_sprog_time[M_BUILDING_TEPEE] / 100);
+  local one_percent_2 = math.floor(p_sprog_time[M_BUILDING_TEPEE_2] / 100);
+  local one_percent_3 = math.floor(p_sprog_time[M_BUILDING_TEPEE_3] / 100);
 
-  t_player.LimitsBuilding.SproggingTime[M_BUILDING_TEPEE] = t_player.LimitsBuilding.SproggingTime[M_BUILDING_TEPEE] - (one_percent_1 * percent);
-  t_player.LimitsBuilding.SproggingTime[M_BUILDING_TEPEE_2] = t_player.LimitsBuilding.SproggingTime[M_BUILDING_TEPEE_2] - (one_percent_2 * percent);
-  t_player.LimitsBuilding.SproggingTime[M_BUILDING_TEPEE_3] = t_player.LimitsBuilding.SproggingTime[M_BUILDING_TEPEE_3] - (one_percent_3 * percent);
+  p_sprog_time[M_BUILDING_TEPEE] = p_sprog_time[M_BUILDING_TEPEE] - (one_percent_1 * percent);
+  p_sprog_time[M_BUILDING_TEPEE_2] = p_sprog_time[M_BUILDING_TEPEE_2] - (one_percent_2 * percent);
+  p_sprog_time[M_BUILDING_TEPEE_3] = p_sprog_time[M_BUILDING_TEPEE_3] - (one_percent_3 * percent);
 end
