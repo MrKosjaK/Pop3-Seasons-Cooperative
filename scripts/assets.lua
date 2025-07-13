@@ -360,3 +360,25 @@ function create_people(model, owner, x, z, amount)
     createThing(T_PERSON, model, owner, _c3d_pos, false, false);
   end
 end
+
+
+local plants_per_season = {
+	[SEASON_WINTER] = function() return rndb(1775, 1784) end,
+	[SEASON_SPRING] = function() return 1 end,
+	[SEASON_SUMMER] = function() return 1 end,
+	[SEASON_AUTUMN] = function() return 1 end
+}
+
+function create_random_plant_at_marker(marker, season)
+	local spr = plants_per_season[season]()
+	local p = createThing(T_SCENERY, M_SCENERY_PLANT_1, TRIBE_NEUTRAL, marker_to_coord3d(marker), false, false)
+	centre_coord3d_on_block(p.Pos.D3)
+	p.DrawInfo.DrawNum = spr
+	p.DrawInfo.Alpha = -16
+end
+
+function plants_at_markers(start, ending, season)
+	for marker = start, ending do
+		create_random_plant_at_marker(marker, season)
+	end
+end

@@ -11,7 +11,7 @@ add_ai_player_start_info(142, 4, {M_SPELL_BLAST, M_SPELL_CONVERT_WILD, M_SPELL_I
 
 
 function ScrOnLevelInit(level_id)
-	
+	plants_at_markers(143, 166, SEASON_WINTER)
 end
 
 
