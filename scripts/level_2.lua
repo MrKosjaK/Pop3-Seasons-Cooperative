@@ -1,6 +1,4 @@
 include("common.lua");
---include("pop_helper.lua");
---include("weather.lua");
 
 set_level_human_count(2);
 set_level_computer_count(2);
