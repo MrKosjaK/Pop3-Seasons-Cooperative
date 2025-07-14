@@ -63,13 +63,6 @@ import(Module_String);
 import(Module_System);
 import(Module_Table);
 
--- lib
-include("popscript.lua");
---include("lb_box.lua");
---include("lb_button.lua");
---include("lb_menu.lua");
---include("lb_textbox.lua");
-
 -- global pointers
 G_CONST = constants();
 G_SPELL_CONST = spells_type_info();
@@ -90,7 +83,7 @@ G_PLR = {
 
 -- global vars
 
-turn = 0
+G_SCRIPT_TURN = 0
 
 -- global function
 function set_level_unable_to_complete()

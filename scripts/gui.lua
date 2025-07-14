@@ -121,7 +121,7 @@ BOX_STYLE = {
 
 local NUM_STYLES = 41;
 
-_BOX_LAYOUTS = {};
+local _BOX_LAYOUTS = {};
 
 local function create_all_layouts()
   
@@ -141,7 +141,6 @@ local function create_all_layouts()
     _BOX_LAYOUTS[i] = BorderLayout.new();
     _apply_sprites(_BOX_LAYOUTS[i], BOX_STYLE_SPRITE_INDEX[i]);
   end
-  log("Registered layouts");
 end
 
 create_all_layouts(); -- registers layouts
@@ -222,10 +221,6 @@ local function gui_auto_scale_menu(menu)
   local sc_w = ScreenWidth();
   local sc_h = ScreenHeight();
   
-  --log(string.format("Width: %i, Height: %i", sc_w, sc_h));
-  
-  --log("Auto scale in process");
-  
   local init_menu = _GUI_INIT_MENUS[menu.ID];
   
   menu.Data.X = FLOOR(init_menu.Data.X * sc_w);
@@ -276,8 +271,6 @@ local function gui_auto_scale_menu(menu)
       elem.Box.Bottom = elem.Box.Top + elem.Data.H;
     end
   end
-  
-  log("Auto scaled menu elements");
 end
 
 local function _gui_draw_basic_background(_elem)
@@ -1088,8 +1081,6 @@ local function _create_elem_button(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh
   -- add element to menu
   local actual_menu_elements = _GUI_MENUS[_menu_ptr.ID].Elements;
   actual_menu_elements[#actual_menu_elements + 1] = _GUI_ELEMENTS[_elem_ptr_idx];
-  
-  log("Created button element");
 end
 
 local function _create_elem_multi_button(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh, _mx, _my, _mw, _mh)
@@ -1144,8 +1135,6 @@ local function _create_elem_multi_button(_menu_ptr, _elem_ptr, _elem_ptr_idx, _s
   -- add element to menu
   local actual_menu_elements = _GUI_MENUS[_menu_ptr.ID].Elements;
   actual_menu_elements[#actual_menu_elements + 1] = _GUI_ELEMENTS[_elem_ptr_idx];
-  
-  log("Created multi button element");
 end
 
 local function _create_elem_text(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh, _mx, _my, _mw, _mh)
@@ -1194,8 +1183,6 @@ local function _create_elem_text(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh, 
   -- add element to menu
   local actual_menu_elements = _GUI_MENUS[_menu_ptr.ID].Elements;
   actual_menu_elements[#actual_menu_elements + 1] = _GUI_ELEMENTS[_elem_ptr_idx];
-  
-  log("Created text element");
 end
 
 local function _create_elem_panel(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh, _mx, _my, _mw, _mh)
@@ -1239,8 +1226,6 @@ local function _create_elem_panel(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh,
   -- add element to menu
   local actual_menu_elements = _GUI_MENUS[_menu_ptr.ID].Elements;
   actual_menu_elements[#actual_menu_elements + 1] = _GUI_ELEMENTS[_elem_ptr_idx];
-  
-  log("Created panel element");
 end
 
 local function _create_elem_sprite(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh, _mx, _my, _mw, _mh)
@@ -1296,8 +1281,6 @@ local function _create_elem_sprite(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh
   -- add element to menu
   local actual_menu_elements = _GUI_MENUS[_menu_ptr.ID].Elements;
   actual_menu_elements[#actual_menu_elements + 1] = _GUI_ELEMENTS[_elem_ptr_idx];
-  
-  log("Created sprite element");
 end
 
 local function _create_elem_s_panel(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _sh, _mx, _my, _mw, _mh)
@@ -1341,8 +1324,6 @@ local function _create_elem_s_panel(_menu_ptr, _elem_ptr, _elem_ptr_idx, _sw, _s
   -- add element to menu
   local actual_menu_elements = _GUI_MENUS[_menu_ptr.ID].Elements;
   actual_menu_elements[#actual_menu_elements + 1] = _GUI_ELEMENTS[_elem_ptr_idx];
-  
-  log("Created simple panel element");
 end
 
 function gui_close_menu(_menu_id)
@@ -1383,8 +1364,6 @@ function gui_init_all_menus()
       OnRes = menu.OnRes,
       isActive = false
     };
-    
-    log("Created Menu");
     
     -- now go through elements that menu consists of and see if they need to be created/binded
     local init_menu_elems = _GUI_MENU_INIT_ELEMENTS[menu.ID];
@@ -1469,7 +1448,7 @@ function process_gui_mouse_inputs(key, is_down, x, y)
                 elem.Pressed = true;
               else
                 elem.Pressed = false;
-                --log("clicked");
+                
                 if (elem.FuncLeftClick ~= nil and key == LB_KEY_MOUSE0) then
                   elem.FuncLeftClick(elem);
                 end
@@ -1489,7 +1468,7 @@ function process_gui_mouse_inputs(key, is_down, x, y)
                 elem.Pressed = true;
               else
                 elem.Pressed = false;
-                --log("clicked");
+
                 if (elem.FuncClick ~= nil and key == LB_KEY_MOUSE0) then
                   elem.FuncClick(elem);
                 end
@@ -1501,71 +1480,6 @@ function process_gui_mouse_inputs(key, is_down, x, y)
     end
   end
 end
-
--- function OnMouseButton(key, is_down, x, y)
-  -- if (key == LB_KEY_MOUSE0) then
-    -- -- left click
-    -- for i,menu in ipairs(_GUI_MENUS) do
-      -- if (menu.isActive) then
-        -- for j,elem in ipairs(menu.Elements) do
-          -- if (elem.isActive) then
-            -- if (elem.ElemType == ELEM_TYPE_BUTTON) then
-              -- elem.Pressed = false;
-              -- if (is_point_on_rectangle(elem.Box, x, y)) then
-                -- if (is_down) then
-                  -- elem.Pressed = true;
-                -- else
-                  -- elem.Pressed = false;
-                  -- --log("clicked");
-                  -- if (elem.FuncClick ~= nil) then
-                    -- elem.FuncClick();
-                  -- end
-                -- end
-              -- end
-            -- end
-          -- end
-        -- end
-      -- end
-    -- end
-  -- end
--- end
-
-
--- function OnFrame()
-  -- if (CURR_RES_HEIGHT ~= ScreenHeight() or CURR_RES_WIDTH ~= ScreenWidth()) then
-    -- -- reapply resolution
-    -- CURR_RES_HEIGHT = ScreenHeight();
-    -- CURR_RES_WIDTH = ScreenWidth();
-    -- log("res changed");
-    
-    -- if (CURR_RES_WIDTH >= 1920 and CURR_RES_HEIGHT >= 1080) then
-      -- GUI_TEXT_FONT = 9;
-    -- elseif (CURR_RES_WIDTH >= 1280 and CURR_RES_HEIGHT >= 720) then
-      -- GUI_TEXT_FONT = 3;
-    -- else
-      -- GUI_TEXT_FONT = 4;
-    -- end
-    
-    -- -- go through all created menus and trigger their OnRes function
-    -- for i,menu in ipairs(_GUI_MENUS) do
-      -- log("is type: " .. type(menu.OnRes));
-      -- if (menu.OnRes ~= nil) then
-        -- menu.OnRes(menu);
-      -- end
-    -- end
-  -- end
-  
-  -- local gui_width = GFGetGuiWidth();
-  
-  -- if (am_i_not_in_igm()) then
-    -- gui_draw_menus();
-  -- end
-  
-  -- PopSetFont(GUI_TEXT_FONT);
-  -- LbDraw_Text(gui_width, ScreenHeight() - CharHeight2(), string.format("GUI ID: %i", GUI_HOVERING_ID), 0);
-  
-  -- GUI_HOVERING_ID = -1;
--- end
 
 function get_elem_ptr(_elem_idx)
   return _GUI_ELEMENTS[_elem_idx];

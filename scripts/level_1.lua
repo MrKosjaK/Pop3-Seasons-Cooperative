@@ -27,7 +27,6 @@ end
 -- triggers after GAME MASTER starts game.
 function OnGameStart()
   process_all_ai_info(function(ai)
-    --log(string.format("Owner: %i, Difficulty: %i", ai.Owner, ai.Difficulty));
     set_player_check_surround_slopes(G_PLR[ai.Owner], FALSE);
     reduce_computer_players_sprogging_time_by_percent(G_PLR[ai.Owner], 0 + ((ai.Difficulty - 1) * 15));
     spawn_computer_addons(ai.Owner, ai.Difficulty);

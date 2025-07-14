@@ -256,19 +256,12 @@ end
 function update_network_players_count(p_num)
   if (HUMAN_PLAYERS_COUNT == 0) then
     GAME_MASTER_ID = p_num;
-    --set_player_name(p_num, "ORE_GAMMAMON", ntb(am_i_in_network_game()));
     set_elem_text_string(MY_ELEM_TXT_GAME_MASTER, string.format("Game Master: %s", get_player_name(p_num, ntb(am_i_in_network_game()))));
   end
   
   HUMAN_CHECK_IN[p_num] = true;
   HUMAN_PLAYERS[#HUMAN_PLAYERS + 1] = p_num;
   HUMAN_PLAYERS_COUNT = HUMAN_PLAYERS_COUNT + 1;
-end
-
-function get_info_on_players_count()
-  if (HUMAN_PLAYERS_COUNT > HUMAN_COUNT) then
-    log(string.format("Amount of players exceed defined amount in level. Defined %i, actual %i", HUMAN_COUNT, HUMAN_PLAYERS_COUNT));
-  end
 end
 
 function link_stuff_to_gui()
@@ -649,222 +642,6 @@ function link_stuff_to_gui()
   end);
 end
 
-function init_game_lobbys_menus_and_elements()
-  local table_str = {};
-  
-  -- 65 = "A";
-  for i = 1, #HUMAN_INFO do
-    table_str[i] = string.char(65 + (i - 1));
-  end
-  
-  -- button function defines
-  set_button_function(BTN_OM_AI,
-  function(button)
-    close_menu(MENU_PLAYERS);
-    close_menu(MENU_OPTIONS);
-    open_menu(MENU_AI);
-  end);
-  
-  set_button_function(BTN_OM_PLAYERS,
-  function(button)
-    close_menu(MENU_AI);
-    close_menu(MENU_OPTIONS);
-    open_menu(MENU_PLAYERS);
-  end);
-  
-  set_button_function(BTN_OM_SETTINGS,
-  function(button)
-    close_menu(MENU_AI);
-    close_menu(MENU_PLAYERS);
-    open_menu(MENU_OPTIONS);
-  end);
-  
-  
-  -- players pos buttons
-  for i = 1, 8 do
-    set_array_button_text_table(BTN_PLR1_POS + (i - 1), table_str);
-    set_array_button_data_ptr(BTN_PLR1_POS + (i - 1), GAME_LOBBY_SETTINGS[GLS_PLAYER_SETUP_IDX][i-1]);
-    set_array_button_functions(BTN_PLR1_POS + (i - 1),
-    function(b)
-      local pos = MapPosXZ.new() 
-      pos.Pos = world_coord3d_to_map_idx(HUMAN_INFO[b.CurrData[1]]._start_pos);	
-      ZOOM_TO(pos.XZ.X,pos.XZ.Z, 256 * math.random(1, 8));
-    end,
-    function(b)
-      if (am_i_in_network_game() ~= 0) then
-        if (i_am_game_master()) then
-          Send(PACKET_BTN_ARRAY_DEC, tostring(BTN_PLR1_POS + (i - 1)));
-        end
-      else
-        b.CurrData[1] = math.min(math.max(b.CurrData[1] - 1, 1), b.MaxData);
-      end
-    end,
-    function(b)
-      if (am_i_in_network_game() ~= 0) then
-        if (i_am_game_master()) then
-          Send(PACKET_BTN_ARRAY_INCR, tostring(BTN_PLR1_POS + (i - 1)));
-        end
-      else
-        b.CurrData[1] = math.min(math.max(b.CurrData[1] + 1, 1), b.MaxData);
-      end
-    end);
-  end
-  
-  -- ai difficulty button
-  set_array_button_text_table(BTN_AI_DIFFICULTY, AI_DIFFICULTY_STR_TABLE);
-  --set_array_button_data_ptr(BTN_AI_DIFFICULTY, AI_MEDIUM);
-  set_array_button_functions(BTN_AI_DIFFICULTY, nil,
-  function(b)
-    if (am_i_in_network_game() ~= 0) then
-      if (i_am_game_master()) then
-        Send(PACKET_BTN_ARRAY_DEC, tostring(BTN_AI_DIFFICULTY));
-      end
-    else
-      b.CurrData[1] = math.min(math.max(b.CurrData[1] - 1, 1), b.MaxData);
-    end
-  end,
-  function(b)
-    if (am_i_in_network_game() ~= 0) then
-      if (i_am_game_master()) then
-        Send(PACKET_BTN_ARRAY_INCR, tostring(BTN_AI_DIFFICULTY));
-      end
-    else
-      b.CurrData[1] = math.min(math.max(b.CurrData[1] + 1, 1), b.MaxData);
-    end
-  end);
-  
-  -- AI BUTTONS
-  for i = 1, 6 do
-    set_array_button_data_ptr(BTN_AI_PLR1_DIFF + (i - 1), GAME_LOBBY_SETTINGS[GLS_COMPUTER_DIFFICULTY][i]);
-    set_array_button_text_table(BTN_AI_PLR1_DIFF + (i - 1), AI_DIFFICULTY_STR_TABLE);
-    set_array_button_functions(BTN_AI_PLR1_DIFF + (i - 1), nil,
-    function(b)
-      if (am_i_in_network_game() ~= 0) then
-        if (i_am_game_master()) then
-          Send(PACKET_BTN_ARRAY_DEC, tostring(BTN_AI_PLR1_DIFF + (i - 1)));
-        end
-      else
-        b.CurrData[1] = math.min(math.max(b.CurrData[1] - 1, 1), b.MaxData);
-      end
-    end,
-    function(b)
-      if (am_i_in_network_game() ~= 0) then
-        if (i_am_game_master()) then
-          Send(PACKET_BTN_ARRAY_INCR, tostring(BTN_AI_PLR1_DIFF + (i - 1)));
-        end
-      else
-        b.CurrData[1] = math.min(math.max(b.CurrData[1] + 1, 1), b.MaxData);
-      end
-    end);
-  end
-  
-  -- check in menu
-  set_menu_position_and_dimensions(MENU_CHECK_IN, (ScreenWidth() >> 1) - 48, (ScreenHeight() >> 1) - 45, 96, 90);
-  set_menu_open_function(MENU_CHECK_IN,
-  function(menu)
-    local b_data = get_button_pos_and_dimensions(BTN_CHECK_IN);
-    set_button_position(BTN_CHECK_IN, menu.Pos[1] + (menu.Size[1] >> 1) - (b_data[3] >> 1), menu.Pos[2] + (menu.Size[2] >> 1) - (b_data[4] >> 1));
-    set_button_active(BTN_CHECK_IN);
-  end);
-  set_menu_close_function(MENU_CHECK_IN,
-  function(menu)
-    set_button_inactive(BTN_CHECK_IN);
-  end);
-  open_menu(MENU_CHECK_IN);
-  
-  -- players menu
-  set_menu_dimensions(MENU_PLAYERS, 256, 256);
-  set_menu_open_function(MENU_PLAYERS,
-  function(menu)
-    local split_pos = (ScreenWidth() >> 1);
-    set_menu_position(MENU_PLAYERS, split_pos - (menu.Size[1] >> 1), (ScreenHeight() >> 1) - (menu.Size[2] >> 1));
-    
-    set_text_field_position(TXT_FIELD_TRIBE, menu.Pos[1] + 40, menu.Pos[2] + 8);
-    set_text_field_position(TXT_FIELD_PLR_NAME, menu.Pos[1] + 110, menu.Pos[2] + 8);
-    set_text_field_position(TXT_FIELD_START_POS, menu.Pos[1] + 192, menu.Pos[2] + 8);
-    set_text_field_active(TXT_FIELD_TRIBE);
-    set_text_field_active(TXT_FIELD_PLR_NAME);
-    set_text_field_active(TXT_FIELD_START_POS);
-    for i = 1, 8 do
-      local b_data = get_button_pos_and_dimensions(BTN_PLR1_POS + (i - 1));
-      set_array_button_position(BTN_PLR1_POS + (i - 1), menu.Pos[1] + (menu.Size[1] - 68), menu.Pos[2] + 24 + ((i - 1) * 28));
-      if (HUMAN_CHECK_IN[i - 1]) then
-        set_button_active(BTN_PLR1_POS + (i - 1));
-        set_text_field_text(TXT_PLR1_NAME + (i - 1), get_player_name(i - 1, ntb(am_i_in_network_game())));
-        set_text_field_position(TXT_PLR1_NAME + (i - 1), menu.Pos[1] + 110, menu.Pos[2] + 24 + ((i - 1) * 28));
-        set_text_field_active(TXT_PLR1_NAME + (i - 1));
-        set_icon_position(ICON_PLR1 + (i - 1), menu.Pos[1] + 40, menu.Pos[2] + 18 + ((i - 1) * 28));
-        set_icon_active(ICON_PLR1 + (i - 1));
-      end
-    end
-    --set_array_button_position(BTN_PLR1_POS, menu.Pos[1] + (menu.Size[1] >> 1) - (b_data[3] >> 1), menu.Pos[2] + (menu.Size[2] >> 1) - (b_data[4] >> 1));
-  end);
-  set_menu_close_function(MENU_PLAYERS,
-  function(menu)
-    set_text_field_inactive(TXT_FIELD_TRIBE);
-    set_text_field_inactive(TXT_FIELD_PLR_NAME);
-    set_text_field_inactive(TXT_FIELD_START_POS);
-    for i = 1, 8 do
-      set_button_inactive(BTN_PLR1_POS + (i - 1));
-      set_text_field_inactive(TXT_PLR1_NAME + (i - 1));
-      set_icon_inactive(ICON_PLR1 + (i - 1));
-    end
-  end);
-  
-  -- options menu
-  set_menu_dimensions(MENU_OPTIONS, 256, 256);
-  set_menu_open_function(MENU_OPTIONS,
-  function(menu)
-    local split_pos = (ScreenWidth() >> 1);
-    set_menu_position(MENU_OPTIONS, split_pos - (menu.Size[1] >> 1), (ScreenHeight() >> 1) - (menu.Size[2] >> 1));
-  end);
-  set_menu_close_function(MENU_OPTIONS,
-  function(menu)
-    
-  end);
-  
-  -- ai menu
-  set_menu_dimensions(MENU_AI, 256, 256);
-  set_menu_open_function(MENU_AI,
-  function(menu)
-    local split_pos = (ScreenWidth() >> 1);
-    set_menu_position(MENU_AI, split_pos - (menu.Size[1] >> 1), (ScreenHeight() >> 1) - (menu.Size[2] >> 1));
-  
-    set_text_field_position(TXT_FIELD_AI_TRIBE, menu.Pos[1] + 40, menu.Pos[2] + 8);
-    set_text_field_position(TXT_FIELD_AI_DIFFICULTY, menu.Pos[1] + 160, menu.Pos[2] + 8);
-    set_text_field_active(TXT_FIELD_AI_TRIBE);
-    set_text_field_active(TXT_FIELD_AI_DIFFICULTY);
-    for i = 1, 6 do
-      local b_data = get_button_pos_and_dimensions(BTN_AI_PLR1_DIFF + (i - 1));
-      set_array_button_position(BTN_AI_PLR1_DIFF + (i - 1), menu.Pos[1] + (menu.Size[1] - 140), menu.Pos[2] + 24 + ((i - 1) * 36));
-      
-      if (AI_INFO[i] ~= nil) then
-        set_button_active(BTN_AI_PLR1_DIFF + (i - 1));
-        local own = AI_INFO[i]._forced_owner;
-        
-        if (own >= 0) then
-          set_icon_sprite_and_bank(ICON_AI_PLR1 + (i - 1), ICON_DATA_BASE[own][1], ICON_DATA_BASE[own][2]);
-        end
-        set_icon_position(ICON_AI_PLR1 + (i - 1), menu.Pos[1] + 40, menu.Pos[2] + 19 + ((i - 1) * 35));
-        set_icon_active(ICON_AI_PLR1 + (i - 1));
-      end
-    end
-    --local b_data = get_button_pos_and_dimensions(BTN_AI_DIFFICULTY);
-    --set_array_button_position(BTN_AI_DIFFICULTY, menu.Pos[1] + (menu.Size[1] >> 1) - (b_data[3] >> 1), menu.Pos[2] + (b_data[4] >> 1));
-    --set_button_active(BTN_AI_DIFFICULTY);
-  end);
-  set_menu_close_function(MENU_AI,
-  function(menu)
-    set_text_field_inactive(TXT_FIELD_AI_TRIBE);
-    set_text_field_inactive(TXT_FIELD_AI_DIFFICULTY);
-  
-    for i = 1, 6 do
-      set_button_inactive(BTN_AI_PLR1_DIFF + (i - 1));
-      set_icon_inactive(ICON_AI_PLR1 + (i - 1));
-    end
-  end);
-end
-
 function process_game_lobby_packets(pn, p_type, data)
   if (p_type == 255) then
     update_network_players_count(tonumber(data));
@@ -874,14 +651,6 @@ function process_game_lobby_packets(pn, p_type, data)
       gui_close_menu(MY_MENU_HUMAN_PLAYERS);
       trigger_menu_maintain(MY_MENU_HUMAN_PLAYERS);
       gui_open_menu(MY_MENU_HUMAN_PLAYERS);
-      -- local m_data = get_menu_pos_and_dimensions(MENU_PLAYERS);
-      -- set_array_button_position(BTN_PLR1_POS + pn, m_data[1] + (m_data[3] - 68), m_data[2] + 24 + ((pn * 28)));
-      -- set_button_active(BTN_PLR1_POS + pn);
-      -- set_text_field_text(TXT_PLR1_NAME + pn, get_player_name(pn, ntb(am_i_in_network_game())));
-      -- set_text_field_position(TXT_PLR1_NAME + pn, m_data[1] + 110, m_data[2] + 24 + (pn * 28));
-      -- set_text_field_active(TXT_PLR1_NAME + pn);
-      -- set_icon_position(ICON_PLR1 + pn, m_data[1] + 40, m_data[2] + 18 + (pn * 28));
-      -- set_icon_active(ICON_PLR1 + pn);
     end
     
     if (pn == G_NSI.PlayerNum) then
@@ -891,32 +660,6 @@ function process_game_lobby_packets(pn, p_type, data)
       gui_open_menu(MY_MENU_HUMAN_PLAYERS);
       gui_open_menu(MY_MENU_COMP_PLAYERS);
       gui_open_menu(MY_MENU_SETUP_GENERAL);
-      --close_menu(MENU_CHECK_IN);
-      --set_button_inactive(BTN_CHECK_IN);
-      
-      
-      --open_menu(MENU_PLAYERS);
-      --open_menu(MENU_LOG_MSG);
-      --open_menu(MENU_OPTIONS);
-      --open_menu(MENU_AI);
-       
-      -- local b_data = get_button_pos_and_dimensions(BTN_START_GAME);
-      -- set_button_position(BTN_START_GAME, (ScreenWidth() >> 1) - (b_data[3] >> 1), (ScreenHeight() - (b_data[4] << 1)));
-      
-      -- local m_data = get_menu_pos_and_dimensions(MENU_PLAYERS);
-      -- local middle_x = m_data[1] + (m_data[3] >> 1);
-      -- local pos_y = m_data[2] + m_data[4];
-      -- local b_data = get_button_pos_and_dimensions(BTN_OM_PLAYERS);
-      -- set_button_position(BTN_OM_PLAYERS, middle_x - (b_data[3] >> 1) - 128, pos_y + 12);
-      -- local b_data = get_button_pos_and_dimensions(BTN_OM_SETTINGS);
-      -- set_button_position(BTN_OM_SETTINGS, middle_x - (b_data[3] >> 1), pos_y + 12);
-      -- local b_data = get_button_pos_and_dimensions(BTN_OM_AI);
-      -- set_button_position(BTN_OM_AI, middle_x - (b_data[3] >> 1) + 128, pos_y + 12);
-      
-      -- set_button_active(BTN_START_GAME);
-      -- set_button_active(BTN_OM_PLAYERS);
-      -- set_button_active(BTN_OM_SETTINGS);
-      -- set_button_active(BTN_OM_AI);
     end
   end
   

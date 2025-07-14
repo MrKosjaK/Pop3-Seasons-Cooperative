@@ -1,10 +1,10 @@
 -- includes
 include("globals.lua");
 include("assets.lua");
+include("popscript.lua");
 include("gui.lua");
 include("game_lobby.lua");
 include("game_state.lua");
-include("event_logger.lua");
 
 -- main hooks
 
@@ -45,14 +45,11 @@ function OnTurn()
     gui_init_all_menus();
     link_stuff_to_gui();
     gui_open_menu(MY_MENU_CHECK_IN);
-    --init_game_lobbys_menus_and_elements();
     
     if (OnInit ~= nil) then OnInit(); end
   end
   if (is_game_state(GM_STATE_SETUP)) then
     if (GAME_STARTED) then
-      --get_info_on_players_count();
-    
       ProcessGlobalTypeList(T_PERSON, function(t_thing)
         remove_all_persons_commands(t_thing);
         set_person_top_state(t_thing);
@@ -83,7 +80,7 @@ function OnTurn()
       -- main entry
       if (ScrOnTurn ~= nil) then ScrOnTurn(); end
 	
-	  turn = turn + 1
+      G_SCRIPT_TURN = G_SCRIPT_TURN + 1
     end
   end
 end
@@ -92,10 +89,11 @@ end
 function OnCreateThing(t_thing)
   -- check if t_thing isn't local
   if (t_thing.Flags3 & TF3_LOCAL ~= 0) then
-    return;
+    goto on_create_end;
   end
   
   if (ScrOnCreateThing ~= nil) then ScrOnCreateThing(t_thing); end
+  ::on_create_end::
 end
 
 
@@ -110,7 +108,6 @@ function OnFrame()
     -- reapply resolution
       CURR_RES_HEIGHT = ScreenHeight();
       CURR_RES_WIDTH = ScreenWidth();
-      --log("res changed");
       
       if (CURR_RES_WIDTH >= 1920 and CURR_RES_HEIGHT >= 1080) then
         GUI_TEXT_FONT = 9;
@@ -122,7 +119,6 @@ function OnFrame()
       
       -- go through all created menus and trigger their OnRes function
       for i,menu in ipairs(_GUI_MENUS) do
-        --log("is type: " .. type(menu.OnRes));
         if (menu.OnRes ~= nil) then
           menu.OnRes(menu);
         end
@@ -136,22 +132,9 @@ function OnFrame()
     gui_draw_menus();
     
     if (is_game_state(GM_STATE_SETUP)) then
-      if (am_i_in_network_game() ~= 0) then
-        
-      else
-        
-      end
+      PopSetFont(GUI_TEXT_FONT);
+      LbDraw_Text(guiW, ScreenHeight() - CharHeight2(), string.format("GUI ID: %i", GUI_HOVERING_ID), 0);
     end
-    
-    --draw_menus();
-    --draw_text_boxes();
-    --draw_buttons();
-    --draw_text_fields();
-    --draw_icons();
-    
-    --draw_log_events(w, h, guiW);
-    PopSetFont(GUI_TEXT_FONT);
-    LbDraw_Text(guiW, ScreenHeight() - CharHeight2(), string.format("GUI ID: %i", GUI_HOVERING_ID), 0);
     
     GUI_HOVERING_ID = -1;
   end
