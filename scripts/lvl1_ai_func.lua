@@ -143,6 +143,8 @@ function register_ai_events(player_num, difficulty)
   for i,event in ipairs(t) do
     TurnClock.new(get_script_turn(), event[1], event[2], player_num, event[3]);
   end
+  
+  _EVENT_INDEX = _EVENT_INDEX + 1;
 end
 
 function process_ai_events()
