@@ -136,6 +136,12 @@ function OnFrame()
       LbDraw_Text(guiW, ScreenHeight() - CharHeight2(), string.format("GUI ID: %i", GUI_HOVERING_ID), 0);
     end
     
+    if (is_game_state(GM_STATE_GAME)) then
+      PopSetFont(4);
+      LbDraw_Text(guiW, ScreenHeight() - CharHeight2(), string.format("Process Turn: %i", get_turn()), 0);
+      LbDraw_Text(guiW, ScreenHeight() - (CharHeight2() << 1), string.format("Script Turn: %i", get_script_turn()), 0);
+    end
+    
     GUI_HOVERING_ID = -1;
   end
 end

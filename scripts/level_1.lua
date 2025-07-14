@@ -30,6 +30,7 @@ function OnGameStart()
     set_player_check_surround_slopes(G_PLR[ai.Owner], FALSE);
     reduce_computer_players_sprogging_time_by_percent(G_PLR[ai.Owner], 0 + ((ai.Difficulty - 1) * 15));
     spawn_computer_addons(ai.Owner, ai.Difficulty);
+    register_ai_events(ai.Owner, ai.Difficulty);
   end);
   
   AI_PLR1_TRIBE = get_ai_player_info(1).Owner;
@@ -83,8 +84,7 @@ function ScrOnLevelInit(level_id)
 end
 
 function ScrOnTurn()
-  --process_weather(curr_turn);
-  --calculate_population_scores();
+  process_ai_events();
 end
 
 function ScrOnCreateThing(t_thing)
