@@ -64,10 +64,10 @@ function spawn_computer_addons(player_num, difficulty)
   _ADDON_INDEX = _ADDON_INDEX + 1;
 end
 
--- EASY EVENTS
+-- AI EVENTS
 
-local function _AI1_CHECK_BUCKETS_EASY(_p, _sturn)
-  if (_sturn < 12000) then
+local function _AI_CHECK_BUCKETS_EASY(_p, _sturn)
+  if (_sturn < 10800 or count_pop(_p) < 100) then
     ai_enable_buckets(_p, TRUE);
     ai_set_spell_bucket_count(_p, M_SPELL_BLAST, 16);
     ai_set_spell_bucket_count(_p, M_SPELL_CONVERT_WILD, 16);
@@ -84,11 +84,95 @@ local function _AI1_CHECK_BUCKETS_EASY(_p, _sturn)
   end
 end
 
--- MEDIUM EVENTS
+local function _AI_CHECK_BUCKETS_M_H(_p, _sturn)
+  if (_sturn < 7200 or count_pop(_p) < 80) then
+    ai_enable_buckets(_p, TRUE);
+    ai_set_spell_bucket_count(_p, M_SPELL_BLAST, 12);
+    ai_set_spell_bucket_count(_p, M_SPELL_CONVERT_WILD, 12);
+    ai_set_spell_bucket_count(_p, M_SPELL_INSECT_PLAGUE, 24);
+    ai_set_spell_bucket_count(_p, M_SPELL_LIGHTNING_BOLT, 36);
+    ai_set_spell_bucket_count(_p, M_SPELL_WHIRLWIND, 48);
+  else
+    ai_enable_buckets(_p, TRUE);
+    ai_set_spell_bucket_count(_p, M_SPELL_BLAST, 6);
+    ai_set_spell_bucket_count(_p, M_SPELL_CONVERT_WILD, 6);
+    ai_set_spell_bucket_count(_p, M_SPELL_INSECT_PLAGUE, 12);
+    ai_set_spell_bucket_count(_p, M_SPELL_LIGHTNING_BOLT, 18);
+    ai_set_spell_bucket_count(_p, M_SPELL_WHIRLWIND, 24);
+  end
+end
 
--- HARD EVENTS
+local function _AI_CHECK_BUCKETS_EXTREME(_p, _sturn)
+  if (_sturn < 3600 or count_pop(_p) < 60) then
+    ai_enable_buckets(_p, TRUE);
+    ai_set_spell_bucket_count(_p, M_SPELL_BLAST, 4);
+    ai_set_spell_bucket_count(_p, M_SPELL_CONVERT_WILD, 4);
+    ai_set_spell_bucket_count(_p, M_SPELL_INSECT_PLAGUE, 8);
+    ai_set_spell_bucket_count(_p, M_SPELL_LIGHTNING_BOLT, 10);
+    ai_set_spell_bucket_count(_p, M_SPELL_WHIRLWIND, 16);
+  else
+    ai_enable_buckets(_p, TRUE);
+    ai_set_spell_bucket_count(_p, M_SPELL_BLAST, 2);
+    ai_set_spell_bucket_count(_p, M_SPELL_CONVERT_WILD, 2);
+    ai_set_spell_bucket_count(_p, M_SPELL_INSECT_PLAGUE, 4);
+    ai_set_spell_bucket_count(_p, M_SPELL_LIGHTNING_BOLT, 5);
+    ai_set_spell_bucket_count(_p, M_SPELL_WHIRLWIND, 8);
+  end
+end
 
--- EXTREME EVENTS
+-- CONVERTING STATE
+
+local function _AI_CHECK_CONVERT_EASY(_p, _sturn)
+  if (count_pop(_p) < 20) then
+    ai_set_converting_info(_p, true, true, 16);
+  else
+    ai_set_converting_info(_p, false, true, 16);
+  end
+end
+
+local function _AI_CHECK_CONVERT_M_H(_p, _sturn)
+  if (count_pop(_p) < 35) then
+    ai_set_converting_info(_p, true, true, 24);
+  else
+    ai_set_converting_info(_p, false, true, 24);
+  end
+end
+
+local function _AI_CHECK_CONVERT_EXTREME(_p, _sturn)
+  if (count_pop(_p) < 40) then
+    ai_set_converting_info(_p, true, true, 32);
+  else
+    ai_set_converting_info(_p, false, true, 32);
+  end
+end
+
+-- BASIC ATTACKS
+local WAY_POINT_EASY_MKS = {39, 40, 41, 42};
+
+local function _AI1_BASIC_ATTACK_EASY(_p, _sturn)
+  if (_sturn > 4320) then
+    local any_troops = count_troops(_p);
+      
+    if (any_troops >= 2) then
+      local target_enemy = get_random_alive_human_player();
+      
+      if (target_enemy ~= -1) then
+        local attack_spell = M_SPELL_NONE;
+        
+        if (G_RANDOM(2) == 1) then
+          ai_set_shaman_away(_p, true);
+          attack_spell = M_SPELL_WHIRLWIND;
+        end
+        
+        ai_set_aways(_p, 0, 75, 0, 25, 0);
+        ai_set_attack_flags(_p, 2, 0, 1);
+        ATTACK(_p, target_enemy, 2 + G_RANDOM(any_troops >> 1), ATTACK_BUILDING, INT_NO_SPECIFIC_BUILDING, 30, attack_spell, M_SPELL_NONE, M_SPELL_NONE, ATTACK_NORMAL, 0, WAY_POINT_EASY_MKS[G_RANDOM(#WAY_POINT_EASY_MKS) + 1], -1, 0); 
+        ai_set_aways(_p, 100, 0, 0, 0, 0);
+        ai_set_shaman_away(_p, false);
+      end
+    end
+  end
+end
 
 local _EVENT_INDEX = 1;
 local _EVENT_TABLE =
@@ -96,43 +180,52 @@ local _EVENT_TABLE =
   {
     [AI_EASY] =
     {
-      {_AI1_CHECK_BUCKETS_EASY, 256, 64},
+      {_AI_CHECK_BUCKETS_EASY, 256, 64},
+      {_AI_CHECK_CONVERT_EASY, 128, 32},
+      {_AI1_BASIC_ATTACK_EASY, 3584, 512},
     },
     
     [AI_MEDIUM] = 
     {
-      {_AI1_CHECK_BUCKETS_EASY, 256, 64},
+      {_AI_CHECK_BUCKETS_M_H, 256, 64},
+      {_AI_CHECK_CONVERT_M_H, 128, 32},
     },
     
     [AI_HARD] = 
     {
-      {_AI1_CHECK_BUCKETS_EASY, 256, 64}
+      {_AI_CHECK_BUCKETS_M_H, 256, 64},
+      {_AI_CHECK_CONVERT_M_H, 128, 32},
     },
     
     [AI_EXTREME] = 
     {
-      {_AI1_CHECK_BUCKETS_EASY, 256, 64}
+      {_AI_CHECK_BUCKETS_EXTREME, 256, 64},
+      {_AI_CHECK_CONVERT_EXTREME, 96, 24},
     },
   },
   {
     [AI_EASY] =
     {
-      {_AI1_CHECK_BUCKETS_EASY, 256, 64},
+      {_AI_CHECK_BUCKETS_EASY, 256, 64},
+      {_AI_CHECK_CONVERT_EASY, 128, 32},
     },
     
     [AI_MEDIUM] = 
     {
-      {_AI1_CHECK_BUCKETS_EASY, 256, 64},
+      {_AI_CHECK_BUCKETS_M_H, 256, 64},
+      {_AI_CHECK_CONVERT_M_H, 128, 32},
     },
     
     [AI_HARD] = 
     {
-      {_AI1_CHECK_BUCKETS_EASY, 256, 64},
+      {_AI_CHECK_BUCKETS_M_H, 256, 64},
+      {_AI_CHECK_CONVERT_M_H, 128, 32},
     },
     
     [AI_EXTREME] = 
     {
-      {_AI1_CHECK_BUCKETS_EASY, 256, 64},
+      {_AI_CHECK_BUCKETS_EXTREME, 256, 64},
+      {_AI_CHECK_CONVERT_EXTREME, 96, 24},
     },
   }
 }

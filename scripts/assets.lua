@@ -232,38 +232,38 @@ function nilT(thing)
 end
 
 function count_pop(pn)
-  return _gsi.Players[pn].NumPeople
+  return G_PLR[pn].NumPeople
 end
 
 function count_troops(pn)
 	local sh = 0 if getShaman(0) ~= nil then sh = 1 end
-	return (_gsi.Players[pn].NumPeople - _gsi.Players[pn].NumPeopleOfType[M_PERSON_BRAVE]) - sh
+	return (G_PLR[pn].NumPeople - G_PLR[pn].NumPeopleOfType[M_PERSON_BRAVE]) - sh
 end
 
 function count_boats(pn)
-	return _gsi.Players[pn].NumVehiclesOfType[M_VEHICLE_BOAT_1]
+	return G_PLR[pn].NumVehiclesOfType[M_VEHICLE_BOAT_1]
 end
 
 function count_balloons(pn)
-	return _gsi.Players[pn].NumVehiclesOfType[M_VEHICLE_AIRSHIP_1]
+	return G_PLR[pn].NumVehiclesOfType[M_VEHICLE_AIRSHIP_1]
 end
 
 function count_buildings(pn)
-	return _gsi.Players[pn].NumBuildings
+	return G_PLR[pn].NumBuildings
 end
 
 function count_huts(pn, includeDamaged)
 	if includeDamaged then 
-		return _gsi.Players[pn].NumBuiltOrPartBuiltBuildingsOfType[1]+_gsi.Players[pn].NumBuiltOrPartBuiltBuildingsOfType[2]+_gsi.Players[pn].NumBuiltOrPartBuiltBuildingsOfType[3]
+		return G_PLR[pn].NumBuiltOrPartBuiltBuildingsOfType[1]+G_PLR[pn].NumBuiltOrPartBuiltBuildingsOfType[2]+G_PLR[pn].NumBuiltOrPartBuiltBuildingsOfType[3]
 	end
-	return _gsi.Players[pn].NumBuildingsOfType[1]+_gsi.Players[pn].NumBuildingsOfType[2]+_gsi.Players[pn].NumBuildingsOfType[3]
+	return G_PLR[pn].NumBuildingsOfType[1]+G_PLR[pn].NumBuildingsOfType[2]+G_PLR[pn].NumBuildingsOfType[3]
 end
 
 function count_towers(pn, includeDamaged)
 	if includeDamaged then 
-		return _gsi.Players[pn].NumBuiltOrPartBuiltBuildingsOfType[4]
+		return G_PLR[pn].NumBuiltOrPartBuiltBuildingsOfType[4]
 	end
-	return _gsi.Players[pn].NumBuildingsOfType[4]
+	return G_PLR[pn].NumBuildingsOfType[4]
 end
 
 ----------------------------------------------------------------------------------------------------------------
@@ -382,4 +382,23 @@ function plants_at_markers(start, ending, season)
 	for marker = start, ending do
 		create_random_plant_at_marker(marker, season)
 	end
+end
+
+function get_random_alive_human_player()
+  -- for this specific pack human players are 0 and 1, so we'll only check those.
+  local num_alive_human_players = 0;
+  local table_pn = {};
+  
+  for i = 0, 1 do
+    if (G_PLR[i].NumPeople > 0) then
+      num_alive_human_players = num_alive_human_players + 1;
+      table_pn[#table_pn + 1] = i;
+    end
+  end
+  
+  if (num_alive_human_players > 0) then
+    return table_pn[G_RANDOM(num_alive_human_players) + 1];
+  end
+  
+  return -1;
 end
