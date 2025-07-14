@@ -98,18 +98,42 @@ local _EVENT_TABLE =
     {
       {_AI1_CHECK_BUCKETS_EASY, 256, 64},
     },
-    [AI_MEDIUM] = {_AI1_CHECK_BUCKETS_EASY, 256, 64},
-    [AI_HARD] = {_AI1_CHECK_BUCKETS_EASY, 256, 64},
-    [AI_EXTREME] = {_AI1_CHECK_BUCKETS_EASY, 256, 64},
+    
+    [AI_MEDIUM] = 
+    {
+      {_AI1_CHECK_BUCKETS_EASY, 256, 64},
+    },
+    
+    [AI_HARD] = 
+    {
+      {_AI1_CHECK_BUCKETS_EASY, 256, 64}
+    },
+    
+    [AI_EXTREME] = 
+    {
+      {_AI1_CHECK_BUCKETS_EASY, 256, 64}
+    },
   },
   {
     [AI_EASY] =
     {
       {_AI1_CHECK_BUCKETS_EASY, 256, 64},
     },
-    [AI_MEDIUM] = {_AI1_CHECK_BUCKETS_EASY, 256, 64},
-    [AI_HARD] = {_AI1_CHECK_BUCKETS_EASY, 256, 64},
-    [AI_EXTREME] = {_AI1_CHECK_BUCKETS_EASY, 256, 64},
+    
+    [AI_MEDIUM] = 
+    {
+      {_AI1_CHECK_BUCKETS_EASY, 256, 64},
+    },
+    
+    [AI_HARD] = 
+    {
+      {_AI1_CHECK_BUCKETS_EASY, 256, 64},
+    },
+    
+    [AI_EXTREME] = 
+    {
+      {_AI1_CHECK_BUCKETS_EASY, 256, 64},
+    },
   }
 }
 
