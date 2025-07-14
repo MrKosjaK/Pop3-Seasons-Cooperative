@@ -106,6 +106,10 @@ function set_player_check_surround_slopes(t_player, toggle)
   t_player.LimitsBuilding.CheckForSurroundSlopes = toggle;
 end
 
+function get_script_turn()
+  return G_SCRIPT_TURN;
+end
+
 function reduce_computer_players_sprogging_time_by_percent(t_player, percent)
   local p_sprog_time = t_player.LimitsBuilding.SproggingTime
   local one_percent_1 = math.floor(p_sprog_time[M_BUILDING_TEPEE] / 100);
