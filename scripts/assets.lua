@@ -19,11 +19,11 @@ function DisableFlag(_f1, _f2)
 end
 
 function player_in_options()
-	return (_gnsi.Flags3 & GNS3_INGAME_OPTIONS) > 0
+	return (G_NSI.Flags3 & GNS3_INGAME_OPTIONS) > 0
 end
 
 function player_in_player_stats()
-	return (_gnsi.Flags3 & 	GNS3_DISPLAY_LEVEL_STATS) > 0
+	return (G_NSI.Flags3 & 	GNS3_DISPLAY_LEVEL_STATS) > 0
 end
 
 function no_menus_open()
@@ -31,7 +31,7 @@ function no_menus_open()
 end
 
 function is_paused()
-	return _gnsi.Flags & GNS_PAUSED > 0
+	return G_NSI.Flags & GNS_PAUSED > 0
 end
 
 function unpause_if_paused()
@@ -51,7 +51,7 @@ function get_turn()
 end
 
 function LOG(msg)
-	log_msg(8, "turn: " .. turn .. " |   " .. tostring(msg))
+	log_msg(8, "turn: " .. G_SCRIPT_TURN .. " |   " .. tostring(msg))
 end
 
 function btn(bool)
