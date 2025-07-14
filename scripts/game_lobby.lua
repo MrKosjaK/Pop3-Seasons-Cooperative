@@ -628,8 +628,10 @@ function link_stuff_to_gui()
     if (not found_duplicate) then
       if (am_i_in_network_game() ~= 0) then
         if (i_am_game_master()) then
-          Send(PACKET_START_GAME, "0");
-          gui_close_menu(MY_MENU_SETUP_GENERAL);
+          if (HUMAN_PLAYERS_COUNT > 1) then -- for now in network game you're forced to have an ally.
+            Send(PACKET_START_GAME, "0");
+            gui_close_menu(MY_MENU_SETUP_GENERAL);
+          end
         end
       else
         GAME_STARTED = true;
