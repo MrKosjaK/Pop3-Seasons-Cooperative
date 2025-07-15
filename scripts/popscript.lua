@@ -153,6 +153,10 @@ function ai_set_attack_flags(pn, a, b, c)
   WRITE_CP_ATTRIB(pn, ATTR_DONT_USE_BOATS, c);
 end
 
+function ai_set_atk_var(pn, a)
+  SET_ATTACK_VARIABLE(pn, a);
+end
+
 function ai_set_populating_info(pn, a, b)
   STATE_SET(pn, a and 1 or 0, CP_AT_TYPE_POPULATE_DRUM_TOWER);
   STATE_SET(pn, b and 1 or 0, CP_AT_TYPE_HOUSE_A_PERSON);
