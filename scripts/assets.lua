@@ -240,6 +240,10 @@ function count_troops(pn)
 	return (G_PLR[pn].NumPeople - G_PLR[pn].NumPeopleOfType[M_PERSON_BRAVE]) - sh
 end
 
+function num_braves(pn)
+  return G_PLR[pn].NumPeopleOfType[M_PERSON_BRAVE];
+end
+
 function count_boats(pn)
 	return G_PLR[pn].NumVehiclesOfType[M_VEHICLE_BOAT_1]
 end

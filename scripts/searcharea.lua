@@ -77,3 +77,36 @@ function create_enemy_search_area()
   
   return area;
 end
+
+function is_shape_or_bldg_at_xz(_owner, _model, _x, _z, _radius)
+  local result = false;
+  _MAP_POS_XZ.XZ.X = _x;
+  _MAP_POS_XZ.XZ.Z = _z;
+  local t = nil;
+  
+  SearchMapCells(SQUARE, 0, 0, _radius, _MAP_POS_XZ.Pos, function(me)
+      if (not me.ShapeOrBldgIdx:isNull()) then
+        t = me.ShapeOrBldgIdx:get();
+        
+        if (t.Owner == _owner) then
+          if (t.Type == T_BUILDING) then
+            if (t.Model == _model) then
+              result = true;
+              return false;
+            end
+          end
+          
+          if (t.Type == T_SHAPE) then
+            if (t.u.Shape.BldgModel == _model) then
+              result = true;
+              return false;
+            end
+          end
+        end
+      end
+      
+      return true;
+    end);
+  
+  return result;
+end

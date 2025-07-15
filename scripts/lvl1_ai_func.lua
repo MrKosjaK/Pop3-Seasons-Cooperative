@@ -155,62 +155,88 @@ end
 
 -- BASIC ATTACKS
 local WAY_POINT_EASY_MKS = {39, 40, 41, 42};
+local USER_BASIC_ATTACK = 64;
 
 local function _AI1_BASIC_ATTACK_EASY(_p, _sturn)
   if (_sturn > 4320) then
-    -- first scan area around waypoint markers
-    EnemyArea:clear();
-    EnemyArea:scan(_p, 210, 110, 5);
+    -- check if we're performing basic attack already
+    local var_value = ai_getv(_p, USER_BASIC_ATTACK);
     
-    if (not EnemyArea:has_enemy()) then
-      log("No enemies at waypoints");
-      local any_troops = count_troops(_p);
-        
-      if (any_troops >= 2) then
-        local target_enemy = get_random_alive_human_player();
-        log("Target Enemy: " .. target_enemy);
-        if (target_enemy ~= -1) then
-          local attack_spell = M_SPELL_NONE;
+    if (var_value > 50) then
+      -- can do another attack.
+      -- first scan area around waypoint markers
+      EnemyArea:clear();
+      EnemyArea:scan(_p, 210, 110, 5);
+      
+      if (not EnemyArea:has_enemy()) then
+        log("No enemies at waypoints");
+        local any_troops = count_troops(_p);
           
-          if (G_RANDOM(2) == 1) then
-            ai_set_shaman_away(_p, true);
-            attack_spell = M_SPELL_WHIRLWIND;
+        if (any_troops >= 2) then
+          local target_enemy = get_random_alive_human_player();
+          log("Target Enemy: " .. target_enemy);
+          if (target_enemy ~= -1) then
+            local attack_spell = M_SPELL_NONE;
+            
+            if (G_RANDOM(2) == 1) then
+              ai_set_shaman_away(_p, true);
+              attack_spell = M_SPELL_WHIRLWIND;
+            end
+            
+            ai_set_aways(_p, 0, 75, 0, 25, 0);
+            ai_set_attack_flags(_p, 2, 0, 1);
+            ai_set_atk_var(_p, USER_BASIC_ATTACK);
+            ATTACK(_p, target_enemy, 2 + G_RANDOM(any_troops >> 1), ATTACK_BUILDING, INT_NO_SPECIFIC_BUILDING, 90, attack_spell, M_SPELL_NONE, M_SPELL_NONE, ATTACK_NORMAL, 0, WAY_POINT_EASY_MKS[G_RANDOM(#WAY_POINT_EASY_MKS) + 1], -1, 0); 
+            ai_set_aways(_p, 100, 0, 0, 0, 0);
+            ai_set_shaman_away(_p, false);
           end
+        end
+      else
+        -- something is at waypoint marker, try attacking it?
+        log("Enemies at waypoint");
+        local target_enemy = get_random_alive_human_player();
+        
+        if (target_enemy ~= -1) then
+          local num_enemies = EnemyArea:get_people_count();
+          local any_troops = count_troops(_p);
           
-          ai_set_aways(_p, 0, 75, 0, 25, 0);
-          ai_set_attack_flags(_p, 2, 0, 1);
-          ATTACK(_p, target_enemy, 2 + G_RANDOM(any_troops >> 1), ATTACK_BUILDING, INT_NO_SPECIFIC_BUILDING, 90, attack_spell, M_SPELL_NONE, M_SPELL_NONE, ATTACK_NORMAL, 0, WAY_POINT_EASY_MKS[G_RANDOM(#WAY_POINT_EASY_MKS) + 1], -1, 0); 
-          ai_set_aways(_p, 100, 0, 0, 0, 0);
-          ai_set_shaman_away(_p, false);
+          if (any_troops > num_enemies) then
+            log("Have enough troops");
+            -- have more troops than there are enemies, try attacking
+            ai_set_aways(_p, 0, 80, 0, 20, 0);
+            ai_set_attack_flags(_p, 3, 0, 1);
+            ai_set_shaman_away(_p, false);
+            ai_set_atk_var(_p, USER_BASIC_ATTACK);
+            ATTACK(_p, target_enemy, (any_troops >> 1), ATTACK_MARKER, 43, 150, M_SPELL_NONE, M_SPELL_NONE, M_SPELL_NONE, ATTACK_NORMAL, 0, -1, -1, 0);
+            ai_set_aways(_p, 100, 0, 0, 0, 0);
+          elseif (ai_shaman_available(_p)) then
+            log("Sent shaman to help");
+            -- try sending shaman with some spells
+            ai_set_aways(_p, 20, 60, 0, 20, 0);
+            ai_set_attack_flags(_p, 3, 0, 1);
+            ai_set_shaman_away(_p, true);
+            ai_set_atk_var(_p, USER_BASIC_ATTACK);
+            ATTACK(_p, target_enemy, (any_troops >> 1), ATTACK_MARKER, 43, 150, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_INSECT_PLAGUE, ATTACK_NORMAL, 0, -1, -1, 0);
+            ai_set_aways(_p, 100, 0, 0, 0, 0);
+            ai_set_shaman_away(_p, false);
+          end
         end
       end
     else
-      -- something is at waypoint marker, try attacking it?
-      log("Enemies at waypoint");
-      local target_enemy = get_random_alive_human_player();
-      
-      if (target_enemy ~= -1) then
-        local num_enemies = EnemyArea:get_people_count();
-        local any_troops = count_troops(_p);
-        
-        if (any_troops > num_enemies) then
-          log("Have enough troops");
-          -- have more troops than there are enemies, try attacking
-          ai_set_aways(_p, 0, 80, 0, 20, 0);
-          ai_set_attack_flags(_p, 3, 0, 1);
-          ai_set_shaman_away(_p, false);
-          ATTACK(_p, target_enemy, (any_troops >> 1), ATTACK_MARKER, 43, 150, M_SPELL_NONE, M_SPELL_NONE, M_SPELL_NONE, ATTACK_NORMAL, 0, -1, -1, 0);
-          ai_set_aways(_p, 100, 0, 0, 0, 0);
-        elseif (ai_shaman_available(_p)) then
-          log("Sent shaman to help");
-          -- try sending shaman with some spells
-          ai_set_aways(_p, 20, 60, 0, 20, 0);
-          ai_set_attack_flags(_p, 3, 0, 1);
-          ai_set_shaman_away(_p, true);
-          ATTACK(_p, target_enemy, (any_troops >> 1), ATTACK_MARKER, 43, 150, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_INSECT_PLAGUE, ATTACK_NORMAL, 0, -1, -1, 0);
-          ai_set_aways(_p, 100, 0, 0, 0, 0);
-          ai_set_shaman_away(_p, false);
-        end
+      log("Attack busy");
+    end
+  end
+end
+
+-- SOME DEFENSE BUILD UP
+
+local function _AI1_TOWERS_EXPANSION(_p, _sturn)
+  if (_sturn > 3600) then
+    local my_braves = num_braves(_p);
+    
+    if (my_braves >= 10) then
+      if (not is_shape_or_bldg_at_xz(_p, M_BUILDING_DRUM_TOWER, 184, 108, 2)) then
+        BUILD_DRUM_TOWER(_p, 184, 108);
       end
     end
   end
@@ -225,6 +251,7 @@ local _EVENT_TABLE =
       {_AI_CHECK_BUCKETS_EASY, 256, 64},
       {_AI_CHECK_CONVERT_EASY, 128, 32},
       {_AI1_BASIC_ATTACK_EASY, 1024, 512},
+      {_AI1_TOWERS_EXPANSION, 512, 256},
     },
     
     [AI_MEDIUM] = 
@@ -278,6 +305,8 @@ function register_ai_events(player_num, difficulty)
   for i,event in ipairs(t) do
     TurnClock.new(get_script_turn(), event[1], event[2], player_num, event[3]);
   end
+  
+  ai_setv(player_num, USER_BASIC_ATTACK, 52);
   
   _EVENT_INDEX = _EVENT_INDEX + 1;
 end
