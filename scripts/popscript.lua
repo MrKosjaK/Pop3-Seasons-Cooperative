@@ -6,14 +6,19 @@ function ai_shaman_available(pn)
   return (IS_SHAMAN_AVAILABLE_FOR_ATTACK(pn) ~= 0);
 end
 
+ai_atr_w = WRITE_CP_ATTRIB;
+ai_atr_r = READ_CP_ATTRIB;
 ai_setv = SET_USER_VARIABLE_VALUE;
 ai_getv = GET_USER_VARIABLE_VALUE;
 ai_convert_marker = CONVERT_AT_MARKER;
 ai_set_marker_entry = SET_MARKER_ENTRY;
+ai_set_spell_entry = SET_SPELL_ENTRY;
 ai_enable_buckets = SET_BUCKET_USAGE;
 ai_set_spell_bucket_count = SET_BUCKET_COUNT_FOR_SPELL;
 ai_set_atk_var = SET_ATTACK_VARIABLE;
 ai_do_marker_entries = MARKER_ENTRIES;
+ai_do_attack = ATTACK;
+ai_fix_wilds = FIX_WILD_IN_AREA;
 
 function ai_set_targets(pn, opponent, a, b)
   TARGET_PLAYER_DT_AND_S(pn, opponent);

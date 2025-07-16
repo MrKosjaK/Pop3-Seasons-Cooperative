@@ -190,7 +190,7 @@ local function _AI1_BASIC_ATTACK_EASY(_p, _sturn)
             ai_set_aways(_p, 0, 75, 0, 25, 0);
             ai_set_attack_flags(_p, 2, 0, 1);
             ai_set_atk_var(_p, USER_BASIC_ATTACK);
-            ATTACK(_p, target_enemy, 2 + G_RANDOM(any_troops >> 1), ATTACK_BUILDING, INT_NO_SPECIFIC_BUILDING, 90, attack_spell, M_SPELL_NONE, M_SPELL_NONE, ATTACK_NORMAL, 0, WAY_POINT_EASY_MKS[G_RANDOM(#WAY_POINT_EASY_MKS) + 1], -1, 0); 
+            ai_do_attack(_p, target_enemy, 2 + G_RANDOM(any_troops >> 1), ATTACK_BUILDING, INT_NO_SPECIFIC_BUILDING, 90, attack_spell, M_SPELL_NONE, M_SPELL_NONE, ATTACK_NORMAL, 0, WAY_POINT_EASY_MKS[G_RANDOM(#WAY_POINT_EASY_MKS) + 1], -1, 0); 
             ai_set_aways(_p, 100, 0, 0, 0, 0);
             ai_set_shaman_away(_p, false);
           end
@@ -209,7 +209,7 @@ local function _AI1_BASIC_ATTACK_EASY(_p, _sturn)
             ai_set_attack_flags(_p, 3, 0, 1);
             ai_set_shaman_away(_p, false);
             ai_set_atk_var(_p, USER_BASIC_ATTACK);
-            ATTACK(_p, target_enemy, (any_troops >> 1), ATTACK_MARKER, 43, 150, M_SPELL_NONE, M_SPELL_NONE, M_SPELL_NONE, ATTACK_NORMAL, 0, -1, -1, 0);
+            ai_do_attack(_p, target_enemy, (any_troops >> 1), ATTACK_MARKER, 43, 150, M_SPELL_NONE, M_SPELL_NONE, M_SPELL_NONE, ATTACK_NORMAL, 0, -1, -1, 0);
             ai_set_aways(_p, 100, 0, 0, 0, 0);
           elseif (ai_shaman_available(_p)) then
             -- try sending shaman with some spells
@@ -217,7 +217,7 @@ local function _AI1_BASIC_ATTACK_EASY(_p, _sturn)
             ai_set_attack_flags(_p, 3, 0, 1);
             ai_set_shaman_away(_p, true);
             ai_set_atk_var(_p, USER_BASIC_ATTACK);
-            ATTACK(_p, target_enemy, (any_troops >> 1), ATTACK_MARKER, 43, 150, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_INSECT_PLAGUE, ATTACK_NORMAL, 0, -1, -1, 0);
+            ai_do_attack(_p, target_enemy, (any_troops >> 1), ATTACK_MARKER, 43, 150, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_INSECT_PLAGUE, ATTACK_NORMAL, 0, -1, -1, 0);
             ai_set_aways(_p, 100, 0, 0, 0, 0);
             ai_set_shaman_away(_p, false);
           end
