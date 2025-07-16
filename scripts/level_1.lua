@@ -51,13 +51,11 @@ function OnGameStart()
   ai_set_training_people(AI_PLR1_TRIBE, true, 10, 0, 12, 0, 0 + AI_PLR1_DIFF);
   ai_set_populating_info(AI_PLR1_TRIBE, true, true);
   
-  -- ai player 1 spells
-  ai_enable_buckets(AI_PLR1_TRIBE);
-  ai_set_spell_bucket_count(AI_PLR1_TRIBE, M_SPELL_BLAST, 4);
-  ai_set_spell_bucket_count(AI_PLR1_TRIBE, M_SPELL_CONVERT_WILD, 1);
-  ai_set_spell_bucket_count(AI_PLR1_TRIBE, M_SPELL_INSECT_PLAGUE, 8);
-  ai_set_spell_bucket_count(AI_PLR1_TRIBE, M_SPELL_LIGHTNING_BOLT, 10);
-  ai_set_spell_bucket_count(AI_PLR1_TRIBE, M_SPELL_WHIRLWIND, 16);
+  if (AI_PLR1_DIFF == AI_EASY) then
+    ai_set_marker_entry(AI_PLR1_TRIBE, 0, 44, -1, 0, 1, 2, 0);
+    ai_set_marker_entry(AI_PLR1_TRIBE, 1, 45, -1, 0, 2, 1, 0);
+    ai_set_marker_entry(AI_PLR1_TRIBE, 2, 46, 47, 0, 1, 3, 0);
+  end
   
   -- ai player 2 stuff
   ai_main_drum_tower_info(AI_PLR2_TRIBE, true, 36, 88);
@@ -70,14 +68,6 @@ function OnGameStart()
   ai_set_training_huts(AI_PLR2_TRIBE, 1, 0, 1, 0);
   ai_set_training_people(AI_PLR2_TRIBE, true, 10, 0, 12, 0, 0 + AI_PLR2_DIFF);
   ai_set_populating_info(AI_PLR2_TRIBE, true, true);
-  
-  -- ai player 2 spells
-  ai_enable_buckets(AI_PLR2_TRIBE);
-  ai_set_spell_bucket_count(AI_PLR2_TRIBE, M_SPELL_BLAST, 4);
-  ai_set_spell_bucket_count(AI_PLR2_TRIBE, M_SPELL_CONVERT_WILD, 1);
-  ai_set_spell_bucket_count(AI_PLR2_TRIBE, M_SPELL_INSECT_PLAGUE, 8);
-  ai_set_spell_bucket_count(AI_PLR2_TRIBE, M_SPELL_LIGHTNING_BOLT, 10);
-  ai_set_spell_bucket_count(AI_PLR2_TRIBE, M_SPELL_WHIRLWIND, 16);
 end
 
 function ScrOnLevelInit(level_id)

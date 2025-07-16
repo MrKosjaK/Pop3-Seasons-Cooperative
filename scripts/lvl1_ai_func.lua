@@ -155,6 +155,7 @@ end
 
 -- BASIC ATTACKS
 local WAY_POINT_EASY_MKS = {39, 40, 41, 42};
+local USER_TOWER_BUILT = 1;
 local USER_BASIC_ATTACK = 64;
 
 local function _AI1_BASIC_ATTACK_EASY(_p, _sturn)
@@ -169,12 +170,10 @@ local function _AI1_BASIC_ATTACK_EASY(_p, _sturn)
       EnemyArea:scan(_p, 210, 110, 5);
       
       if (not EnemyArea:has_enemy()) then
-        log("No enemies at waypoints");
         local any_troops = count_troops(_p);
           
         if (any_troops >= 2) then
           local target_enemy = get_random_alive_human_player();
-          log("Target Enemy: " .. target_enemy);
           if (target_enemy ~= -1) then
             local attack_spell = M_SPELL_NONE;
             
@@ -193,7 +192,6 @@ local function _AI1_BASIC_ATTACK_EASY(_p, _sturn)
         end
       else
         -- something is at waypoint marker, try attacking it?
-        log("Enemies at waypoint");
         local target_enemy = get_random_alive_human_player();
         
         if (target_enemy ~= -1) then
@@ -201,7 +199,6 @@ local function _AI1_BASIC_ATTACK_EASY(_p, _sturn)
           local any_troops = count_troops(_p);
           
           if (any_troops > num_enemies) then
-            log("Have enough troops");
             -- have more troops than there are enemies, try attacking
             ai_set_aways(_p, 0, 80, 0, 20, 0);
             ai_set_attack_flags(_p, 3, 0, 1);
@@ -210,7 +207,6 @@ local function _AI1_BASIC_ATTACK_EASY(_p, _sturn)
             ATTACK(_p, target_enemy, (any_troops >> 1), ATTACK_MARKER, 43, 150, M_SPELL_NONE, M_SPELL_NONE, M_SPELL_NONE, ATTACK_NORMAL, 0, -1, -1, 0);
             ai_set_aways(_p, 100, 0, 0, 0, 0);
           elseif (ai_shaman_available(_p)) then
-            log("Sent shaman to help");
             -- try sending shaman with some spells
             ai_set_aways(_p, 20, 60, 0, 20, 0);
             ai_set_attack_flags(_p, 3, 0, 1);
@@ -223,7 +219,16 @@ local function _AI1_BASIC_ATTACK_EASY(_p, _sturn)
         end
       end
     else
-      log("Attack busy");
+      -- check whats going on
+      if (var_value >= 1 and var_value < 7) then
+        -- reset variable to check it again
+        ai_setv(_p, USER_BASIC_ATTACK, 52);
+      end
+      
+      if (var_value == 7) then
+        -- navigation failed... try vehicles?
+        ai_setv(_p, USER_BASIC_ATTACK, 52);
+      end
     end
   end
 end
@@ -237,6 +242,23 @@ local function _AI1_TOWERS_EXPANSION(_p, _sturn)
     if (my_braves >= 10) then
       if (not is_shape_or_bldg_at_xz(_p, M_BUILDING_DRUM_TOWER, 184, 108, 2)) then
         BUILD_DRUM_TOWER(_p, 184, 108);
+        ai_setv(_p, USER_TOWER_BUILT, 0);
+      else
+        ai_setv(_p, USER_TOWER_BUILT, 1);
+      end
+    end
+  end
+end
+
+local function _AI1_MARKER_ENTRIES_EASY(_p, _sturn)
+  if (_sturn > 7200) then
+    local any_troops = count_troops(_p);
+    
+    if (any_troops > 3) then
+      if (ai_getv(_p, USER_TOWER_BUILT)) then
+        ai_do_marker_entries(_p, 0, 1, 2, -1);
+      else
+        ai_do_marker_entries(_p, 2, -1, -1, -1);
       end
     end
   end
@@ -250,8 +272,9 @@ local _EVENT_TABLE =
     {
       {_AI_CHECK_BUCKETS_EASY, 256, 64},
       {_AI_CHECK_CONVERT_EASY, 128, 32},
-      {_AI1_BASIC_ATTACK_EASY, 1024, 512},
+      {_AI1_BASIC_ATTACK_EASY, 3072, 512},
       {_AI1_TOWERS_EXPANSION, 512, 256},
+      {_AI1_MARKER_ENTRIES_EASY, 256, 128},
     },
     
     [AI_MEDIUM] = 

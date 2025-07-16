@@ -6,53 +6,19 @@ function ai_shaman_available(pn)
   return (IS_SHAMAN_AVAILABLE_FOR_ATTACK(pn) ~= 0);
 end
 
-function ai_setv(player, idx, value)
-  SET_USER_VARIABLE_VALUE(player, idx, value);
-end
-
-function ai_getv(player, idx)
-  return GET_USER_VARIABLE_VALUE(player, idx);
-end
-
-function ai_convert_marker(pn, mk)
-  CONVERT_AT_MARKER(pn, mk);
-end
-
-function ai_units_of_type(pn, unit)
-  return PLAYERS_PEOPLE_OF_TYPE(pn, unit);
-end
-
-function ai_num_people(pn)
-  return GET_NUM_PEOPLE(pn);
-end
-
-function ai_bldgs_of_type(pn, model)
-  return PLAYERS_BUILDING_OF_TYPE(pn, model);
-end
-
-function ai_num_houses(pn)
-  local huts = PLAYERS_BUILDING_OF_TYPE(pn, M_BUILDING_TEPEE);
-  huts = huts + PLAYERS_BUILDING_OF_TYPE(pn, M_BUILDING_HUT);
-  huts = huts + PLAYERS_BUILDING_OF_TYPE(pn, M_BUILDING_FARM);
-  return huts;
-end
+ai_setv = SET_USER_VARIABLE_VALUE;
+ai_getv = GET_USER_VARIABLE_VALUE;
+ai_convert_marker = CONVERT_AT_MARKER;
+ai_set_marker_entry = SET_MARKER_ENTRY;
+ai_enable_buckets = SET_BUCKET_USAGE;
+ai_set_spell_bucket_count = SET_BUCKET_COUNT_FOR_SPELL;
+ai_set_atk_var = SET_ATTACK_VARIABLE;
+ai_do_marker_entries = MARKER_ENTRIES;
 
 function ai_set_targets(pn, opponent, a, b)
   TARGET_PLAYER_DT_AND_S(pn, opponent);
   if (a) then TARGET_DRUM_TOWERS(pn); else DONT_TARGET_DRUM_TOWERS(pn); end
   if (b) then TARGET_S_WARRIORS(pn); else DONT_TARGET_S_WARRIORS(pn); end
-end
-
-function ai_enable_buckets(pn)
-  SET_BUCKET_USAGE(pn, TRUE);
-end
-
-function ai_disable_buckets(pn)
-  SET_BUCKET_USAGE(pn, FALSE);
-end
-
-function ai_set_spell_bucket_count(pn, a, b)
-  SET_BUCKET_COUNT_FOR_SPELL(pn, a, b);
 end
 
 function ai_set_aways(pn, a, b, c, d, e)
@@ -151,10 +117,6 @@ function ai_set_attack_flags(pn, a, b, c)
   WRITE_CP_ATTRIB(pn, ATTR_GROUP_OPTION, a);
   WRITE_CP_ATTRIB(pn, ATTR_DONT_GROUP_AT_DT, b);
   WRITE_CP_ATTRIB(pn, ATTR_DONT_USE_BOATS, c);
-end
-
-function ai_set_atk_var(pn, a)
-  SET_ATTACK_VARIABLE(pn, a);
 end
 
 function ai_set_populating_info(pn, a, b)
