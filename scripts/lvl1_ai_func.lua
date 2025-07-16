@@ -246,7 +246,7 @@ local function _AI1_TOWERS_EXPANSION(_p, _sturn)
     
     if (my_braves >= 10) then
       if (not is_shape_or_bldg_at_xz(_p, M_BUILDING_DRUM_TOWER, 184, 108, 2)) then
-        BUILD_DRUM_TOWER(_p, 184, 108);
+        ai_build_tower(_p, 184, 108);
         ai_setv(_p, USER_TOWER_BUILT, 0);
       else
         ai_setv(_p, USER_TOWER_BUILT, 1);
@@ -281,7 +281,7 @@ local function _AI1_TOWER_SPAM_FRONT_M_H(_p, _sturn)
       MP_POS.XZ.X = 162 - 18 + G_RANDOM(36);
       MP_POS.XZ.Z = 100 - 18 + G_RANDOM(36);
       
-      BUILD_DRUM_TOWER(_p, MP_POS.XZ.X, MP_POS.XZ.Z);
+      ai_build_tower(_p, MP_POS.XZ.X, MP_POS.XZ.Z);
     end
   end
 end
@@ -298,7 +298,7 @@ local function _AI1_TOWER_SPAM_BASE_M_H(_p, _sturn)
       MP_POS.XZ.X = 142 - 20 + G_RANDOM(40);
       MP_POS.XZ.Z = 70 - 20 + G_RANDOM(40);
       
-      BUILD_DRUM_TOWER(_p, MP_POS.XZ.X, MP_POS.XZ.Z);
+      ai_build_tower(_p, MP_POS.XZ.X, MP_POS.XZ.Z);
     end
   end
 end

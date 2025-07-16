@@ -19,6 +19,7 @@ ai_set_atk_var = SET_ATTACK_VARIABLE;
 ai_do_marker_entries = MARKER_ENTRIES;
 ai_do_attack = ATTACK;
 ai_fix_wilds = FIX_WILD_IN_AREA;
+ai_build_tower = BUILD_DRUM_TOWER;
 
 function ai_set_targets(pn, opponent, a, b)
   TARGET_PLAYER_DT_AND_S(pn, opponent);
