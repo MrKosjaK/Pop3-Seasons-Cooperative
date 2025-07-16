@@ -3,7 +3,9 @@ local EnemyArea = create_enemy_search_area();
 
 
 local _ADDON_INDEX = 1;
-
+local FLOOR = math.floor;
+local MIN = math.min;
+local MP_POS = MapPosXZ.new();
 
 -- Data base for computer's starting things.
 -- The way it is designed is index will be incremented by 1 every time you call
@@ -66,6 +68,11 @@ function spawn_computer_addons(player_num, difficulty)
   
   _ADDON_INDEX = _ADDON_INDEX + 1;
 end
+
+-- AI DEFINES
+local WAY_POINT_EASY_MKS = {39, 40, 41, 42};
+local USER_TOWER_BUILT = 1;
+local USER_BASIC_ATTACK = 64;
 
 -- AI EVENTS
 
@@ -154,9 +161,7 @@ local function _AI_CHECK_CONVERT_EXTREME(_p, _sturn)
 end
 
 -- BASIC ATTACKS
-local WAY_POINT_EASY_MKS = {39, 40, 41, 42};
-local USER_TOWER_BUILT = 1;
-local USER_BASIC_ATTACK = 64;
+
 
 local function _AI1_BASIC_ATTACK_EASY(_p, _sturn)
   if (_sturn > 4320) then
@@ -264,6 +269,40 @@ local function _AI1_MARKER_ENTRIES_EASY(_p, _sturn)
   end
 end
 
+local function _AI1_TOWER_SPAM_FRONT_M_H(_p, _sturn)
+  local num_huts = count_huts(_p, false);
+  
+  if (num_huts >= 12) then
+    local num_towers = MIN(FLOOR(_sturn / 1440) * 2, 10);
+    local curr_towers = count_towers(_p, true);
+    
+    
+    if (curr_towers < num_towers) then
+      MP_POS.XZ.X = 162 - 18 + G_RANDOM(36);
+      MP_POS.XZ.Z = 100 - 18 + G_RANDOM(36);
+      
+      BUILD_DRUM_TOWER(_p, MP_POS.XZ.X, MP_POS.XZ.Z);
+    end
+  end
+end
+
+local function _AI1_TOWER_SPAM_BASE_M_H(_p, _sturn)
+  local num_huts = count_huts(_p, false);
+  
+  if (num_huts >= 14) then
+    local num_towers = MIN(FLOOR(_sturn / 2160) * 2, 20);
+    local curr_towers = count_towers(_p, true);
+    
+    
+    if (curr_towers < num_towers) then
+      MP_POS.XZ.X = 142 - 20 + G_RANDOM(40);
+      MP_POS.XZ.Z = 70 - 20 + G_RANDOM(40);
+      
+      BUILD_DRUM_TOWER(_p, MP_POS.XZ.X, MP_POS.XZ.Z);
+    end
+  end
+end
+
 local _EVENT_INDEX = 1;
 local _EVENT_TABLE =
 {
@@ -281,12 +320,16 @@ local _EVENT_TABLE =
     {
       {_AI_CHECK_BUCKETS_M_H, 256, 64},
       {_AI_CHECK_CONVERT_M_H, 128, 32},
+      {_AI1_TOWER_SPAM_FRONT_M_H, 384, 64},
+      {_AI1_TOWER_SPAM_BASE_M_H, 512, 128},
     },
     
     [AI_HARD] = 
     {
       {_AI_CHECK_BUCKETS_M_H, 256, 64},
       {_AI_CHECK_CONVERT_M_H, 128, 32},
+      {_AI1_TOWER_SPAM_FRONT_M_H, 384, 32},
+      {_AI1_TOWER_SPAM_BASE_M_H, 512, 32},
     },
     
     [AI_EXTREME] = 
