@@ -71,6 +71,10 @@ end
 
 -- AI DEFINES
 local WAY_POINT_EASY_MKS = {39, 40, 41, 42};
+local PLR1_NUM_DEFENCE_TOWERS = 5; -- default, will be change depending on difficulty.
+local PLR2_NUM_DEFENCE_TOWERS = 8;
+
+-- user vars
 local USER_TOWER_BUILT = 1;
 local USER_FAR_FRONT_STATUS = 2;
 local USER_OUR_FRONT_STATUS = 3;
@@ -399,7 +403,7 @@ local function _AI1_TOWER_SPAM_FRONT_M_H(_p, _sturn)
     local num_huts = count_huts(_p, false);
     
     if (num_huts >= 12) then
-      local num_towers = MIN(FLOOR(_sturn / 1440) * 2, 10);
+      local num_towers = MIN(FLOOR(_sturn / 1440) * 2, (PLR1_NUM_DEFENCE_TOWERS >> 1));
       local curr_towers = count_towers(_p, true);
       
       
@@ -418,7 +422,7 @@ local function _AI1_TOWER_SPAM_BASE_M_H(_p, _sturn)
     local num_huts = count_huts(_p, false);
     
     if (num_huts >= 14) then
-      local num_towers = MIN(FLOOR(_sturn / 2160) * 2, 20);
+      local num_towers = MIN(FLOOR(_sturn / 2160) * 2, PLR1_NUM_DEFENCE_TOWERS);
       local curr_towers = count_towers(_p, true);
       
       
@@ -517,6 +521,9 @@ function register_ai_events(player_num, difficulty)
   ai_setv(player_num, USER_EXTRA_ATTACK, 52);
   ai_setv(player_num, USER_SHAMAN_DEFEND, 52);
   ai_setv(player_num, USER_TROOPS_DEFEND, 52);
+  
+  PLR1_NUM_DEFENCE_TOWERS = 10 + (difficulty * 4);
+  PLR2_NUM_DEFENCE_TOWERS = 8 + (difficulty * 4);
   
   _EVENT_INDEX = _EVENT_INDEX + 1;
 end
