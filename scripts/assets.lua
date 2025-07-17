@@ -34,6 +34,8 @@ function is_paused()
 	return G_NSI.Flags & GNS_PAUSED > 0
 end
 
+give_player_mana = GIVE_MANA_TO_PLAYER;
+
 function unpause_if_paused()
 	if isPaused() then
 		process_options(OPT_SET_PAUSE, 0, FALSE)

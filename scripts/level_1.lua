@@ -44,9 +44,9 @@ function OnGameStart()
   
   -- ai player 1 stuff
   ai_main_drum_tower_info(AI_PLR1_TRIBE, true, 122, 66);
-  ai_set_shaman_info(AI_PLR1_TRIBE, 168, 74, true, 56 - ((AI_PLR1_DIFF - 1) * 16), 12);
+  ai_set_shaman_info(AI_PLR1_TRIBE, 168, 74, true, 56 - ((AI_PLR1_DIFF - 1) * 16), 16);
   ai_set_converting_info(AI_PLR1_TRIBE, true, true, 24);
-  ai_set_defensive_info(AI_PLR1_TRIBE, true, true, true, true, 3, 3, 1);
+  ai_set_defensive_info(AI_PLR1_TRIBE, true, true, true, true, 1, 3, 1);
   ai_set_fetch_info(AI_PLR1_TRIBE, true, false, false, true);
   ai_set_attack_info(AI_PLR1_TRIBE, true, 1 + (AI_PLR1_DIFF), 30 - ((AI_PLR1_DIFF - 1) * 10), 12);
   ai_set_bldg_info(AI_PLR1_TRIBE, true, 15 + (AI_PLR1_DIFF * 25), 2 + ((AI_PLR1_DIFF - 1) * 2));
@@ -60,11 +60,31 @@ function OnGameStart()
     ai_set_marker_entry(AI_PLR1_TRIBE, 2, 46, 47, 0, 1, 3, 0);
   end
   
+  if (AI_PLR1_DIFF == AI_MEDIUM) then
+    ai_set_spell_entry(AI_PLR1_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 3, 0);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 3, 1);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 0);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 3, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 1);
+    
+    ai_set_targets(AI_PLR1_TRIBE, 0, true, false); -- this will by dynamically changed in actual attacks
+  end
+  
+  if (AI_PLR1_DIFF >= AI_HARD) then
+    ai_set_spell_entry(AI_PLR1_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 2, 0);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 2, 1);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 0);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 3, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 1);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 5, M_SPELL_LIGHTNING_BOLT, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 0);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 6, M_SPELL_LIGHTNING_BOLT, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 1);
+    
+    ai_set_targets(AI_PLR1_TRIBE, 0, true, true); -- this will by dynamically changed in actual attacks
+  end
+  
   -- ai player 2 stuff
   ai_main_drum_tower_info(AI_PLR2_TRIBE, true, 36, 88);
-  ai_set_shaman_info(AI_PLR2_TRIBE, 22, 110, true, 56 - ((AI_PLR2_DIFF - 1) * 16), 12);
+  ai_set_shaman_info(AI_PLR2_TRIBE, 22, 110, true, 56 - ((AI_PLR2_DIFF - 1) * 16), 16);
   ai_set_converting_info(AI_PLR2_TRIBE, true, true, 24);
-  ai_set_defensive_info(AI_PLR2_TRIBE, true, true, true, true, 3, 3, 1);
+  ai_set_defensive_info(AI_PLR2_TRIBE, true, true, true, true, 1, 3, 1);
   ai_set_fetch_info(AI_PLR2_TRIBE, true, false, false, true);
   ai_set_attack_info(AI_PLR2_TRIBE, true, 1 + (AI_PLR2_DIFF), 30 - ((AI_PLR2_DIFF - 1) * 10), 12);
   ai_set_bldg_info(AI_PLR2_TRIBE, true, 20 + (AI_PLR2_DIFF * 25), 2 + ((AI_PLR2_DIFF - 1) * 2));

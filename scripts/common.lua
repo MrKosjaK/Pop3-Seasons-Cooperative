@@ -172,7 +172,7 @@ function OnKeyUp(key)
   if (ScrOnKeyUp ~= nil) then ScrOnKeyUp(key); end
   
   -- network based/online
-  if (is_game_state(GM_STATE_SETUP)) then
+  if (is_game_state(GM_STATE_GAME)) then
     if (am_i_in_network_game() ~= 0) then
       
     else

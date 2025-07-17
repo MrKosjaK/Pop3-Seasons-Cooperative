@@ -72,7 +72,13 @@ end
 -- AI DEFINES
 local WAY_POINT_EASY_MKS = {39, 40, 41, 42};
 local USER_TOWER_BUILT = 1;
+local USER_FAR_FRONT_STATUS = 2;
+local USER_OUR_FRONT_STATUS = 3;
+local USER_BASE_STATUS = 4;
 local USER_BASIC_ATTACK = 64;
+local USER_EXTRA_ATTACK = 65;
+local USER_SHAMAN_DEFEND = 66;
+local USER_TROOPS_DEFEND = 67;
 
 -- AI EVENTS
 
@@ -240,6 +246,104 @@ end
 
 -- SOME DEFENSE BUILD UP
 
+local function _AI1_CHECK_FAR_FRONT(_p, _sturn)
+  EnemyArea:clear();
+  ai_setv(_p, USER_FAR_FRONT_STATUS, 0);
+  
+  EnemyArea:scan(_p, 210, 110, 5);
+  
+  if (EnemyArea:has_enemy()) then
+    ai_setv(_p, USER_FAR_FRONT_STATUS, 1);
+  end
+end
+
+local function _AI1_CHECK_OUR_FRONT(_p, _sturn)
+  EnemyArea:clear();
+  ai_setv(_p, USER_OUR_FRONT_STATUS, 0);
+  
+  EnemyArea:scan(_p, 162, 100, 7);
+  
+  if (EnemyArea:has_enemy()) then
+    ai_setv(_p, USER_OUR_FRONT_STATUS, 1);
+  end
+end
+
+local function _AI1_CHECK_OUR_BASE(_p, _sturn)
+  EnemyArea:clear();
+  ai_setv(_p, USER_BASE_STATUS, 0);
+  
+  EnemyArea:scan(_p, 142, 70, 10);
+  
+  if (EnemyArea:has_enemy()) then
+    ai_setv(_p, USER_BASE_STATUS, 1);
+  end
+end
+
+local function _AI1_TRY_DEFEND_BASE_OR_FRONT(_p, _sturn)
+  local front_status = ai_getv(_p, USER_OUR_FRONT_STATUS);
+  local base_status = ai_getv(_p, USER_BASE_STATUS);
+  
+  -- check if base has some enemies 
+  
+  if (base_status == 1) then
+    local target_enemy = get_random_alive_human_player();
+    
+    if (target_enemy ~= -1) then
+      -- base under attack presumebly, try sending shaman with spells and troops
+      local any_troops = count_troops(_p);
+      local troop_atk = ai_getv(_p, USER_TROOPS_DEFEND);
+      local sham_atk = ai_getv(_p, USER_SHAMAN_DEFEND);
+      
+      if (troop_atk > 50) then
+        if (any_troops > 0) then
+          ai_set_shaman_away(_p, false);
+          ai_set_aways(_p, 0, 50, 0, 50, 0);
+          ai_set_attack_flags(_p, 3, 1, 1);
+          ai_set_atk_var(_p, USER_TROOPS_DEFEND);
+          ai_do_attack(_p, target_enemy, any_troops, ATTACK_MARKER, 2, 999999, M_SPELL_NONE, M_SPELL_NONE, M_SPELL_NONE, ATTACK_NORMAL, 0, -1, -1, 0);
+          ai_set_aways(_p, 100, 0, 0, 0, 0);
+        end
+      else
+        -- check whats going on
+        if (troop_atk >= 1 and troop_atk < 7) then
+          -- reset variable to check it again
+          ai_setv(_p, USER_TROOPS_DEFEND, 52);
+        end
+        
+        if (troop_atk == 7) then
+          -- navigation failed... try vehicles?
+          ai_setv(_p, USER_TROOPS_DEFEND, 52);
+        end
+      end
+      
+      if (sham_atk > 50) then
+        if (ai_shaman_available(_p)) then
+          computer_reset_limits_for_spell(G_PLR[_p], M_SPELL_INSECT_PLAGUE);
+          give_player_mana(_p, SPELL_COST(M_SPELL_INSECT_PLAGUE) * 4);
+          ai_set_shaman_away(_p, true);
+          ai_set_aways(_p, 0, 0, 0, 0, 0);
+          ai_set_attack_flags(_p, 3, 1, 1);
+          ai_set_atk_var(_p, USER_SHAMAN_DEFEND);
+          ai_do_attack(_p, target_enemy, 0, ATTACK_MARKER, 2, 999999, M_SPELL_INSECT_PLAGUE, M_SPELL_INSECT_PLAGUE, M_SPELL_INSECT_PLAGUE, ATTACK_NORMAL, 0, -1, -1, 0);
+          ai_set_aways(_p, 100, 0, 0, 0, 0);
+          ai_set_shaman_away(_p, false);
+        end
+      else
+        -- check whats going on
+        if (sham_atk >= 1 and sham_atk < 7) then
+          -- reset variable to check it again
+          ai_setv(_p, USER_SHAMAN_DEFEND, 52);
+        end
+        
+        if (sham_atk == 7) then
+          -- navigation failed... try vehicles?
+          ai_setv(_p, USER_SHAMAN_DEFEND, 52);
+        end
+      end
+    end
+  end
+end
+
 local function _AI1_TOWERS_EXPANSION(_p, _sturn)
   if (_sturn > 3600) then
     local my_braves = num_braves(_p);
@@ -270,35 +374,39 @@ local function _AI1_MARKER_ENTRIES_EASY(_p, _sturn)
 end
 
 local function _AI1_TOWER_SPAM_FRONT_M_H(_p, _sturn)
-  local num_huts = count_huts(_p, false);
-  
-  if (num_huts >= 12) then
-    local num_towers = MIN(FLOOR(_sturn / 1440) * 2, 10);
-    local curr_towers = count_towers(_p, true);
+  if (ai_getv(_p, USER_OUR_FRONT_STATUS) == 0) then
+    local num_huts = count_huts(_p, false);
     
-    
-    if (curr_towers < num_towers) then
-      MP_POS.XZ.X = 162 - 18 + G_RANDOM(36);
-      MP_POS.XZ.Z = 100 - 18 + G_RANDOM(36);
+    if (num_huts >= 12) then
+      local num_towers = MIN(FLOOR(_sturn / 1440) * 2, 10);
+      local curr_towers = count_towers(_p, true);
       
-      ai_build_tower(_p, MP_POS.XZ.X, MP_POS.XZ.Z);
+      
+      if (curr_towers < num_towers) then
+        MP_POS.XZ.X = 162 - 18 + G_RANDOM(36);
+        MP_POS.XZ.Z = 100 - 18 + G_RANDOM(36);
+        
+        ai_build_tower(_p, MP_POS.XZ.X, MP_POS.XZ.Z);
+      end
     end
   end
 end
 
 local function _AI1_TOWER_SPAM_BASE_M_H(_p, _sturn)
-  local num_huts = count_huts(_p, false);
-  
-  if (num_huts >= 14) then
-    local num_towers = MIN(FLOOR(_sturn / 2160) * 2, 20);
-    local curr_towers = count_towers(_p, true);
+  if (ai_getv(_p, USER_BASE_STATUS) == 0) then
+    local num_huts = count_huts(_p, false);
     
-    
-    if (curr_towers < num_towers) then
-      MP_POS.XZ.X = 142 - 20 + G_RANDOM(40);
-      MP_POS.XZ.Z = 70 - 20 + G_RANDOM(40);
+    if (num_huts >= 14) then
+      local num_towers = MIN(FLOOR(_sturn / 2160) * 2, 20);
+      local curr_towers = count_towers(_p, true);
       
-      ai_build_tower(_p, MP_POS.XZ.X, MP_POS.XZ.Z);
+      
+      if (curr_towers < num_towers) then
+        MP_POS.XZ.X = 142 - 20 + G_RANDOM(40);
+        MP_POS.XZ.Z = 70 - 20 + G_RANDOM(40);
+        
+        ai_build_tower(_p, MP_POS.XZ.X, MP_POS.XZ.Z);
+      end
     end
   end
 end
@@ -322,6 +430,10 @@ local _EVENT_TABLE =
       {_AI_CHECK_CONVERT_M_H, 128, 32},
       {_AI1_TOWER_SPAM_FRONT_M_H, 384, 64},
       {_AI1_TOWER_SPAM_BASE_M_H, 512, 128},
+      {_AI1_CHECK_FAR_FRONT, 256, 128},
+      {_AI1_CHECK_OUR_FRONT, 256, 96},
+      {_AI1_CHECK_OUR_BASE, 256, 64},
+      {_AI1_TRY_DEFEND_BASE_OR_FRONT, 196, 128},
     },
     
     [AI_HARD] = 
@@ -330,12 +442,20 @@ local _EVENT_TABLE =
       {_AI_CHECK_CONVERT_M_H, 128, 32},
       {_AI1_TOWER_SPAM_FRONT_M_H, 384, 32},
       {_AI1_TOWER_SPAM_BASE_M_H, 512, 32},
+      {_AI1_CHECK_FAR_FRONT, 256, 128},
+      {_AI1_CHECK_OUR_FRONT, 256, 96},
+      {_AI1_CHECK_OUR_BASE, 256, 64},
+      {_AI1_TRY_DEFEND_BASE_OR_FRONT, 196, 64},
     },
     
     [AI_EXTREME] = 
     {
       {_AI_CHECK_BUCKETS_EXTREME, 256, 64},
       {_AI_CHECK_CONVERT_EXTREME, 96, 24},
+      {_AI1_CHECK_FAR_FRONT, 256, 128},
+      {_AI1_CHECK_OUR_FRONT, 256, 96},
+      {_AI1_CHECK_OUR_BASE, 256, 64},
+      {_AI1_TRY_DEFEND_BASE_OR_FRONT, 128, 32},
     },
   },
   {
@@ -373,6 +493,9 @@ function register_ai_events(player_num, difficulty)
   end
   
   ai_setv(player_num, USER_BASIC_ATTACK, 52);
+  ai_setv(player_num, USER_EXTRA_ATTACK, 52);
+  ai_setv(player_num, USER_SHAMAN_DEFEND, 52);
+  ai_setv(player_num, USER_TROOPS_DEFEND, 52);
   
   _EVENT_INDEX = _EVENT_INDEX + 1;
 end
