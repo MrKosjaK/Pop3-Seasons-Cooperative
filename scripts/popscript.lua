@@ -6,8 +6,8 @@ function ai_shaman_available(pn)
   return (IS_SHAMAN_AVAILABLE_FOR_ATTACK(pn) ~= 0);
 end
 
-ai_atr_w = WRITE_CP_ATTRIB;
-ai_atr_r = READ_CP_ATTRIB;
+ai_attr_w = WRITE_CP_ATTRIB;
+ai_attr_r = READ_CP_ATTRIB;
 ai_setv = SET_USER_VARIABLE_VALUE;
 ai_getv = GET_USER_VARIABLE_VALUE;
 ai_convert_marker = CONVERT_AT_MARKER;
@@ -22,10 +22,11 @@ ai_fix_wilds = FIX_WILD_IN_AREA;
 ai_build_tower = BUILD_DRUM_TOWER;
 ai_set_defence_rad = SET_DEFENCE_RADIUS;
 
-function ai_set_targets(pn, opponent, a, b)
+function ai_set_targets(pn, opponent, a, b, c)
   TARGET_PLAYER_DT_AND_S(pn, opponent);
   if (a) then TARGET_DRUM_TOWERS(pn); else DONT_TARGET_DRUM_TOWERS(pn); end
   if (b) then TARGET_S_WARRIORS(pn); else DONT_TARGET_S_WARRIORS(pn); end
+  if (c) then TARGET_SHAMAN(pn); else DONT_TARGET_SHAMAN(pn); end
 end
 
 function ai_set_aways(pn, a, b, c, d, e)

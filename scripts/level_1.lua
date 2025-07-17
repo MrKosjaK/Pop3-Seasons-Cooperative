@@ -59,6 +59,8 @@ function OnGameStart()
     ai_set_marker_entry(AI_PLR1_TRIBE, 0, 44, -1, 0, 1, 2, 0);
     ai_set_marker_entry(AI_PLR1_TRIBE, 1, 45, -1, 0, 2, 1, 0);
     ai_set_marker_entry(AI_PLR1_TRIBE, 2, 46, 47, 0, 1, 3, 0);
+    
+    ai_attr_w(AI_PLR1_TRIBE, ATTR_SHAMEN_BLAST, 32);
   end
   
   if (AI_PLR1_DIFF == AI_MEDIUM) then
@@ -67,7 +69,8 @@ function OnGameStart()
     ai_set_spell_entry(AI_PLR1_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 0);
     ai_set_spell_entry(AI_PLR1_TRIBE, 3, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 1);
     
-    ai_set_targets(AI_PLR1_TRIBE, 0, true, false); -- this will by dynamically changed in actual attacks
+    ai_attr_w(AI_PLR1_TRIBE, ATTR_SHAMEN_BLAST, 16);
+    ai_set_targets(AI_PLR1_TRIBE, 0, true, false, true); -- this will by dynamically changed in actual attacks
   end
   
   if (AI_PLR1_DIFF >= AI_HARD) then
@@ -78,7 +81,8 @@ function OnGameStart()
     ai_set_spell_entry(AI_PLR1_TRIBE, 5, M_SPELL_LIGHTNING_BOLT, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 0);
     ai_set_spell_entry(AI_PLR1_TRIBE, 6, M_SPELL_LIGHTNING_BOLT, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 1);
     
-    ai_set_targets(AI_PLR1_TRIBE, 0, true, true); -- this will by dynamically changed in actual attacks
+    ai_attr_w(AI_PLR1_TRIBE, ATTR_SHAMEN_BLAST, 8);
+    ai_set_targets(AI_PLR1_TRIBE, 0, true, true, true); -- this will by dynamically changed in actual attacks
   end
   
   -- ai player 2 stuff
