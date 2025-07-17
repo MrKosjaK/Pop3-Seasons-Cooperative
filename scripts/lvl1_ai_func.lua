@@ -75,6 +75,15 @@ local USER_TOWER_BUILT = 1;
 local USER_FAR_FRONT_STATUS = 2;
 local USER_OUR_FRONT_STATUS = 3;
 local USER_BASE_STATUS = 4;
+local USER_DEF3_ENEMY_COUNT = 5;
+local USER_DEF3_HAS_SHAMAN = 6;
+local USER_DEF3_FIRST_OWNER = 7;
+local USER_DEF2_ENEMY_COUNT = 8;
+local USER_DEF2_HAS_SHAMAN = 9;
+local USER_DEF2_FIRST_OWNER = 10;
+local USER_DEF1_ENEMY_COUNT = 11;
+local USER_DEF1_HAS_SHAMAN = 12;
+local USER_DEF1_FIRST_OWNER = 13;
 local USER_BASIC_ATTACK = 64;
 local USER_EXTRA_ATTACK = 65;
 local USER_SHAMAN_DEFEND = 66;
@@ -254,6 +263,9 @@ local function _AI1_CHECK_FAR_FRONT(_p, _sturn)
   
   if (EnemyArea:has_enemy()) then
     ai_setv(_p, USER_FAR_FRONT_STATUS, 1);
+    ai_setv(_p, USER_DEF3_ENEMY_COUNT, EnemyArea:get_people_count());
+    ai_setv(_p, USER_DEF3_HAS_SHAMAN, EnemyArea:has_shaman());
+    ai_setv(_p, USER_DEF3_FIRST_OWNER, EnemyArea:get_first_enemy_owner());
   end
 end
 
@@ -265,6 +277,9 @@ local function _AI1_CHECK_OUR_FRONT(_p, _sturn)
   
   if (EnemyArea:has_enemy()) then
     ai_setv(_p, USER_OUR_FRONT_STATUS, 1);
+    ai_setv(_p, USER_DEF2_ENEMY_COUNT, EnemyArea:get_people_count());
+    ai_setv(_p, USER_DEF2_HAS_SHAMAN, EnemyArea:has_shaman());
+    ai_setv(_p, USER_DEF2_FIRST_OWNER, EnemyArea:get_first_enemy_owner());
   end
 end
 
@@ -276,6 +291,9 @@ local function _AI1_CHECK_OUR_BASE(_p, _sturn)
   
   if (EnemyArea:has_enemy()) then
     ai_setv(_p, USER_BASE_STATUS, 1);
+    ai_setv(_p, USER_DEF1_ENEMY_COUNT, EnemyArea:get_people_count());
+    ai_setv(_p, USER_DEF1_HAS_SHAMAN, EnemyArea:has_shaman());
+    ai_setv(_p, USER_DEF1_FIRST_OWNER, EnemyArea:get_first_enemy_owner());
   end
 end
 
@@ -286,13 +304,14 @@ local function _AI1_TRY_DEFEND_BASE_OR_FRONT(_p, _sturn)
   -- check if base has some enemies 
   
   if (base_status == 1) then
-    local target_enemy = get_random_alive_human_player();
+    local target_enemy = ai_getv(_p, USER_DEF1_FIRST_OWNER);
     
     if (target_enemy ~= -1) then
       -- base under attack presumebly, try sending shaman with spells and troops
       local any_troops = count_troops(_p);
       local troop_atk = ai_getv(_p, USER_TROOPS_DEFEND);
       local sham_atk = ai_getv(_p, USER_SHAMAN_DEFEND);
+      local enemy_shaman = ai_getv(_p, USER_DEF1_HAS_SHAMAN);
       
       if (troop_atk > 50) then
         if (any_troops > 0) then
@@ -317,16 +336,18 @@ local function _AI1_TRY_DEFEND_BASE_OR_FRONT(_p, _sturn)
       end
       
       if (sham_atk > 50) then
-        if (ai_shaman_available(_p)) then
-          computer_reset_limits_for_spell(G_PLR[_p], M_SPELL_INSECT_PLAGUE);
-          give_player_mana(_p, SPELL_COST(M_SPELL_INSECT_PLAGUE) * 4);
-          ai_set_shaman_away(_p, true);
-          ai_set_aways(_p, 0, 0, 0, 0, 0);
-          ai_set_attack_flags(_p, 3, 1, 1);
-          ai_set_atk_var(_p, USER_SHAMAN_DEFEND);
-          ai_do_attack(_p, target_enemy, 0, ATTACK_MARKER, 2, 999999, M_SPELL_INSECT_PLAGUE, M_SPELL_INSECT_PLAGUE, M_SPELL_INSECT_PLAGUE, ATTACK_NORMAL, 0, -1, -1, 0);
-          ai_set_aways(_p, 100, 0, 0, 0, 0);
-          ai_set_shaman_away(_p, false);
+        if (enemy_shaman > 0) then
+          if (ai_shaman_available(_p)) then
+            computer_reset_limits_for_spell(G_PLR[_p], M_SPELL_LIGHTNING_BOLT);
+            give_player_mana(_p, SPELL_COST(M_SPELL_LIGHTNING_BOLT) * 4);
+            ai_set_shaman_away(_p, true);
+            ai_set_aways(_p, 0, 0, 0, 0, 0);
+            ai_set_attack_flags(_p, 3, 1, 1);
+            ai_set_atk_var(_p, USER_SHAMAN_DEFEND);
+            ai_do_attack(_p, target_enemy, 0, ATTACK_PERSON, M_PERSON_MEDICINE_MAN, 999999, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, ATTACK_NORMAL, 0, -1, -1, 0);
+            ai_set_aways(_p, 100, 0, 0, 0, 0);
+            ai_set_shaman_away(_p, false);
+          end
         end
       else
         -- check whats going on

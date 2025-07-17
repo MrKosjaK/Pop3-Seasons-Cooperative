@@ -17,14 +17,48 @@ search_enemy_area_mt.__index =
     for i,v in ipairs(self.Buildings) do
       self.Buildings[i] = 0;
     end
+    
+    for i = 0, 7 do
+      self.EnemyOwners[i] = false;
+    end
   end,
   
   has_enemy = function(self)
     return (self.hasEnemy);
   end,
   
+  has_shaman = function(self)
+    if (self.People[M_PERSON_MEDICINE_MAN] > 0) then
+      return 1;
+    else
+      return 0;
+    end
+  end,
+  
+  get_first_enemy_owner = function(self)
+    for i = 0,7 do
+      if (self.EnemyOwners[i]) then
+        return i;
+      end
+    end
+    
+    return -1;
+  end,
+  
   get_people_count = function(self)
     return (self.NumPeople);
+  end,
+  
+  get_firewarriors_count = function(self)
+    return (self.People[M_PERSON_SUPER_WARRIOR]);
+  end,
+  
+  get_warriors_count = function(self)
+    return (self.People[M_PERSON_WARRIOR]);
+  end,
+  
+  get_braves_count = function(self)
+    return (self.People[M_PERSON_BRAVE]);
   end,
   
   scan = function(self, owner, x, z, radius)
@@ -35,6 +69,8 @@ search_enemy_area_mt.__index =
       if (not me.MapWhoList:isEmpty()) then
         me.MapWhoList:processList(function(t)
           if (are_players_allied(t.Owner, owner) == 0) then
+            self.EnemyOwners[t.Owner] = true;
+            
             if (t.Type == T_BUILDING) then
               self.Buildings[t.Model] = self.Buildings[t.Model] + 1;
               self.NumBuildings = self.NumBuildings + 1;
@@ -71,6 +107,7 @@ function create_enemy_search_area()
     hasBuildings = false,
     NumPeople = 0,
     NumBuildings = 0,
+    EnemyOwners = {[0] = false, false, false, false, false, false, false, false}
   };
   
   setmetatable(area, search_enemy_area_mt);
