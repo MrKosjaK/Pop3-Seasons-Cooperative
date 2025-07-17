@@ -262,6 +262,9 @@ end
 local function _AI1_CHECK_FAR_FRONT(_p, _sturn)
   EnemyArea:clear();
   ai_setv(_p, USER_FAR_FRONT_STATUS, 0);
+  ai_setv(_p, USER_DEF3_ENEMY_COUNT, 0);
+  ai_setv(_p, USER_DEF3_HAS_SHAMAN, 0);
+  ai_setv(_p, USER_DEF3_FIRST_OWNER, 0);
   
   EnemyArea:scan(_p, 210, 110, 5);
   
@@ -276,6 +279,9 @@ end
 local function _AI1_CHECK_OUR_FRONT(_p, _sturn)
   EnemyArea:clear();
   ai_setv(_p, USER_OUR_FRONT_STATUS, 0);
+  ai_setv(_p, USER_DEF2_ENEMY_COUNT, 0);
+  ai_setv(_p, USER_DEF2_HAS_SHAMAN, 0);
+  ai_setv(_p, USER_DEF2_FIRST_OWNER, 0);
   
   EnemyArea:scan(_p, 162, 100, 7);
   
@@ -290,6 +296,9 @@ end
 local function _AI1_CHECK_OUR_BASE(_p, _sturn)
   EnemyArea:clear();
   ai_setv(_p, USER_BASE_STATUS, 0);
+  ai_setv(_p, USER_DEF1_ENEMY_COUNT, 0);
+  ai_setv(_p, USER_DEF1_HAS_SHAMAN, 0);
+  ai_setv(_p, USER_DEF1_FIRST_OWNER, 0);
   
   EnemyArea:scan(_p, 142, 70, 10);
   
