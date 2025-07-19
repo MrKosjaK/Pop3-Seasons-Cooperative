@@ -96,6 +96,7 @@ COPY "%SCR_PATH%\gui.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\popscript.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\turnclock.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\searcharea.lua" "%WORK_DIR%\scripts"
+COPY "%SCR_PATH%\ai_shaman.lua" "%WORK_DIR%\scripts"
 
 :: Sound
 ECHO.

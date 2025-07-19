@@ -1,6 +1,8 @@
 include("common.lua");
 include("searcharea.lua");
+include("ai_shaman.lua");
 include("lvl1_ai_func.lua");
+
 --include("pop_helper.lua");
 --include("weather.lua");
 
@@ -91,8 +93,6 @@ function OnGameStart()
     ai_set_spell_entry(AI_PLR1_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 2, 1);
     ai_set_spell_entry(AI_PLR1_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 0);
     ai_set_spell_entry(AI_PLR1_TRIBE, 3, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 1);
-    ai_set_spell_entry(AI_PLR1_TRIBE, 5, M_SPELL_LIGHTNING_BOLT, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 0);
-    ai_set_spell_entry(AI_PLR1_TRIBE, 6, M_SPELL_LIGHTNING_BOLT, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 1);
     ai_set_state(AI_PLR1_TRIBE, TRUE, CP_AT_TYPE_REPAIR_BLDGS);
     
     ai_attr_w(AI_PLR1_TRIBE, ATTR_SHAMEN_BLAST, 8);

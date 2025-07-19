@@ -83,6 +83,7 @@ local PLR2_CONVERT_POINTS = {51, 52, 53};
 -- cache
 local PLR1_BLDG_LIST = nil;
 local PLR2_BLDG_LIST = nil;
+local PLR1_SHAMAN = nil;
 
 -- user vars
 local USER_TOWER_BUILT = 1;
@@ -186,14 +187,16 @@ local function _AI1_CHECK_CONVERT_M_H(_p, _sturn)
 end
 
 local function _AI1_CHECK_CONVERT_EXTREME(_p, _sturn)
-  if (count_pop(_p) < 40) then
+  if (count_pop(_p) < 55) then
     ai_set_converting_info(_p, true, true, 32);
+    PLR1_SHAMAN:toggle_converting(true);
     
     if (G_RANDOM(4) > 0) then
       ai_convert_marker(_p, PLR1_CONVERT_POINTS[G_RANDOM(#PLR1_CONVERT_POINTS) + 1]);
     end
   else
     ai_set_converting_info(_p, false, true, 32);
+    PLR1_SHAMAN:toggle_converting(false);
   end
 end
 
@@ -722,6 +725,16 @@ function register_ai_events(player_num, difficulty)
     
     PLR1_NUM_DEFENCE_TOWERS = 10 + (difficulty * 4);
     PLR1_BLDG_LIST = getPlayerContainer(player_num).PlayerLists[BUILDINGLIST];
+    
+    if (difficulty == AI_EXTREME) then
+      PLR1_SHAMAN = create_shaman_ai(player_num);
+      PLR1_SHAMAN:toggle_fall_damage_save(true, 60 + G_RANDOM(40));
+      PLR1_SHAMAN:toggle_lightning_dodge(true, 60 + G_RANDOM(40));
+      PLR1_SHAMAN:toggle_spell_check(true);
+
+      PLR1_SHAMAN:set_spell_entry(1, M_SPELL_LIGHTNING_BOLT, {4, 5, 6, 7, 8}, 4, 4, 40000);
+      PLR1_SHAMAN:set_spell_entry(2, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 5, 6, 7, 8}, 3, 3, 75000);
+    end
   else
     PLR2_BLDG_LIST = getPlayerContainer(player_num).PlayerLists[BUILDINGLIST];
     PLR2_NUM_DEFENCE_TOWERS = 8 + (difficulty * 4);
@@ -732,4 +745,8 @@ end
 
 function process_ai_events()
   TurnClock.process_clocks();
+  
+  if (PLR1_SHAMAN ~= nil) then
+    PLR1_SHAMAN:process();
+  end
 end
