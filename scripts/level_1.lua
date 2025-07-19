@@ -92,6 +92,7 @@ function OnGameStart()
     ai_set_spell_entry(AI_PLR1_TRIBE, 3, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 1);
     ai_set_spell_entry(AI_PLR1_TRIBE, 5, M_SPELL_LIGHTNING_BOLT, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 0);
     ai_set_spell_entry(AI_PLR1_TRIBE, 6, M_SPELL_LIGHTNING_BOLT, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 1);
+    ai_set_state(AI_PLR1_TRIBE, TRUE, CP_AT_TYPE_REPAIR_BLDGS);
     
     ai_attr_w(AI_PLR1_TRIBE, ATTR_SHAMEN_BLAST, 8);
     ai_set_targets(AI_PLR1_TRIBE, 0, true, true, true); -- this will by dynamically changed in actual attacks

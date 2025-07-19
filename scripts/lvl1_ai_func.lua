@@ -70,11 +70,19 @@ function spawn_computer_addons(player_num, difficulty)
 end
 
 -- AI DEFINES
+-- PLAYER ONE
 local WAY_POINT_EASY_MKS = {39, 40, 41, 42};
 local PLR1_NUM_DEFENCE_TOWERS = 5; -- default, will be change depending on difficulty.
-local PLR2_NUM_DEFENCE_TOWERS = 8;
 local PLR1_CONVERT_POINTS = {48, 49, 50};
+local PLR1_ANNOYANCE_GROUPS = {68, 69, 70, 71, 72};
+
+-- PLAYER TWO
+local PLR2_NUM_DEFENCE_TOWERS = 8;
 local PLR2_CONVERT_POINTS = {51, 52, 53};
+
+-- cache
+local PLR1_BLDG_LIST = nil;
+local PLR2_BLDG_LIST = nil;
 
 -- user vars
 local USER_TOWER_BUILT = 1;
@@ -464,14 +472,14 @@ local function _AI1_MANAGE_AMOUNT_OF_TROOPS_M_H(_p, _sturn)
   
   if (num_small_huts > (num_medium_huts + num_large_huts)) then
     -- too many small huts, do not train too much
-    ai_attr_w(_p, ATTR_MAX_TRAIN_AT_ONCE, 4);
+    ai_attr_w(_p, ATTR_MAX_TRAIN_AT_ONCE, 3);
     ai_attr_w(_p, ATTR_PREF_WARRIOR_PEOPLE, (num_small_huts >> 1) + ((num_large_huts + num_medium_huts)));
     ai_attr_w(_p, ATTR_PREF_SUPER_WARRIOR_PEOPLE, (num_small_huts >> 1) + (num_large_huts + num_medium_huts));
   else
     -- have more upgraded huts than small ones
-    ai_attr_w(_p, ATTR_MAX_TRAIN_AT_ONCE, 5);
-    ai_attr_w(_p, ATTR_PREF_WARRIOR_PEOPLE, MIN((num_large_huts << 1), 30) + (num_medium_huts + num_small_huts));
-    ai_attr_w(_p, ATTR_PREF_SUPER_WARRIOR_PEOPLE, MIN((num_large_huts << 1), 35) + (num_medium_huts + num_small_huts));
+    ai_attr_w(_p, ATTR_MAX_TRAIN_AT_ONCE, 4);
+    ai_attr_w(_p, ATTR_PREF_WARRIOR_PEOPLE, MIN((num_large_huts << 1) + (num_medium_huts + num_small_huts), 30));
+    ai_attr_w(_p, ATTR_PREF_SUPER_WARRIOR_PEOPLE, MIN((num_large_huts << 1) + (num_medium_huts + num_small_huts), 35));
   end
   
   if (_sturn > 3600) then
@@ -522,6 +530,96 @@ local function _AI1_TOWER_SPAM_BASE_M_H(_p, _sturn)
   end
 end
 
+local function _AI1_TOWER_SPAM_FRONT_EXTREME(_p, _sturn)
+  if (ai_getv(_p, USER_OUR_FRONT_STATUS) == 0) then
+    local num_huts = count_huts(_p, false);
+    
+    if (num_huts >= 12) then
+      local num_towers = MIN(FLOOR(_sturn / 360) * 2, (PLR1_NUM_DEFENCE_TOWERS >> 1));
+      local curr_towers = count_towers(_p, true);
+      
+      
+      if (curr_towers < num_towers) then
+        MP_POS.XZ.X = 162 - 18 + G_RANDOM(36);
+        MP_POS.XZ.Z = 100 - 18 + G_RANDOM(36);
+        
+        ai_build_tower(_p, MP_POS.XZ.X, MP_POS.XZ.Z);
+      end
+    end
+  end
+end
+
+local function _AI1_TOWER_SPAM_BASE_EXTREME(_p, _sturn)
+  if (ai_getv(_p, USER_BASE_STATUS) == 0) then
+    local num_huts = count_huts(_p, false);
+    
+    if (num_huts >= 10) then
+      local num_towers = MIN(FLOOR(_sturn / 720) * 2, PLR1_NUM_DEFENCE_TOWERS);
+      local curr_towers = count_towers(_p, true);
+      
+      
+      if (curr_towers < num_towers) then
+        MP_POS.XZ.X = 142 - 20 + G_RANDOM(40);
+        MP_POS.XZ.Z = 70 - 20 + G_RANDOM(40);
+        
+        ai_build_tower(_p, MP_POS.XZ.X, MP_POS.XZ.Z);
+      end
+    end
+  end
+end
+
+local function _AI1_SPAM_HUTS_EVERYWHERE(_p, _sturn)
+  local num_huts = count_huts(_p);
+  
+  if (num_huts > 14 and num_huts < 69) then
+    local num_bldgs = PLR1_BLDG_LIST:count();
+    local index = G_RANDOM(num_bldgs);
+    local my_bldg = PLR1_BLDG_LIST:getNth(index);
+    
+    if (my_bldg ~= nil) then
+      MP_POS.Pos = world_coord3d_to_map_idx(my_bldg.Pos.D3);
+      computer_build_at_xz(G_PLR[_p], MP_POS.XZ.X, MP_POS.XZ.Z, M_BUILDING_TEPEE);
+    end
+  end
+end
+
+local function _AI1_ANNOYING_ATTACKS(_p, _sturn)
+  if (_sturn > 720) then
+    local my_wars = MIN(count_troops(_p), #PLR1_ANNOYANCE_GROUPS * 3);
+    for i,var_index in ipairs(PLR1_ANNOYANCE_GROUPS) do
+      local attack_status = ai_getv(_p, var_index);
+      
+      if (attack_status > 50) then
+        local target_enemy = get_random_alive_human_player();
+        
+        if (target_enemy ~= nil) then
+          if (my_wars > 2) then
+            ai_set_shaman_away(_p, false);
+            ai_set_aways(_p, 0, 80, 0, 50, 0);
+            ai_set_attack_flags(_p, 3, 1, 1);
+            ai_set_atk_var(_p, var_index);
+            ai_do_attack(_p, target_enemy, 1 + G_RANDOM(4), ATTACK_BUILDING, INT_NO_SPECIFIC_BUILDING, 999, M_SPELL_NONE, M_SPELL_NONE, M_SPELL_NONE, ATTACK_NORMAL, 0, -1, -1, 0);
+            ai_set_aways(_p, 100, 0, 0, 0, 0);
+            break;
+          end
+        end
+      else
+        -- check whats going on
+        my_wars = my_wars - 3;
+        if (attack_status >= 1 and attack_status < 7) then
+          -- reset variable to check it again
+          ai_setv(_p, var_index, 52);
+        end
+        
+        if (attack_status == 7) then
+          -- navigation failed... try vehicles?
+          ai_setv(_p, var_index, 52);
+        end
+      end
+    end
+  end
+end
+
 local _EVENT_INDEX = 1;
 local _EVENT_TABLE =
 {
@@ -567,10 +665,15 @@ local _EVENT_TABLE =
     {
       {_AI_CHECK_BUCKETS_EXTREME, 256, 64},
       {_AI1_CHECK_CONVERT_EXTREME, 96, 24},
-      {_AI1_CHECK_FAR_FRONT, 256, 128},
-      {_AI1_CHECK_OUR_FRONT, 256, 96},
-      {_AI1_CHECK_OUR_BASE, 256, 64},
+      {_AI1_CHECK_FAR_FRONT, 192, 128},
+      {_AI1_CHECK_OUR_FRONT, 192, 96},
+      {_AI1_CHECK_OUR_BASE, 192, 64},
       {_AI1_TRY_DEFEND_BASE_OR_FRONT, 128, 32},
+      {_AI1_TOWER_SPAM_FRONT_EXTREME, 256, 32},
+      {_AI1_TOWER_SPAM_BASE_EXTREME, 384, 64},
+      {_AI1_SPAM_HUTS_EVERYWHERE, 64, 32},
+      {_AI1_MANAGE_AMOUNT_OF_TROOPS_M_H, 384, 64},
+      {_AI1_ANNOYING_ATTACKS, 192, 96},
     },
   },
   {
@@ -612,8 +715,17 @@ function register_ai_events(player_num, difficulty)
   ai_setv(player_num, USER_SHAMAN_DEFEND, 52);
   ai_setv(player_num, USER_TROOPS_DEFEND, 52);
   
-  PLR1_NUM_DEFENCE_TOWERS = 10 + (difficulty * 4);
-  PLR2_NUM_DEFENCE_TOWERS = 8 + (difficulty * 4);
+  if (_EVENT_INDEX == 1) then
+    for i,var_index in ipairs(PLR1_ANNOYANCE_GROUPS) do
+      ai_setv(player_num, var_index, 52);
+    end
+    
+    PLR1_NUM_DEFENCE_TOWERS = 10 + (difficulty * 4);
+    PLR1_BLDG_LIST = getPlayerContainer(player_num).PlayerLists[BUILDINGLIST];
+  else
+    PLR2_BLDG_LIST = getPlayerContainer(player_num).PlayerLists[BUILDINGLIST];
+    PLR2_NUM_DEFENCE_TOWERS = 8 + (difficulty * 4);
+  end
   
   _EVENT_INDEX = _EVENT_INDEX + 1;
 end

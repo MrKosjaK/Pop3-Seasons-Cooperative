@@ -21,6 +21,7 @@ ai_do_attack = ATTACK;
 ai_fix_wilds = FIX_WILD_IN_AREA;
 ai_build_tower = BUILD_DRUM_TOWER;
 ai_set_defence_rad = SET_DEFENCE_RADIUS;
+ai_set_state = STATE_SET;
 
 function ai_set_targets(pn, opponent, a, b, c)
   TARGET_PLAYER_DT_AND_S(pn, opponent);
