@@ -48,7 +48,7 @@ function OnGameStart()
   ai_set_converting_info(AI_PLR1_TRIBE, true, true, 24);
   ai_set_defensive_info(AI_PLR1_TRIBE, true, true, true, true, 1, 3, 1);
   ai_set_fetch_info(AI_PLR1_TRIBE, true, false, false, true);
-  ai_set_attack_info(AI_PLR1_TRIBE, true, 1 + (AI_PLR1_DIFF), 30 - ((AI_PLR1_DIFF - 1) * 10), 12);
+  ai_set_attack_info(AI_PLR1_TRIBE, true, 1, 30 - ((AI_PLR1_DIFF - 1) * 10), 12);
   ai_set_bldg_info(AI_PLR1_TRIBE, true, 15 + (AI_PLR1_DIFF * 25), 2 + ((AI_PLR1_DIFF - 1) * 2));
   ai_set_training_huts(AI_PLR1_TRIBE, 1, 0, 1, 0);
   ai_set_training_people(AI_PLR1_TRIBE, true, 10, 0, 12, 0, 0 + AI_PLR1_DIFF);
@@ -76,6 +76,7 @@ function OnGameStart()
     ai_set_spell_entry(AI_PLR1_TRIBE, 3, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 1);
     
     ai_attr_w(AI_PLR1_TRIBE, ATTR_SHAMEN_BLAST, 16);
+    ai_attr_w(AI_PLR1_TRIBE, ATTR_MAX_ATTACKS, 5);
     ai_set_targets(AI_PLR1_TRIBE, 0, true, false, true); -- this will by dynamically changed in actual attacks
   end
   
@@ -95,6 +96,7 @@ function OnGameStart()
     ai_set_state(AI_PLR1_TRIBE, TRUE, CP_AT_TYPE_REPAIR_BLDGS);
     
     ai_attr_w(AI_PLR1_TRIBE, ATTR_SHAMEN_BLAST, 8);
+    ai_attr_w(AI_PLR1_TRIBE, ATTR_MAX_ATTACKS, 8);
     ai_set_targets(AI_PLR1_TRIBE, 0, true, true, true); -- this will by dynamically changed in actual attacks
   end
   
@@ -104,7 +106,7 @@ function OnGameStart()
   ai_set_converting_info(AI_PLR2_TRIBE, true, true, 24);
   ai_set_defensive_info(AI_PLR2_TRIBE, true, true, true, true, 1, 3, 1);
   ai_set_fetch_info(AI_PLR2_TRIBE, true, false, false, true);
-  ai_set_attack_info(AI_PLR2_TRIBE, true, 1 + (AI_PLR2_DIFF), 30 - ((AI_PLR2_DIFF - 1) * 10), 12);
+  ai_set_attack_info(AI_PLR2_TRIBE, true, 1, 30 - ((AI_PLR2_DIFF - 1) * 10), 12);
   ai_set_bldg_info(AI_PLR2_TRIBE, true, 20 + (AI_PLR2_DIFF * 25), 2 + ((AI_PLR2_DIFF - 1) * 2));
   ai_set_training_huts(AI_PLR2_TRIBE, 1, 0, 1, 0);
   ai_set_training_people(AI_PLR2_TRIBE, true, 10, 0, 12, 0, 0 + AI_PLR2_DIFF);
