@@ -73,6 +73,8 @@ end
 local WAY_POINT_EASY_MKS = {39, 40, 41, 42};
 local PLR1_NUM_DEFENCE_TOWERS = 5; -- default, will be change depending on difficulty.
 local PLR2_NUM_DEFENCE_TOWERS = 8;
+local PLR1_CONVERT_POINTS = {48, 49, 50};
+local PLR2_CONVERT_POINTS = {51, 52, 53};
 
 -- user vars
 local USER_TOWER_BUILT = 1;
@@ -163,17 +165,49 @@ local function _AI_CHECK_CONVERT_EASY(_p, _sturn)
   end
 end
 
-local function _AI_CHECK_CONVERT_M_H(_p, _sturn)
+local function _AI1_CHECK_CONVERT_M_H(_p, _sturn)
   if (count_pop(_p) < 35) then
     ai_set_converting_info(_p, true, true, 24);
+    
+    if (G_RANDOM(4) > 0) then
+      ai_convert_marker(_p, PLR1_CONVERT_POINTS[G_RANDOM(#PLR1_CONVERT_POINTS) + 1]);
+    end
   else
     ai_set_converting_info(_p, false, true, 24);
   end
 end
 
-local function _AI_CHECK_CONVERT_EXTREME(_p, _sturn)
+local function _AI1_CHECK_CONVERT_EXTREME(_p, _sturn)
   if (count_pop(_p) < 40) then
     ai_set_converting_info(_p, true, true, 32);
+    
+    if (G_RANDOM(4) > 0) then
+      ai_convert_marker(_p, PLR1_CONVERT_POINTS[G_RANDOM(#PLR1_CONVERT_POINTS) + 1]);
+    end
+  else
+    ai_set_converting_info(_p, false, true, 32);
+  end
+end
+
+local function _AI2_CHECK_CONVERT_M_H(_p, _sturn)
+  if (count_pop(_p) < 35) then
+    ai_set_converting_info(_p, true, true, 24);
+    
+    if (G_RANDOM(4) > 0) then
+      ai_convert_marker(_p, PLR2_CONVERT_POINTS[G_RANDOM(#PLR2_CONVERT_POINTS) + 1]);
+    end
+  else
+    ai_set_converting_info(_p, false, true, 24);
+  end
+end
+
+local function _AI2_CHECK_CONVERT_EXTREME(_p, _sturn)
+  if (count_pop(_p) < 40) then
+    ai_set_converting_info(_p, true, true, 32);
+    
+    if (G_RANDOM(4) > 0) then
+      ai_convert_marker(_p, PLR2_CONVERT_POINTS[G_RANDOM(#PLR2_CONVERT_POINTS) + 1]);
+    end
   else
     ai_set_converting_info(_p, false, true, 32);
   end
@@ -407,6 +441,49 @@ local function _AI1_MARKER_ENTRIES_EASY(_p, _sturn)
   end
 end
 
+local function _AI1_MARKER_ENTRIES_M_H(_p, _sturn)
+  if (_sturn > 3600) then
+    if (ai_getv(_p, USER_BASE_STATUS) == 0) then
+      ai_do_marker_entries(_p, 3, 4, 5, -1);
+    end
+    
+    if (ai_getv(_p, USER_OUR_FRONT_STATUS) == 0) then
+      ai_do_marker_entries(_p, 0, 2, -1, -1);
+    end
+    
+    if (ai_getv(_p, USER_FAR_FRONT_STATUS) == 0) then
+      ai_do_marker_entries(_p, 1, -1, -1, -1);
+    end
+  end
+end
+
+local function _AI1_MANAGE_AMOUNT_OF_TROOPS_M_H(_p, _sturn)
+  local num_small_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE);
+  local num_medium_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE_2);
+  local num_large_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE_3);
+  
+  if (num_small_huts > (num_medium_huts + num_large_huts)) then
+    -- too many small huts, do not train too much
+    ai_attr_w(_p, ATTR_MAX_TRAIN_AT_ONCE, 4);
+    ai_attr_w(_p, ATTR_PREF_WARRIOR_PEOPLE, (num_small_huts >> 1) + ((num_large_huts + num_medium_huts)));
+    ai_attr_w(_p, ATTR_PREF_SUPER_WARRIOR_PEOPLE, (num_small_huts >> 1) + (num_large_huts + num_medium_huts));
+  else
+    -- have more upgraded huts than small ones
+    ai_attr_w(_p, ATTR_MAX_TRAIN_AT_ONCE, 5);
+    ai_attr_w(_p, ATTR_PREF_WARRIOR_PEOPLE, MIN((num_large_huts << 1), 30) + (num_medium_huts + num_small_huts));
+    ai_attr_w(_p, ATTR_PREF_SUPER_WARRIOR_PEOPLE, MIN((num_large_huts << 1), 35) + (num_medium_huts + num_small_huts));
+  end
+  
+  if (_sturn > 3600) then
+    if ((num_large_huts + num_medium_huts) > num_small_huts) then
+      -- see if can build more war trainings
+      ai_attr_w(_p, ATTR_PREF_WARRIOR_TRAINS, 2);
+    else
+      ai_attr_w(_p, ATTR_PREF_WARRIOR_TRAINS, 1);
+    end
+  end
+end
+
 local function _AI1_TOWER_SPAM_FRONT_M_H(_p, _sturn)
   if (ai_getv(_p, USER_OUR_FRONT_STATUS) == 0) then
     local num_huts = count_huts(_p, false);
@@ -452,7 +529,7 @@ local _EVENT_TABLE =
     [AI_EASY] =
     {
       {_AI_CHECK_BUCKETS_EASY, 256, 64},
-      {_AI_CHECK_CONVERT_EASY, 128, 32},
+      {_AI1_CHECK_CONVERT_EASY, 128, 32},
       {_AI1_BASIC_ATTACK_EASY, 3072, 512},
       {_AI1_TOWERS_EXPANSION, 512, 256},
       {_AI1_MARKER_ENTRIES_EASY, 256, 128},
@@ -461,31 +538,35 @@ local _EVENT_TABLE =
     [AI_MEDIUM] = 
     {
       {_AI_CHECK_BUCKETS_M_H, 256, 64},
-      {_AI_CHECK_CONVERT_M_H, 128, 32},
+      {_AI1_CHECK_CONVERT_M_H, 128, 32},
       {_AI1_TOWER_SPAM_FRONT_M_H, 384, 64},
       {_AI1_TOWER_SPAM_BASE_M_H, 512, 128},
       {_AI1_CHECK_FAR_FRONT, 256, 128},
       {_AI1_CHECK_OUR_FRONT, 256, 96},
       {_AI1_CHECK_OUR_BASE, 256, 64},
       {_AI1_TRY_DEFEND_BASE_OR_FRONT, 196, 128},
+      {_AI1_MARKER_ENTRIES_M_H, 384, 64},
+      {_AI1_MANAGE_AMOUNT_OF_TROOPS_M_H, 512, 128},
     },
     
     [AI_HARD] = 
     {
       {_AI_CHECK_BUCKETS_M_H, 256, 64},
-      {_AI_CHECK_CONVERT_M_H, 128, 32},
+      {_AI1_CHECK_CONVERT_M_H, 128, 32},
       {_AI1_TOWER_SPAM_FRONT_M_H, 384, 32},
       {_AI1_TOWER_SPAM_BASE_M_H, 512, 32},
       {_AI1_CHECK_FAR_FRONT, 256, 128},
       {_AI1_CHECK_OUR_FRONT, 256, 96},
       {_AI1_CHECK_OUR_BASE, 256, 64},
       {_AI1_TRY_DEFEND_BASE_OR_FRONT, 196, 64},
+      {_AI1_MARKER_ENTRIES_M_H, 288, 64},
+      {_AI1_MANAGE_AMOUNT_OF_TROOPS_M_H, 384, 128},
     },
     
     [AI_EXTREME] = 
     {
       {_AI_CHECK_BUCKETS_EXTREME, 256, 64},
-      {_AI_CHECK_CONVERT_EXTREME, 96, 24},
+      {_AI1_CHECK_CONVERT_EXTREME, 96, 24},
       {_AI1_CHECK_FAR_FRONT, 256, 128},
       {_AI1_CHECK_OUR_FRONT, 256, 96},
       {_AI1_CHECK_OUR_BASE, 256, 64},
@@ -502,19 +583,19 @@ local _EVENT_TABLE =
     [AI_MEDIUM] = 
     {
       {_AI_CHECK_BUCKETS_M_H, 256, 64},
-      {_AI_CHECK_CONVERT_M_H, 128, 32},
+      {_AI2_CHECK_CONVERT_M_H, 128, 32},
     },
     
     [AI_HARD] = 
     {
       {_AI_CHECK_BUCKETS_M_H, 256, 64},
-      {_AI_CHECK_CONVERT_M_H, 128, 32},
+      {_AI2_CHECK_CONVERT_M_H, 128, 32},
     },
     
     [AI_EXTREME] = 
     {
       {_AI_CHECK_BUCKETS_EXTREME, 256, 64},
-      {_AI_CHECK_CONVERT_EXTREME, 96, 24},
+      {_AI2_CHECK_CONVERT_EXTREME, 96, 24},
     },
   }
 }

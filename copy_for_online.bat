@@ -77,17 +77,25 @@ ECHO Copying object files...
 :: Scripts
 ECHO.
 ECHO Copying lua script files...
+
+:: Levels
+COPY "%SCR_PATH%\level_1.lua" "%WORK_DIR%\scripts"
+COPY "%SCR_PATH%\level_2.lua" "%WORK_DIR%\scripts"
+
+:: Level's Database
+COPY "%SCR_PATH%\lvl1_ai_func.lua" "%WORK_DIR%\scripts"
+
+::Misc
 COPY "%SCR_PATH%\globals.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\common.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\assets.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\weather.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\game_lobby.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\game_state.lua" "%WORK_DIR%\scripts"
-COPY "%SCR_PATH%\level_1.lua" "%WORK_DIR%\scripts"
-COPY "%SCR_PATH%\level_2.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\gui.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\popscript.lua" "%WORK_DIR%\scripts"
 COPY "%SCR_PATH%\turnclock.lua" "%WORK_DIR%\scripts"
+COPY "%SCR_PATH%\searcharea.lua" "%WORK_DIR%\scripts"
 
 :: Sound
 ECHO.

@@ -64,6 +64,12 @@ function OnGameStart()
   end
   
   if (AI_PLR1_DIFF == AI_MEDIUM) then
+    ai_set_marker_entry(AI_PLR1_TRIBE, 0, 54, 55, 0, 4, 4, 0);
+    ai_set_marker_entry(AI_PLR1_TRIBE, 1, 39, -1, 0, 2, 2, 0);
+    ai_set_marker_entry(AI_PLR1_TRIBE, 2, 56, 57, 0, 3, 3, 0);
+    ai_set_marker_entry(AI_PLR1_TRIBE, 3, 46, 47, 0, 0, 4, 0);
+    ai_set_marker_entry(AI_PLR1_TRIBE, 4, 58, 59, 0, 0, 4, 0);
+    ai_set_marker_entry(AI_PLR1_TRIBE, 5, 60, 61, 0, 0, 4, 0);
     ai_set_spell_entry(AI_PLR1_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 3, 0);
     ai_set_spell_entry(AI_PLR1_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 3, 1);
     ai_set_spell_entry(AI_PLR1_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 0);
@@ -74,6 +80,12 @@ function OnGameStart()
   end
   
   if (AI_PLR1_DIFF >= AI_HARD) then
+    ai_set_marker_entry(AI_PLR1_TRIBE, 0, 54, 55, 0, 4, 4, 0);
+    ai_set_marker_entry(AI_PLR1_TRIBE, 1, 39, -1, 0, 2, 2, 0);
+    ai_set_marker_entry(AI_PLR1_TRIBE, 2, 56, 57, 0, 3, 3, 0);
+    ai_set_marker_entry(AI_PLR1_TRIBE, 3, 46, 47, 0, 0, 4, 0);
+    ai_set_marker_entry(AI_PLR1_TRIBE, 4, 58, 59, 0, 0, 4, 0);
+    ai_set_marker_entry(AI_PLR1_TRIBE, 5, 60, 61, 0, 0, 4, 0);
     ai_set_spell_entry(AI_PLR1_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 2, 0);
     ai_set_spell_entry(AI_PLR1_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 2, 1);
     ai_set_spell_entry(AI_PLR1_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 0);

@@ -258,6 +258,9 @@ function count_buildings(pn)
 	return G_PLR[pn].NumBuildings
 end
 
+count_bldgs_of_type = PLAYERS_BUILDING_OF_TYPE;
+count_people_of_type = PLAYERS_PEOPLE_OF_TYPE;
+
 function count_huts(pn, includeDamaged)
 	if includeDamaged then 
 		return G_PLR[pn].NumBuiltOrPartBuiltBuildingsOfType[1]+G_PLR[pn].NumBuiltOrPartBuiltBuildingsOfType[2]+G_PLR[pn].NumBuiltOrPartBuiltBuildingsOfType[3]
