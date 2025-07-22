@@ -52,6 +52,64 @@ function get_turn()
 	return G_SI.Counts.ProcessThings
 end
 
+-- EVERY POW FUNCS
+
+function is_every_2_turns(_val)
+  return (_val & 1 == 0);
+end
+
+function is_every_4_turns(_val)
+  return (_val & 3 == 0);
+end
+
+function is_every_8_turns(_val)
+  return (_val & 7 == 0);
+end
+
+function is_every_16_turns(_val)
+  return (_val & 15 == 0);
+end
+
+function is_every_32_turns(_val)
+  return (_val & 31 == 0);
+end
+
+function is_every_64_turns(_val)
+  return (_val & 63 == 0);
+end
+
+function is_every_128_turns(_val)
+  return (_val & 127 == 0);
+end
+
+function is_every_256_turns(_val)
+  return (_val & 255 == 0);
+end
+
+function is_every_512_turns(_val)
+  return (_val & 511 == 0);
+end
+
+function is_every_1024_turns(_val)
+  return (_val & 1023 == 0);
+end
+
+function is_every_2048_turns(_val)
+  return (_val & 2047 == 0);
+end
+
+function is_every_4096_turns(_val)
+  return (_val & 4095 == 0);
+end
+
+function is_every_8192_turns(_val)
+  return (_val & 8191 == 0);
+end
+
+function is_every_16384_turns(_val)
+  return (_val & 16383 == 0);
+end
+
 function LOG(msg)
 	log_msg(8, "turn: " .. G_SCRIPT_TURN .. " |   " .. tostring(msg))
 end
