@@ -723,6 +723,9 @@ function register_ai_events(player_num, difficulty)
       ai_setv(player_num, var_index, 52);
     end
     
+    PLR1_SH = register_shaman_ai(player_num);
+    PLR1_SH:set_defensive_spell_entry(1, M_SPELL_SHIELD, 4, 25000);
+    PLR1_SH:set_defensive_mode();
     PLR1_NUM_DEFENCE_TOWERS = 10 + (difficulty * 4);
     PLR1_BLDG_LIST = getPlayerContainer(player_num).PlayerLists[BUILDINGLIST];
     
@@ -743,10 +746,14 @@ function register_ai_events(player_num, difficulty)
   _EVENT_INDEX = _EVENT_INDEX + 1;
 end
 
+PLR1_SH = nil;
+
 function process_ai_events()
   TurnClock.process_clocks();
   
+  process_shaman_ai(get_script_turn());
+  
   if (PLR1_SHAMAN ~= nil) then
-    PLR1_SHAMAN:process();
+    --PLR1_SHAMAN:process();
   end
 end
