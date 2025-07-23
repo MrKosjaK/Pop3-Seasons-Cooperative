@@ -71,6 +71,12 @@ function OnTurn()
       process_options(OPT_TOGGLE_PANEL, 1, 0);
       enable_inputs(DIF_FLYBY);
       
+      -- These should be applied globally, fixes AI's poor mana generation
+      -- I'm also disabling mana gaining from killing AI shamans coz of large mana pool
+      G_CONST.ComputerManaAdjustFactor = 320;
+      G_CONST.MaxManaValue = 3000000;
+      G_CONST.ShamenDeadManaPer256Gained = 0;
+      
       if (OnGameStart ~= nil) then OnGameStart(); end
       
       set_game_state(GM_STATE_GAME);

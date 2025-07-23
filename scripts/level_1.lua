@@ -36,10 +36,6 @@ function OnGameStart()
     register_ai_events(ai.Owner, ai.Difficulty);
   end);
   
-  G_CONST.ComputerManaAdjustFactor = 320;
-  G_CONST.MaxManaValue = 3000000;
-  G_CONST.ShamenDeadManaPer256Gained = 0;
-  
   AI_PLR1_TRIBE = get_ai_player_info(1).Owner;
   AI_PLR1_DIFF = get_ai_player_info(1).Difficulty;
   AI_PLR2_TRIBE = get_ai_player_info(2).Owner;
