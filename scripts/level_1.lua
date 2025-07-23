@@ -16,11 +16,11 @@ add_ai_player_start_info(2, -1, {M_SPELL_BLAST, M_SPELL_CONVERT_WILD, M_SPELL_HY
 add_ai_player_start_info(3, -1, {M_SPELL_BLAST, M_SPELL_CONVERT_WILD, M_SPELL_INSECT_PLAGUE, M_SPELL_HYPNOTISM, M_SPELL_LIGHTNING_BOLT, M_SPELL_WHIRLWIND}, {M_BUILDING_TEPEE, M_BUILDING_DRUM_TOWER, M_BUILDING_WARRIOR_TRAIN, M_BUILDING_SUPER_TRAIN});
 
 
-
-local AI_PLR1_TRIBE = -1;
-local AI_PLR1_DIFF = AI_EASY;
-local AI_PLR2_TRIBE = -1;
-local AI_PLR2_DIFF = AI_EASY;
+PLR1_SH = nil;
+AI_PLR1_TRIBE = -1;
+AI_PLR1_DIFF = AI_EASY;
+AI_PLR2_TRIBE = -1;
+AI_PLR2_DIFF = AI_EASY;
 
 -- triggers at turn 0, at that point client's resolution is set to correct one instead of 640x480.
 function OnInit()
@@ -35,6 +35,10 @@ function OnGameStart()
     spawn_computer_addons(ai.Owner, ai.Difficulty);
     register_ai_events(ai.Owner, ai.Difficulty);
   end);
+  
+  G_CONST.ComputerManaAdjustFactor = 320;
+  G_CONST.MaxManaValue = 3000000;
+  G_CONST.ShamenDeadManaPer256Gained = 0;
   
   AI_PLR1_TRIBE = get_ai_player_info(1).Owner;
   AI_PLR1_DIFF = get_ai_player_info(1).Difficulty;
@@ -120,6 +124,12 @@ end
 
 function ScrOnTurn()
   process_ai_events();
+  
+  local sTurn = get_script_turn();
+  
+  if (sTurn == 72) then
+    PLR1_SH:set_defensive_mode();
+  end
 end
 
 function ScrOnCreateThing(t_thing)

@@ -5,6 +5,14 @@ local CASTINGM_OFFENSIVE = 3;
 
 local MP_POS = MapPosXZ.new();
 
+local ACCEPTABLE_DEFENSIVE_PERSON_MODELS = {false, true, true, true, true, true, false, false};
+local is_person_valid_for_defensive_spell =
+{
+  [M_SPELL_SHIELD] = function(t) return (t.u.Pers.u.Owned.ShieldCount == 0); end,
+  [M_SPELL_INVISIBILITY] = function(t) return (t.u.Pers.u.Owned.InvisibleCount == 0); end,
+  [M_SPELL_BLOODLUST] = function(t) return (t.u.Pers.u.Owned.BloodlustCount == 0); end
+}
+
 local sh_mt = {};
 sh_mt.__index = 
 {
@@ -33,6 +41,10 @@ sh_mt.__index =
   
   can_cast_offensive_spell = function(self, idx)
     return (self.SpellOffensiveEntry[idx]._used_count < self.SpellOffensiveEntry[idx]._max_shots);
+  end,
+  
+  set_casting_delay = function(self, val)
+    self.SpellDelay = val;
   end,
   
   set_converting_mode = function(self)
@@ -64,7 +76,65 @@ sh_mt.__index =
     self.CastingMode = CASTINGM_OFFENSIVE;
   end,
   
+  process_mana_sharing = function(self, sturn)
+    if (is_every_4_turns(sturn)) then
+      local curr_mana_amt = G_PLR[self.Owner].LastManaIncr >> 2;
+      
+      local se_size = #self.SpellDefensiveEntry;
+      local se = self.SpellDefensiveEntry;
+      local entry;
+      
+      for i = 1, se_size do
+        entry = se[i];
+        
+        if (entry ~= nil) then
+          if (entry._used_count > 0) then
+            entry._mana = entry._mana + curr_mana_amt;
+          
+            if (entry._mana >= entry._cost) then
+              entry._used_count = entry._used_count - 1;
+              entry._mana = 0;
+            end
+          end
+        end
+      end
+      
+      se_size = #self.SpellOffensiveEntry;
+      se = self.SpellOffensiveEntry;
+      
+      for i = 1, se_size do
+        entry = se[i];
+        
+        if (entry ~= nil) then
+          if (entry._used_count > 0) then
+            entry._mana = entry._mana + curr_mana_amt;
+          
+            if (entry._mana >= entry._cost) then
+              entry._used_count = entry._used_count - 1;
+              entry._mana = 0;
+            end
+          end
+        end
+      end
+    end
+  end,
+  
   process_casting_modes = function(self, sturn)
+    if (self.CastDelay > 0) then
+      self.CastDelay = self.CastDelay - 1;
+      goto pcm_end;
+    end
+    
+    local s = getShaman(self.Owner);
+      
+    if (s == nil) then
+      goto pcm_end;
+    end
+    
+    if (is_med_man_in_valid_state_to_cast_a_spell(s) == 0) then
+      goto pcm_end;
+    end
+    
     if (sturn & 3 ~= 0) then
       --log("SKIP TURN: " .. sturn);
       goto pcm_end;
@@ -98,12 +168,6 @@ sh_mt.__index =
       
       ::pcm_process_def::
       
-      local s = getShaman(self.Owner);
-      
-      if (s == nil) then
-        goto pcm_end;
-      end
-      
       local curr_entry = self.SpellDefensiveEntry[self.CurrEntry];
       local break_loop = false;
       --local c3d = Coord3D.new();
@@ -115,10 +179,12 @@ sh_mt.__index =
           if (not map_elem.PlayerMapWho[self.Owner]:isEmpty()) then
             map_elem.PlayerMapWho[self.Owner]:processList(function(t)
               if (t.Type == T_PERSON) then
-                if (t.Model ~= M_PERSON_MEDICINE_MAN) then
-                  if (t.Flags3 & TF3_SHIELD_ACTIVE == 0) then
+                if (ACCEPTABLE_DEFENSIVE_PERSON_MODELS[t.Model]) then
+                  if (is_person_valid_for_defensive_spell[curr_entry._spell](t)) then
                     break_loop = true;
                     self.CurrRad = 0
+                    self.CastDelay = 24;
+                    curr_entry._used_count = curr_entry._used_count + 1;
                     CREATE_THING_WITH_PARAMS4(T_SPELL, curr_entry._spell, s.Owner, t.Pos.D3, curr_entry._cost, t.ThingNum, 0, 0);
                     return false;
                   end
@@ -129,18 +195,14 @@ sh_mt.__index =
             end);
           end
           
-          --log("gg");
-          
-          --map_ptr_to_world_coord2d_centre(map_elem, c2d);
-          --coord2D_to_coord3D(c2d, c3d);
-          --createThing(T_EFFECT, 4, 0, c3d, false, false);
-          
           if (break_loop) then
             return false;
           end
           
           return true;
         end);
+      else
+        self.CurrEntry = -1;
       end
       
       if (self.CurrRad < self.MaxRad) then
@@ -170,6 +232,7 @@ function register_shaman_ai(player_num)
     Owner = player_num;
     Enabled = true,
     CastDelay = 0,
+    SpellDelay = 12, -- DEFAULT
     CastingMode = CASTINGM_NONE,
     SpellOffensiveEntry = {nil, nil, nil, nil, nil},
     SpellDefensiveEntry = {nil, nil, nil},
@@ -183,6 +246,7 @@ end
 
 function process_shaman_ai(sturn);
   for i,ai in ipairs(_AI_SHAMANS) do
+    ai:process_mana_sharing(sturn);
     ai:process_casting_modes(sturn);
   end
 end
