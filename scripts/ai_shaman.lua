@@ -156,7 +156,7 @@ sh_mt.__index =
                 if (t.Model == M_PERSON_WILD) then
                   break_look2 = true;
                   self.CurrRad = 0;
-                  self.CastDelay = 24;
+                  self.CastDelay = self.SpellDelay;
                   CREATE_THING_WITH_PARAMS4(T_SPELL, M_SPELL_CONVERT_WILD, s.Owner, t.Pos.D3, 0, t.ThingNum, 0, 0);
                   return false;
                 end
@@ -209,11 +209,8 @@ sh_mt.__index =
       
       local curr_entry = self.SpellDefensiveEntry[self.CurrEntry];
       local break_loop = false;
-      --local c3d = Coord3D.new();
-      --local c2d = Coord2D.new();
-      --log("gg");
+      
       if (curr_entry._used_count < curr_entry._max_shots) then
-      --log("gg");
         SearchMapCells(CIRCULAR, 0, self.CurrRad, self.CurrRad, world_coord3d_to_map_idx(s.Pos.D3), function(map_elem)
           if (not map_elem.PlayerMapWho[self.Owner]:isEmpty()) then
             map_elem.PlayerMapWho[self.Owner]:processList(function(t)
@@ -222,7 +219,7 @@ sh_mt.__index =
                   if (is_person_valid_for_defensive_spell[curr_entry._spell](t)) then
                     break_loop = true;
                     self.CurrRad = 0
-                    self.CastDelay = 24;
+                    self.CastDelay = self.SpellDelay;
                     curr_entry._used_count = curr_entry._used_count + 1;
                     CREATE_THING_WITH_PARAMS4(T_SPELL, curr_entry._spell, s.Owner, t.Pos.D3, curr_entry._cost, t.ThingNum, 0, 0);
                     return false;
