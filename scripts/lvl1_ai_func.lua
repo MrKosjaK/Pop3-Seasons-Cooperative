@@ -731,17 +731,17 @@ function register_ai_events(player_num, difficulty)
     PLR1_BLDG_LIST = getPlayerContainer(player_num).PlayerLists[BUILDINGLIST];
     
     if (difficulty == AI_EXTREME) then
-      PLR1_SHAMAN = create_shaman_ai(player_num);
-      PLR1_SHAMAN:toggle_fall_damage_save(true, 60 + G_RANDOM(40));
-      PLR1_SHAMAN:toggle_lightning_dodge(true, 60 + G_RANDOM(40));
-      PLR1_SHAMAN:toggle_spell_check(true);
+      --PLR1_SHAMAN = create_shaman_ai(player_num);
+      --PLR1_SHAMAN:toggle_fall_damage_save(true, 60 + G_RANDOM(40));
+      --PLR1_SHAMAN:toggle_lightning_dodge(true, 60 + G_RANDOM(40));
+      --PLR1_SHAMAN:toggle_spell_check(true);
 
-      PLR1_SHAMAN:set_spell_entry(1, M_SPELL_LIGHTNING_BOLT, {4, 5, 6, 7, 8}, 4, 4, 40000);
-      PLR1_SHAMAN:set_spell_entry(2, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 5, 6, 7, 8}, 3, 3, 75000);
+      --PLR1_SHAMAN:set_spell_entry(1, M_SPELL_LIGHTNING_BOLT, {4, 5, 6, 7, 8}, 4, 4, 40000);
+      --PLR1_SHAMAN:set_spell_entry(2, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 5, 6, 7, 8}, 3, 3, 75000);
     end
   else
     PLR2_BLDG_LIST = getPlayerContainer(player_num).PlayerLists[BUILDINGLIST];
-    PLR2_NUM_DEFENCE_TOWERS = 8 + (difficulty * 4);
+    PLR2_NUM_DEFENCE_TOWERS = 8 + (difficulty * 5);
   end
   
   _EVENT_INDEX = _EVENT_INDEX + 1;

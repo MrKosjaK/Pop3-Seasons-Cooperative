@@ -49,6 +49,8 @@ sh_mt.__index =
   
   set_converting_mode = function(self)
     self.CastingMode = CASTINGM_GET_WILDS;
+    self.MaxRad = (G_PLR[self.Owner].LimitsSpell.WorldCoordRange[M_SPELL_CONVERT_WILD] >> 9) + 1;
+    self.CurrRad = 0;
   end,
   
   set_no_casting = function(self)
@@ -145,6 +147,43 @@ sh_mt.__index =
     end
     
     if (self.CastingMode == CASTINGM_GET_WILDS) then
+      if (MANA(s.Owner) > 0) then
+        local break_look2 = false;
+        SearchMapCells(CIRCULAR, 0, self.CurrRad, self.CurrRad, world_coord3d_to_map_idx(s.Pos.D3), function(map_elem)
+          if (not map_elem.PlayerMapWho[TRIBE_HOSTBOT]:isEmpty()) then
+            map_elem.PlayerMapWho[TRIBE_HOSTBOT]:processList(function(t)
+              if (t.Type == T_PERSON) then
+                if (t.Model == M_PERSON_WILD) then
+                  break_look2 = true;
+                  self.CurrRad = 0;
+                  self.CastDelay = 24;
+                  CREATE_THING_WITH_PARAMS4(T_SPELL, M_SPELL_CONVERT_WILD, s.Owner, t.Pos.D3, 0, t.ThingNum, 0, 0);
+                  return false;
+                end
+              end
+              
+              return true;
+            end);
+          end
+            
+          --map_ptr_to_world_coord2d_centre(map_elem, c2d);
+          --coord2D_to_coord3D(c2d, c3d);
+          --createThing(T_EFFECT, 2, 8, c3d, false, false);
+            
+          if (break_look2) then
+            return false;
+          end
+            
+          return true;
+        end);
+      end
+      
+      if (self.CurrRad < self.MaxRad) then
+        self.CurrRad = self.CurrRad + 1;
+      else
+        self.CurrRad = 0;
+      end
+      
       goto pcm_end;
     end
     
