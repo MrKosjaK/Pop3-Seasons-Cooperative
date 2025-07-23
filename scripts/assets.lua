@@ -419,6 +419,10 @@ function create_building(model, owner, x, z, orient)
   CREATE_THING_WITH_PARAMS5(T_BUILDING, model, owner, MAP_XZ_2_WORLD_XYZ(x, z), orient, 0, S_BUILDING_STAND, -1, 0);
 end
 
+function create_person(model, owner, x, z);
+  createThing(T_PERSON, model, owner, MAP_XZ_2_WORLD_XYZ(x, z), false, false);
+end
+
 function create_people(model, owner, x, z, amount)
   local num = math.max(1, amount);
   local _c3d_pos = MAP_XZ_2_WORLD_XYZ(x, z);

@@ -28,7 +28,13 @@ local _MAP_ADDONS =
     {AI_EXTREME, T_BUILDING, M_BUILDING_DRUM_TOWER, 170, 96},
     {AI_EXTREME, T_BUILDING, M_BUILDING_DRUM_TOWER, 184, 108},
     {AI_EXTREME, T_BUILDING, M_BUILDING_DRUM_TOWER, 126, 102},
-    {AI_EXTREME, T_BUILDING, M_BUILDING_DRUM_TOWER, 178, 42}
+    {AI_EXTREME, T_BUILDING, M_BUILDING_DRUM_TOWER, 178, 42},
+    {AI_MEDIUM, T_PERSON, 12, M_PERSON_BRAVE, 142, 70},
+    {AI_HARD, T_PERSON, 6, M_PERSON_WARRIOR, 142, 70},
+    {AI_HARD, T_PERSON, 6, M_PERSON_SUPER_WARRIOR, 142, 70},
+    {AI_EXTREME, T_PERSON, 12, M_PERSON_BRAVE, 142, 70},
+    {AI_EXTREME, T_PERSON, 6, M_PERSON_WARRIOR, 142, 70},
+    {AI_EXTREME, T_PERSON, 6, M_PERSON_SUPER_WARRIOR, 142, 70},
   },
   
   {
@@ -63,6 +69,14 @@ function spawn_computer_addons(player_num, difficulty)
       if (item[2] == T_BUILDING) then
         create_building(item[3], p, item[4], item[5], G_RANDOM(4)); 
       end
+      -- Spawn people
+      if (item[2] == T_PERSON) then
+        local amount = item[3];
+        
+        for k = 1,amount do
+          create_person(item[4], p, item[5], item[6]);
+        end
+      end
     end
   end
   
@@ -83,7 +97,6 @@ local PLR2_CONVERT_POINTS = {51, 52, 53};
 -- cache
 local PLR1_BLDG_LIST = nil;
 local PLR2_BLDG_LIST = nil;
-local PLR1_SHAMAN = nil;
 
 -- user vars
 local USER_TOWER_BUILT = 1;
@@ -189,14 +202,12 @@ end
 local function _AI1_CHECK_CONVERT_EXTREME(_p, _sturn)
   if (count_pop(_p) < 55) then
     ai_set_converting_info(_p, true, true, 32);
-    PLR1_SHAMAN:toggle_converting(true);
     
     if (G_RANDOM(4) > 0) then
       ai_convert_marker(_p, PLR1_CONVERT_POINTS[G_RANDOM(#PLR1_CONVERT_POINTS) + 1]);
     end
   else
     ai_set_converting_info(_p, false, true, 32);
-    PLR1_SHAMAN:toggle_converting(false);
   end
 end
 
@@ -587,7 +598,7 @@ local function _AI1_SPAM_HUTS_EVERYWHERE(_p, _sturn)
 end
 
 local function _AI1_ANNOYING_ATTACKS(_p, _sturn)
-  if (_sturn > 720) then
+  if (_sturn > 0) then
     local my_wars = MIN(count_troops(_p), #PLR1_ANNOYANCE_GROUPS * 3);
     for i,var_index in ipairs(PLR1_ANNOYANCE_GROUPS) do
       local attack_status = ai_getv(_p, var_index);
@@ -599,9 +610,9 @@ local function _AI1_ANNOYING_ATTACKS(_p, _sturn)
           if (my_wars > 2) then
             ai_set_shaman_away(_p, false);
             ai_set_aways(_p, 0, 80, 0, 50, 0);
-            ai_set_attack_flags(_p, 3, 1, 1);
+            ai_set_attack_flags(_p, 2, 1, 1);
             ai_set_atk_var(_p, var_index);
-            ai_do_attack(_p, target_enemy, 1 + G_RANDOM(4), ATTACK_BUILDING, INT_NO_SPECIFIC_BUILDING, 999, M_SPELL_NONE, M_SPELL_NONE, M_SPELL_NONE, ATTACK_NORMAL, 0, -1, -1, 0);
+            ai_do_attack(_p, target_enemy, 1 + G_RANDOM(4), ATTACK_BUILDING, INT_NO_SPECIFIC_BUILDING, 999, M_SPELL_NONE, M_SPELL_NONE, M_SPELL_NONE, ATTACK_NORMAL, 0, WAY_POINT_EASY_MKS[G_RANDOM(#WAY_POINT_EASY_MKS) + 1], -1, 0);
             ai_set_aways(_p, 100, 0, 0, 0, 0);
             break;
           end
@@ -731,13 +742,6 @@ function register_ai_events(player_num, difficulty)
     PLR1_BLDG_LIST = getPlayerContainer(player_num).PlayerLists[BUILDINGLIST];
     
     if (difficulty == AI_EXTREME) then
-      --PLR1_SHAMAN = create_shaman_ai(player_num);
-      --PLR1_SHAMAN:toggle_fall_damage_save(true, 60 + G_RANDOM(40));
-      --PLR1_SHAMAN:toggle_lightning_dodge(true, 60 + G_RANDOM(40));
-      --PLR1_SHAMAN:toggle_spell_check(true);
-
-      --PLR1_SHAMAN:set_spell_entry(1, M_SPELL_LIGHTNING_BOLT, {4, 5, 6, 7, 8}, 4, 4, 40000);
-      --PLR1_SHAMAN:set_spell_entry(2, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 5, 6, 7, 8}, 3, 3, 75000);
     end
   else
     PLR2_BLDG_LIST = getPlayerContainer(player_num).PlayerLists[BUILDINGLIST];
@@ -751,8 +755,4 @@ function process_ai_events()
   TurnClock.process_clocks();
   
   process_shaman_ai(get_script_turn());
-  
-  if (PLR1_SHAMAN ~= nil) then
-    --PLR1_SHAMAN:process();
-  end
 end
