@@ -128,7 +128,7 @@ function ScrOnTurn()
   local sTurn = get_script_turn();
   
   if (sTurn == 72) then
-    PLR1_SH:set_defensive_mode();
+    PLR1_SH:set_no_casting();
   end
 end
 

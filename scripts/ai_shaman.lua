@@ -77,7 +77,7 @@ sh_mt.__index =
   end,
   
   process_mana_sharing = function(self, sturn)
-    if (is_every_4_turns(sturn)) then
+    if ((sturn + self.Owner) & 3 == 0) then
       local curr_mana_amt = G_PLR[self.Owner].LastManaIncr >> 2;
       
       local se_size = #self.SpellDefensiveEntry;
@@ -135,7 +135,7 @@ sh_mt.__index =
       goto pcm_end;
     end
     
-    if (sturn & 3 ~= 0) then
+    if ((sturn + self.Owner) & 3 ~= 0) then
       --log("SKIP TURN: " .. sturn);
       goto pcm_end;
     end
@@ -221,8 +221,6 @@ sh_mt.__index =
     ::pcm_end::
   end,
 }
-local c_mposxz = MapPosXZ.new();
-
 
 local _AI_SHAMANS = {};
 
