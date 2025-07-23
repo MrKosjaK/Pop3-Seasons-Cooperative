@@ -121,7 +121,7 @@ BOX_STYLE = {
 
 local NUM_STYLES = 41;
 
-local _BOX_LAYOUTS = {};
+_BOX_LAYOUTS = {};
 
 local function create_all_layouts()
   

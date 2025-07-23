@@ -3,6 +3,7 @@ include("searcharea.lua");
 include("ai_shaman.lua");
 include("lvl1_ai_func.lua");
 
+
 --include("pop_helper.lua");
 --include("weather.lua");
 
@@ -125,6 +126,7 @@ function ScrOnTurn()
   
   if (sTurn == 72) then
     PLR1_SH:set_converting_mode();
+    footer_add_msg("As such the other tribes did everything they could to undermine the Ikani, they attacked the bases already established, they even attacked at the Ikani's home system.");
   end
 end
 

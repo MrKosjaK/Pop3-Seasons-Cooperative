@@ -5,6 +5,7 @@ include("popscript.lua");
 include("gui.lua");
 include("game_lobby.lua");
 include("game_state.lua");
+include("scrolling_msg.lua");
 
 -- main hooks
 
@@ -115,6 +116,8 @@ function OnFrame()
       CURR_RES_HEIGHT = ScreenHeight();
       CURR_RES_WIDTH = ScreenWidth();
       
+      
+      
       if (CURR_RES_WIDTH >= 1920 and CURR_RES_HEIGHT >= 1080) then
         GUI_TEXT_FONT = 9;
       elseif (CURR_RES_WIDTH >= 1280 and CURR_RES_HEIGHT >= 720) then
@@ -133,6 +136,8 @@ function OnFrame()
           menu.FuncMaintain(menu);
         end
       end
+      
+      auto_scale_footer_box();
     end
     
     gui_draw_menus();
@@ -146,7 +151,10 @@ function OnFrame()
       PopSetFont(4);
       LbDraw_Text(guiW, ScreenHeight() - CharHeight2(), string.format("Process Turn: %i", get_turn()), 0);
       LbDraw_Text(guiW, ScreenHeight() - (CharHeight2() << 1), string.format("Script Turn: %i", get_script_turn()), 0);
+      
+      --footer_draw_scrolling_msg();
     end
+    
     
     GUI_HOVERING_ID = -1;
   end
