@@ -86,7 +86,7 @@ end
 -- AI DEFINES
 -- PLAYER ONE
 local WAY_POINT_EASY_MKS = {39, 40, 41, 42};
-local PLR1_NUM_DEFENCE_TOWERS = 5; -- default, will be change depending on difficulty.
+local PLR1_NUM_DEFENCE_TOWERS = 5; -- default, will change depending on difficulty.
 local PLR1_CONVERT_POINTS = {48, 49, 50};
 local PLR1_ANNOYANCE_GROUPS = {68, 69, 70, 71, 72};
 
@@ -582,6 +582,30 @@ local function _AI1_TOWER_SPAM_BASE_EXTREME(_p, _sturn)
   end
 end
 
+local function _AI1_FAR_FRONT_TOWER_EXPANSION(_p, _sturn)
+  if (ai_getv(_p, USER_FAR_FRONT_STATUS) == 0) then
+    local tower_built = is_shape_or_bldg_at_xz(_p, M_BUILDING_DRUM_TOWER, 210, 110, 6);
+    
+    if (tower_built) then
+      ai_setv(_p, USER_TOWER_BUILT, 1);
+      
+      if (_sturn > 7200) then
+        local num_towers = count_towers(_p, true);
+        
+        if (num_towers < 69) then
+          MP_POS.XZ.X = 210 - 24 + G_RANDOM(48);
+          MP_POS.XZ.Z = 110 - 24 + G_RANDOM(48);
+          
+          ai_build_tower(_p, MP_POS.XZ.X, MP_POS.XZ.Z);
+        end
+      end
+    else
+      ai_build_tower(_p, 210, 110);
+      ai_setv(_p, USER_TOWER_BUILT, 0);
+    end
+  end
+end
+
 local function _AI1_SPAM_HUTS_EVERYWHERE(_p, _sturn)
   local num_huts = count_huts(_p);
   
@@ -598,7 +622,7 @@ local function _AI1_SPAM_HUTS_EVERYWHERE(_p, _sturn)
 end
 
 local function _AI1_ANNOYING_ATTACKS(_p, _sturn)
-  if (_sturn > 0) then
+  if (_sturn > 720) then
     local my_wars = MIN(count_troops(_p), #PLR1_ANNOYANCE_GROUPS * 3);
     for i,var_index in ipairs(PLR1_ANNOYANCE_GROUPS) do
       local attack_status = ai_getv(_p, var_index);
@@ -612,7 +636,7 @@ local function _AI1_ANNOYING_ATTACKS(_p, _sturn)
             ai_set_aways(_p, 0, 80, 0, 50, 0);
             ai_set_attack_flags(_p, 2, 1, 1);
             ai_set_atk_var(_p, var_index);
-            ai_do_attack(_p, target_enemy, 1 + G_RANDOM(4), ATTACK_BUILDING, INT_NO_SPECIFIC_BUILDING, 999, M_SPELL_NONE, M_SPELL_NONE, M_SPELL_NONE, ATTACK_NORMAL, 0, WAY_POINT_EASY_MKS[G_RANDOM(#WAY_POINT_EASY_MKS) + 1], -1, 0);
+            ai_do_attack(_p, target_enemy, 1 + G_RANDOM(3), ATTACK_BUILDING, INT_NO_SPECIFIC_BUILDING, 999, M_SPELL_NONE, M_SPELL_NONE, M_SPELL_NONE, ATTACK_NORMAL, 0, WAY_POINT_EASY_MKS[G_RANDOM(#WAY_POINT_EASY_MKS) + 1], -1, 0);
             ai_set_aways(_p, 100, 0, 0, 0, 0);
             break;
           end
@@ -688,6 +712,7 @@ local _EVENT_TABLE =
       {_AI1_SPAM_HUTS_EVERYWHERE, 64, 32},
       {_AI1_MANAGE_AMOUNT_OF_TROOPS_M_H, 384, 64},
       {_AI1_ANNOYING_ATTACKS, 192, 96},
+      {_AI1_FAR_FRONT_TOWER_EXPANSION, 412, 64},
     },
   },
   {
