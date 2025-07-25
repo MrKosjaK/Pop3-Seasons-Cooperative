@@ -19,18 +19,28 @@ function OnLevelInit(level_id)
     set_level_unable_to_lose();
     
     -- freeze all units and make them unselectable
+    local delete_cache = {};
     ProcessGlobalTypeList(T_PERSON, function(t_thing)
+      if (t_thing.Model == M_PERSON_MEDICINE_MAN) then
+        delete_cache[#delete_cache + 1] = t_thing;
+        return true;
+      end
       remove_all_persons_commands(t_thing);
       set_person_new_state(t_thing, S_PERSON_NONE);
       t_thing.Flags2 = t_thing.Flags2 | TF2_PERSON_NOT_SELECTABLE;
       return true;
     end);
     
+    for i,t in ipairs(delete_cache) do
+      delete_thing_type(t);
+    end
+    
     -- mark all players as NO_PLAYER.
     for i = 0, 7 do
-      if (G_PLR[i].DeadCount > 0) then
+      --if (G_PLR[i].DeadCount > 0) then
         G_PLR[i].PlayerType = NO_PLAYER;
-      end
+        G_PLR[i].DeadCount = 999;
+      --end
     end
   end
 end
