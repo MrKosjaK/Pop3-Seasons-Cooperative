@@ -54,7 +54,13 @@ local _MAP_ADDONS =
     {AI_EXTREME, T_BUILDING, M_BUILDING_DRUM_TOWER, 252, 106},
     {AI_EXTREME, T_BUILDING, M_BUILDING_DRUM_TOWER, 30, 132},
     {AI_EXTREME, T_BUILDING, M_BUILDING_DRUM_TOWER, 20, 128},
-    {AI_EXTREME, T_BUILDING, M_BUILDING_DRUM_TOWER, 22, 110}
+    {AI_EXTREME, T_BUILDING, M_BUILDING_DRUM_TOWER, 22, 110},
+    {AI_MEDIUM, T_PERSON, 10, M_PERSON_BRAVE, 64, 90},
+    {AI_HARD, T_PERSON, 7, M_PERSON_WARRIOR, 64, 90},
+    {AI_HARD, T_PERSON, 5, M_PERSON_SUPER_WARRIOR, 64, 90},
+    {AI_EXTREME, T_PERSON, 16, M_PERSON_BRAVE, 64, 90},
+    {AI_EXTREME, T_PERSON, 8, M_PERSON_WARRIOR, 64, 90},
+    {AI_EXTREME, T_PERSON, 4, M_PERSON_SUPER_WARRIOR, 90, 90},
   }
 }
 
@@ -97,6 +103,8 @@ local PLR2_CONVERT_POINTS = {51, 52, 53};
 -- cache
 local PLR1_BLDG_LIST = nil;
 local PLR2_BLDG_LIST = nil;
+PLR1_SH = nil;
+PLR2_SH = nil;
 
 -- user vars
 local USER_TOWER_BUILT = 1;
@@ -179,59 +187,79 @@ end
 
 -- CONVERTING STATE
 
-local function _AI_CHECK_CONVERT_EASY(_p, _sturn)
+local function _AI1_CHECK_CONVERT_EASY(_p, _sturn)
   if (count_pop(_p) < 20) then
     ai_set_converting_info(_p, true, true, 16);
+    PLR1_SH:toggle_converting_wilds(true);
   else
     ai_set_converting_info(_p, false, true, 16);
+    PLR1_SH:toggle_converting_wilds(false);
   end
 end
 
 local function _AI1_CHECK_CONVERT_M_H(_p, _sturn)
-  if (count_pop(_p) < 35) then
+  if (_sturn < 720) then
     ai_set_converting_info(_p, true, true, 24);
+    PLR1_SH:toggle_converting_wilds(true);
     
     if (G_RANDOM(4) > 0) then
       ai_convert_marker(_p, PLR1_CONVERT_POINTS[G_RANDOM(#PLR1_CONVERT_POINTS) + 1]);
     end
   else
     ai_set_converting_info(_p, false, true, 24);
+    PLR1_SH:toggle_converting_wilds(false);
   end
 end
 
 local function _AI1_CHECK_CONVERT_EXTREME(_p, _sturn)
-  if (count_pop(_p) < 55) then
+  if (_sturn < 720) then
     ai_set_converting_info(_p, true, true, 32);
+    PLR1_SH:toggle_converting_wilds(true);
     
     if (G_RANDOM(4) > 0) then
       ai_convert_marker(_p, PLR1_CONVERT_POINTS[G_RANDOM(#PLR1_CONVERT_POINTS) + 1]);
     end
   else
     ai_set_converting_info(_p, false, true, 32);
+    PLR1_SH:toggle_converting_wilds(false);
+  end
+end
+
+local function _AI2_CHECK_CONVERT_EASY(_p, _sturn)
+  if (count_pop(_p) < 20) then
+    ai_set_converting_info(_p, true, true, 16);
+    PLR2_SH:toggle_converting_wilds(true);
+  else
+    ai_set_converting_info(_p, false, true, 16);
+    PLR2_SH:toggle_converting_wilds(false);
   end
 end
 
 local function _AI2_CHECK_CONVERT_M_H(_p, _sturn)
-  if (count_pop(_p) < 35) then
+  if (_sturn < 720) then
     ai_set_converting_info(_p, true, true, 24);
+    PLR2_SH:toggle_converting_wilds(true);
     
     if (G_RANDOM(4) > 0) then
       ai_convert_marker(_p, PLR2_CONVERT_POINTS[G_RANDOM(#PLR2_CONVERT_POINTS) + 1]);
     end
   else
     ai_set_converting_info(_p, false, true, 24);
+    PLR2_SH:toggle_converting_wilds(false);
   end
 end
 
 local function _AI2_CHECK_CONVERT_EXTREME(_p, _sturn)
-  if (count_pop(_p) < 40) then
+  if (_sturn < 720) then
     ai_set_converting_info(_p, true, true, 32);
+    PLR2_SH:toggle_converting_wilds(true);
     
     if (G_RANDOM(4) > 0) then
       ai_convert_marker(_p, PLR2_CONVERT_POINTS[G_RANDOM(#PLR2_CONVERT_POINTS) + 1]);
     end
   else
     ai_set_converting_info(_p, false, true, 32);
+    PLR2_SH:toggle_converting_wilds(false);
   end
 end
 
@@ -719,7 +747,7 @@ local _EVENT_TABLE =
     [AI_EASY] =
     {
       {_AI_CHECK_BUCKETS_EASY, 256, 64},
-      {_AI_CHECK_CONVERT_EASY, 128, 32},
+      {_AI2_CHECK_CONVERT_EASY, 128, 32},
     },
     
     [AI_MEDIUM] = 
@@ -759,7 +787,6 @@ function register_ai_events(player_num, difficulty)
       ai_setv(player_num, var_index, 52);
     end
     
-    PLR1_SH = register_shaman_ai(player_num);
     --PLR1_SH:set_defensive_spell_entry(1, M_SPELL_SHIELD, 4, 25000);
     --PLR1_SH:set_defensive_spell_entry(2, M_SPELL_BLOODLUST, 4, 15000);
     --PLR1_SH:set_defensive_mode();

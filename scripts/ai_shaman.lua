@@ -1,7 +1,6 @@
 local CASTINGM_NONE = 0;
-local CASTINGM_GET_WILDS = 1;
-local CASTINGM_DEFENSIVE = 2;
-local CASTINGM_OFFENSIVE = 3;
+local CASTINGM_DEFENSIVE = 1;
+local CASTINGM_OFFENSIVE = 2;
 
 local MP_POS = MapPosXZ.new();
 
@@ -20,12 +19,29 @@ sh_mt.__index =
     self.SpellOffensiveEntry[idx] =
     {
       _spell = spell;
-      _targets = b_models,
+      _targets = {
+        [1] = false, 
+        [2] = false, 
+        [3] = false, 
+        [4] = false, 
+        [5] = false, 
+        [6] = false, 
+        [7] = false, 
+        [8] = false,
+        [13] = false,
+        [15] = false
+      },
       _max_shots = max_shots,
       _cost = cost,
       _used_count = max_shots,
       _mana = 0
     };
+    
+    local curr_entry = self.SpellOffensiveEntry[idx];
+    
+    for i,model in ipairs(b_models) do
+      curr_entry._targets[model] = true;
+    end
   end,
   
   set_defensive_spell_entry = function(self, idx, spell, max_shots, cost)
@@ -47,10 +63,17 @@ sh_mt.__index =
     self.SpellDelay = val;
   end,
   
-  set_converting_mode = function(self)
-    self.CastingMode = CASTINGM_GET_WILDS;
-    self.MaxRad = (G_PLR[self.Owner].LimitsSpell.WorldCoordRange[M_SPELL_CONVERT_WILD] >> 9) + 1;
-    self.CurrRad = 0;
+  toggle_converting_wilds = function(self, toggle)
+    if (toggle) then
+      self.ConvertWild = true;
+      self.MaxRad = (G_PLR[self.Owner].LimitsSpell.WorldCoordRange[M_SPELL_CONVERT_WILD] >> 9) + 1;
+      self.CurrRad = 0;
+    else
+      self.ConvertWild = false;
+      self.CurrEntry = -1;
+      self.MaxRad = 0;
+      self.CurrRad = 0;
+    end
   end,
   
   set_no_casting = function(self)
@@ -76,6 +99,18 @@ sh_mt.__index =
   
   set_offensive_mode = function(self)
     self.CastingMode = CASTINGM_OFFENSIVE;
+    
+    -- get radius of the first spell in defensive entry
+    for i,spell in ipairs(self.SpellOffensiveEntry) do
+      if (spell ~= nil) then
+        if (spell._used_count < spell._max_shots) then
+          self.CurrEntry = i;
+          self.MaxRad = G_PLR[self.Owner].LimitsSpell.WorldCoordRange[spell._spell] >> 9;
+          self.CurrRad = 0;
+          break;
+        end
+      end
+    end
   end,
   
   process_mana_sharing = function(self, sturn)
@@ -141,12 +176,9 @@ sh_mt.__index =
       --log("SKIP TURN: " .. sturn);
       goto pcm_end;
     end
-
-    if (self.CastingMode == CASTINGM_NONE) then
-      goto pcm_end;
-    end
     
-    if (self.CastingMode == CASTINGM_GET_WILDS) then
+    -- Made it forced, since it'll cause some issues later with older approach
+    if (self.ConvertWild) then
       if (MANA(s.Owner) > 0) then
         local break_look2 = false;
         SearchMapCells(CIRCULAR, 0, self.CurrRad, self.CurrRad, world_coord3d_to_map_idx(s.Pos.D3), function(map_elem)
@@ -184,6 +216,10 @@ sh_mt.__index =
         self.CurrRad = 0;
       end
       
+      goto pcm_end;
+    end
+    
+    if (self.CastingMode == CASTINGM_NONE) then
       goto pcm_end;
     end
     
@@ -251,6 +287,60 @@ sh_mt.__index =
     end
     
     if (self.CastingMode == CASTINGM_OFFENSIVE) then
+      if (self.CurrEntry == -1) then
+        -- spell was reset supposedly
+        for i,spell in ipairs(self.SpellOffensiveEntry) do
+          if (spell ~= nil) then
+            if (spell._used_count < spell._max_shots) then
+              self.CurrEntry = i;
+              self.MaxRad = G_PLR[self.Owner].LimitsSpell.WorldCoordRange[spell._spell] >> 9;
+              self.CurrRad = 0;
+              goto pcm_process_off;
+              break;
+            end
+          end
+        end
+        
+        goto pcm_end;
+      end
+      
+      ::pcm_process_off::
+      
+      local curr_entry = self.SpellOffensiveEntry[self.CurrEntry];
+      local shape_or_bldg = nil;
+      
+      if (curr_entry._used_count < curr_entry._max_shots) then
+        SearchMapCells(CIRCULAR, 0, self.CurrRad, self.CurrRad, world_coord3d_to_map_idx(s.Pos.D3), function(map_elem)
+        
+          shape_or_bldg = map_elem.ShapeOrBldgIdx:get();
+          
+          if (shape_or_bldg ~= nil) then
+            if (shape_or_bldg.Type == T_BUILDING) then
+              if (are_players_allied(shape_or_bldg.Owner, s.Owner) == 0) then
+                if (curr_entry._targets[shape_or_bldg.Model]) then
+                  break_loop3 = true;
+                  self.CurrRad = 0
+                  self.CastDelay = self.SpellDelay;
+                  curr_entry._used_count = curr_entry._used_count + 1;
+                  CREATE_THING_WITH_PARAMS4(T_SPELL, curr_entry._spell, s.Owner, shape_or_bldg.Pos.D3, curr_entry._cost, shape_or_bldg.ThingNum, 0, 0);
+                  return false;
+                end
+              end
+            end
+          end
+          
+          return true;
+        end);
+      else
+        self.CurrEntry = -1;
+      end
+      
+      if (self.CurrRad < self.MaxRad) then
+        self.CurrRad = self.CurrRad + 1;
+      else
+        self.CurrRad = 0;
+      end
+      
       goto pcm_end;
     end
     
