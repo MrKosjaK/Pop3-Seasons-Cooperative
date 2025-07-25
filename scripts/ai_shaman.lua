@@ -354,9 +354,9 @@ function register_shaman_ai(player_num)
   _AI_SHAMANS[#_AI_SHAMANS + 1] = setmetatable(
   {
     Owner = player_num;
-    Enabled = true,
+    ConvertWild = false,
     CastDelay = 0,
-    SpellDelay = 12, -- DEFAULT
+    SpellDelay = 16, -- DEFAULT
     CastingMode = CASTINGM_NONE,
     SpellOffensiveEntry = {nil, nil, nil, nil, nil},
     SpellDefensiveEntry = {nil, nil, nil},
