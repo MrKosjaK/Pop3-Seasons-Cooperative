@@ -94,7 +94,7 @@ end
 local WAY_POINT_EASY_MKS = {39, 40, 41, 42};
 local PLR1_NUM_DEFENCE_TOWERS = 5; -- default, will change depending on difficulty.
 local PLR1_CONVERT_POINTS = {48, 49, 50};
-local PLR1_ANNOYANCE_GROUPS = {68, 69, 70, 71, 72};
+local PLR1_ANNOYANCE_GROUPS = {70, 71, 72, 73, 74};
 
 -- PLAYER TWO
 local PLR2_NUM_DEFENCE_TOWERS = 8;
@@ -124,6 +124,8 @@ local USER_BASIC_ATTACK = 64;
 local USER_EXTRA_ATTACK = 65;
 local USER_SHAMAN_DEFEND = 66;
 local USER_TROOPS_DEFEND = 67;
+local USER_MAJOR_TROOP_ATTACK = 68;
+local USER_SHAMAN_ATTACK = 69;
 
 -- AI EVENTS
 
@@ -294,7 +296,7 @@ local function _AI1_BASIC_ATTACK_EASY(_p, _sturn)
             ai_set_attack_flags(_p, 2, 0, 1);
             ai_set_atk_var(_p, USER_BASIC_ATTACK);
             ai_do_attack(_p, target_enemy, 2 + G_RANDOM(any_troops >> 1), ATTACK_BUILDING, INT_NO_SPECIFIC_BUILDING, 90, attack_spell, M_SPELL_NONE, M_SPELL_NONE, ATTACK_NORMAL, 0, WAY_POINT_EASY_MKS[G_RANDOM(#WAY_POINT_EASY_MKS) + 1], -1, 0); 
-            ai_set_aways(_p, 100, 0, 0, 0, 0);
+            ai_set_aways(_p, 0, 0, 0, 0, 0);
             ai_set_shaman_away(_p, false);
           end
         end
@@ -313,7 +315,7 @@ local function _AI1_BASIC_ATTACK_EASY(_p, _sturn)
             ai_set_shaman_away(_p, false);
             ai_set_atk_var(_p, USER_BASIC_ATTACK);
             ai_do_attack(_p, target_enemy, (any_troops >> 1), ATTACK_MARKER, 43, 150, M_SPELL_NONE, M_SPELL_NONE, M_SPELL_NONE, ATTACK_NORMAL, 0, -1, -1, 0);
-            ai_set_aways(_p, 100, 0, 0, 0, 0);
+            ai_set_aways(_p, 0, 0, 0, 0, 0);
           elseif (ai_shaman_available(_p)) then
             -- try sending shaman with some spells
             ai_set_aways(_p, 20, 60, 0, 20, 0);
@@ -321,7 +323,7 @@ local function _AI1_BASIC_ATTACK_EASY(_p, _sturn)
             ai_set_shaman_away(_p, true);
             ai_set_atk_var(_p, USER_BASIC_ATTACK);
             ai_do_attack(_p, target_enemy, (any_troops >> 1), ATTACK_MARKER, 43, 150, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_INSECT_PLAGUE, ATTACK_NORMAL, 0, -1, -1, 0);
-            ai_set_aways(_p, 100, 0, 0, 0, 0);
+            ai_set_aways(_p, 0, 0, 0, 0, 0);
             ai_set_shaman_away(_p, false);
           end
         end
@@ -417,7 +419,7 @@ local function _AI1_TRY_DEFEND_BASE_OR_FRONT(_p, _sturn)
           ai_set_attack_flags(_p, 3, 1, 1);
           ai_set_atk_var(_p, USER_TROOPS_DEFEND);
           ai_do_attack(_p, target_enemy, any_troops, ATTACK_MARKER, 2, 999999, M_SPELL_NONE, M_SPELL_NONE, M_SPELL_NONE, ATTACK_NORMAL, 0, -1, -1, 0);
-          ai_set_aways(_p, 100, 0, 0, 0, 0);
+          ai_set_aways(_p, 0, 0, 0, 0, 0);
         end
       else
         -- check whats going on
@@ -442,7 +444,7 @@ local function _AI1_TRY_DEFEND_BASE_OR_FRONT(_p, _sturn)
             ai_set_attack_flags(_p, 3, 1, 1);
             ai_set_atk_var(_p, USER_SHAMAN_DEFEND);
             ai_do_attack(_p, target_enemy, 0, ATTACK_PERSON, M_PERSON_MEDICINE_MAN, 999999, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, ATTACK_NORMAL, 0, -1, -1, 0);
-            ai_set_aways(_p, 100, 0, 0, 0, 0);
+            ai_set_aways(_p, 0, 0, 0, 0, 0);
             ai_set_shaman_away(_p, false);
           end
         end
@@ -662,10 +664,10 @@ local function _AI1_ANNOYING_ATTACKS(_p, _sturn)
           if (my_wars > 2) then
             ai_set_shaman_away(_p, false);
             ai_set_aways(_p, 0, 80, 0, 50, 0);
-            ai_set_attack_flags(_p, 2, 1, 1);
+            ai_set_attack_flags(_p, 0, 1, 1);
             ai_set_atk_var(_p, var_index);
             ai_do_attack(_p, target_enemy, 1 + G_RANDOM(3), ATTACK_BUILDING, INT_NO_SPECIFIC_BUILDING, 999, M_SPELL_NONE, M_SPELL_NONE, M_SPELL_NONE, ATTACK_NORMAL, 0, WAY_POINT_EASY_MKS[G_RANDOM(#WAY_POINT_EASY_MKS) + 1], -1, 0);
-            ai_set_aways(_p, 100, 0, 0, 0, 0);
+            ai_set_aways(_p, 0, 0, 0, 0, 0);
             break;
           end
         end
@@ -680,6 +682,112 @@ local function _AI1_ANNOYING_ATTACKS(_p, _sturn)
         if (attack_status == 7) then
           -- navigation failed... try vehicles?
           ai_setv(_p, var_index, 52);
+        end
+      end
+    end
+  end
+end
+
+local function _AI1_SHAMAN_ATTACK_EXTREME(_p, _sturn)
+  if (_sturn > 360) then
+    local target_enemy = get_random_alive_human_player();
+    
+    if (target_enemy ~= -1) then
+      local shaman_result = ai_getv(_p, USER_SHAMAN_ATTACK);
+      
+      if (shaman_result > 50) then
+        if (ai_shaman_available(_p)) then
+          local can_cast_tornado = PLR1_SH:can_cast_offensive_spell(1);
+          
+          if (can_cast_tornado) then
+            ai_set_shaman_away(_p, true);
+            ai_set_aways(_p, 0, 100, 0, 100, 0);
+            ai_set_attack_flags(_p, 0, 1, 1);
+            ai_set_atk_var(_p, USER_SHAMAN_ATTACK);
+            ai_do_attack(_p, target_enemy, 0, ATTACK_BUILDING, INT_NO_SPECIFIC_BUILDING, 9999, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, ATTACK_NORMAL, 0, WAY_POINT_EASY_MKS[G_RANDOM(#WAY_POINT_EASY_MKS) + 1], -1, 0);
+            ai_set_aways(_p, 0, 0, 0, 0, 0);
+            ai_set_shaman_away(_p, false);
+            PLR1_SH:set_offensive_mode();
+          end
+        end
+      else
+        if (shaman_result >= 1 and shaman_result < 7) then
+          -- reset variable to check it again
+          ai_setv(_p, USER_SHAMAN_ATTACK, 52);
+          PLR1_SH:set_no_casting();
+        end
+        
+        if (shaman_result == 7) then
+          -- navigation failed... try vehicles?
+          ai_setv(_p, USER_SHAMAN_ATTACK, 52);
+          PLR1_SH:set_no_casting();
+        end
+      end
+    end
+  end
+end
+
+local function _AI1_MAJOR_TROOPS_ATTACK(_p, _sturn)
+  if (_sturn > 1440) then
+    local target_enemy = get_random_alive_human_player();
+    
+    if (target_enemy ~= -1) then
+      local my_wars = count_people_of_type(_p, M_PERSON_WARRIOR);
+      local my_fws = count_people_of_type(_p, M_PERSON_SUPER_WARRIOR);
+      local have_enough = (my_wars + my_fws > 10);
+      
+      local enemy_troops = count_troops(target_enemy);
+      
+      local troop_result = ai_getv(_p, USER_MAJOR_TROOP_ATTACK);
+      local shaman_result = ai_getv(_p, USER_SHAMAN_ATTACK);
+      
+      if (have_enough) then
+        if (troop_result > 50) then
+          -- can attack
+          ai_set_shaman_away(_p, false);
+          ai_set_aways(_p, 0, 100, 0, 100, 0);
+          ai_set_attack_flags(_p, 0, 0, 1);
+          ai_set_atk_var(_p, USER_MAJOR_TROOP_ATTACK);
+          ai_do_attack(_p, target_enemy, MIN((my_wars + my_fws), 50), ATTACK_BUILDING, INT_NO_SPECIFIC_BUILDING, 9999, M_SPELL_NONE, M_SPELL_NONE, M_SPELL_NONE, ATTACK_NORMAL, 0, WAY_POINT_EASY_MKS[G_RANDOM(#WAY_POINT_EASY_MKS) + 1], -1, 0);
+          ai_set_aways(_p, 0, 0, 0, 0, 0);
+        else
+          if (troop_result >= 1 and troop_result < 7) then
+            -- reset variable to check it again
+            ai_setv(_p, USER_MAJOR_TROOP_ATTACK, 52);
+          end
+          
+          if (troop_result == 7) then
+            -- navigation failed... try vehicles?
+            ai_setv(_p, USER_MAJOR_TROOP_ATTACK, 52);
+          end
+        end
+      end
+      
+      if ((my_wars + my_fws) < enemy_troops or (not have_enough)) then
+        -- send in shaman if shes available.
+        if (shaman_result > 50) then
+          if (ai_shaman_available(_p)) then
+            ai_set_shaman_away(_p, true);
+            ai_set_aways(_p, 0, 100, 0, 100, 0);
+            ai_set_attack_flags(_p, 0, 1, 1);
+            ai_set_atk_var(_p, USER_SHAMAN_ATTACK);
+            ai_do_attack(_p, target_enemy, 0, ATTACK_BUILDING, INT_NO_SPECIFIC_BUILDING, 9999, M_SPELL_INSECT_PLAGUE, M_SPELL_INSECT_PLAGUE, M_SPELL_INSECT_PLAGUE, ATTACK_NORMAL, 0, WAY_POINT_EASY_MKS[G_RANDOM(#WAY_POINT_EASY_MKS) + 1], -1, 0);
+            ai_set_aways(_p, 0, 0, 0, 0, 0);
+            ai_set_shaman_away(_p, false);
+            PLR1_SH:set_offensive_mode();
+          end
+        else
+          if (shaman_result >= 1 and shaman_result < 7) then
+            -- reset variable to check it again
+            ai_setv(_p, USER_SHAMAN_ATTACK, 52);
+            PLR1_SH:set_no_casting();
+          end
+          
+          if (shaman_result == 7) then
+            -- navigation failed... try vehicles?
+            ai_setv(_p, USER_SHAMAN_ATTACK, 52);
+            PLR1_SH:set_no_casting();
+          end
         end
       end
     end
@@ -711,6 +819,7 @@ local _EVENT_TABLE =
       {_AI1_TRY_DEFEND_BASE_OR_FRONT, 196, 128},
       {_AI1_MARKER_ENTRIES_M_H, 384, 64},
       {_AI1_MANAGE_AMOUNT_OF_TROOPS_M_H, 512, 128},
+      {_AI1_MAJOR_TROOPS_ATTACK, 1024, 768},
     },
     
     [AI_HARD] = 
@@ -725,6 +834,7 @@ local _EVENT_TABLE =
       {_AI1_TRY_DEFEND_BASE_OR_FRONT, 196, 64},
       {_AI1_MARKER_ENTRIES_M_H, 288, 64},
       {_AI1_MANAGE_AMOUNT_OF_TROOPS_M_H, 384, 128},
+      {_AI1_MAJOR_TROOPS_ATTACK, 1024, 512},
     },
     
     [AI_EXTREME] = 
@@ -741,6 +851,9 @@ local _EVENT_TABLE =
       {_AI1_MANAGE_AMOUNT_OF_TROOPS_M_H, 384, 64},
       {_AI1_ANNOYING_ATTACKS, 192, 96},
       {_AI1_FAR_FRONT_TOWER_EXPANSION, 412, 64},
+      {_AI1_MAJOR_TROOPS_ATTACK, 1024, 256},
+      {_AI1_SHAMAN_ATTACK_EXTREME, 512, 1024},
+      {_AI1_MARKER_ENTRIES_M_H, 288, 32},
     },
   },
   {
@@ -781,6 +894,8 @@ function register_ai_events(player_num, difficulty)
   ai_setv(player_num, USER_EXTRA_ATTACK, 52);
   ai_setv(player_num, USER_SHAMAN_DEFEND, 52);
   ai_setv(player_num, USER_TROOPS_DEFEND, 52);
+  ai_setv(player_num, USER_MAJOR_TROOP_ATTACK, 52);
+  ai_setv(player_num, USER_SHAMAN_ATTACK, 52);
   
   if (_EVENT_INDEX == 1) then
     for i,var_index in ipairs(PLR1_ANNOYANCE_GROUPS) do

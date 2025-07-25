@@ -159,10 +159,6 @@ function ScrOnTurn()
     PLR2_SH:toggle_converting_wilds(true);
     footer_add_msg("As such the other tribes did everything they could to undermine the Ikani, they attacked the bases already established, they even attacked at the Ikani's home system.");
   end
-  
-  if (sTurn == 722) then
-    PLR1_SH:set_offensive_mode();
-  end
 end
 
 function ScrOnCreateThing(t_thing)
