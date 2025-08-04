@@ -77,10 +77,10 @@ function OnGameStart()
     ai_set_marker_entry(AI_PLR1_TRIBE, 3, 46, 47, 0, 0, 4, 0);
     ai_set_marker_entry(AI_PLR1_TRIBE, 4, 58, 59, 0, 0, 4, 0);
     ai_set_marker_entry(AI_PLR1_TRIBE, 5, 60, 61, 0, 0, 4, 0);
-    ai_set_spell_entry(AI_PLR1_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 3, 0);
-    ai_set_spell_entry(AI_PLR1_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 3, 1);
-    ai_set_spell_entry(AI_PLR1_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 0);
-    ai_set_spell_entry(AI_PLR1_TRIBE, 3, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 1);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE)), 64, 3, 0);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE)), 64, 3, 1);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM)), 64, 5, 0);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 3, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM)), 64, 5, 1);
     
     ai_attr_w(AI_PLR1_TRIBE, ATTR_SHAMEN_BLAST, 16);
     ai_attr_w(AI_PLR1_TRIBE, ATTR_MAX_ATTACKS, 5);
@@ -97,10 +97,10 @@ function OnGameStart()
     ai_set_marker_entry(AI_PLR1_TRIBE, 3, 46, 47, 0, 0, 4, 0);
     ai_set_marker_entry(AI_PLR1_TRIBE, 4, 58, 59, 0, 0, 4, 0);
     ai_set_marker_entry(AI_PLR1_TRIBE, 5, 60, 61, 0, 0, 4, 0);
-    ai_set_spell_entry(AI_PLR1_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 2, 0);
-    ai_set_spell_entry(AI_PLR1_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 2, 1);
-    ai_set_spell_entry(AI_PLR1_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 0);
-    ai_set_spell_entry(AI_PLR1_TRIBE, 3, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 1);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 1, 0);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 1, 1);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 1), 64, 4, 0);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 3, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 1), 64, 4, 1);
     ai_set_state(AI_PLR1_TRIBE, TRUE, CP_AT_TYPE_REPAIR_BLDGS);
     
     ai_attr_w(AI_PLR1_TRIBE, ATTR_SHAMEN_BLAST, 8);
@@ -117,10 +117,10 @@ function OnGameStart()
     ai_set_marker_entry(AI_PLR1_TRIBE, 3, 46, 47, 0, 0, 4, 0);
     ai_set_marker_entry(AI_PLR1_TRIBE, 4, 58, 59, 0, 0, 4, 0);
     ai_set_marker_entry(AI_PLR1_TRIBE, 5, 60, 61, 0, 0, 4, 0);
-    ai_set_spell_entry(AI_PLR1_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 2, 0);
-    ai_set_spell_entry(AI_PLR1_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 2, 1);
-    ai_set_spell_entry(AI_PLR1_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 0);
-    ai_set_spell_entry(AI_PLR1_TRIBE, 3, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 2, 1);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 1, 0);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 1, 1);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 4, 0);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 3, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 4, 1);
     ai_set_state(AI_PLR1_TRIBE, TRUE, CP_AT_TYPE_REPAIR_BLDGS);
     
     ai_attr_w(AI_PLR1_TRIBE, ATTR_SHAMEN_BLAST, 8);
@@ -143,6 +143,74 @@ function OnGameStart()
   ai_set_training_people(AI_PLR2_TRIBE, true, 10, 0, 12, 0, 0 + AI_PLR2_DIFF);
   ai_set_populating_info(AI_PLR2_TRIBE, true, true);
   ai_set_defence_rad(AI_PLR2_TRIBE, 7);
+  
+  if (AI_PLR2_DIFF == AI_EASY) then
+  
+  end
+  
+  if (AI_PLR2_DIFF == AI_MEDIUM) then
+    ai_set_marker_entry(AI_PLR2_TRIBE, 0, 68, 69, 0, 1, 3, 0);
+    ai_set_marker_entry(AI_PLR2_TRIBE, 1, 70, 71, 0, 1, 3, 0);
+    ai_set_marker_entry(AI_PLR2_TRIBE, 2, 72, 73, 0, 2, 1, 0);
+    ai_set_marker_entry(AI_PLR2_TRIBE, 3, 74, 75, 0, 2, 3, 0);
+    ai_set_spell_entry(AI_PLR2_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE)), 64, 1, 0);
+    ai_set_spell_entry(AI_PLR2_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE)), 64, 1, 1);
+    ai_set_spell_entry(AI_PLR2_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM)), 64, 4, 0);
+    ai_set_spell_entry(AI_PLR2_TRIBE, 3, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM)), 64, 4, 1);
+    
+    ai_attr_w(AI_PLR2_TRIBE, ATTR_SHAMEN_BLAST, 16);
+    ai_attr_w(AI_PLR2_TRIBE, ATTR_MAX_ATTACKS, 5);
+    ai_set_targets(AI_PLR2_TRIBE, 0, true, false, true); -- this will by dynamically changed in actual attacks
+    
+    PLR2_SH:set_casting_delay(64);
+    PLR2_SH:set_offensive_spell_entry(1, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 7, 8}, 3, SPELL_COST(M_SPELL_WHIRLWIND));
+  end
+  
+  if (AI_PLR2_DIFF == AI_HARD) then
+    ai_set_marker_entry(AI_PLR2_TRIBE, 0, 68, 69, 0, 1, 3, 0);
+    ai_set_marker_entry(AI_PLR2_TRIBE, 1, 70, 71, 0, 1, 3, 0);
+    ai_set_marker_entry(AI_PLR2_TRIBE, 2, 72, 73, 0, 2, 1, 0);
+    ai_set_marker_entry(AI_PLR2_TRIBE, 3, 74, 75, 0, 2, 3, 0);
+    ai_set_marker_entry(AI_PLR2_TRIBE, 4, 76, 77, 0, 0, 4, 0);
+    ai_set_marker_entry(AI_PLR2_TRIBE, 5, 78, 79, 0, 0, 4, 0);
+    ai_set_marker_entry(AI_PLR2_TRIBE, 6, 80, 81, 0, 3, 2, 0);
+    ai_set_marker_entry(AI_PLR2_TRIBE, 7, 82, 83, 0, 3, 1, 0);
+    ai_set_spell_entry(AI_PLR2_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 1, 0);
+    ai_set_spell_entry(AI_PLR2_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 1, 1);
+    ai_set_spell_entry(AI_PLR2_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 1), 64, 4, 0);
+    ai_set_spell_entry(AI_PLR2_TRIBE, 3, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 1), 64, 4, 1);
+    ai_set_state(AI_PLR2_TRIBE, TRUE, CP_AT_TYPE_REPAIR_BLDGS);
+    
+    ai_attr_w(AI_PLR2_TRIBE, ATTR_SHAMEN_BLAST, 8);
+    ai_attr_w(AI_PLR2_TRIBE, ATTR_MAX_ATTACKS, 8);
+    ai_set_targets(AI_PLR2_TRIBE, 0, true, true, true); -- this will by dynamically changed in actual attacks
+    
+    PLR2_SH:set_casting_delay(32);
+    PLR2_SH:set_offensive_spell_entry(1, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 7, 8}, 3, SPELL_COST(M_SPELL_WHIRLWIND) >> 1);
+  end
+  
+  if (AI_PLR2_DIFF == AI_EXTREME) then
+    ai_set_marker_entry(AI_PLR2_TRIBE, 0, 68, 69, 0, 1, 3, 0);
+    ai_set_marker_entry(AI_PLR2_TRIBE, 1, 70, 71, 0, 1, 3, 0);
+    ai_set_marker_entry(AI_PLR2_TRIBE, 2, 72, 73, 0, 2, 1, 0);
+    ai_set_marker_entry(AI_PLR2_TRIBE, 3, 74, 75, 0, 2, 3, 0);
+    ai_set_marker_entry(AI_PLR2_TRIBE, 4, 76, 77, 0, 0, 4, 0);
+    ai_set_marker_entry(AI_PLR2_TRIBE, 5, 78, 79, 0, 0, 4, 0);
+    ai_set_marker_entry(AI_PLR2_TRIBE, 6, 80, 81, 0, 3, 2, 0);
+    ai_set_marker_entry(AI_PLR2_TRIBE, 7, 82, 83, 0, 3, 1, 0);
+    ai_set_spell_entry(AI_PLR2_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 1, 0);
+    ai_set_spell_entry(AI_PLR2_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 1, 1);
+    ai_set_spell_entry(AI_PLR2_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 4, 0);
+    ai_set_spell_entry(AI_PLR2_TRIBE, 3, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 4, 1);
+    ai_set_state(AI_PLR2_TRIBE, TRUE, CP_AT_TYPE_REPAIR_BLDGS);
+    
+    ai_attr_w(AI_PLR2_TRIBE, ATTR_SHAMEN_BLAST, 8);
+    ai_attr_w(AI_PLR2_TRIBE, ATTR_MAX_ATTACKS, 10);
+    ai_set_targets(AI_PLR2_TRIBE, 0, true, true, true); -- this will by dynamically changed in actual attacks
+    
+    PLR2_SH:set_casting_delay(16);
+    PLR2_SH:set_offensive_spell_entry(1, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 7, 8}, 3, SPELL_COST(M_SPELL_WHIRLWIND) >> 2);
+  end
 end
 
 function ScrOnLevelInit(level_id)
