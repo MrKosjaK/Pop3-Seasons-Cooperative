@@ -67,7 +67,7 @@ function OnGameStart()
     
     ai_attr_w(AI_PLR1_TRIBE, ATTR_SHAMEN_BLAST, 32);
     
-    PLR1_SH:set_casting_delay(256);
+    PLR1_SH:set_casting_delay(512);
   end
   
   if (AI_PLR1_DIFF == AI_MEDIUM) then
@@ -145,7 +145,7 @@ function OnGameStart()
   ai_set_defence_rad(AI_PLR2_TRIBE, 7);
   
   if (AI_PLR2_DIFF == AI_EASY) then
-  
+    PLR2_SH:set_casting_delay(512);
   end
   
   if (AI_PLR2_DIFF == AI_MEDIUM) then
