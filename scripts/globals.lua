@@ -84,6 +84,7 @@ G_PLR = {
 -- global vars
 
 G_SCRIPT_TURN = 0
+G_SCRIPT_SECOND = 0
 
 -- global function
 function set_level_unable_to_complete()

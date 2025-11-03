@@ -105,6 +105,10 @@ function OnTurn()
       if (ScrOnTurn ~= nil) then ScrOnTurn(); end
 	
       G_SCRIPT_TURN = G_SCRIPT_TURN + 1
+	  
+	  if G_SCRIPT_TURN % 12 == 0 then
+	    G_SCRIPT_SECOND = G_SCRIPT_SECOND + 1
+	  end
     end
   end
 end
