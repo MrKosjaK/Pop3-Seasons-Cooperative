@@ -90,6 +90,12 @@ function OnTurn()
       
       if (OnGameStart ~= nil) then OnGameStart(); end
       
+      -- fixes floating trees
+      ProcessGlobalTypeList(T_SCENERY, function(t_thing)
+        t_thing.Flags = t_thing.Flags | TF_AFFECTED_BY_ALTITUDE;
+        return true;
+      end);
+      
       set_game_state(GM_STATE_GAME);
     end
   else
