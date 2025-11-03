@@ -178,6 +178,11 @@ function spawn_players_initial_stuff();
     set_players_shaman_initial_command(G_PLR[p_num]);
     
     occupied_p_nums[#occupied_p_nums + 1] = p_num;
+    
+    -- assuming you are launching as BLUE player, force add RED player into single-player testing, so AI doesn't spawn using RED player.
+    if (am_i_in_network_game() == 0) then
+      occupied_p_nums[#occupied_p_nums + 1] = 1;
+    end
   end
   
   for i,ai_data in ipairs(AI_INFO) do
