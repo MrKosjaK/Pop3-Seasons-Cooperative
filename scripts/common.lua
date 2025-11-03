@@ -23,6 +23,7 @@ function OnLevelInit(level_id)
     ProcessGlobalTypeList(T_PERSON, function(t_thing)
       if (t_thing.Model == M_PERSON_MEDICINE_MAN) then
         delete_cache[#delete_cache + 1] = t_thing;
+        mark_reincarnation_site_mes(G_PLR[t_thing.Owner].ReincarnSiteCoord, t_thing.Owner, UNMARK);
         return true;
       end
       remove_all_persons_commands(t_thing);
