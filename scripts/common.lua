@@ -216,3 +216,24 @@ function OnPacket(player_num, packet_type, data)
     end
   end
 end
+
+
+---------------------
+-- SAVING/LOADING ---
+---------------------
+
+function OnSave(sData)
+  game_state_save(sData);
+  game_lobby_save(sData);
+
+  gsave_globals(sData); -- this has to be very last
+end
+
+function OnLoad(sData)
+  gload_all_data(sData);
+  
+  -- order doesn't matter in this case
+  gload_globals();
+  game_state_load();
+  game_lobby_load();
+end

@@ -689,3 +689,21 @@ function process_game_lobby_packets(pn, p_type, data)
     gui_close_menu(MY_MENU_SETUP_GENERAL);
   end
 end
+
+---------------------
+-- SAVING/LOADING ---
+---------------------
+
+function game_lobby_save(sData)
+  gsave_bool(sData, "GameStarted", GAME_STARTED);
+  gsave_int(sData, "HumanCount", HUMAN_COUNT);
+  gsave_int(sData, "ComputerCount", AI_COUNT);
+  gsave_int(sData, "HumanPlrCount", HUMAN_PLAYERS_COUNT);
+end
+
+function game_lobby_load()
+  GAME_STARTED = gload_data("GameStarted");
+  HUMAN_COUNT = gload_data("HumanCount");
+  AI_COUNT = gload_data("ComputerCount");
+  HUMAN_PLAYERS_COUNT = gload_data("HumanPlrCount");
+end

@@ -120,3 +120,88 @@ function reduce_computer_players_sprogging_time_by_percent(t_player, percent)
   p_sprog_time[M_BUILDING_TEPEE_2] = p_sprog_time[M_BUILDING_TEPEE_2] - (one_percent_2 * percent);
   p_sprog_time[M_BUILDING_TEPEE_3] = p_sprog_time[M_BUILDING_TEPEE_3] - (one_percent_3 * percent);
 end
+
+---------------------
+-- SAVING/LOADING ---
+---------------------
+
+local G_NUM_SAVE_ITEMS = 0;
+local SAVE_ITEMS_MAP = {};
+
+function gsave_int(sData, key, value)
+  sData:push_int(value);
+  sData:push_string(key);
+  sData:push_string("INTEGER");
+  G_NUM_SAVE_ITEMS = G_NUM_SAVE_ITEMS + 1;
+end
+
+function gsave_string(sData, key, str)
+  sData:push_string(str);
+  sData:push_string(key);
+  sData:push_string("STRING");
+  G_NUM_SAVE_ITEMS = G_NUM_SAVE_ITEMS + 1;
+end
+
+function gsave_bool(sData, key, value)
+  sData:push_bool(value);
+  sData:push_string(key);
+  sData:push_string("BOOLEAN");
+  G_NUM_SAVE_ITEMS = G_NUM_SAVE_ITEMS + 1;
+end
+
+function gsave_float(sData, key, value)
+  sData:push_float(value);
+  sData:push_string(key);
+  sData:push_string("FLOAT");
+  G_NUM_SAVE_ITEMS = G_NUM_SAVE_ITEMS + 1;
+end
+
+function gload_all_data(sData)
+  SAVE_ITEMS_MAP = {}; -- clear cache
+  
+  local _t = nil;
+  local _k = nil;
+  local _v = nil;
+  
+  G_NUM_SAVE_ITEMS = sData:pop_int();
+  
+  for i = 1, G_NUM_SAVE_ITEMS do
+    _t = sData:pop_string();
+    _k = sData:pop_string();
+    
+    if _t == "INTEGER" then
+      SAVE_ITEMS_MAP[_k] = sData:pop_int();
+    end
+    
+    if _t == "STRING" then
+      SAVE_ITEMS_MAP[_k] = sData:pop_string();
+    end
+    
+    if _t == "BOOLEAN" then
+      SAVE_ITEMS_MAP[_k] = sData:pop_bool();
+    end
+    
+    if _t == "FLOAT" then
+      SAVE_ITEMS_MAP[_k] = sData:pop_float();
+    end
+  end
+end
+
+function gload_data(key)
+  if (SAVE_ITEMS_MAP[key] ~= nil) then
+    log(string.format("Loaded item key: %s, value: %s", key, tostring(SAVE_ITEMS_MAP[key])));
+    return SAVE_ITEMS_MAP[key];
+  end
+  
+  log("KEY VALUE NOT FOUND");
+  return nil;
+end
+
+function gsave_globals(sData)
+  gsave_int(sData, "ScriptTurn", G_SCRIPT_TURN);
+  sData:push_int(G_NUM_SAVE_ITEMS); -- has to be very last saved item that doesn't account for G_NUM_SAVE_ITEMS
+end
+
+function gload_globals();
+  G_SCRIPT_TURN = gload_data("ScriptTurn");
+end
