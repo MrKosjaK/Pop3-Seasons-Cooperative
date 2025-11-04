@@ -473,3 +473,13 @@ function get_random_alive_human_player()
   
   return -1;
 end
+
+----------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------
+
+function is_ai_shaman_in_base(tribe, base_marker, range)
+	if not nilS(tribe) then return false end
+	
+	local dist = get_world_dist_xyz(getShaman(tribe).Pos.D3, marker_to_coord3d(base_marker))
+	return dist <= range*512
+end
