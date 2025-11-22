@@ -8,7 +8,7 @@ setmetatable(TurnClock,
 {
   __index =
   {
-    new = function(_turn, _func, _ticks, _owner, _randomness)
+    new = function(_turn, _func, _ticks, _owner, _randomness, _diff)
       _NUM_CLOCKS = _NUM_CLOCKS + 1;
       rawset(_TURN_CLOCKS, _NUM_CLOCKS,
       {
@@ -16,6 +16,7 @@ setmetatable(TurnClock,
         Randomness = _randomness or 1,
         NextTurn = _turn + _ticks + G_RANDOM(_randomness),
         Owner = _owner,
+        Diff = _diff,
         Function = _func
       });
     end,
@@ -29,7 +30,7 @@ setmetatable(TurnClock,
           c.NextTurn = sturn + c.ResetCount + G_RANDOM(c.Randomness);
           
           if (c.Function ~= nil) then
-            c.Function(c.Owner, sturn);
+            c.Function(c.Owner, sturn, c.Diff);
           end
         end
       end

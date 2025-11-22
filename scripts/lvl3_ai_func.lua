@@ -75,6 +75,60 @@ PLR2_SH = nil;
 
 -- AI EVENTS
 
+local function _AI1_CHECK_BUCKET_COUNTS(_p, _sturn, difficulty)
+  if (difficulty == AI_EASY) then
+    local base_mod = 16;
+    local time_passed_mod = MIN(FLOOR(_sturn / 3600), 5);
+    local population_mod = FLOOR(count_pop(_p) / 25);
+    local final_mod = (base_mod - (time_passed_mod + population_mod));
+    
+    ai_set_spell_bucket_count(_p, M_SPELL_BLAST, 1 + final_mod);
+    ai_set_spell_bucket_count(_p, M_SPELL_CONVERT_WILD, 1 * final_mod);
+    ai_set_spell_bucket_count(_p, M_SPELL_INSECT_PLAGUE, 2 * final_mod);
+    ai_set_spell_bucket_count(_p, M_SPELL_LIGHTNING_BOLT, 3 * final_mod);
+    ai_set_spell_bucket_count(_p, M_SPELL_WHIRLWIND, 4 * final_mod);
+  end
+  
+  if (difficulty == AI_MEDIUM) then
+    local base_mod = 12;
+    local time_passed_mod = MIN(FLOOR(_sturn / 3600), 5);
+    local population_mod = FLOOR(count_pop(_p) / 25);
+    local final_mod = (base_mod - (time_passed_mod + population_mod));
+    
+    ai_set_spell_bucket_count(_p, M_SPELL_BLAST, 1 + final_mod);
+    ai_set_spell_bucket_count(_p, M_SPELL_CONVERT_WILD, 1 * final_mod);
+    ai_set_spell_bucket_count(_p, M_SPELL_INSECT_PLAGUE, 2 * final_mod);
+    ai_set_spell_bucket_count(_p, M_SPELL_LIGHTNING_BOLT, 3 * final_mod);
+    ai_set_spell_bucket_count(_p, M_SPELL_WHIRLWIND, 4 * final_mod);
+  end
+  
+  if (difficulty == AI_HARD) then
+    local base_mod = 8;
+    local time_passed_mod = MIN(FLOOR(_sturn / 3600), 5);
+    local population_mod = FLOOR(count_pop(_p) / 25);
+    local final_mod = (base_mod - (time_passed_mod + population_mod));
+    
+    ai_set_spell_bucket_count(_p, M_SPELL_BLAST, 1 + final_mod);
+    ai_set_spell_bucket_count(_p, M_SPELL_CONVERT_WILD, 1 * final_mod);
+    ai_set_spell_bucket_count(_p, M_SPELL_INSECT_PLAGUE, 2 * final_mod);
+    ai_set_spell_bucket_count(_p, M_SPELL_LIGHTNING_BOLT, 3 * final_mod);
+    ai_set_spell_bucket_count(_p, M_SPELL_WHIRLWIND, 4 * final_mod);
+  end
+  
+  if (difficulty == AI_EXTREME) then
+    local base_mod = 4;
+    local time_passed_mod = MIN(FLOOR(_sturn / 3600), 5);
+    local population_mod = FLOOR(count_pop(_p) / 25);
+    local final_mod = (base_mod - (time_passed_mod + population_mod));
+    
+    ai_set_spell_bucket_count(_p, M_SPELL_BLAST, 1 + final_mod);
+    ai_set_spell_bucket_count(_p, M_SPELL_CONVERT_WILD, 1 * final_mod);
+    ai_set_spell_bucket_count(_p, M_SPELL_INSECT_PLAGUE, 2 * final_mod);
+    ai_set_spell_bucket_count(_p, M_SPELL_LIGHTNING_BOLT, 3 * final_mod);
+    ai_set_spell_bucket_count(_p, M_SPELL_WHIRLWIND, 4 * final_mod);
+  end
+end
+
 local _EVENT_INDEX = 1;
 local _EVENT_TABLE =
 {
@@ -160,7 +214,7 @@ function register_ai_events(player_num, difficulty)
   
   for i,event in ipairs(t) do
     if (event ~= nil) then
-      TurnClock.new(get_script_turn(), event[1], event[2], player_num, event[3]);
+      TurnClock.new(get_script_turn(), event[1], event[2], player_num, event[3], difficulty);
     end
   end
   

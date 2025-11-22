@@ -131,7 +131,7 @@ local USER_SHAMAN_ATTACK = 69;
 
 -- AI EVENTS
 
-local function _AI_CHECK_BUCKETS_EASY(_p, _sturn)
+local function _AI_CHECK_BUCKETS_EASY(_p, _sturn, difficulty)
   if (_sturn < 10800 or count_pop(_p) < 100) then
     ai_enable_buckets(_p, TRUE);
     ai_set_spell_bucket_count(_p, M_SPELL_BLAST, 16);
@@ -149,7 +149,7 @@ local function _AI_CHECK_BUCKETS_EASY(_p, _sturn)
   end
 end
 
-local function _AI_CHECK_BUCKETS_M_H(_p, _sturn)
+local function _AI_CHECK_BUCKETS_M_H(_p, _sturn, difficulty)
   if (_sturn < 7200 or count_pop(_p) < 80) then
     ai_enable_buckets(_p, TRUE);
     ai_set_spell_bucket_count(_p, M_SPELL_BLAST, 12);
@@ -169,7 +169,7 @@ local function _AI_CHECK_BUCKETS_M_H(_p, _sturn)
   end
 end
 
-local function _AI_CHECK_BUCKETS_EXTREME(_p, _sturn)
+local function _AI_CHECK_BUCKETS_EXTREME(_p, _sturn, difficulty)
   if (_sturn < 3600 or count_pop(_p) < 60) then
     ai_enable_buckets(_p, TRUE);
     ai_set_spell_bucket_count(_p, M_SPELL_BLAST, 4);
@@ -191,7 +191,7 @@ end
 
 -- CONVERTING STATE
 
-local function _AI1_CHECK_CONVERT_EASY(_p, _sturn)
+local function _AI1_CHECK_CONVERT_EASY(_p, _sturn, difficulty)
   if (count_pop(_p) < 20) then
     ai_set_converting_info(_p, true, true, 16);
     PLR1_SH:toggle_converting_wilds(true);
@@ -201,7 +201,7 @@ local function _AI1_CHECK_CONVERT_EASY(_p, _sturn)
   end
 end
 
-local function _AI1_CHECK_CONVERT_M_H(_p, _sturn)
+local function _AI1_CHECK_CONVERT_M_H(_p, _sturn, difficulty)
   if (_sturn < 720) then
     ai_set_converting_info(_p, true, true, 24);
     PLR1_SH:toggle_converting_wilds(true);
@@ -215,7 +215,7 @@ local function _AI1_CHECK_CONVERT_M_H(_p, _sturn)
   end
 end
 
-local function _AI1_CHECK_CONVERT_EXTREME(_p, _sturn)
+local function _AI1_CHECK_CONVERT_EXTREME(_p, _sturn, difficulty)
   if (_sturn < 720) then
     ai_set_converting_info(_p, true, true, 32);
     PLR1_SH:toggle_converting_wilds(true);
@@ -229,7 +229,7 @@ local function _AI1_CHECK_CONVERT_EXTREME(_p, _sturn)
   end
 end
 
-local function _AI2_CHECK_CONVERT_EASY(_p, _sturn)
+local function _AI2_CHECK_CONVERT_EASY(_p, _sturn, difficulty)
   if (count_pop(_p) < 20) then
     ai_set_converting_info(_p, true, true, 16);
     PLR2_SH:toggle_converting_wilds(true);
@@ -239,7 +239,7 @@ local function _AI2_CHECK_CONVERT_EASY(_p, _sturn)
   end
 end
 
-local function _AI2_CHECK_CONVERT_M_H(_p, _sturn)
+local function _AI2_CHECK_CONVERT_M_H(_p, _sturn, difficulty)
   if (_sturn < 720) then
     ai_set_converting_info(_p, true, true, 24);
     PLR2_SH:toggle_converting_wilds(true);
@@ -253,7 +253,7 @@ local function _AI2_CHECK_CONVERT_M_H(_p, _sturn)
   end
 end
 
-local function _AI2_CHECK_CONVERT_EXTREME(_p, _sturn)
+local function _AI2_CHECK_CONVERT_EXTREME(_p, _sturn, difficulty)
   if (_sturn < 720) then
     ai_set_converting_info(_p, true, true, 32);
     PLR2_SH:toggle_converting_wilds(true);
@@ -270,7 +270,7 @@ end
 -- BASIC ATTACKS
 
 
-local function _AI1_BASIC_ATTACK_EASY(_p, _sturn)
+local function _AI1_BASIC_ATTACK_EASY(_p, _sturn, difficulty)
   if (_sturn > 4320) then
     -- check if we're performing basic attack already
     local var_value = ai_getv(_p, USER_BASIC_ATTACK);
@@ -347,7 +347,7 @@ end
 
 -- SOME DEFENSE BUILD UP
 
-local function _AI1_CHECK_FAR_FRONT(_p, _sturn)
+local function _AI1_CHECK_FAR_FRONT(_p, _sturn, difficulty)
   EnemyArea:clear();
   ai_setv(_p, USER_FAR_FRONT_STATUS, 0);
   ai_setv(_p, USER_DEF3_ENEMY_COUNT, 0);
@@ -364,7 +364,7 @@ local function _AI1_CHECK_FAR_FRONT(_p, _sturn)
   end
 end
 
-local function _AI1_CHECK_OUR_FRONT(_p, _sturn)
+local function _AI1_CHECK_OUR_FRONT(_p, _sturn, difficulty)
   EnemyArea:clear();
   ai_setv(_p, USER_OUR_FRONT_STATUS, 0);
   ai_setv(_p, USER_DEF2_ENEMY_COUNT, 0);
@@ -381,7 +381,7 @@ local function _AI1_CHECK_OUR_FRONT(_p, _sturn)
   end
 end
 
-local function _AI1_CHECK_OUR_BASE(_p, _sturn)
+local function _AI1_CHECK_OUR_BASE(_p, _sturn, difficulty)
   EnemyArea:clear();
   ai_setv(_p, USER_BASE_STATUS, 0);
   ai_setv(_p, USER_DEF1_ENEMY_COUNT, 0);
@@ -398,7 +398,7 @@ local function _AI1_CHECK_OUR_BASE(_p, _sturn)
   end
 end
 
-local function _AI1_TRY_DEFEND_BASE_OR_FRONT(_p, _sturn)
+local function _AI1_TRY_DEFEND_BASE_OR_FRONT(_p, _sturn, difficulty)
   local front_status = ai_getv(_p, USER_OUR_FRONT_STATUS);
   local base_status = ai_getv(_p, USER_BASE_STATUS);
   
@@ -466,7 +466,7 @@ local function _AI1_TRY_DEFEND_BASE_OR_FRONT(_p, _sturn)
   end
 end
 
-local function _AI1_TOWERS_EXPANSION(_p, _sturn)
+local function _AI1_TOWERS_EXPANSION(_p, _sturn, difficulty)
   if (_sturn > 3600) then
     local my_braves = num_braves(_p);
     
@@ -481,7 +481,7 @@ local function _AI1_TOWERS_EXPANSION(_p, _sturn)
   end
 end
 
-local function _AI1_MARKER_ENTRIES_EASY(_p, _sturn)
+local function _AI1_MARKER_ENTRIES_EASY(_p, _sturn, difficulty)
   if (_sturn > 7200) then
     local any_troops = count_troops(_p);
     
@@ -495,7 +495,7 @@ local function _AI1_MARKER_ENTRIES_EASY(_p, _sturn)
   end
 end
 
-local function _AI1_MARKER_ENTRIES_M_H(_p, _sturn)
+local function _AI1_MARKER_ENTRIES_M_H(_p, _sturn, difficulty)
   if (_sturn > 3600) then
     if (ai_getv(_p, USER_BASE_STATUS) == 0) then
       ai_do_marker_entries(_p, 3, 4, 5, -1);
@@ -511,7 +511,7 @@ local function _AI1_MARKER_ENTRIES_M_H(_p, _sturn)
   end
 end
 
-local function _AI1_MANAGE_AMOUNT_OF_TROOPS_M_H(_p, _sturn)
+local function _AI1_MANAGE_AMOUNT_OF_TROOPS_M_H(_p, _sturn, difficulty)
   local num_small_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE);
   local num_medium_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE_2);
   local num_large_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE_3);
@@ -538,7 +538,7 @@ local function _AI1_MANAGE_AMOUNT_OF_TROOPS_M_H(_p, _sturn)
   end
 end
 
-local function _AI1_TOWER_SPAM_FRONT_M_H(_p, _sturn)
+local function _AI1_TOWER_SPAM_FRONT_M_H(_p, _sturn, difficulty)
   if (ai_getv(_p, USER_OUR_FRONT_STATUS) == 0) then
     local num_huts = count_huts(_p, false);
     
@@ -557,7 +557,7 @@ local function _AI1_TOWER_SPAM_FRONT_M_H(_p, _sturn)
   end
 end
 
-local function _AI1_TOWER_SPAM_BASE_M_H(_p, _sturn)
+local function _AI1_TOWER_SPAM_BASE_M_H(_p, _sturn, difficulty)
   if (ai_getv(_p, USER_BASE_STATUS) == 0) then
     local num_huts = count_huts(_p, false);
     
@@ -576,7 +576,7 @@ local function _AI1_TOWER_SPAM_BASE_M_H(_p, _sturn)
   end
 end
 
-local function _AI1_TOWER_SPAM_FRONT_EXTREME(_p, _sturn)
+local function _AI1_TOWER_SPAM_FRONT_EXTREME(_p, _sturn, difficulty)
   if (ai_getv(_p, USER_OUR_FRONT_STATUS) == 0) then
     local num_huts = count_huts(_p, false);
     
@@ -595,7 +595,7 @@ local function _AI1_TOWER_SPAM_FRONT_EXTREME(_p, _sturn)
   end
 end
 
-local function _AI1_TOWER_SPAM_BASE_EXTREME(_p, _sturn)
+local function _AI1_TOWER_SPAM_BASE_EXTREME(_p, _sturn, difficulty)
   if (ai_getv(_p, USER_BASE_STATUS) == 0) then
     local num_huts = count_huts(_p, false);
     
@@ -614,7 +614,7 @@ local function _AI1_TOWER_SPAM_BASE_EXTREME(_p, _sturn)
   end
 end
 
-local function _AI1_FAR_FRONT_TOWER_EXPANSION(_p, _sturn)
+local function _AI1_FAR_FRONT_TOWER_EXPANSION(_p, _sturn, difficulty)
   if (ai_getv(_p, USER_FAR_FRONT_STATUS) == 0) then
     local tower_built = is_shape_or_bldg_at_xz(_p, M_BUILDING_DRUM_TOWER, 210, 110, 6);
     
@@ -638,7 +638,7 @@ local function _AI1_FAR_FRONT_TOWER_EXPANSION(_p, _sturn)
   end
 end
 
-local function _AI1_SPAM_HUTS_EVERYWHERE(_p, _sturn)
+local function _AI1_SPAM_HUTS_EVERYWHERE(_p, _sturn, difficulty)
   local num_huts = count_huts(_p);
   
   if (num_huts > 14 and num_huts < 69) then
@@ -653,7 +653,7 @@ local function _AI1_SPAM_HUTS_EVERYWHERE(_p, _sturn)
   end
 end
 
-local function _AI1_ANNOYING_ATTACKS(_p, _sturn)
+local function _AI1_ANNOYING_ATTACKS(_p, _sturn, difficulty)
   if (_sturn > 720) then
     local my_wars = MIN(count_troops(_p), #PLR1_ANNOYANCE_GROUPS * 3);
     for i,var_index in ipairs(PLR1_ANNOYANCE_GROUPS) do
@@ -690,7 +690,7 @@ local function _AI1_ANNOYING_ATTACKS(_p, _sturn)
   end
 end
 
-local function _AI1_SHAMAN_ATTACK_EXTREME(_p, _sturn)
+local function _AI1_SHAMAN_ATTACK_EXTREME(_p, _sturn, difficulty)
   if (_sturn > 360) then
     local target_enemy = get_random_alive_human_player();
     
@@ -729,7 +729,7 @@ local function _AI1_SHAMAN_ATTACK_EXTREME(_p, _sturn)
   end
 end
 
-local function _AI1_MAJOR_TROOPS_ATTACK(_p, _sturn)
+local function _AI1_MAJOR_TROOPS_ATTACK(_p, _sturn, difficulty)
   if (_sturn > 1440) then
     local target_enemy = get_random_alive_human_player();
     
@@ -796,7 +796,7 @@ local function _AI1_MAJOR_TROOPS_ATTACK(_p, _sturn)
   end
 end
 
-local function _AI2_ANNOYING_ATTACKS(_p, _sturn)
+local function _AI2_ANNOYING_ATTACKS(_p, _sturn, difficulty)
   if (_sturn > 1120) then
     local my_troops = MIN(count_troops(_p), #PLR2_ANNOYANCE_GROUPS * 3);
     for i,var_index in ipairs(PLR2_ANNOYANCE_GROUPS) do
@@ -833,7 +833,7 @@ local function _AI2_ANNOYING_ATTACKS(_p, _sturn)
   end
 end
 
-local function _AI2_SHAMAN_ATTACK_EXTREME(_p, _sturn)
+local function _AI2_SHAMAN_ATTACK_EXTREME(_p, _sturn, difficulty)
   if (_sturn > 1440) then
     local target_enemy = get_random_alive_human_player();
     
@@ -872,7 +872,7 @@ local function _AI2_SHAMAN_ATTACK_EXTREME(_p, _sturn)
   end
 end
 
-local function _AI2_MAJOR_TROOPS_ATTACK(_p, _sturn)
+local function _AI2_MAJOR_TROOPS_ATTACK(_p, _sturn, difficulty)
   if (_sturn > 1120) then
     local target_enemy = get_random_alive_human_player();
     
@@ -939,7 +939,7 @@ local function _AI2_MAJOR_TROOPS_ATTACK(_p, _sturn)
   end
 end
 
-local function _AI2_CHECK_OUR_SECOND_FRONT(_p, _sturn)
+local function _AI2_CHECK_OUR_SECOND_FRONT(_p, _sturn, difficulty)
   EnemyArea:clear();
   ai_setv(_p, USER_FAR_FRONT_STATUS, 0);
   ai_setv(_p, USER_DEF3_ENEMY_COUNT, 0);
@@ -956,7 +956,7 @@ local function _AI2_CHECK_OUR_SECOND_FRONT(_p, _sturn)
   end
 end
 
-local function _AI2_CHECK_OUR_FIRST_FRONT(_p, _sturn)
+local function _AI2_CHECK_OUR_FIRST_FRONT(_p, _sturn, difficulty)
   EnemyArea:clear();
   ai_setv(_p, USER_OUR_FRONT_STATUS, 0);
   ai_setv(_p, USER_DEF2_ENEMY_COUNT, 0);
@@ -973,7 +973,7 @@ local function _AI2_CHECK_OUR_FIRST_FRONT(_p, _sturn)
   end
 end
 
-local function _AI2_CHECK_OUR_BASE(_p, _sturn)
+local function _AI2_CHECK_OUR_BASE(_p, _sturn, difficulty)
   EnemyArea:clear();
   ai_setv(_p, USER_BASE_STATUS, 0);
   ai_setv(_p, USER_DEF1_ENEMY_COUNT, 0);
@@ -990,7 +990,7 @@ local function _AI2_CHECK_OUR_BASE(_p, _sturn)
   end
 end
 
-local function _AI2_TOWER_SPAM_RANDOM_FRONT_M_H(_p, _sturn)
+local function _AI2_TOWER_SPAM_RANDOM_FRONT_M_H(_p, _sturn, difficulty)
   if (ai_getv(_p, USER_OUR_FRONT_STATUS) == 0 and ai_getv(_p, USER_FAR_FRONT_STATUS) == 0) then
     local num_huts = count_huts(_p, false);
     
@@ -1013,7 +1013,7 @@ local function _AI2_TOWER_SPAM_RANDOM_FRONT_M_H(_p, _sturn)
   end
 end
 
-local function _AI2_TOWER_SPAM_BASE_M_H(_p, _sturn)
+local function _AI2_TOWER_SPAM_BASE_M_H(_p, _sturn, difficulty)
   if (ai_getv(_p, USER_BASE_STATUS) == 0) then
     local num_huts = count_huts(_p, false);
     
@@ -1032,7 +1032,7 @@ local function _AI2_TOWER_SPAM_BASE_M_H(_p, _sturn)
   end
 end
 
-local function _AI2_TOWER_SPAM_RANDOM_FRONT_EXTREME(_p, _sturn)
+local function _AI2_TOWER_SPAM_RANDOM_FRONT_EXTREME(_p, _sturn, difficulty)
   if (ai_getv(_p, USER_OUR_FRONT_STATUS) == 0 and ai_getv(_p, USER_FAR_FRONT_STATUS) == 0) then
     local num_huts = count_huts(_p, false);
     
@@ -1055,7 +1055,7 @@ local function _AI2_TOWER_SPAM_RANDOM_FRONT_EXTREME(_p, _sturn)
   end
 end
 
-local function _AI2_TOWER_SPAM_BASE_EXTREME(_p, _sturn)
+local function _AI2_TOWER_SPAM_BASE_EXTREME(_p, _sturn, difficulty)
   if (ai_getv(_p, USER_BASE_STATUS) == 0) then
     local num_huts = count_huts(_p, false);
     
@@ -1074,7 +1074,7 @@ local function _AI2_TOWER_SPAM_BASE_EXTREME(_p, _sturn)
   end
 end
 
-local function _AI2_MANAGE_AMOUNT_OF_TROOPS_M_H(_p, _sturn)
+local function _AI2_MANAGE_AMOUNT_OF_TROOPS_M_H(_p, _sturn, difficulty)
   local num_small_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE);
   local num_medium_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE_2);
   local num_large_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE_3);
@@ -1101,7 +1101,7 @@ local function _AI2_MANAGE_AMOUNT_OF_TROOPS_M_H(_p, _sturn)
   end
 end
 
-local function _AI2_MARKER_ENTRIES_MEDIUM(_p, _sturn)
+local function _AI2_MARKER_ENTRIES_MEDIUM(_p, _sturn, difficulty)
   if (_sturn > 3600) then
     if (ai_getv(_p, USER_OUR_FRONT_STATUS) == 0) then
       ai_do_marker_entries(_p, 0, 1, -1, -1);
@@ -1113,7 +1113,7 @@ local function _AI2_MARKER_ENTRIES_MEDIUM(_p, _sturn)
   end
 end
 
-local function _AI2_MARKER_ENTRIES_H_EX(_p, _sturn)
+local function _AI2_MARKER_ENTRIES_H_EX(_p, _sturn, difficulty)
   if (_sturn > 1800) then
     if (ai_getv(_p, USER_OUR_FRONT_STATUS) == 0) then
       ai_do_marker_entries(_p, 0, 1, 6, -1);
@@ -1244,7 +1244,7 @@ function register_ai_events(player_num, difficulty)
   local t = _EVENT_TABLE[_EVENT_INDEX][difficulty];
   
   for i,event in ipairs(t) do
-    TurnClock.new(get_script_turn(), event[1], event[2], player_num, event[3]);
+    TurnClock.new(get_script_turn(), event[1], event[2], player_num, event[3], difficulty);
   end
   
   ai_setv(player_num, USER_BASIC_ATTACK, 52);
