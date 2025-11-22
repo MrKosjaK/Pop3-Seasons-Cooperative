@@ -1,7 +1,7 @@
 include("common.lua");
 include("searcharea.lua");
 include("ai_shaman.lua");
-include("lvl1_ai_func.lua");
+include("lvl3_ai_func.lua");
 
 
 --include("pop_helper.lua");
@@ -122,8 +122,8 @@ function OnGameStart()
   process_all_ai_info(function(ai)
     set_player_check_surround_slopes(G_PLR[ai.Owner], FALSE);
     reduce_computer_players_sprogging_time_by_percent(G_PLR[ai.Owner], 0 + ((ai.Difficulty - 1) * 15));
-    --spawn_computer_addons(ai.Owner, ai.Difficulty);
-    --register_ai_events(ai.Owner, ai.Difficulty);
+    spawn_computer_addons(ai.Owner, ai.Difficulty);
+    register_ai_events(ai.Owner, ai.Difficulty);
   end);
   
   AI_PLR1_TRIBE = get_ai_player_info(1).Owner;
