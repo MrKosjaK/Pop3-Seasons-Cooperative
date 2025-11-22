@@ -135,8 +135,8 @@ function OnGameStart()
   AI_PLR3_DIFF = get_ai_player_info(3).Difficulty;
   AI_PLR4_DIFF = get_ai_player_info(4).Difficulty;
   
-  set_players_allied(AI_PLR1_TRIBE, AI_PLR2_TRIBE);
-  set_players_allied(AI_PLR2_TRIBE, AI_PLR1_TRIBE);
+  set_players_allied(AI_PLR4_TRIBE, AI_PLR2_TRIBE);
+  set_players_allied(AI_PLR2_TRIBE, AI_PLR4_TRIBE);
   
   -- ai player 1 stuff
   ai_main_drum_tower_info(AI_PLR1_TRIBE, true, 238, 90);
@@ -305,6 +305,32 @@ function OnGameStart()
     --PLR2_SH:set_casting_delay(16);
     --PLR2_SH:set_offensive_spell_entry(1, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 7, 8}, 3, SPELL_COST(M_SPELL_WHIRLWIND) >> 2);
   end
+  
+  -- ai player 3 stuff
+  ai_main_drum_tower_info(AI_PLR3_TRIBE, true, 158, 242);
+  ai_set_shaman_info(AI_PLR3_TRIBE, 158, 242, true, 56 - ((AI_PLR3_DIFF - 1) * 16), 16);
+  ai_set_converting_info(AI_PLR3_TRIBE, true, true, 24);
+  ai_set_defensive_info(AI_PLR3_TRIBE, true, true, true, true, 1, 3, 1);
+  ai_set_fetch_info(AI_PLR3_TRIBE, true, false, false, true);
+  ai_set_attack_info(AI_PLR3_TRIBE, true, 1, 30 - ((AI_PLR3_DIFF - 1) * 10), 12);
+  ai_set_bldg_info(AI_PLR3_TRIBE, true, 15 + (AI_PLR3_DIFF * 25), 2 + ((AI_PLR3_DIFF - 1) * 2));
+  ai_set_training_huts(AI_PLR3_TRIBE, 1, 0, 1, 0);
+  ai_set_training_people(AI_PLR3_TRIBE, true, 10, 0, 12, 0, 0 + AI_PLR3_DIFF);
+  ai_set_populating_info(AI_PLR3_TRIBE, true, true);
+  ai_set_defence_rad(AI_PLR3_TRIBE, 7);
+  
+  -- ai player 4 stuff
+  ai_main_drum_tower_info(AI_PLR4_TRIBE, true, 230, 10);
+  ai_set_shaman_info(AI_PLR4_TRIBE, 230, 10, true, 56 - ((AI_PLR4_DIFF - 1) * 16), 16);
+  ai_set_converting_info(AI_PLR4_TRIBE, true, true, 24);
+  ai_set_defensive_info(AI_PLR4_TRIBE, true, true, true, true, 1, 3, 1);
+  ai_set_fetch_info(AI_PLR4_TRIBE, true, false, false, true);
+  ai_set_attack_info(AI_PLR4_TRIBE, true, 1, 30 - ((AI_PLR4_DIFF - 1) * 10), 12);
+  ai_set_bldg_info(AI_PLR4_TRIBE, true, 15 + (AI_PLR4_DIFF * 25), 2 + ((AI_PLR4_DIFF - 1) * 2));
+  ai_set_training_huts(AI_PLR4_TRIBE, 1, 0, 1, 0);
+  ai_set_training_people(AI_PLR4_TRIBE, true, 10, 0, 12, 0, 0 + AI_PLR4_DIFF);
+  ai_set_populating_info(AI_PLR4_TRIBE, true, true);
+  ai_set_defence_rad(AI_PLR4_TRIBE, 7);
 end
 
 function ScrOnLevelInit(level_id)
