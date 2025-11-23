@@ -4,7 +4,9 @@ local EnemyArea = create_enemy_search_area();
 
 local _ADDON_INDEX = 1;
 local FLOOR = math.floor;
+local ROUND = function(n) return FLOOR(n + 0.5); end;
 local MIN = math.min;
+local MAX = math.max;
 local MP_POS = MapPosXZ.new();
 
 -- Data base for computer's starting things.
@@ -76,57 +78,42 @@ PLR2_SH = nil;
 -- AI EVENTS
 
 local function _AI1_CHECK_BUCKET_COUNTS(_p, _sturn, difficulty)
-  if (difficulty == AI_EASY) then
-    local base_mod = 16;
-    local time_passed_mod = MIN(FLOOR(_sturn / 3600), 5);
-    local population_mod = FLOOR(count_pop(_p) / 25);
-    local final_mod = (base_mod - (time_passed_mod + population_mod));
-    
-    ai_set_spell_bucket_count(_p, M_SPELL_BLAST, 1 + final_mod);
-    ai_set_spell_bucket_count(_p, M_SPELL_CONVERT_WILD, 1 * final_mod);
-    ai_set_spell_bucket_count(_p, M_SPELL_INSECT_PLAGUE, 2 * final_mod);
-    ai_set_spell_bucket_count(_p, M_SPELL_LIGHTNING_BOLT, 3 * final_mod);
-    ai_set_spell_bucket_count(_p, M_SPELL_WHIRLWIND, 4 * final_mod);
-  end
+  local base_mod = 20 - (4 * difficulty);
+  local time_passed_mod = MIN(FLOOR(_sturn / 3600), 5);
+  local population_mod = FLOOR(count_pop(_p) / 25);
+  local final_mod = MAX(1, (base_mod - (time_passed_mod + population_mod)));
   
-  if (difficulty == AI_MEDIUM) then
-    local base_mod = 12;
-    local time_passed_mod = MIN(FLOOR(_sturn / 3600), 5);
-    local population_mod = FLOOR(count_pop(_p) / 25);
-    local final_mod = (base_mod - (time_passed_mod + population_mod));
-    
-    ai_set_spell_bucket_count(_p, M_SPELL_BLAST, 1 + final_mod);
-    ai_set_spell_bucket_count(_p, M_SPELL_CONVERT_WILD, 1 * final_mod);
-    ai_set_spell_bucket_count(_p, M_SPELL_INSECT_PLAGUE, 2 * final_mod);
-    ai_set_spell_bucket_count(_p, M_SPELL_LIGHTNING_BOLT, 3 * final_mod);
-    ai_set_spell_bucket_count(_p, M_SPELL_WHIRLWIND, 4 * final_mod);
-  end
+  -- tier 1 spells
+  ai_set_spell_bucket_count(_p, M_SPELL_BLAST, ROUND(1.0 * final_mod));
+  ai_set_spell_bucket_count(_p, M_SPELL_CONVERT_WILD, ROUND(1.0 * final_mod));
+  ai_set_spell_bucket_count(_p, M_SPELL_GHOST_ARMY, ROUND(1.15 * final_mod));
   
-  if (difficulty == AI_HARD) then
-    local base_mod = 8;
-    local time_passed_mod = MIN(FLOOR(_sturn / 3600), 5);
-    local population_mod = FLOOR(count_pop(_p) / 25);
-    local final_mod = (base_mod - (time_passed_mod + population_mod));
-    
-    ai_set_spell_bucket_count(_p, M_SPELL_BLAST, 1 + final_mod);
-    ai_set_spell_bucket_count(_p, M_SPELL_CONVERT_WILD, 1 * final_mod);
-    ai_set_spell_bucket_count(_p, M_SPELL_INSECT_PLAGUE, 2 * final_mod);
-    ai_set_spell_bucket_count(_p, M_SPELL_LIGHTNING_BOLT, 3 * final_mod);
-    ai_set_spell_bucket_count(_p, M_SPELL_WHIRLWIND, 4 * final_mod);
-  end
+  -- tier 2 spells
+  ai_set_spell_bucket_count(_p, M_SPELL_INSECT_PLAGUE, ROUND(2.10 * final_mod));
+  ai_set_spell_bucket_count(_p, M_SPELL_INVISIBILITY, ROUND(2.25 * final_mod));
+  ai_set_spell_bucket_count(_p, M_SPELL_SHIELD, ROUND(2.35 * final_mod));
+  ai_set_spell_bucket_count(_p, M_SPELL_LAND_BRIDGE, ROUND(2.45 * final_mod));
+  ai_set_spell_bucket_count(_p, M_SPELL_LIGHTNING_BOLT, ROUND(2.75 * final_mod));
   
-  if (difficulty == AI_EXTREME) then
-    local base_mod = 4;
-    local time_passed_mod = MIN(FLOOR(_sturn / 3600), 5);
-    local population_mod = FLOOR(count_pop(_p) / 25);
-    local final_mod = (base_mod - (time_passed_mod + population_mod));
-    
-    ai_set_spell_bucket_count(_p, M_SPELL_BLAST, 1 + final_mod);
-    ai_set_spell_bucket_count(_p, M_SPELL_CONVERT_WILD, 1 * final_mod);
-    ai_set_spell_bucket_count(_p, M_SPELL_INSECT_PLAGUE, 2 * final_mod);
-    ai_set_spell_bucket_count(_p, M_SPELL_LIGHTNING_BOLT, 3 * final_mod);
-    ai_set_spell_bucket_count(_p, M_SPELL_WHIRLWIND, 4 * final_mod);
-  end
+  -- tier 3 spells
+  ai_set_spell_bucket_count(_p, M_SPELL_HYPNOTISM, ROUND(3.25 * final_mod));
+  ai_set_spell_bucket_count(_p, M_SPELL_WHIRLWIND, ROUND(3.35 * final_mod));
+  ai_set_spell_bucket_count(_p, M_SPELL_SWAMP, ROUND(3.55 * final_mod));
+  ai_set_spell_bucket_count(_p, M_SPELL_FLATTEN, ROUND(3.85 * final_mod));
+  
+  -- tier 4 spells
+  ai_set_spell_bucket_count(_p, M_SPELL_EARTHQUAKE, ROUND(4.05 * final_mod));
+  ai_set_spell_bucket_count(_p, M_SPELL_EROSION, ROUND(4.35 * final_mod));
+  ai_set_spell_bucket_count(_p, M_SPELL_FIRESTORM, ROUND(4.90 * final_mod));
+  
+  -- tier 5 spells
+  ai_set_spell_bucket_count(_p, M_SPELL_ANGEL_OF_DEATH, ROUND(5.45 * final_mod));
+  ai_set_spell_bucket_count(_p, M_SPELL_VOLCANO, ROUND(5.85 * final_mod));
+  
+  -- tier 6 spells
+  ai_set_spell_bucket_count(_p, M_SPELL_ARMAGEDDON, ROUND(6.0 * final_mod));
+  ai_set_spell_bucket_count(_p, M_SPELL_BLOODLUST, ROUND(6.0 * final_mod));
+  ai_set_spell_bucket_count(_p, M_SPELL_TELEPORT, ROUND(6.0 * final_mod));
 end
 
 local _EVENT_INDEX = 1;
@@ -136,18 +123,22 @@ local _EVENT_TABLE =
   {
     [AI_EASY] =
     {
+      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
     },
     
     [AI_MEDIUM] = 
     {
+      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
     },
     
     [AI_HARD] = 
     {
+      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
     },
     
     [AI_EXTREME] = 
     {
+      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
     },
   },
   
@@ -155,18 +146,22 @@ local _EVENT_TABLE =
   {
     [AI_EASY] =
     {
+      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
     },
     
     [AI_MEDIUM] = 
     {
+      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
     },
     
     [AI_HARD] = 
     {
+      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
     },
     
     [AI_EXTREME] = 
     {
+      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
     },
   },
   
@@ -174,18 +169,22 @@ local _EVENT_TABLE =
   {
     [AI_EASY] =
     {
+      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
     },
     
     [AI_MEDIUM] = 
     {
+      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
     },
     
     [AI_HARD] = 
     {
+      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
     },
     
     [AI_EXTREME] = 
     {
+      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
     },
   },
   
@@ -193,18 +192,22 @@ local _EVENT_TABLE =
   {
     [AI_EASY] =
     {
+      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
     },
     
     [AI_MEDIUM] = 
     {
+      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
     },
     
     [AI_HARD] = 
     {
+      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
     },
     
     [AI_EXTREME] = 
     {
+      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
     },
   }
 }
