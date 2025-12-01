@@ -77,7 +77,7 @@ PLR2_SH = nil;
 
 -- AI EVENTS
 
-local function _AI1_CHECK_BUCKET_COUNTS(_p, _sturn, difficulty)
+local function _AI1_CALC_BUCKET_COUNTS(_p, _sturn, difficulty)
   local base_mod = 20 - (4 * difficulty);
   local time_passed_mod = MIN(FLOOR(_sturn / 3600), 5);
   local population_mod = FLOOR(count_pop(_p) / 25);
@@ -116,6 +116,52 @@ local function _AI1_CHECK_BUCKET_COUNTS(_p, _sturn, difficulty)
   ai_set_spell_bucket_count(_p, M_SPELL_TELEPORT, ROUND(6.0 * final_mod));
 end
 
+local AI_TROOP_HUT_VALUE_TBL =
+{
+  -- player 1
+  {
+    [M_PERSON_WARRIOR] = {0.95, 1.25, 1.45},
+    [M_PERSON_SUPER_WARRIOR] = {1, 1.35, 1.65}
+  },
+  
+  -- player 2
+  {
+    [M_PERSON_SPY] = {0.55, 0.70, 0.95},
+    [M_PERSON_SUPER_WARRIOR] = {1.15, 1.55, 1.85}
+  },
+  
+  -- player 3
+  {
+    [M_PERSON_WARRIOR] = {0.95, 1.25, 1.45},
+    [M_PERSON_SUPER_WARRIOR] = {1, 1.35, 1.65},
+    [M_PERSON_RELIGIOUS] = {1, 1.25, 1.55}
+  },
+  
+  -- player 4
+  {
+    [M_PERSON_SUPER_WARRIOR] = {0.95, 1.15, 1.35},
+    [M_PERSON_RELIGIOUS] = {1.25, 1.55, 1.95}
+  }
+}
+
+local function _AI1_MANAGE_MY_TROOPS_AMOUNTS(_p, _sturn, difficulty)
+  local num_small_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE);
+  local num_medium_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE_2);
+  local num_large_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE_3);
+  
+  local function calculate_troop_value(p_type)
+    return FLOOR((AI_TROOP_HUT_VALUE_TBL[_p][p_type][M_BUILDING_TEPEE] * num_small_huts) +
+    (AI_TROOP_HUT_VALUE_TBL[_p][p_type][M_BUILDING_TEPEE_2] * num_medium_huts) +
+    (AI_TROOP_HUT_VALUE_TBL[_p][p_type][M_BUILDING_TEPEE_3] * num_large_huts));
+  end
+  
+  local m_war_value = calculate_troop_value(M_PERSON_WARRIOR);
+  local m_fw_value = calculate_troop_value(M_PERSON_SUPER_WARRIOR);
+  
+  ai_attr_w(_p, ATTR_PREF_WARRIOR_PEOPLE, m_war_value);
+  ai_attr_w(_p, ATTR_PREF_SUPER_WARRIOR_PEOPLE, m_fw_value);
+end
+
 local _EVENT_INDEX = 1;
 local _EVENT_TABLE =
 {
@@ -123,22 +169,26 @@ local _EVENT_TABLE =
   {
     [AI_EASY] =
     {
-      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
+      {_AI1_CALC_BUCKET_COUNTS, 688, 32},
+      {_AI1_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
     },
     
     [AI_MEDIUM] = 
     {
-      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
+      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
+      {_AI1_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
     },
     
     [AI_HARD] = 
     {
-      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
+      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
+      {_AI1_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
     },
     
     [AI_EXTREME] = 
     {
-      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
+      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
+      {_AI1_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
     },
   },
   
@@ -146,22 +196,22 @@ local _EVENT_TABLE =
   {
     [AI_EASY] =
     {
-      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
+      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
     },
     
     [AI_MEDIUM] = 
     {
-      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
+      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
     },
     
     [AI_HARD] = 
     {
-      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
+      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
     },
     
     [AI_EXTREME] = 
     {
-      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
+      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
     },
   },
   
@@ -169,22 +219,22 @@ local _EVENT_TABLE =
   {
     [AI_EASY] =
     {
-      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
+      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
     },
     
     [AI_MEDIUM] = 
     {
-      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
+      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
     },
     
     [AI_HARD] = 
     {
-      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
+      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
     },
     
     [AI_EXTREME] = 
     {
-      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
+      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
     },
   },
   
@@ -192,22 +242,22 @@ local _EVENT_TABLE =
   {
     [AI_EASY] =
     {
-      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
+      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
     },
     
     [AI_MEDIUM] = 
     {
-      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
+      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
     },
     
     [AI_HARD] = 
     {
-      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
+      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
     },
     
     [AI_EXTREME] = 
     {
-      {_AI1_CHECK_BUCKET_COUNTS, 720, 16},
+      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
     },
   }
 }
