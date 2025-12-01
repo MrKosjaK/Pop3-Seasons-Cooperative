@@ -77,7 +77,7 @@ PLR2_SH = nil;
 
 -- AI EVENTS
 
-local function _AI1_CALC_BUCKET_COUNTS(_p, _sturn, difficulty)
+local function _AI_CALC_BUCKETS_GENERAL(_p, _sturn, difficulty)
   local base_mod = 20 - (4 * difficulty);
   local time_passed_mod = MIN(FLOOR(_sturn / 3600), 5);
   local population_mod = FLOOR(count_pop(_p) / 25);
@@ -144,21 +144,59 @@ local AI_TROOP_HUT_VALUE_TBL =
   }
 }
 
+local function calculate_troop_value(plr_num, p_type, n_small, n_medium, n_large)
+    return FLOOR((AI_TROOP_HUT_VALUE_TBL[plr_num][p_type][M_BUILDING_TEPEE] * n_small) +
+    (AI_TROOP_HUT_VALUE_TBL[plr_num][p_type][M_BUILDING_TEPEE_2] * n_medium) +
+    (AI_TROOP_HUT_VALUE_TBL[plr_num][p_type][M_BUILDING_TEPEE_3] * n_large));
+end
+
 local function _AI1_MANAGE_MY_TROOPS_AMOUNTS(_p, _sturn, difficulty)
   local num_small_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE);
   local num_medium_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE_2);
   local num_large_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE_3);
   
-  local function calculate_troop_value(p_type)
-    return FLOOR((AI_TROOP_HUT_VALUE_TBL[_p][p_type][M_BUILDING_TEPEE] * num_small_huts) +
-    (AI_TROOP_HUT_VALUE_TBL[_p][p_type][M_BUILDING_TEPEE_2] * num_medium_huts) +
-    (AI_TROOP_HUT_VALUE_TBL[_p][p_type][M_BUILDING_TEPEE_3] * num_large_huts));
-  end
-  
-  local m_war_value = calculate_troop_value(M_PERSON_WARRIOR);
-  local m_fw_value = calculate_troop_value(M_PERSON_SUPER_WARRIOR);
+  local m_war_value = calculate_troop_value(_p, M_PERSON_WARRIOR, num_small_huts, num_medium_huts, num_large_huts);
+  local m_fw_value = calculate_troop_value(_p, M_PERSON_SUPER_WARRIOR, num_small_huts, num_medium_huts, num_large_huts);
   
   ai_attr_w(_p, ATTR_PREF_WARRIOR_PEOPLE, m_war_value);
+  ai_attr_w(_p, ATTR_PREF_SUPER_WARRIOR_PEOPLE, m_fw_value);
+end
+
+local function _AI2_MANAGE_MY_TROOPS_AMOUNTS(_p, _sturn, difficulty)
+  local num_small_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE);
+  local num_medium_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE_2);
+  local num_large_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE_3);
+  
+  local m_spy_value = calculate_troop_value(_p, M_PERSON_SPY, num_small_huts, num_medium_huts, num_large_huts);
+  local m_fw_value = calculate_troop_value(_p, M_PERSON_SUPER_WARRIOR, num_small_huts, num_medium_huts, num_large_huts);
+  
+  ai_attr_w(_p, ATTR_PREF_SPY_PEOPLE, m_spy_value);
+  ai_attr_w(_p, ATTR_PREF_SUPER_WARRIOR_PEOPLE, m_fw_value);
+end
+
+local function _AI3_MANAGE_MY_TROOPS_AMOUNTS(_p, _sturn, difficulty)
+  local num_small_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE);
+  local num_medium_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE_2);
+  local num_large_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE_3);
+  
+  local m_priest_value = calculate_troop_value(_p, M_PERSON_RELIGIOUS, num_small_huts, num_medium_huts, num_large_huts);
+  local m_war_value = calculate_troop_value(_p, M_PERSON_WARRIOR, num_small_huts, num_medium_huts, num_large_huts);
+  local m_fw_value = calculate_troop_value(_p, M_PERSON_SUPER_WARRIOR, num_small_huts, num_medium_huts, num_large_huts);
+  
+  ai_attr_w(_p, ATTR_PREF_RELIGIOUS_PEOPLE, m_priest_value);
+  ai_attr_w(_p, ATTR_PREF_WARRIOR_PEOPLE, m_war_value);
+  ai_attr_w(_p, ATTR_PREF_SUPER_WARRIOR_PEOPLE, m_fw_value);
+end
+
+local function _AI4_MANAGE_MY_TROOPS_AMOUNTS(_p, _sturn, difficulty)
+  local num_small_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE);
+  local num_medium_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE_2);
+  local num_large_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE_3);
+  
+  local m_priest_value = calculate_troop_value(_p, M_PERSON_RELIGIOUS, num_small_huts, num_medium_huts, num_large_huts);
+  local m_fw_value = calculate_troop_value(_p, M_PERSON_SUPER_WARRIOR, num_small_huts, num_medium_huts, num_large_huts);
+  
+  ai_attr_w(_p, ATTR_PREF_RELIGIOUS_PEOPLE, m_priest_value);
   ai_attr_w(_p, ATTR_PREF_SUPER_WARRIOR_PEOPLE, m_fw_value);
 end
 
@@ -169,25 +207,25 @@ local _EVENT_TABLE =
   {
     [AI_EASY] =
     {
-      {_AI1_CALC_BUCKET_COUNTS, 688, 32},
+      {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI1_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
     },
     
     [AI_MEDIUM] = 
     {
-      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
+      {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI1_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
     },
     
     [AI_HARD] = 
     {
-      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
+      {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI1_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
     },
     
     [AI_EXTREME] = 
     {
-      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
+      {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI1_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
     },
   },
@@ -196,22 +234,26 @@ local _EVENT_TABLE =
   {
     [AI_EASY] =
     {
-      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
+      {_AI_CALC_BUCKETS_GENERAL, 688, 32},
+      {_AI2_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
     },
     
     [AI_MEDIUM] = 
     {
-      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
+      {_AI_CALC_BUCKETS_GENERAL, 688, 32},
+      {_AI2_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
     },
     
     [AI_HARD] = 
     {
-      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
+      {_AI_CALC_BUCKETS_GENERAL, 688, 32},
+      {_AI2_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
     },
     
     [AI_EXTREME] = 
     {
-      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
+      {_AI_CALC_BUCKETS_GENERAL, 688, 32},
+      {_AI2_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
     },
   },
   
@@ -219,22 +261,26 @@ local _EVENT_TABLE =
   {
     [AI_EASY] =
     {
-      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
+      {_AI_CALC_BUCKETS_GENERAL, 688, 32},
+      {_AI3_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
     },
     
     [AI_MEDIUM] = 
     {
-      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
+      {_AI_CALC_BUCKETS_GENERAL, 688, 32},
+      {_AI3_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
     },
     
     [AI_HARD] = 
     {
-      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
+      {_AI_CALC_BUCKETS_GENERAL, 688, 32},
+      {_AI3_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
     },
     
     [AI_EXTREME] = 
     {
-      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
+      {_AI_CALC_BUCKETS_GENERAL, 688, 32},
+      {_AI3_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
     },
   },
   
@@ -242,22 +288,26 @@ local _EVENT_TABLE =
   {
     [AI_EASY] =
     {
-      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
+      {_AI_CALC_BUCKETS_GENERAL, 688, 32},
+      {_AI4_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
     },
     
     [AI_MEDIUM] = 
     {
-      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
+      {_AI_CALC_BUCKETS_GENERAL, 688, 32},
+      {_AI4_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
     },
     
     [AI_HARD] = 
     {
-      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
+      {_AI_CALC_BUCKETS_GENERAL, 688, 32},
+      {_AI4_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
     },
     
     [AI_EXTREME] = 
     {
-      {_AI1_CALC_BUCKET_COUNTS, 720, 16},
+      {_AI_CALC_BUCKETS_GENERAL, 688, 32},
+      {_AI4_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
     },
   }
 }
