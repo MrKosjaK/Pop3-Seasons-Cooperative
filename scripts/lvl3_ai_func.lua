@@ -2,6 +2,10 @@ include("turnclock.lua");
 local EnemyArea = create_enemy_search_area();
 
 
+local PLAYER_2_IDX =
+{
+
+};
 local _ADDON_INDEX = 1;
 local FLOOR = math.floor;
 local ROUND = function(n) return FLOOR(n + 0.5); end;
@@ -60,6 +64,16 @@ end
 
 -- AI DEFINES
 -- PLAYER ONE
+
+-- Event vars
+local USER_BALLOONS_AVAILABLE = 1;
+
+-- Attack vars
+local USER_BASIC_ATTACK = 64;
+local USER_SHAMAN_ATTACK = 65;
+local USER_MAJOR_ATTACK = 66;
+local USER_REINFORCEMENT_ATTACK = 67;
+local USER_BALLOON_FWS_ASSAULT = 68;
 
 -- PLAYER TWO
 
@@ -145,9 +159,9 @@ local AI_TROOP_HUT_VALUE_TBL =
 }
 
 local function calculate_troop_value(plr_num, p_type, n_small, n_medium, n_large)
-    return FLOOR((AI_TROOP_HUT_VALUE_TBL[plr_num][p_type][M_BUILDING_TEPEE] * n_small) +
-    (AI_TROOP_HUT_VALUE_TBL[plr_num][p_type][M_BUILDING_TEPEE_2] * n_medium) +
-    (AI_TROOP_HUT_VALUE_TBL[plr_num][p_type][M_BUILDING_TEPEE_3] * n_large));
+    return FLOOR((AI_TROOP_HUT_VALUE_TBL[PLAYER_2_IDX[plr_num]][p_type][M_BUILDING_TEPEE] * n_small) +
+    (AI_TROOP_HUT_VALUE_TBL[PLAYER_2_IDX[plr_num]][p_type][M_BUILDING_TEPEE_2] * n_medium) +
+    (AI_TROOP_HUT_VALUE_TBL[PLAYER_2_IDX[plr_num]][p_type][M_BUILDING_TEPEE_3] * n_large));
 end
 
 local function _AI1_MANAGE_MY_TROOPS_AMOUNTS(_p, _sturn, difficulty)
@@ -160,6 +174,31 @@ local function _AI1_MANAGE_MY_TROOPS_AMOUNTS(_p, _sturn, difficulty)
   
   ai_attr_w(_p, ATTR_PREF_WARRIOR_PEOPLE, m_war_value);
   ai_attr_w(_p, ATTR_PREF_SUPER_WARRIOR_PEOPLE, m_fw_value);
+end
+
+local function _AI1_SHOULD_I_BUILD_AIRSHIP_HUT(_p, _sturn, difficulty)
+  if (difficulty >= AI_HARD) then
+    -- Only build balloons on hard and extreme diffs.
+
+    -- First we check if we have firewarrior train built with decent amount of population.
+    local num_huts = count_huts(_p, true);
+    local fw_bldgs = count_bldgs_of_type(_p, M_BUILDING_SUPER_TRAIN);
+    if (num_huts >= 7 and fw_bldgs > 0) then
+      -- Commence airship craft.
+      ai_set_vehicle_info(_p, true, 0, 0, 1, 0);
+      ai_set_state(_p, TRUE, CP_AT_TYPE_FETCH_LOST_VEHICLE);
+      ai_set_state(_p, TRUE, CP_AT_TYPE_FETCH_FAR_VEHICLE);
+      ai_attr_w(_p, ATTR_PEOPLE_PER_BALLOON, 8);
+      ai_setv(_p, USER_BALLOONS_AVAILABLE, 1);
+    else
+      -- Halt production of flying potatoes.
+      ai_set_vehicle_info(_p, false, 0, 0, 0, 0);
+      ai_set_state(_p, FALSE, CP_AT_TYPE_FETCH_LOST_VEHICLE);
+      ai_set_state(_p, FALSE, CP_AT_TYPE_FETCH_FAR_VEHICLE);
+      ai_attr_w(_p, ATTR_PEOPLE_PER_BALLOON, 0);
+      ai_setv(_p, USER_BALLOONS_AVAILABLE, 0);
+    end
+  end
 end
 
 local function _AI2_MANAGE_MY_TROOPS_AMOUNTS(_p, _sturn, difficulty)
@@ -200,6 +239,8 @@ local function _AI4_MANAGE_MY_TROOPS_AMOUNTS(_p, _sturn, difficulty)
   ai_attr_w(_p, ATTR_PREF_SUPER_WARRIOR_PEOPLE, m_fw_value);
 end
 
+
+
 local _EVENT_INDEX = 1;
 local _EVENT_TABLE =
 {
@@ -221,12 +262,14 @@ local _EVENT_TABLE =
     {
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI1_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
+      {_AI1_SHOULD_I_BUILD_AIRSHIP_HUT, 512, 64},
     },
     
     [AI_EXTREME] = 
     {
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI1_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
+      {_AI1_SHOULD_I_BUILD_AIRSHIP_HUT, 512, 32},
     },
   },
   
@@ -314,7 +357,7 @@ local _EVENT_TABLE =
 
 function register_ai_events(player_num, difficulty)
   local t = _EVENT_TABLE[_EVENT_INDEX][difficulty];
-  
+  PLAYER_2_IDX[player_num] = _EVENT_INDEX;
   for i,event in ipairs(t) do
     if (event ~= nil) then
       TurnClock.new(get_script_turn(), event[1], event[2], player_num, event[3], difficulty);

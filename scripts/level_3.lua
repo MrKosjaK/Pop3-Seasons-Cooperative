@@ -367,7 +367,7 @@ function ScrOnLevelInit(level_id)
 end
 
 function ScrOnTurn()
-  --process_ai_events();
+  process_ai_events();
   
   local sTurn = get_script_turn();
   
