@@ -262,8 +262,8 @@ function OnGameStart()
   ai_set_fetch_info(AI_PLR2_TRIBE, true, false, false, true);
   ai_set_attack_info(AI_PLR2_TRIBE, true, 1, 30 - ((AI_PLR2_DIFF - 1) * 10), 12);
   ai_set_bldg_info(AI_PLR2_TRIBE, true, 20 + (AI_PLR2_DIFF * 25), 2 + ((AI_PLR2_DIFF - 1) * 2));
-  ai_set_training_huts(AI_PLR2_TRIBE, 1, 0, 1, 0);
-  ai_set_training_people(AI_PLR2_TRIBE, true, 10, 0, 12, 0, 0 + AI_PLR2_DIFF);
+  ai_set_training_huts(AI_PLR2_TRIBE, 0, 0, 1, 1);
+  ai_set_training_people(AI_PLR2_TRIBE, true, 0, 0, 12, 2, 0 + AI_PLR2_DIFF);
   ai_set_populating_info(AI_PLR2_TRIBE, true, true);
   ai_set_defence_rad(AI_PLR2_TRIBE, 7);
   
@@ -329,7 +329,7 @@ function OnGameStart()
     
     ai_attr_w(AI_PLR2_TRIBE, ATTR_SHAMEN_BLAST, 8);
     ai_attr_w(AI_PLR2_TRIBE, ATTR_MAX_ATTACKS, 10);
-    ai_set_targets(AI_PLR2_TRIBE, 0, true, true, true); -- this will by dynamically changed in actual attacks
+    ai_set_targets(AI_PLR2_TRIBE, 0, true, true, true); -- this will be dynamically changed in actual attacks
     
     --PLR2_SH:set_casting_delay(16);
     --PLR2_SH:set_offensive_spell_entry(1, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 7, 8}, 3, SPELL_COST(M_SPELL_WHIRLWIND) >> 2);
@@ -343,8 +343,8 @@ function OnGameStart()
   ai_set_fetch_info(AI_PLR3_TRIBE, true, false, false, true);
   ai_set_attack_info(AI_PLR3_TRIBE, true, 1, 30 - ((AI_PLR3_DIFF - 1) * 10), 12);
   ai_set_bldg_info(AI_PLR3_TRIBE, true, 15 + (AI_PLR3_DIFF * 25), 2 + ((AI_PLR3_DIFF - 1) * 2));
-  ai_set_training_huts(AI_PLR3_TRIBE, 1, 0, 1, 0);
-  ai_set_training_people(AI_PLR3_TRIBE, true, 10, 0, 12, 0, 0 + AI_PLR3_DIFF);
+  ai_set_training_huts(AI_PLR3_TRIBE, 1, 1, 1, 0);
+  ai_set_training_people(AI_PLR3_TRIBE, true, 10, 9, 12, 0, 0 + AI_PLR3_DIFF);
   ai_set_populating_info(AI_PLR3_TRIBE, true, true);
   ai_set_defence_rad(AI_PLR3_TRIBE, 7);
   
@@ -356,8 +356,8 @@ function OnGameStart()
   ai_set_fetch_info(AI_PLR4_TRIBE, true, false, false, true);
   ai_set_attack_info(AI_PLR4_TRIBE, true, 1, 30 - ((AI_PLR4_DIFF - 1) * 10), 12);
   ai_set_bldg_info(AI_PLR4_TRIBE, true, 15 + (AI_PLR4_DIFF * 25), 2 + ((AI_PLR4_DIFF - 1) * 2));
-  ai_set_training_huts(AI_PLR4_TRIBE, 1, 0, 1, 0);
-  ai_set_training_people(AI_PLR4_TRIBE, true, 10, 0, 12, 0, 0 + AI_PLR4_DIFF);
+  ai_set_training_huts(AI_PLR4_TRIBE, 0, 1, 1, 0);
+  ai_set_training_people(AI_PLR4_TRIBE, true, 0, 12, 12, 0, 0 + AI_PLR4_DIFF);
   ai_set_populating_info(AI_PLR4_TRIBE, true, true);
   ai_set_defence_rad(AI_PLR4_TRIBE, 7);
 end
