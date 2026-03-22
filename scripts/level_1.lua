@@ -41,8 +41,8 @@ function OnGameStart()
   AI_PLR2_TRIBE = get_ai_player_info(2).Owner;
   AI_PLR2_DIFF = get_ai_player_info(2).Difficulty;
   
-  set_players_allied(AI_PLR1_TRIBE, AI_PLR2_TRIBE);
-  set_players_allied(AI_PLR2_TRIBE, AI_PLR1_TRIBE);
+  set_players_allied_silent(AI_PLR1_TRIBE, AI_PLR2_TRIBE);
+  set_players_allied_silent(AI_PLR2_TRIBE, AI_PLR1_TRIBE);
   
   -- ai player 1 stuff
   ai_main_drum_tower_info(AI_PLR1_TRIBE, true, 122, 66);
