@@ -166,6 +166,11 @@ function OnGameStart()
   
   set_players_allied_silent(AI_PLR4_TRIBE, AI_PLR2_TRIBE);
   set_players_allied_silent(AI_PLR2_TRIBE, AI_PLR4_TRIBE);
+
+  PLR1_SH = register_shaman_ai(AI_PLR1_TRIBE);
+  PLR2_SH = register_shaman_ai(AI_PLR2_TRIBE);
+  PLR3_SH = register_shaman_ai(AI_PLR3_TRIBE);
+  PLR4_SH = register_shaman_ai(AI_PLR4_TRIBE);
   
   -- ai player 1 stuff
   ai_main_drum_tower_info(AI_PLR1_TRIBE, true, 238, 90);
@@ -184,22 +189,12 @@ function OnGameStart()
   PLR2_SH = register_shaman_ai(AI_PLR2_TRIBE);
   
   if (AI_PLR1_DIFF == AI_EASY) then
-    ai_set_marker_entry(AI_PLR1_TRIBE, 0, 44, -1, 0, 1, 2, 0);
-    ai_set_marker_entry(AI_PLR1_TRIBE, 1, 45, -1, 0, 2, 1, 0);
-    ai_set_marker_entry(AI_PLR1_TRIBE, 2, 46, 47, 0, 1, 3, 0);
-    
     ai_attr_w(AI_PLR1_TRIBE, ATTR_SHAMEN_BLAST, 32);
     
-    --PLR1_SH:set_casting_delay(512);
+    PLR1_SH:set_casting_delay(512);
   end
   
   if (AI_PLR1_DIFF == AI_MEDIUM) then
-    ai_set_marker_entry(AI_PLR1_TRIBE, 0, 54, 55, 0, 4, 4, 0);
-    ai_set_marker_entry(AI_PLR1_TRIBE, 1, 39, -1, 0, 2, 2, 0);
-    ai_set_marker_entry(AI_PLR1_TRIBE, 2, 56, 57, 0, 3, 3, 0);
-    ai_set_marker_entry(AI_PLR1_TRIBE, 3, 46, 47, 0, 0, 4, 0);
-    ai_set_marker_entry(AI_PLR1_TRIBE, 4, 58, 59, 0, 0, 4, 0);
-    ai_set_marker_entry(AI_PLR1_TRIBE, 5, 60, 61, 0, 0, 4, 0);
     ai_set_spell_entry(AI_PLR1_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE)), 64, 3, 0);
     ai_set_spell_entry(AI_PLR1_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE)), 64, 3, 1);
     ai_set_spell_entry(AI_PLR1_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM)), 64, 5, 0);
@@ -209,17 +204,11 @@ function OnGameStart()
     ai_attr_w(AI_PLR1_TRIBE, ATTR_MAX_ATTACKS, 5);
     ai_set_targets(AI_PLR1_TRIBE, 0, true, false, true); -- this will by dynamically changed in actual attacks
     
-    --PLR1_SH:set_casting_delay(64);
-    --PLR1_SH:set_offensive_spell_entry(1, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 7, 8}, 3, SPELL_COST(M_SPELL_WHIRLWIND));
+    PLR1_SH:set_casting_delay(64);
+    PLR1_SH:set_offensive_spell_entry(1, M_SPELL_SWAMP, {1, 2, 3, 5, 6, 7, 8, 15}, 2, SPELL_COST(M_SPELL_SWAMP));
   end
   
   if (AI_PLR1_DIFF == AI_HARD) then
-    ai_set_marker_entry(AI_PLR1_TRIBE, 0, 54, 55, 0, 4, 4, 0);
-    ai_set_marker_entry(AI_PLR1_TRIBE, 1, 39, -1, 0, 2, 2, 0);
-    ai_set_marker_entry(AI_PLR1_TRIBE, 2, 56, 57, 0, 3, 3, 0);
-    ai_set_marker_entry(AI_PLR1_TRIBE, 3, 46, 47, 0, 0, 4, 0);
-    ai_set_marker_entry(AI_PLR1_TRIBE, 4, 58, 59, 0, 0, 4, 0);
-    ai_set_marker_entry(AI_PLR1_TRIBE, 5, 60, 61, 0, 0, 4, 0);
     ai_set_spell_entry(AI_PLR1_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 1, 0);
     ai_set_spell_entry(AI_PLR1_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 1, 1);
     ai_set_spell_entry(AI_PLR1_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 1), 64, 4, 0);
@@ -229,17 +218,11 @@ function OnGameStart()
     ai_attr_w(AI_PLR1_TRIBE, ATTR_SHAMEN_BLAST, 8);
     ai_attr_w(AI_PLR1_TRIBE, ATTR_MAX_ATTACKS, 8);
     ai_set_targets(AI_PLR1_TRIBE, 0, true, true, true); -- this will by dynamically changed in actual attacks
-    --PLR1_SH:set_casting_delay(32);
-    --PLR1_SH:set_offensive_spell_entry(1, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 7, 8}, 3, SPELL_COST(M_SPELL_WHIRLWIND) >> 1);
+    PLR1_SH:set_casting_delay(32);
+    PLR1_SH:set_offensive_spell_entry(1, M_SPELL_SWAMP, {1, 2, 3, 5, 6, 7, 8, 15}, 3, SPELL_COST(M_SPELL_SWAMP) >> 1);
   end
   
   if (AI_PLR1_DIFF == AI_EXTREME) then
-    ai_set_marker_entry(AI_PLR1_TRIBE, 0, 54, 55, 0, 4, 4, 0);
-    ai_set_marker_entry(AI_PLR1_TRIBE, 1, 39, -1, 0, 2, 2, 0);
-    ai_set_marker_entry(AI_PLR1_TRIBE, 2, 56, 57, 0, 3, 3, 0);
-    ai_set_marker_entry(AI_PLR1_TRIBE, 3, 46, 47, 0, 0, 4, 0);
-    ai_set_marker_entry(AI_PLR1_TRIBE, 4, 58, 59, 0, 0, 4, 0);
-    ai_set_marker_entry(AI_PLR1_TRIBE, 5, 60, 61, 0, 0, 4, 0);
     ai_set_spell_entry(AI_PLR1_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 1, 0);
     ai_set_spell_entry(AI_PLR1_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 1, 1);
     ai_set_spell_entry(AI_PLR1_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 4, 0);
@@ -250,8 +233,8 @@ function OnGameStart()
     ai_attr_w(AI_PLR1_TRIBE, ATTR_MAX_ATTACKS, 10);
     ai_set_targets(AI_PLR1_TRIBE, 0, true, true, true); -- this will by dynamically changed in actual attacks
     
-    --PLR1_SH:set_casting_delay(16);
-    --PLR1_SH:set_offensive_spell_entry(1, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 7, 8}, 3, SPELL_COST(M_SPELL_WHIRLWIND) >> 2);
+    PLR1_SH:set_casting_delay(16);
+    PLR1_SH:set_offensive_spell_entry(1, M_SPELL_SWAMP, {1, 2, 3, 5, 6, 7, 8, 15}, 3, SPELL_COST(M_SPELL_SWAMP) >> 2);
   end
   
   -- ai player 2 stuff
@@ -268,14 +251,12 @@ function OnGameStart()
   ai_set_defence_rad(AI_PLR2_TRIBE, 7);
   
   if (AI_PLR2_DIFF == AI_EASY) then
-    --PLR2_SH:set_casting_delay(512);
+    ai_attr_w(AI_PLR1_TRIBE, ATTR_SHAMEN_BLAST, 32);
+
+    PLR2_SH:set_casting_delay(512);
   end
   
   if (AI_PLR2_DIFF == AI_MEDIUM) then
-    ai_set_marker_entry(AI_PLR2_TRIBE, 0, 68, 69, 0, 1, 3, 0);
-    ai_set_marker_entry(AI_PLR2_TRIBE, 1, 70, 71, 0, 1, 3, 0);
-    ai_set_marker_entry(AI_PLR2_TRIBE, 2, 72, 73, 0, 2, 1, 0);
-    ai_set_marker_entry(AI_PLR2_TRIBE, 3, 74, 75, 0, 2, 3, 0);
     ai_set_spell_entry(AI_PLR2_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE)), 64, 1, 0);
     ai_set_spell_entry(AI_PLR2_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE)), 64, 1, 1);
     ai_set_spell_entry(AI_PLR2_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM)), 64, 4, 0);
@@ -285,19 +266,12 @@ function OnGameStart()
     ai_attr_w(AI_PLR2_TRIBE, ATTR_MAX_ATTACKS, 5);
     ai_set_targets(AI_PLR2_TRIBE, 0, true, false, true); -- this will by dynamically changed in actual attacks
     
-    --PLR2_SH:set_casting_delay(64);
-    --PLR2_SH:set_offensive_spell_entry(1, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 7, 8}, 3, SPELL_COST(M_SPELL_WHIRLWIND));
+    PLR2_SH:set_casting_delay(64);
+    PLR2_SH:set_offensive_spell_entry(1, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 5, 6, 7, 8, 15}, 2, SPELL_COST(M_SPELL_WHIRLWIND));
+    PLR2_SH:set_offensive_spell_entry(2, M_SPELL_FIRESTORM, {2, 3, 5, 6, 7, 8}, 1, SPELL_COST(M_SPELL_FIRESTORM));
   end
   
   if (AI_PLR2_DIFF == AI_HARD) then
-    ai_set_marker_entry(AI_PLR2_TRIBE, 0, 68, 69, 0, 1, 3, 0);
-    ai_set_marker_entry(AI_PLR2_TRIBE, 1, 70, 71, 0, 1, 3, 0);
-    ai_set_marker_entry(AI_PLR2_TRIBE, 2, 72, 73, 0, 2, 1, 0);
-    ai_set_marker_entry(AI_PLR2_TRIBE, 3, 74, 75, 0, 2, 3, 0);
-    ai_set_marker_entry(AI_PLR2_TRIBE, 4, 76, 77, 0, 0, 4, 0);
-    ai_set_marker_entry(AI_PLR2_TRIBE, 5, 78, 79, 0, 0, 4, 0);
-    ai_set_marker_entry(AI_PLR2_TRIBE, 6, 80, 81, 0, 3, 2, 0);
-    ai_set_marker_entry(AI_PLR2_TRIBE, 7, 82, 83, 0, 3, 1, 0);
     ai_set_spell_entry(AI_PLR2_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 1, 0);
     ai_set_spell_entry(AI_PLR2_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 1, 1);
     ai_set_spell_entry(AI_PLR2_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 1), 64, 4, 0);
@@ -308,19 +282,12 @@ function OnGameStart()
     ai_attr_w(AI_PLR2_TRIBE, ATTR_MAX_ATTACKS, 8);
     ai_set_targets(AI_PLR2_TRIBE, 0, true, true, true); -- this will by dynamically changed in actual attacks
     
-    --PLR2_SH:set_casting_delay(32);
-    --PLR2_SH:set_offensive_spell_entry(1, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 7, 8}, 3, SPELL_COST(M_SPELL_WHIRLWIND) >> 1);
+    PLR2_SH:set_casting_delay(32);
+    PLR2_SH:set_offensive_spell_entry(1, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 5, 6, 7, 8, 15}, 3, SPELL_COST(M_SPELL_WHIRLWIND) >> 1);
+    PLR2_SH:set_offensive_spell_entry(2, M_SPELL_FIRESTORM, {2, 3, 5, 6, 7, 8}, 1, SPELL_COST(M_SPELL_FIRESTORM) >> 1);
   end
   
   if (AI_PLR2_DIFF == AI_EXTREME) then
-    ai_set_marker_entry(AI_PLR2_TRIBE, 0, 68, 69, 0, 1, 3, 0);
-    ai_set_marker_entry(AI_PLR2_TRIBE, 1, 70, 71, 0, 1, 3, 0);
-    ai_set_marker_entry(AI_PLR2_TRIBE, 2, 72, 73, 0, 2, 1, 0);
-    ai_set_marker_entry(AI_PLR2_TRIBE, 3, 74, 75, 0, 2, 3, 0);
-    ai_set_marker_entry(AI_PLR2_TRIBE, 4, 76, 77, 0, 0, 4, 0);
-    ai_set_marker_entry(AI_PLR2_TRIBE, 5, 78, 79, 0, 0, 4, 0);
-    ai_set_marker_entry(AI_PLR2_TRIBE, 6, 80, 81, 0, 3, 2, 0);
-    ai_set_marker_entry(AI_PLR2_TRIBE, 7, 82, 83, 0, 3, 1, 0);
     ai_set_spell_entry(AI_PLR2_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 1, 0);
     ai_set_spell_entry(AI_PLR2_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 1, 1);
     ai_set_spell_entry(AI_PLR2_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 4, 0);
@@ -331,8 +298,9 @@ function OnGameStart()
     ai_attr_w(AI_PLR2_TRIBE, ATTR_MAX_ATTACKS, 10);
     ai_set_targets(AI_PLR2_TRIBE, 0, true, true, true); -- this will be dynamically changed in actual attacks
     
-    --PLR2_SH:set_casting_delay(16);
-    --PLR2_SH:set_offensive_spell_entry(1, M_SPELL_WHIRLWIND, {1, 2, 3, 4, 7, 8}, 3, SPELL_COST(M_SPELL_WHIRLWIND) >> 2);
+    PLR2_SH:set_casting_delay(16);
+    PLR2_SH:set_offensive_spell_entry(1, M_SPELL_WHIRLWIND, {1, 2, 3, 5, 6, 7, 8, 15}, 3, SPELL_COST(M_SPELL_WHIRLWIND) >> 2);
+    PLR2_SH:set_offensive_spell_entry(2, M_SPELL_FIRESTORM, {1, 2, 3, 5, 6, 7, 8}, 2, SPELL_COST(M_SPELL_FIRESTORM) >> 2);
   end
   
   -- ai player 3 stuff
@@ -372,8 +340,8 @@ function ScrOnTurn()
   local sTurn = get_script_turn();
   
   if (sTurn == 72) then
-    --PLR1_SH:toggle_converting_wilds(true);
-    --PLR2_SH:toggle_converting_wilds(true);
+    PLR1_SH:toggle_converting_wilds(true);
+    PLR2_SH:toggle_converting_wilds(true);
     --footer_add_msg("As such the other tribes did everything they could to undermine the Ikani, they attacked the bases already established, they even attacked at the Ikani's home system.");
   end
 end

@@ -44,6 +44,9 @@ function OnGameStart()
   set_players_allied_silent(AI_PLR1_TRIBE, AI_PLR2_TRIBE);
   set_players_allied_silent(AI_PLR2_TRIBE, AI_PLR1_TRIBE);
   
+  PLR1_SH = register_shaman_ai(AI_PLR1_TRIBE);
+  PLR2_SH = register_shaman_ai(AI_PLR2_TRIBE);
+
   -- ai player 1 stuff
   ai_main_drum_tower_info(AI_PLR1_TRIBE, true, 122, 66);
   ai_set_shaman_info(AI_PLR1_TRIBE, 168, 74, true, 56 - ((AI_PLR1_DIFF - 1) * 16), 16);
@@ -56,9 +59,6 @@ function OnGameStart()
   ai_set_training_people(AI_PLR1_TRIBE, true, 10, 0, 12, 0, 0 + AI_PLR1_DIFF);
   ai_set_populating_info(AI_PLR1_TRIBE, true, true);
   ai_set_defence_rad(AI_PLR1_TRIBE, 7);
-  
-  PLR1_SH = register_shaman_ai(AI_PLR1_TRIBE);
-  PLR2_SH = register_shaman_ai(AI_PLR2_TRIBE);
   
   if (AI_PLR1_DIFF == AI_EASY) then
     ai_set_marker_entry(AI_PLR1_TRIBE, 0, 44, -1, 0, 1, 2, 0);

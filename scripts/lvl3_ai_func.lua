@@ -93,6 +93,7 @@ end
 
 -- Event vars
 local U1_BALLOONS_AVAILABLE = 1;
+local U1_BALLOONS_IN_BASE_COUNT = 2;
 
 -- Attack vars
 local U1_BASIC_ATTACK = 64;
@@ -108,10 +109,10 @@ local U1_BALLOON_FWS_ASSAULT = 68;
 -- PLAYER FOUR
 
 -- cache
-local PLR1_BLDG_LIST = nil;
-local PLR2_BLDG_LIST = nil;
 PLR1_SH = nil;
 PLR2_SH = nil;
+PLR3_SH = nil;
+PLR4_SH = nil;
 
 -- user vars
 
@@ -122,7 +123,9 @@ local function _AI_CALC_BUCKETS_GENERAL(_p, _sturn, difficulty)
   local time_passed_mod = MIN(FLOOR(_sturn / 3600), 5);
   local population_mod = FLOOR(count_pop(_p) / 25);
   local final_mod = MAX(1, (base_mod - (time_passed_mod + population_mod)));
-  
+
+  ai_enable_buckets(_p, TRUE);
+
   -- tier 1 spells
   ai_set_spell_bucket_count(_p, M_SPELL_BLAST, ROUND(1.0 * final_mod));
   ai_set_spell_bucket_count(_p, M_SPELL_CONVERT_WILD, ROUND(1.0 * final_mod));
@@ -209,7 +212,7 @@ local function _AI1_SHOULD_I_BUILD_AIRSHIP_HUT(_p, _sturn, difficulty)
     -- First we check if we have firewarrior train built with decent amount of population.
     local num_huts = count_huts(_p, true);
     local fw_bldgs = count_bldgs_of_type(_p, M_BUILDING_SUPER_TRAIN);
-    if (num_huts >= 7 and fw_bldgs > 0) then
+    if (num_huts >= 5 and fw_bldgs > 0) then
       -- Commence airship craft.
       ai_set_vehicle_info(_p, true, 0, 0, 1, 0);
       ai_set_state(_p, TRUE, CP_AT_TYPE_FETCH_LOST_VEHICLE);
@@ -227,23 +230,26 @@ local function _AI1_SHOULD_I_BUILD_AIRSHIP_HUT(_p, _sturn, difficulty)
   end
 end
 
+local function _AI1_COUNT_MY_BALLOONS_IN_BASE(_p, _t, _d)
+  ai_setv(_p, U1_BALLOONS_IN_BASE_COUNT, count_vehicles_in_area(M_VEHICLE_AIRSHIP_1, 238, 90, 12));
+end
+
 local function _AI1_AERIAL_ATTACK_CHECK(_p, _sturn, difficulty)
   if (_sturn > 2000) then
     local balloons_available = ai_getv(_p, U1_BALLOONS_AVAILABLE);
-    log("1");
+
     if (balloons_available ~= 0) then
       local target_enemy = get_random_alive_enemy_player(_p);
-      log("2");
+
       if (target_enemy ~= -1) then
         -- Check if we have firewarriors 
         local num_fws = count_people_of_type(_p, M_PERSON_SUPER_WARRIOR);
 
         -- Check for any balloons near our base
-        local num_balloons = count_vehicles_in_area(M_VEHICLE_AIRSHIP_1, 238, 90, 12);
+        local num_balloons = ai_getv(_p, U1_BALLOONS_IN_BASE_COUNT);
 
         if (num_fws > 1 and num_balloons > 0) then
           -- Have at least 2 firewarriors and 1 balloon, try attacking.
-          log("3");
           local fw_attack_result = ai_getv(_p, U1_BALLOON_FWS_ASSAULT);
 
           -- Limit amount of balloons to use
@@ -253,16 +259,15 @@ local function _AI1_AERIAL_ATTACK_CHECK(_p, _sturn, difficulty)
           end
 
           if (fw_attack_result > 50) then
-            log("yes");
-            ai_set_shaman_away(_p, true);
+            local spell1 = M_SPELL_NONE;
+            if (ai_shaman_available(_p)) then ai_set_shaman_away(_p, true); spell1 = M_SPELL_SHIELD; end
             ai_set_aways(_p, 0, 0, 0, 100, 0);
             ai_set_attack_flags(_p, 1, 0, 0);
             ai_set_atk_var(_p, U1_BALLOON_FWS_ASSAULT);
-            ai_do_attack(_p, target_enemy, (num_balloons << 1), ATTACK_BUILDING, INT_NO_SPECIFIC_BUILDING, 9999, M_SPELL_SHIELD, M_SPELL_NONE, M_SPELL_NONE, ATTACK_BY_BALLOON, 0, -1, -1, 0);
+            ai_do_attack(_p, target_enemy, (num_balloons << 1), ATTACK_BUILDING, INT_NO_SPECIFIC_BUILDING, 9999, spell1, M_SPELL_NONE, M_SPELL_NONE, ATTACK_BY_BALLOON, 0, -1, -1, 0);
             ai_set_aways(_p, 0, 0, 0, 0, 0);
             ai_set_shaman_away(_p, false);
           else
-            log("no");
             if (fw_attack_result >= 1 and fw_attack_result < 7) then
               -- reset variable to check it again
               ai_setv(_p, U1_BALLOON_FWS_ASSAULT, 52);
@@ -279,6 +284,58 @@ local function _AI1_AERIAL_ATTACK_CHECK(_p, _sturn, difficulty)
   end
 end
 
+local function _AI1_SHAMAN_ATTACK(_p, _sturn, difficulty)
+if (_sturn > 360) then
+    local target_enemy = get_random_alive_enemy_player(_p);
+    
+    if (target_enemy ~= -1) then
+      local shaman_result = ai_getv(_p, U1_SHAMAN_ATTACK);
+      
+      if (shaman_result > 50) then
+        if (ai_shaman_available(_p)) then
+          local can_cast_swamp = PLR1_SH:can_cast_offensive_spell(1);
+          
+          if (can_cast_swamp) then
+            ai_set_shaman_away(_p, true);
+            local attack_type = ATTACK_NORMAL;
+            local any_balloons = (ai_getv(_p, U1_BALLOONS_IN_BASE_COUNT) > 0);
+            if (any_balloons) then attack_type = ATTACK_BY_BALLOON; end
+            ai_set_aways(_p, 0, 0, 0, 0, 0);
+            ai_set_attack_flags(_p, 1, 0, 0);
+            ai_set_atk_var(_p, U1_SHAMAN_ATTACK);
+            ai_do_attack(_p, target_enemy, 0, ATTACK_BUILDING, INT_NO_SPECIFIC_BUILDING, 9999, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, attack_type, 0, -1, -1, 0);
+            ai_set_aways(_p, 0, 0, 0, 0, 0);
+            ai_set_shaman_away(_p, false);
+            PLR1_SH:set_offensive_mode();
+          end
+        end
+      else
+        if (shaman_result >= 1 and shaman_result < 7) then
+          -- reset variable to check it again
+          ai_setv(_p, U1_SHAMAN_ATTACK, 52);
+          PLR1_SH:set_no_casting();
+        end
+        
+        if (shaman_result == 7) then
+          -- navigation failed... try vehicles?
+          ai_setv(_p, U1_SHAMAN_ATTACK, 52);
+          PLR1_SH:set_no_casting();
+        end
+      end
+    end
+  end
+end
+
+local function _AI1_CONVERT_CHECK(_p, _sturn, difficulty)
+  if (_sturn < 720) then
+    ai_set_converting_info(_p, true, true, 24);
+    PLR1_SH:toggle_converting_wilds(true);
+  else
+    ai_set_converting_info(_p, false, true, 24);
+    PLR1_SH:toggle_converting_wilds(false);
+  end
+end
+
 local function _AI2_MANAGE_MY_TROOPS_AMOUNTS(_p, _sturn, difficulty)
   local num_small_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE);
   local num_medium_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE_2);
@@ -289,6 +346,16 @@ local function _AI2_MANAGE_MY_TROOPS_AMOUNTS(_p, _sturn, difficulty)
   
   ai_attr_w(_p, ATTR_PREF_SPY_PEOPLE, m_spy_value);
   ai_attr_w(_p, ATTR_PREF_SUPER_WARRIOR_PEOPLE, m_fw_value);
+end
+
+local function _AI2_CONVERT_CHECK(_p, _sturn, difficulty)
+  if (_sturn < 720) then
+    ai_set_converting_info(_p, true, true, 24);
+    PLR2_SH:toggle_converting_wilds(true);
+  else
+    ai_set_converting_info(_p, false, true, 24);
+    PLR2_SH:toggle_converting_wilds(false);
+  end
 end
 
 local function _AI3_MANAGE_MY_TROOPS_AMOUNTS(_p, _sturn, difficulty)
@@ -328,12 +395,18 @@ local _EVENT_TABLE =
     {
       {_AI_CALC_BUCKETS_GENERAL, 128, 64},
       {_AI1_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
+      {_AI1_CONVERT_CHECK, 128, 128},
+      {_AI1_SHAMAN_ATTACK, 8192, 2048}, -- Once in eternity
+      {_AI1_COUNT_MY_BALLOONS_IN_BASE, 512, 128},
     },
     
     [AI_MEDIUM] = 
     {
       {_AI_CALC_BUCKETS_GENERAL, 128, 64},
       {_AI1_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
+      {_AI1_CONVERT_CHECK, 128, 128},
+      {_AI1_SHAMAN_ATTACK, 4096, 512},
+      {_AI1_COUNT_MY_BALLOONS_IN_BASE, 256, 64},
     },
     
     [AI_HARD] = 
@@ -342,6 +415,9 @@ local _EVENT_TABLE =
       {_AI1_MANAGE_MY_TROOPS_AMOUNTS, 256, 64},
       {_AI1_SHOULD_I_BUILD_AIRSHIP_HUT, 512, 128},
       {_AI1_AERIAL_ATTACK_CHECK, 1024, 512},
+      {_AI1_CONVERT_CHECK, 128, 128},
+      {_AI1_SHAMAN_ATTACK, 2048, 1024},
+      {_AI1_COUNT_MY_BALLOONS_IN_BASE, 256, 64},
     },
     
     [AI_EXTREME] = 
@@ -350,6 +426,9 @@ local _EVENT_TABLE =
       {_AI1_MANAGE_MY_TROOPS_AMOUNTS, 256, 64},
       {_AI1_SHOULD_I_BUILD_AIRSHIP_HUT, 512, 128},
       {_AI1_AERIAL_ATTACK_CHECK, 1024, 512},
+      {_AI1_CONVERT_CHECK, 128, 128},
+      {_AI1_SHAMAN_ATTACK, 2048, 512},
+      {_AI1_COUNT_MY_BALLOONS_IN_BASE, 256, 64},
     },
   },
   
@@ -359,24 +438,28 @@ local _EVENT_TABLE =
     {
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI2_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
+      {_AI2_CONVERT_CHECK, 128, 128},
     },
     
     [AI_MEDIUM] = 
     {
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI2_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
+      {_AI2_CONVERT_CHECK, 128, 128},
     },
     
     [AI_HARD] = 
     {
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI2_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
+      {_AI2_CONVERT_CHECK, 128, 128},
     },
     
     [AI_EXTREME] = 
     {
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI2_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
+      {_AI2_CONVERT_CHECK, 128, 128},
     },
   },
   
@@ -446,6 +529,7 @@ function register_ai_events(player_num, difficulty)
   
   if (_EVENT_INDEX == 1) then
     ai_setv(player_num, U1_BALLOON_FWS_ASSAULT, 52);
+    ai_setv(player_num, U1_SHAMAN_ATTACK, 52);
   else
   
   end
