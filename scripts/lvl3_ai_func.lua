@@ -372,6 +372,16 @@ local function _AI3_MANAGE_MY_TROOPS_AMOUNTS(_p, _sturn, difficulty)
   ai_attr_w(_p, ATTR_PREF_SUPER_WARRIOR_PEOPLE, m_fw_value);
 end
 
+local function _AI3_CONVERT_CHECK(_p, _sturn, difficulty)
+  if (_sturn < 720) then
+    ai_set_converting_info(_p, true, true, 24);
+    PLR3_SH:toggle_converting_wilds(true);
+  else
+    ai_set_converting_info(_p, false, true, 24);
+    PLR3_SH:toggle_converting_wilds(false);
+  end
+end
+
 local function _AI4_MANAGE_MY_TROOPS_AMOUNTS(_p, _sturn, difficulty)
   local num_small_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE);
   local num_medium_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE_2);
@@ -384,6 +394,15 @@ local function _AI4_MANAGE_MY_TROOPS_AMOUNTS(_p, _sturn, difficulty)
   ai_attr_w(_p, ATTR_PREF_SUPER_WARRIOR_PEOPLE, m_fw_value);
 end
 
+local function _AI4_CONVERT_CHECK(_p, _sturn, difficulty)
+  if (_sturn < 720) then
+    ai_set_converting_info(_p, true, true, 24);
+    PLR4_SH:toggle_converting_wilds(true);
+  else
+    ai_set_converting_info(_p, false, true, 24);
+    PLR4_SH:toggle_converting_wilds(false);
+  end
+end
 
 
 local _EVENT_INDEX = 1;
@@ -469,24 +488,28 @@ local _EVENT_TABLE =
     {
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI3_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
+      {_AI3_CONVERT_CHECK, 128, 128},
     },
     
     [AI_MEDIUM] = 
     {
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI3_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
+      {_AI3_CONVERT_CHECK, 128, 128},
     },
     
     [AI_HARD] = 
     {
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI3_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
+      {_AI3_CONVERT_CHECK, 128, 128},
     },
     
     [AI_EXTREME] = 
     {
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI3_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
+      {_AI3_CONVERT_CHECK, 128, 128},
     },
   },
   
@@ -496,24 +519,28 @@ local _EVENT_TABLE =
     {
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI4_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
+      {_AI4_CONVERT_CHECK, 128, 128},
     },
     
     [AI_MEDIUM] = 
     {
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI4_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
+      {_AI4_CONVERT_CHECK, 128, 128},
     },
     
     [AI_HARD] = 
     {
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI4_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
+      {_AI4_CONVERT_CHECK, 128, 128},
     },
     
     [AI_EXTREME] = 
     {
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI4_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
+      {_AI4_CONVERT_CHECK, 128, 128},
     },
   }
 }

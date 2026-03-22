@@ -187,6 +187,8 @@ function OnGameStart()
   
   PLR1_SH = register_shaman_ai(AI_PLR1_TRIBE);
   PLR2_SH = register_shaman_ai(AI_PLR2_TRIBE);
+  PLR3_SH = register_shaman_ai(AI_PLR3_TRIBE);
+  PLR4_SH = register_shaman_ai(AI_PLR4_TRIBE);
   
   if (AI_PLR1_DIFF == AI_EASY) then
     ai_attr_w(AI_PLR1_TRIBE, ATTR_SHAMEN_BLAST, 32);
@@ -315,7 +317,32 @@ function OnGameStart()
   ai_set_training_people(AI_PLR3_TRIBE, true, 10, 9, 12, 0, 0 + AI_PLR3_DIFF);
   ai_set_populating_info(AI_PLR3_TRIBE, true, true);
   ai_set_defence_rad(AI_PLR3_TRIBE, 7);
-  
+
+  if (AI_PLR3_DIFF == AI_EASY) then
+    PLR3_SH:set_casting_delay(512);
+  end
+
+  if (AI_PLR3_DIFF == AI_MEDIUM) then
+    ai_set_spell_entry(AI_PLR3_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE)), 64, 3, 0);
+    ai_set_spell_entry(AI_PLR3_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE)), 64, 3, 1);
+
+    PLR3_SH:set_casting_delay(64);
+  end
+
+  if (AI_PLR3_DIFF == AI_HARD) then
+    ai_set_spell_entry(AI_PLR3_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 1, 0);
+    ai_set_spell_entry(AI_PLR3_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 1, 1);
+
+    PLR3_SH:set_casting_delay(32);
+  end
+
+  if (AI_PLR3_DIFF == AI_EXTREME) then
+    ai_set_spell_entry(AI_PLR3_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 1, 0);
+    ai_set_spell_entry(AI_PLR3_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 1, 1);
+
+    PLR3_SH:set_casting_delay(16);
+  end
+
   -- ai player 4 stuff
   ai_main_drum_tower_info(AI_PLR4_TRIBE, true, 230, 10);
   ai_set_shaman_info(AI_PLR4_TRIBE, 230, 10, true, 56 - ((AI_PLR4_DIFF - 1) * 16), 16);
@@ -328,6 +355,31 @@ function OnGameStart()
   ai_set_training_people(AI_PLR4_TRIBE, true, 0, 12, 12, 0, 0 + AI_PLR4_DIFF);
   ai_set_populating_info(AI_PLR4_TRIBE, true, true);
   ai_set_defence_rad(AI_PLR4_TRIBE, 7);
+
+  if (AI_PLR4_TRIBE == AI_EASY) then
+    PLR4_SH:set_casting_delay(512);
+  end
+
+  if (AI_PLR4_DIFF == AI_MEDIUM) then
+    ai_set_spell_entry(AI_PLR4_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE)), 64, 3, 0);
+    ai_set_spell_entry(AI_PLR4_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE)), 64, 3, 1);
+
+    PLR4_SH:set_casting_delay(64);
+  end
+
+  if (AI_PLR4_DIFF == AI_HARD) then
+    ai_set_spell_entry(AI_PLR4_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 1, 0);
+    ai_set_spell_entry(AI_PLR4_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 1, 1);
+
+    PLR4_SH:set_casting_delay(32);
+  end
+
+  if (AI_PLR4_DIFF == AI_EXTREME) then
+    ai_set_spell_entry(AI_PLR4_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 1, 0);
+    ai_set_spell_entry(AI_PLR4_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 1, 1);
+
+    PLR4_SH:set_casting_delay(16);
+  end
 end
 
 function ScrOnLevelInit(level_id)
@@ -342,6 +394,8 @@ function ScrOnTurn()
   if (sTurn == 72) then
     PLR1_SH:toggle_converting_wilds(true);
     PLR2_SH:toggle_converting_wilds(true);
+    PLR3_SH:toggle_converting_wilds(true);
+    PLR4_SH:toggle_converting_wilds(true);
     --footer_add_msg("As such the other tribes did everything they could to undermine the Ikani, they attacked the bases already established, they even attacked at the Ikani's home system.");
   end
 end
