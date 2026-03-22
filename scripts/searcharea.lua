@@ -115,6 +115,29 @@ function create_enemy_search_area()
   return area;
 end
 
+function count_vehicles_in_area(_model, _x, _z, _radius)
+  local num_found = 0;
+  _MAP_POS_XZ.XZ.X = _x;
+  _MAP_POS_XZ.XZ.Z = _z;
+  SearchMapCells(SQUARE, 0, 0, _radius, _MAP_POS_XZ.Pos, function (me)
+    if (not me.MapWhoList:isEmpty()) then
+      me.MapWhoList:processList(function(t)
+        if (t.Type == T_VEHICLE) then
+          if (t.Model == _model) then
+            num_found = num_found + 1;
+            return true;
+          end
+        end
+
+        return true;
+      end);
+    end
+
+    return true;
+  end)
+  return num_found;
+end
+
 function is_shape_or_bldg_at_xz(_owner, _model, _x, _z, _radius)
   local result = false;
   _MAP_POS_XZ.XZ.X = _x;

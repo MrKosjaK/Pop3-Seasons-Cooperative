@@ -92,14 +92,14 @@ end
 -- PLAYER ONE
 
 -- Event vars
-local USER_BALLOONS_AVAILABLE = 1;
+local U1_BALLOONS_AVAILABLE = 1;
 
 -- Attack vars
-local USER_BASIC_ATTACK = 64;
-local USER_SHAMAN_ATTACK = 65;
-local USER_MAJOR_ATTACK = 66;
-local USER_REINFORCEMENT_ATTACK = 67;
-local USER_BALLOON_FWS_ASSAULT = 68;
+local U1_BASIC_ATTACK = 64;
+local U1_SHAMAN_ATTACK = 65;
+local U1_MAJOR_ATTACK = 66;
+local U1_REINFORCEMENT_ATTACK = 67;
+local U1_BALLOON_FWS_ASSAULT = 68;
 
 -- PLAYER TWO
 
@@ -215,14 +215,66 @@ local function _AI1_SHOULD_I_BUILD_AIRSHIP_HUT(_p, _sturn, difficulty)
       ai_set_state(_p, TRUE, CP_AT_TYPE_FETCH_LOST_VEHICLE);
       ai_set_state(_p, TRUE, CP_AT_TYPE_FETCH_FAR_VEHICLE);
       ai_attr_w(_p, ATTR_PEOPLE_PER_BALLOON, 8);
-      ai_setv(_p, USER_BALLOONS_AVAILABLE, 1);
+      ai_setv(_p, U1_BALLOONS_AVAILABLE, 1);
     else
       -- Halt production of flying potatoes.
       ai_set_vehicle_info(_p, false, 0, 0, 0, 0);
       ai_set_state(_p, FALSE, CP_AT_TYPE_FETCH_LOST_VEHICLE);
       ai_set_state(_p, FALSE, CP_AT_TYPE_FETCH_FAR_VEHICLE);
       ai_attr_w(_p, ATTR_PEOPLE_PER_BALLOON, 0);
-      ai_setv(_p, USER_BALLOONS_AVAILABLE, 0);
+      ai_setv(_p, U1_BALLOONS_AVAILABLE, 0);
+    end
+  end
+end
+
+local function _AI1_AERIAL_ATTACK_CHECK(_p, _sturn, difficulty)
+  if (_sturn > 2000) then
+    local balloons_available = ai_getv(_p, U1_BALLOONS_AVAILABLE);
+    log("1");
+    if (balloons_available ~= 0) then
+      local target_enemy = get_random_alive_enemy_player(_p);
+      log("2");
+      if (target_enemy ~= -1) then
+        -- Check if we have firewarriors 
+        local num_fws = count_people_of_type(_p, M_PERSON_SUPER_WARRIOR);
+
+        -- Check for any balloons near our base
+        local num_balloons = count_vehicles_in_area(M_VEHICLE_AIRSHIP_1, 238, 90, 12);
+
+        if (num_fws > 1 and num_balloons > 0) then
+          -- Have at least 2 firewarriors and 1 balloon, try attacking.
+          log("3");
+          local fw_attack_result = ai_getv(_p, U1_BALLOON_FWS_ASSAULT);
+
+          -- Limit amount of balloons to use
+          num_balloons = MIN(num_balloons, difficulty);
+          if ((num_balloons << 1) > num_fws) then
+            num_balloons = MAX((num_fws >> 1), 1);
+          end
+
+          if (fw_attack_result > 50) then
+            log("yes");
+            ai_set_shaman_away(_p, true);
+            ai_set_aways(_p, 0, 0, 0, 100, 0);
+            ai_set_attack_flags(_p, 1, 0, 0);
+            ai_set_atk_var(_p, U1_BALLOON_FWS_ASSAULT);
+            ai_do_attack(_p, target_enemy, (num_balloons << 1), ATTACK_BUILDING, INT_NO_SPECIFIC_BUILDING, 9999, M_SPELL_SHIELD, M_SPELL_NONE, M_SPELL_NONE, ATTACK_BY_BALLOON, 0, -1, -1, 0);
+            ai_set_aways(_p, 0, 0, 0, 0, 0);
+            ai_set_shaman_away(_p, false);
+          else
+            log("no");
+            if (fw_attack_result >= 1 and fw_attack_result < 7) then
+              -- reset variable to check it again
+              ai_setv(_p, U1_BALLOON_FWS_ASSAULT, 52);
+            end
+            
+            if (fw_attack_result == 7) then
+              -- navigation failed... try vehicles?
+              ai_setv(_p, U1_BALLOON_FWS_ASSAULT, 52);
+            end
+          end
+        end
+      end
     end
   end
 end
@@ -289,6 +341,7 @@ local _EVENT_TABLE =
       {_AI_CALC_BUCKETS_GENERAL, 128, 64},
       {_AI1_MANAGE_MY_TROOPS_AMOUNTS, 256, 64},
       {_AI1_SHOULD_I_BUILD_AIRSHIP_HUT, 512, 128},
+      {_AI1_AERIAL_ATTACK_CHECK, 1024, 512},
     },
     
     [AI_EXTREME] = 
@@ -296,6 +349,7 @@ local _EVENT_TABLE =
       {_AI_CALC_BUCKETS_GENERAL, 128, 64},
       {_AI1_MANAGE_MY_TROOPS_AMOUNTS, 256, 64},
       {_AI1_SHOULD_I_BUILD_AIRSHIP_HUT, 512, 128},
+      {_AI1_AERIAL_ATTACK_CHECK, 1024, 512},
     },
   },
   
@@ -391,7 +445,7 @@ function register_ai_events(player_num, difficulty)
   end
   
   if (_EVENT_INDEX == 1) then
-  
+    ai_setv(player_num, U1_BALLOON_FWS_ASSAULT, 52);
   else
   
   end

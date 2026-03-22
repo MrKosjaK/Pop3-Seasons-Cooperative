@@ -474,6 +474,33 @@ function get_random_alive_human_player()
   return -1;
 end
 
+
+function get_random_alive_enemy_player(my_pn)
+	local num_alive_players = 0;
+	local table_pn = {};
+	for i = 0, 7 do
+		if (i == my_pn) then
+			goto continue;
+		end
+
+		if (are_players_allied(my_pn, i) > 0) then
+			goto continue;
+		end
+
+		if (G_PLR[i].NumPeople > 0) then
+			num_alive_players = num_alive_players + 1;
+			table_pn[#table_pn + 1] = i;
+		end
+
+		::continue::
+	end
+
+	if (num_alive_players > 0) then
+		return table_pn[G_RANDOM(num_alive_players) + 1];
+	end
+
+	return -1; -- No alive enemy tribes.
+end
 ----------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------
 
