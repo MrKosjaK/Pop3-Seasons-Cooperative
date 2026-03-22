@@ -102,7 +102,13 @@ local U1_MAJOR_ATTACK = 66;
 local U1_REINFORCEMENT_ATTACK = 67;
 local U1_BALLOON_FWS_ASSAULT = 68;
 
+
 -- PLAYER TWO
+
+-- Event vars
+
+-- Attack vars
+local U2_SPY_ATTACKS = {69, 70, 71, 72}; -- Nasty piece of [REDACTED]
 
 -- PLAYER THREE
 
@@ -336,6 +342,10 @@ local function _AI1_CONVERT_CHECK(_p, _sturn, difficulty)
   end
 end
 
+
+
+
+
 local function _AI2_MANAGE_MY_TROOPS_AMOUNTS(_p, _sturn, difficulty)
   local num_small_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE);
   local num_medium_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE_2);
@@ -355,6 +365,56 @@ local function _AI2_CONVERT_CHECK(_p, _sturn, difficulty)
   else
     ai_set_converting_info(_p, false, true, 24);
     PLR2_SH:toggle_converting_wilds(false);
+  end
+end
+
+local function _AI2_CHECK_IF_CAN_SABOTAGE_ENEMY(_p, _t, _d)
+  if (_t > 1440) then
+    -- Make sure it's past 2 mins of peace. Then its chaos... almost yep.
+    local target_enemy = get_random_alive_enemy_player(_p);
+
+    if (target_enemy ~= -1) then
+      -- Check if said enemy actually has any bldgs.
+
+      local enemy_bldgs = count_buildings(target_enemy);
+
+      if (enemy_bldgs > 0) then
+        -- Enemy has bldgs, check if we have spies.
+        local my_spies = count_people_of_type(_p, M_PERSON_SPY);
+
+        if (my_spies > 0) then
+
+          local num_attacks_per_event = _d;
+
+          for i = 1, num_attacks_per_event do
+            if (my_spies <= 0) then
+              break; -- ran out of spies, no more nasty annoying gameplay :SOB:
+            end
+            local curr_spy_result = ai_getv(_p, U2_SPY_ATTACKS[i]);
+
+            if (curr_spy_result > 50) then
+              my_spies = my_spies - 1;
+              ai_set_shaman_away(_p, false);
+              ai_set_aways(_p, 0, 0, 0, 0, 100);
+              ai_set_attack_flags(_p, 2, 1, 0);
+              ai_set_atk_var(_p, U2_SPY_ATTACKS[i]);
+              ai_do_attack(_p, target_enemy, 1, ATTACK_BUILDING, INT_NO_SPECIFIC_BUILDING, 9999, M_SPELL_NONE, M_SPELL_NONE, M_SPELL_NONE, ATTACK_NORMAL, 0, 3, -1, 0);
+              ai_set_aways(_p, 0, 0, 0, 0, 0);
+            else
+              if (curr_spy_result >= 1 and curr_spy_result < 7) then
+                -- reset variable to check it again
+                ai_setv(_p, U2_SPY_ATTACKS[i], 52);
+              end
+
+              if (curr_spy_result == 7) then
+                -- navigation failed... try vehicles?
+                ai_setv(_p, U2_SPY_ATTACKS[i], 52);
+              end
+            end
+          end
+        end
+      end
+    end
   end
 end
 
@@ -458,6 +518,7 @@ local _EVENT_TABLE =
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI2_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
       {_AI2_CONVERT_CHECK, 128, 128},
+      {_AI2_CHECK_IF_CAN_SABOTAGE_ENEMY, 4096, 2048},
     },
     
     [AI_MEDIUM] = 
@@ -465,6 +526,7 @@ local _EVENT_TABLE =
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI2_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
       {_AI2_CONVERT_CHECK, 128, 128},
+      {_AI2_CHECK_IF_CAN_SABOTAGE_ENEMY, 4096, 512},
     },
     
     [AI_HARD] = 
@@ -472,6 +534,7 @@ local _EVENT_TABLE =
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI2_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
       {_AI2_CONVERT_CHECK, 128, 128},
+      {_AI2_CHECK_IF_CAN_SABOTAGE_ENEMY, 2048, 1024},
     },
     
     [AI_EXTREME] = 
@@ -479,6 +542,7 @@ local _EVENT_TABLE =
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI2_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
       {_AI2_CONVERT_CHECK, 128, 128},
+      {_AI2_CHECK_IF_CAN_SABOTAGE_ENEMY, 1024, 512},
     },
   },
   
@@ -557,8 +621,10 @@ function register_ai_events(player_num, difficulty)
   if (_EVENT_INDEX == 1) then
     ai_setv(player_num, U1_BALLOON_FWS_ASSAULT, 52);
     ai_setv(player_num, U1_SHAMAN_ATTACK, 52);
-  else
-  
+  elseif (_EVENT_INDEX == 2) then
+    for i = 1,4 do
+      ai_setv(player_num, U2_SPY_ATTACKS[i], 52);
+    end
   end
   
   _EVENT_INDEX = _EVENT_INDEX + 1;

@@ -251,6 +251,7 @@ function OnGameStart()
   ai_set_training_people(AI_PLR2_TRIBE, true, 0, 0, 12, 2, 0 + AI_PLR2_DIFF);
   ai_set_populating_info(AI_PLR2_TRIBE, true, true);
   ai_set_defence_rad(AI_PLR2_TRIBE, 7);
+  ai_set_spy_info(AI_PLR2_TRIBE, false, 5, 10, 128, 128);
   
   if (AI_PLR2_DIFF == AI_EASY) then
     ai_attr_w(AI_PLR1_TRIBE, ATTR_SHAMEN_BLAST, 32);
