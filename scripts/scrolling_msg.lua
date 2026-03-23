@@ -11,7 +11,7 @@ local FLOOR = math.floor;
 
 local FOOTER = 
 {
-  State = FOOTER_STATE_SCROLL_MSG,
+  State = FOOTER_STATE_AWAIT,
   CurrText = nil,
   TextWidth = 0,
   Box = TbRect.new(),
@@ -21,6 +21,7 @@ local FOOTER =
 };
 
 function auto_scale_footer_box()
+  local gui_w = GFGetGuiWidth();
   local sw = ScreenWidth();
   local sh = ScreenHeight();
   
@@ -30,7 +31,7 @@ function auto_scale_footer_box()
   
   f.Size[1] = FLOOR(FOOTER_BOX_SIZE_X * sw);
   f.Size[2] = FLOOR(FOOTER_BOX_SIZE_Y * sh);
-  f.Pos[1] = (sw >> 1) - (f.Size[1] >> 1);
+  f.Pos[1] = (sw >> 1) + (gui_w >> 1) - (f.Size[1] >> 1);
   f.Pos[2] = sh - bottom_offset - (f.Size[2] >> 1);
   
   if (f.CurrText ~= nil) then
@@ -39,15 +40,13 @@ function auto_scale_footer_box()
   
     local max_box_width = FLOOR(FOOTER_BOX_SIZE_X * sw)
     f.Size[1] = math.min(f.TextWidth + (CharWidth2() << 1), max_box_width);
-    f.Pos[1] = (sw >> 1) - (f.Size[1] >> 1);
+    f.Pos[1] = (sw >> 1) + (gui_w >> 1) - (f.Size[1] >> 1);
   end
   
   f.Box.Left = f.Pos[1];
   f.Box.Right = f.Box.Left + f.Size[1];
   f.Box.Top = f.Pos[2];
   f.Box.Bottom = f.Box.Top + f.Size[2];
-  
-  f.OffsetPosX = 0;
 end
 
 function footer_add_msg(str)
@@ -55,6 +54,7 @@ function footer_add_msg(str)
   
   PopSetFont(GUI_TEXT_FONT);
   
+  local gui_w = GFGetGuiWidth();
   local sw = ScreenWidth();
   local sh = ScreenHeight();
   
@@ -66,7 +66,7 @@ function footer_add_msg(str)
   
   local bottom_offset = FLOOR(0.05 * sh);
   
-  f.Pos[1] = (sw >> 1) - (f.Size[1] >> 1);
+  f.Pos[1] = (sw >> 1) + (gui_w >> 1) - (f.Size[1] >> 1);
   f.Pos[2] = sh - bottom_offset - (f.Size[2] >> 1);
   
   f.Box.Left = f.Pos[1];
@@ -75,6 +75,7 @@ function footer_add_msg(str)
   f.Box.Bottom = f.Box.Top + f.Size[2];
   
   f.OffsetPosX = 0;
+  f.State = FOOTER_STATE_SCROLL_MSG;
 end
 
 function footer_draw_scrolling_msg()
@@ -94,6 +95,8 @@ function footer_draw_scrolling_msg()
     
     if (f.OffsetPosX < (f.TextWidth << 1) + (CharWidth2() << 1)) then
       f.OffsetPosX = f.OffsetPosX + (CharWidth2() >> 2);
+    else
+      f.State = FOOTER_STATE_AWAIT;
     end
     
     LbDraw_ReleaseClipRect();

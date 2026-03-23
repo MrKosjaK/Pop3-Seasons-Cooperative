@@ -29,6 +29,8 @@ end
 
 -- triggers after GAME MASTER starts game.
 function OnGameStart()
+  footer_add_msg("Disclaimer: This is unfinished project and it's purpose is to demonstrate fraction of it's features planned for future release.");
+  
   process_all_ai_info(function(ai)
     set_player_check_surround_slopes(G_PLR[ai.Owner], FALSE);
     reduce_computer_players_sprogging_time_by_percent(G_PLR[ai.Owner], 0 + ((ai.Difficulty - 1) * 15));
@@ -225,7 +227,6 @@ function ScrOnTurn()
   if (sTurn == 72) then
     PLR1_SH:toggle_converting_wilds(true);
     PLR2_SH:toggle_converting_wilds(true);
-    footer_add_msg("As such the other tribes did everything they could to undermine the Ikani, they attacked the bases already established, they even attacked at the Ikani's home system.");
   end
 end
 

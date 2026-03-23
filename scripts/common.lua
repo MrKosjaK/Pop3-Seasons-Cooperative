@@ -132,12 +132,9 @@ function OnFrame()
   if (ScrOnFrame ~= nil) then ScrOnFrame(w, h, guiW); end
   
   if (am_i_not_in_igm()) then
-    if (CURR_RES_HEIGHT ~= ScreenHeight() or CURR_RES_WIDTH ~= ScreenWidth()) then
+    if (has_screen_resolution_changed(w, h)) then
     -- reapply resolution
-      CURR_RES_HEIGHT = ScreenHeight();
-      CURR_RES_WIDTH = ScreenWidth();
-      
-      
+      update_screen_resolution_cache();
       
       if (CURR_RES_WIDTH >= 1920 and CURR_RES_HEIGHT >= 1080) then
         GUI_TEXT_FONT = 9;
@@ -160,6 +157,11 @@ function OnFrame()
       
       auto_scale_footer_box();
     end
+
+    if (has_gui_changed(guiW)) then
+      update_gui_width_cache();
+      auto_scale_footer_box();
+    end
     
     gui_draw_menus();
     
@@ -173,7 +175,7 @@ function OnFrame()
       LbDraw_Text(guiW, ScreenHeight() - CharHeight2(), string.format("Process Turn: %i", get_turn()), 0);
       LbDraw_Text(guiW, ScreenHeight() - (CharHeight2() << 1), string.format("Script Turn: %i", get_script_turn()), 0);
       
-      --footer_draw_scrolling_msg();
+      footer_draw_scrolling_msg();
     end
     
     
