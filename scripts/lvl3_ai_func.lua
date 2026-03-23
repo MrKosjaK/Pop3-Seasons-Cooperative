@@ -342,8 +342,43 @@ local function _AI1_CONVERT_CHECK(_p, _sturn, difficulty)
   end
 end
 
+local function _AI1_BUILD_DEFENSE_TOWERS_AT_BASE(_p, _t, _d)
+  --if (ai_getv(_p, USER_BASE_STATUS) == 0) then
+    local num_huts = count_huts(_p, false);
+    
+    if (num_huts >= 12) then
+      local num_towers = MIN(FLOOR(_t / 2160) * 2, 5 + (_d * 2));
+      local curr_towers = count_bldgs_of_type_in_area(_p, M_BUILDING_DRUM_TOWER, 230, 94, 13);
+      
+      
+      if (curr_towers < num_towers) then
+        MP_POS.XZ.X = 230 - 13 + G_RANDOM(26);
+        MP_POS.XZ.Z = 94 - 13 + G_RANDOM(26);
+        
+        ai_build_tower(_p, MP_POS.XZ.X, MP_POS.XZ.Z);
+      end
+    end
+  --end
+end
 
-
+local function _AI1_BUILD_DEFENSE_TOWERS_AT_FRONT(_p, _t, _d)
+  --if (ai_getv(_p, USER_BASE_STATUS) == 0) then
+    local num_huts = count_huts(_p, false);
+    
+    if (num_huts >= 8) then
+      local num_towers = MIN(FLOOR(_t / 2160) * 2, 5 + (_d * 2));
+      local curr_towers = count_bldgs_of_type_in_area(_p, M_BUILDING_DRUM_TOWER, 14, 126, 13);
+      
+      
+      if (curr_towers < num_towers) then
+        MP_POS.XZ.X = 14 - 12 + G_RANDOM(24);
+        MP_POS.XZ.Z = 126 - 12 + G_RANDOM(24);
+        
+        ai_build_tower(_p, MP_POS.XZ.X, MP_POS.XZ.Z);
+      end
+    end
+  --end
+end
 
 
 local function _AI2_MANAGE_MY_TROOPS_AMOUNTS(_p, _sturn, difficulty)
@@ -418,6 +453,44 @@ local function _AI2_CHECK_IF_CAN_SABOTAGE_ENEMY(_p, _t, _d)
   end
 end
 
+local function _AI2_BUILD_DEFENSE_TOWERS_AT_BASE(_p, _t, _d)
+  --if (ai_getv(_p, USER_BASE_STATUS) == 0) then
+    local num_huts = count_huts(_p, false);
+    
+    if (num_huts >= 10) then
+      local num_towers = MIN(FLOOR(_t / 2160) * 2, 3 + (_d * 2));
+      local curr_towers = count_bldgs_of_type_in_area(_p, M_BUILDING_DRUM_TOWER, 226, 202, 13);
+      
+      
+      if (curr_towers < num_towers) then
+        MP_POS.XZ.X = 226 - 13 + G_RANDOM(26);
+        MP_POS.XZ.Z = 202 - 13 + G_RANDOM(26);
+        
+        ai_build_tower(_p, MP_POS.XZ.X, MP_POS.XZ.Z);
+      end
+    end
+  --end
+end
+
+local function _AI2_BUILD_DEFENSE_TOWERS_AT_FRONT(_p, _t, _d)
+  --if (ai_getv(_p, USER_BASE_STATUS) == 0) then
+    local num_huts = count_huts(_p, false);
+    
+    if (num_huts >= 8) then
+      local num_towers = MIN(FLOOR(_t / 2160) * 2, 4 + (_d * 2));
+      local curr_towers = count_bldgs_of_type_in_area(_p, M_BUILDING_DRUM_TOWER, 32, 216, 13);
+      
+      
+      if (curr_towers < num_towers) then
+        MP_POS.XZ.X = 32 - 12 + G_RANDOM(24);
+        MP_POS.XZ.Z = 216 - 12 + G_RANDOM(24);
+        
+        ai_build_tower(_p, MP_POS.XZ.X, MP_POS.XZ.Z);
+      end
+    end
+  --end
+end
+
 local function _AI3_MANAGE_MY_TROOPS_AMOUNTS(_p, _sturn, difficulty)
   local num_small_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE);
   local num_medium_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE_2);
@@ -442,6 +515,44 @@ local function _AI3_CONVERT_CHECK(_p, _sturn, difficulty)
   end
 end
 
+local function _AI3_BUILD_DEFENSE_TOWERS_AT_BASE(_p, _t, _d)
+  --if (ai_getv(_p, USER_BASE_STATUS) == 0) then
+    local num_huts = count_huts(_p, false);
+    
+    if (num_huts >= 10) then
+      local num_towers = MIN(FLOOR(_t / 2160) * 2, 4 + (_d * 2));
+      local curr_towers = count_bldgs_of_type_in_area(_p, M_BUILDING_DRUM_TOWER, 144, 242, 13);
+      
+      
+      if (curr_towers < num_towers) then
+        MP_POS.XZ.X = 144 - 13 + G_RANDOM(26);
+        MP_POS.XZ.Z = 242 - 13 + G_RANDOM(26);
+        
+        ai_build_tower(_p, MP_POS.XZ.X, MP_POS.XZ.Z);
+      end
+    end
+  --end
+end
+
+local function _AI3_BUILD_DEFENSE_TOWERS_AT_FRONT(_p, _t, _d)
+  --if (ai_getv(_p, USER_BASE_STATUS) == 0) then
+    local num_huts = count_huts(_p, false);
+    
+    if (num_huts >= 8) then
+      local num_towers = MIN(FLOOR(_t / 2160) * 2, 6 + (_d * 2));
+      local curr_towers = count_bldgs_of_type_in_area(_p, M_BUILDING_DRUM_TOWER, 100, 250, 15);
+      
+      
+      if (curr_towers < num_towers) then
+        MP_POS.XZ.X = 100 - 14 + G_RANDOM(28);
+        MP_POS.XZ.Z = 250 - 14 + G_RANDOM(28);
+        
+        ai_build_tower(_p, MP_POS.XZ.X, MP_POS.XZ.Z);
+      end
+    end
+  --end
+end
+
 local function _AI4_MANAGE_MY_TROOPS_AMOUNTS(_p, _sturn, difficulty)
   local num_small_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE);
   local num_medium_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE_2);
@@ -464,6 +575,44 @@ local function _AI4_CONVERT_CHECK(_p, _sturn, difficulty)
   end
 end
 
+local function _AI4_BUILD_DEFENSE_TOWERS_AT_BASE(_p, _t, _d)
+  --if (ai_getv(_p, USER_BASE_STATUS) == 0) then
+    local num_huts = count_huts(_p, false);
+    
+    if (num_huts >= 10) then
+      local num_towers = MIN(FLOOR(_t / 2160) * 2, 4 + (_d * 2));
+      local curr_towers = count_bldgs_of_type_in_area(_p, M_BUILDING_DRUM_TOWER, 234, 6, 13);
+      
+      
+      if (curr_towers < num_towers) then
+        MP_POS.XZ.X = 234 - 13 + G_RANDOM(26);
+        MP_POS.XZ.Z = 6 - 13 + G_RANDOM(26);
+        
+        ai_build_tower(_p, MP_POS.XZ.X, MP_POS.XZ.Z);
+      end
+    end
+  --end
+end
+
+local function _AI4_BUILD_DEFENSE_TOWERS_AT_FRONT(_p, _t, _d)
+  --if (ai_getv(_p, USER_BASE_STATUS) == 0) then
+    local num_huts = count_huts(_p, false);
+    
+    if (num_huts >= 8) then
+      local num_towers = MIN(FLOOR(_t / 2160) * 2, 6 + (_d * 2));
+      local curr_towers = count_bldgs_of_type_in_area(_p, M_BUILDING_DRUM_TOWER, 32, 12, 15);
+      
+      
+      if (curr_towers < num_towers) then
+        MP_POS.XZ.X = 32 - 14 + G_RANDOM(28);
+        MP_POS.XZ.Z = 12 - 14 + G_RANDOM(28);
+        
+        ai_build_tower(_p, MP_POS.XZ.X, MP_POS.XZ.Z);
+      end
+    end
+  --end
+end
+
 
 local _EVENT_INDEX = 1;
 local _EVENT_TABLE =
@@ -477,6 +626,7 @@ local _EVENT_TABLE =
       {_AI1_CONVERT_CHECK, 128, 128},
       {_AI1_SHAMAN_ATTACK, 8192, 2048}, -- Once in eternity
       {_AI1_COUNT_MY_BALLOONS_IN_BASE, 512, 128},
+      {_AI1_BUILD_DEFENSE_TOWERS_AT_BASE, 4096, 2048},
     },
     
     [AI_MEDIUM] = 
@@ -486,6 +636,8 @@ local _EVENT_TABLE =
       {_AI1_CONVERT_CHECK, 128, 128},
       {_AI1_SHAMAN_ATTACK, 4096, 512},
       {_AI1_COUNT_MY_BALLOONS_IN_BASE, 256, 64},
+      {_AI1_BUILD_DEFENSE_TOWERS_AT_BASE, 2048, 1024},
+      {_AI1_BUILD_DEFENSE_TOWERS_AT_FRONT, 2048, 1024},
     },
     
     [AI_HARD] = 
@@ -497,6 +649,8 @@ local _EVENT_TABLE =
       {_AI1_CONVERT_CHECK, 128, 128},
       {_AI1_SHAMAN_ATTACK, 2048, 1024},
       {_AI1_COUNT_MY_BALLOONS_IN_BASE, 256, 64},
+      {_AI1_BUILD_DEFENSE_TOWERS_AT_BASE, 1024, 512},
+      {_AI1_BUILD_DEFENSE_TOWERS_AT_FRONT, 1024, 1024},
     },
     
     [AI_EXTREME] = 
@@ -508,6 +662,8 @@ local _EVENT_TABLE =
       {_AI1_CONVERT_CHECK, 128, 128},
       {_AI1_SHAMAN_ATTACK, 2048, 512},
       {_AI1_COUNT_MY_BALLOONS_IN_BASE, 256, 64},
+      {_AI1_BUILD_DEFENSE_TOWERS_AT_BASE, 512, 512},
+      {_AI1_BUILD_DEFENSE_TOWERS_AT_FRONT, 1024, 512},
     },
   },
   
@@ -519,6 +675,7 @@ local _EVENT_TABLE =
       {_AI2_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
       {_AI2_CONVERT_CHECK, 128, 128},
       {_AI2_CHECK_IF_CAN_SABOTAGE_ENEMY, 4096, 2048},
+      {_AI2_BUILD_DEFENSE_TOWERS_AT_BASE, 4096, 2048},
     },
     
     [AI_MEDIUM] = 
@@ -527,6 +684,8 @@ local _EVENT_TABLE =
       {_AI2_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
       {_AI2_CONVERT_CHECK, 128, 128},
       {_AI2_CHECK_IF_CAN_SABOTAGE_ENEMY, 4096, 512},
+      {_AI2_BUILD_DEFENSE_TOWERS_AT_BASE, 2048, 1024},
+      {_AI2_BUILD_DEFENSE_TOWERS_AT_FRONT, 2048, 1024},
     },
     
     [AI_HARD] = 
@@ -535,6 +694,8 @@ local _EVENT_TABLE =
       {_AI2_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
       {_AI2_CONVERT_CHECK, 128, 128},
       {_AI2_CHECK_IF_CAN_SABOTAGE_ENEMY, 2048, 1024},
+      {_AI2_BUILD_DEFENSE_TOWERS_AT_BASE, 1024, 512},
+      {_AI2_BUILD_DEFENSE_TOWERS_AT_FRONT, 1024, 1024},
     },
     
     [AI_EXTREME] = 
@@ -543,6 +704,8 @@ local _EVENT_TABLE =
       {_AI2_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
       {_AI2_CONVERT_CHECK, 128, 128},
       {_AI2_CHECK_IF_CAN_SABOTAGE_ENEMY, 1024, 512},
+      {_AI2_BUILD_DEFENSE_TOWERS_AT_BASE, 512, 512},
+      {_AI2_BUILD_DEFENSE_TOWERS_AT_FRONT, 1024, 512},
     },
   },
   
@@ -553,6 +716,7 @@ local _EVENT_TABLE =
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI3_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
       {_AI3_CONVERT_CHECK, 128, 128},
+      {_AI3_BUILD_DEFENSE_TOWERS_AT_BASE, 4096, 2048},
     },
     
     [AI_MEDIUM] = 
@@ -560,6 +724,8 @@ local _EVENT_TABLE =
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI3_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
       {_AI3_CONVERT_CHECK, 128, 128},
+      {_AI3_BUILD_DEFENSE_TOWERS_AT_BASE, 2048, 1024},
+      {_AI3_BUILD_DEFENSE_TOWERS_AT_FRONT, 2048, 1024},
     },
     
     [AI_HARD] = 
@@ -567,6 +733,8 @@ local _EVENT_TABLE =
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI3_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
       {_AI3_CONVERT_CHECK, 128, 128},
+      {_AI3_BUILD_DEFENSE_TOWERS_AT_BASE, 1024, 512},
+      {_AI3_BUILD_DEFENSE_TOWERS_AT_FRONT, 1024, 1024},
     },
     
     [AI_EXTREME] = 
@@ -574,6 +742,8 @@ local _EVENT_TABLE =
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI3_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
       {_AI3_CONVERT_CHECK, 128, 128},
+      {_AI3_BUILD_DEFENSE_TOWERS_AT_BASE, 512, 512},
+      {_AI3_BUILD_DEFENSE_TOWERS_AT_FRONT, 1024, 512},
     },
   },
   
@@ -584,6 +754,7 @@ local _EVENT_TABLE =
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI4_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
       {_AI4_CONVERT_CHECK, 128, 128},
+      {_AI4_BUILD_DEFENSE_TOWERS_AT_BASE, 4096, 2048},
     },
     
     [AI_MEDIUM] = 
@@ -591,6 +762,8 @@ local _EVENT_TABLE =
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI4_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
       {_AI4_CONVERT_CHECK, 128, 128},
+      {_AI4_BUILD_DEFENSE_TOWERS_AT_BASE, 2048, 1024},
+      {_AI4_BUILD_DEFENSE_TOWERS_AT_FRONT, 2048, 1024},
     },
     
     [AI_HARD] = 
@@ -598,6 +771,8 @@ local _EVENT_TABLE =
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI4_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
       {_AI4_CONVERT_CHECK, 128, 128},
+      {_AI4_BUILD_DEFENSE_TOWERS_AT_BASE, 1024, 512},
+      {_AI4_BUILD_DEFENSE_TOWERS_AT_FRONT, 1024, 1024},
     },
     
     [AI_EXTREME] = 
@@ -605,6 +780,8 @@ local _EVENT_TABLE =
       {_AI_CALC_BUCKETS_GENERAL, 688, 32},
       {_AI4_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
       {_AI4_CONVERT_CHECK, 128, 128},
+      {_AI4_BUILD_DEFENSE_TOWERS_AT_BASE, 512, 512},
+      {_AI4_BUILD_DEFENSE_TOWERS_AT_FRONT, 1024, 512},
     },
   }
 }

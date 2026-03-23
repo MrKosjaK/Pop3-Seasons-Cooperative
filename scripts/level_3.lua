@@ -184,6 +184,7 @@ function OnGameStart()
   ai_set_training_people(AI_PLR1_TRIBE, true, 10, 0, 12, 0, 0 + AI_PLR1_DIFF);
   ai_set_populating_info(AI_PLR1_TRIBE, true, true);
   ai_set_defence_rad(AI_PLR1_TRIBE, 7);
+  ai_set_spy_info(AI_PLR1_TRIBE, false, 0, 10, 128, 128);
   
   PLR1_SH = register_shaman_ai(AI_PLR1_TRIBE);
   PLR2_SH = register_shaman_ai(AI_PLR2_TRIBE);
@@ -318,6 +319,7 @@ function OnGameStart()
   ai_set_training_people(AI_PLR3_TRIBE, true, 10, 9, 12, 0, 0 + AI_PLR3_DIFF);
   ai_set_populating_info(AI_PLR3_TRIBE, true, true);
   ai_set_defence_rad(AI_PLR3_TRIBE, 7);
+  ai_set_spy_info(AI_PLR2_TRIBE, false, 0, 10, 128, 128);
 
   if (AI_PLR3_DIFF == AI_EASY) then
     PLR3_SH:set_casting_delay(512);
@@ -356,6 +358,7 @@ function OnGameStart()
   ai_set_training_people(AI_PLR4_TRIBE, true, 0, 12, 12, 0, 0 + AI_PLR4_DIFF);
   ai_set_populating_info(AI_PLR4_TRIBE, true, true);
   ai_set_defence_rad(AI_PLR4_TRIBE, 7);
+  ai_set_spy_info(AI_PLR2_TRIBE, false, 0, 10, 128, 128);
 
   if (AI_PLR4_TRIBE == AI_EASY) then
     PLR4_SH:set_casting_delay(512);
