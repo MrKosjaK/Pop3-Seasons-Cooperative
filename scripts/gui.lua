@@ -542,7 +542,7 @@ _GUI_INIT_ELEMENTS =
   {
     Data = {X = 0.0, Y = -0.43, W = 0.0, H = 0.0},
     JustData = {H = HJ_CENTER, V = VJ_CENTER},
-    Text = "Descendents",
+    Text = "Descendants",
     FuncDraw = _gui_draw_basic_text,
     FuncMaintain = nil,
     OnRes = nil
@@ -1034,6 +1034,24 @@ _GUI_ELEMENTS =
 
 }
 
+function update_gui_width_cache()
+  G_GUI_WIDTH = GFGetGuiWidth();
+end
+
+function has_gui_changed(size)
+  return (G_GUI_WIDTH ~= size);
+end
+
+function update_screen_resolution_cache()
+  CURR_RES_WIDTH = ScreenWidth();
+  CURR_RES_HEIGHT = ScreenHeight();
+end
+
+function has_screen_resolution_changed(w, h)
+  return (w ~= CURR_RES_WIDTH or h ~= CURR_RES_HEIGHT);
+end
+
+G_GUI_WIDTH = 0;
 CURR_RES_WIDTH = 0;
 CURR_RES_HEIGHT = 0;
 
