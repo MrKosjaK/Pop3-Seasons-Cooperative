@@ -88,9 +88,10 @@ function spawn_computer_addons(player_num, difficulty)
   _ADDON_INDEX = _ADDON_INDEX + 1;
 end
 
--- AI DEFINES
+------------------
+-- AI DEFINES   --
+------------------
 -- PLAYER ONE
-
 -- Event vars
 local U1_BALLOONS_AVAILABLE = 1;
 local U1_BALLOONS_IN_BASE_COUNT = 2;
@@ -104,15 +105,24 @@ local U1_BALLOON_FWS_ASSAULT = 68;
 
 
 -- PLAYER TWO
-
 -- Event vars
 
 -- Attack vars
+local U2_SHAMAN_ATTACK = 65;
 local U2_SPY_ATTACKS = {69, 70, 71, 72}; -- Nasty piece of [REDACTED]
 
 -- PLAYER THREE
+-- Event vars
+
+-- Attack vars
+local U3_SHAMAN_ATTACK = 65;
 
 -- PLAYER FOUR
+-- Event vars
+
+-- Attack vars
+local U4_SHAMAN_ATTACK = 65;
+
 
 -- cache
 PLR1_SH = nil;
@@ -491,6 +501,45 @@ local function _AI2_BUILD_DEFENSE_TOWERS_AT_FRONT(_p, _t, _d)
   --end
 end
 
+local function _AI2_SHAMAN_ATTACK(_p, _sturn, difficulty)
+if (_sturn > 360) then
+    local target_enemy = get_random_alive_enemy_player(_p);
+    
+    if (target_enemy ~= -1) then
+      local shaman_result = ai_getv(_p, U2_SHAMAN_ATTACK);
+      
+      if (shaman_result > 50) then
+        if (ai_shaman_available(_p)) then
+          local can_cast_tornado = PLR2_SH:can_cast_offensive_spell(1);
+          
+          if (can_cast_tornado) then
+            ai_set_shaman_away(_p, true);
+            ai_set_aways(_p, 0, 0, 0, 0, 0);
+            ai_set_attack_flags(_p, 1, 0, 0);
+            ai_set_atk_var(_p, U2_SHAMAN_ATTACK);
+            ai_do_attack(_p, target_enemy, 0, ATTACK_BUILDING, INT_NO_SPECIFIC_BUILDING, 9999, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, M_SPELL_LIGHTNING_BOLT, ATTACK_NORMAL, 0, -1, -1, 0);
+            ai_set_aways(_p, 0, 0, 0, 0, 0);
+            ai_set_shaman_away(_p, false);
+            PLR2_SH:set_offensive_mode();
+          end
+        end
+      else
+        if (shaman_result >= 1 and shaman_result < 7) then
+          -- reset variable to check it again
+          ai_setv(_p, U2_SHAMAN_ATTACK, 52);
+          PLR2_SH:set_no_casting();
+        end
+        
+        if (shaman_result == 7) then
+          -- navigation failed... try vehicles?
+          ai_setv(_p, U2_SHAMAN_ATTACK, 52);
+          PLR2_SH:set_no_casting();
+        end
+      end
+    end
+  end
+end
+
 local function _AI3_MANAGE_MY_TROOPS_AMOUNTS(_p, _sturn, difficulty)
   local num_small_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE);
   local num_medium_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE_2);
@@ -553,6 +602,45 @@ local function _AI3_BUILD_DEFENSE_TOWERS_AT_FRONT(_p, _t, _d)
   --end
 end
 
+local function _AI3_SHAMAN_ATTACK(_p, _sturn, difficulty)
+if (_sturn > 360) then
+    local target_enemy = get_random_alive_enemy_player(_p);
+    
+    if (target_enemy ~= -1) then
+      local shaman_result = ai_getv(_p, U3_SHAMAN_ATTACK);
+      
+      if (shaman_result > 50) then
+        if (ai_shaman_available(_p)) then
+          local can_cast_eq = PLR3_SH:can_cast_offensive_spell(1);
+          
+          if (can_cast_eq) then
+            ai_set_shaman_away(_p, true);
+            ai_set_aways(_p, 0, 0, 0, 0, 0);
+            ai_set_attack_flags(_p, 1, 0, 0);
+            ai_set_atk_var(_p, U3_SHAMAN_ATTACK);
+            ai_do_attack(_p, target_enemy, 0, ATTACK_BUILDING, INT_NO_SPECIFIC_BUILDING, 9999, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, ATTACK_NORMAL, 0, -1, -1, 0);
+            ai_set_aways(_p, 0, 0, 0, 0, 0);
+            ai_set_shaman_away(_p, false);
+            PLR3_SH:set_offensive_mode();
+          end
+        end
+      else
+        if (shaman_result >= 1 and shaman_result < 7) then
+          -- reset variable to check it again
+          ai_setv(_p, U3_SHAMAN_ATTACK, 52);
+          PLR3_SH:set_no_casting();
+        end
+        
+        if (shaman_result == 7) then
+          -- navigation failed... try vehicles?
+          ai_setv(_p, U3_SHAMAN_ATTACK, 52);
+          PLR3_SH:set_no_casting();
+        end
+      end
+    end
+  end
+end
+
 local function _AI4_MANAGE_MY_TROOPS_AMOUNTS(_p, _sturn, difficulty)
   local num_small_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE);
   local num_medium_huts = count_bldgs_of_type(_p, M_BUILDING_TEPEE_2);
@@ -611,6 +699,45 @@ local function _AI4_BUILD_DEFENSE_TOWERS_AT_FRONT(_p, _t, _d)
       end
     end
   --end
+end
+
+local function _AI4_SHAMAN_ATTACK(_p, _sturn, difficulty)
+if (_sturn > 360) then
+    local target_enemy = get_random_alive_enemy_player(_p);
+    
+    if (target_enemy ~= -1) then
+      local shaman_result = ai_getv(_p, U4_SHAMAN_ATTACK);
+      
+      if (shaman_result > 50) then
+        if (ai_shaman_available(_p)) then
+          local can_cast_erode = PLR4_SH:can_cast_offensive_spell(1);
+          
+          if (can_cast_erode) then
+            ai_set_shaman_away(_p, true);
+            ai_set_aways(_p, 0, 0, 0, 0, 0);
+            ai_set_attack_flags(_p, 1, 0, 0);
+            ai_set_atk_var(_p, U4_SHAMAN_ATTACK);
+            ai_do_attack(_p, target_enemy, 0, ATTACK_BUILDING, INT_NO_SPECIFIC_BUILDING, 9999, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, M_SPELL_HYPNOTISM, ATTACK_NORMAL, 0, -1, -1, 0);
+            ai_set_aways(_p, 0, 0, 0, 0, 0);
+            ai_set_shaman_away(_p, false);
+            PLR4_SH:set_offensive_mode();
+          end
+        end
+      else
+        if (shaman_result >= 1 and shaman_result < 7) then
+          -- reset variable to check it again
+          ai_setv(_p, U4_SHAMAN_ATTACK, 52);
+          PLR4_SH:set_no_casting();
+        end
+        
+        if (shaman_result == 7) then
+          -- navigation failed... try vehicles?
+          ai_setv(_p, U4_SHAMAN_ATTACK, 52);
+          PLR4_SH:set_no_casting();
+        end
+      end
+    end
+  end
 end
 
 
@@ -676,6 +803,7 @@ local _EVENT_TABLE =
       {_AI2_CONVERT_CHECK, 128, 128},
       {_AI2_CHECK_IF_CAN_SABOTAGE_ENEMY, 4096, 2048},
       {_AI2_BUILD_DEFENSE_TOWERS_AT_BASE, 4096, 2048},
+      {_AI2_SHAMAN_ATTACK, 8192, 2048},
     },
     
     [AI_MEDIUM] = 
@@ -686,6 +814,7 @@ local _EVENT_TABLE =
       {_AI2_CHECK_IF_CAN_SABOTAGE_ENEMY, 4096, 512},
       {_AI2_BUILD_DEFENSE_TOWERS_AT_BASE, 2048, 1024},
       {_AI2_BUILD_DEFENSE_TOWERS_AT_FRONT, 2048, 1024},
+      {_AI2_SHAMAN_ATTACK, 4096, 512},
     },
     
     [AI_HARD] = 
@@ -696,6 +825,7 @@ local _EVENT_TABLE =
       {_AI2_CHECK_IF_CAN_SABOTAGE_ENEMY, 2048, 1024},
       {_AI2_BUILD_DEFENSE_TOWERS_AT_BASE, 1024, 512},
       {_AI2_BUILD_DEFENSE_TOWERS_AT_FRONT, 1024, 1024},
+      {_AI2_SHAMAN_ATTACK, 2048, 1024},
     },
     
     [AI_EXTREME] = 
@@ -706,6 +836,7 @@ local _EVENT_TABLE =
       {_AI2_CHECK_IF_CAN_SABOTAGE_ENEMY, 1024, 512},
       {_AI2_BUILD_DEFENSE_TOWERS_AT_BASE, 512, 512},
       {_AI2_BUILD_DEFENSE_TOWERS_AT_FRONT, 1024, 512},
+      {_AI2_SHAMAN_ATTACK, 2048, 512},
     },
   },
   
@@ -717,6 +848,7 @@ local _EVENT_TABLE =
       {_AI3_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
       {_AI3_CONVERT_CHECK, 128, 128},
       {_AI3_BUILD_DEFENSE_TOWERS_AT_BASE, 4096, 2048},
+      {_AI3_SHAMAN_ATTACK, 8192, 2048},
     },
     
     [AI_MEDIUM] = 
@@ -726,6 +858,7 @@ local _EVENT_TABLE =
       {_AI3_CONVERT_CHECK, 128, 128},
       {_AI3_BUILD_DEFENSE_TOWERS_AT_BASE, 2048, 1024},
       {_AI3_BUILD_DEFENSE_TOWERS_AT_FRONT, 2048, 1024},
+      {_AI3_SHAMAN_ATTACK, 4096, 512},
     },
     
     [AI_HARD] = 
@@ -735,6 +868,7 @@ local _EVENT_TABLE =
       {_AI3_CONVERT_CHECK, 128, 128},
       {_AI3_BUILD_DEFENSE_TOWERS_AT_BASE, 1024, 512},
       {_AI3_BUILD_DEFENSE_TOWERS_AT_FRONT, 1024, 1024},
+      {_AI3_SHAMAN_ATTACK, 2048, 1024},
     },
     
     [AI_EXTREME] = 
@@ -744,6 +878,7 @@ local _EVENT_TABLE =
       {_AI3_CONVERT_CHECK, 128, 128},
       {_AI3_BUILD_DEFENSE_TOWERS_AT_BASE, 512, 512},
       {_AI3_BUILD_DEFENSE_TOWERS_AT_FRONT, 1024, 512},
+      {_AI3_SHAMAN_ATTACK, 2048, 512},
     },
   },
   
@@ -755,6 +890,7 @@ local _EVENT_TABLE =
       {_AI4_MANAGE_MY_TROOPS_AMOUNTS, 688, 32},
       {_AI4_CONVERT_CHECK, 128, 128},
       {_AI4_BUILD_DEFENSE_TOWERS_AT_BASE, 4096, 2048},
+      {_AI4_SHAMAN_ATTACK, 8192, 2048},
     },
     
     [AI_MEDIUM] = 
@@ -764,6 +900,7 @@ local _EVENT_TABLE =
       {_AI4_CONVERT_CHECK, 128, 128},
       {_AI4_BUILD_DEFENSE_TOWERS_AT_BASE, 2048, 1024},
       {_AI4_BUILD_DEFENSE_TOWERS_AT_FRONT, 2048, 1024},
+      {_AI4_SHAMAN_ATTACK, 4096, 512},
     },
     
     [AI_HARD] = 
@@ -773,6 +910,7 @@ local _EVENT_TABLE =
       {_AI4_CONVERT_CHECK, 128, 128},
       {_AI4_BUILD_DEFENSE_TOWERS_AT_BASE, 1024, 512},
       {_AI4_BUILD_DEFENSE_TOWERS_AT_FRONT, 1024, 1024},
+      {_AI4_SHAMAN_ATTACK, 2048, 1024},
     },
     
     [AI_EXTREME] = 
@@ -782,6 +920,7 @@ local _EVENT_TABLE =
       {_AI4_CONVERT_CHECK, 128, 128},
       {_AI4_BUILD_DEFENSE_TOWERS_AT_BASE, 512, 512},
       {_AI4_BUILD_DEFENSE_TOWERS_AT_FRONT, 1024, 512},
+      {_AI4_SHAMAN_ATTACK, 2048, 512},
     },
   }
 }
@@ -802,6 +941,12 @@ function register_ai_events(player_num, difficulty)
     for i = 1,4 do
       ai_setv(player_num, U2_SPY_ATTACKS[i], 52);
     end
+
+    ai_setv(player_num, U2_SHAMAN_ATTACK, 52);
+  elseif (_EVENT_INDEX == 3) then
+    ai_setv(player_num, U3_SHAMAN_ATTACK, 52);
+  elseif (_EVENT_INDEX == 4) then
+    ai_setv(player_num, U4_SHAMAN_ATTACK, 52);
   end
   
   _EVENT_INDEX = _EVENT_INDEX + 1;
