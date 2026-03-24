@@ -341,7 +341,7 @@ function OnGameStart()
 
     PLR3_SH:set_casting_delay(32);
     PLR3_SH:set_offensive_spell_entry(1, M_SPELL_EARTHQUAKE, {1, 2, 3, 5, 6, 7, 8, 15}, 1, SPELL_COST(M_SPELL_EARTHQUAKE) >> 1);
-    PLR3_SH:set_offensive_spell_entry(2, M_SPELL_VOLCANO, {2, 3, 5, 6, 7, 8}, 1, SPELL_COST(M_SPELL_VOLCANO) >> 1);
+    PLR3_SH:set_offensive_spell_entry(2, M_SPELL_VOLCANO, {2, 3, 5, 6, 7, 8}, 1, SPELL_COST(M_SPELL_VOLCANO) << 2);
   end
 
   if (AI_PLR3_DIFF == AI_EXTREME) then
@@ -350,7 +350,7 @@ function OnGameStart()
 
     PLR3_SH:set_casting_delay(16);
     PLR3_SH:set_offensive_spell_entry(1, M_SPELL_EARTHQUAKE, {1, 2, 3, 5, 6, 7, 8, 15}, 2, SPELL_COST(M_SPELL_EARTHQUAKE) >> 2);
-    PLR3_SH:set_offensive_spell_entry(2, M_SPELL_VOLCANO, {2, 3, 5, 6, 7, 8}, 1, SPELL_COST(M_SPELL_VOLCANO) >> 2);
+    PLR3_SH:set_offensive_spell_entry(2, M_SPELL_VOLCANO, {2, 3, 5, 6, 7, 8}, 1, SPELL_COST(M_SPELL_VOLCANO) << 1);
   end
 
   -- ai player 4 stuff
