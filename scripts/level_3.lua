@@ -214,8 +214,8 @@ function OnGameStart()
   end
   
   if (AI_PLR1_DIFF == AI_HARD) then
-    ai_set_spell_entry(AI_PLR1_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 1, 0);
-    ai_set_spell_entry(AI_PLR1_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 1, 1);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 2, 0);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 2, 1);
     ai_set_spell_entry(AI_PLR1_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 1), 64, 4, 0);
     ai_set_spell_entry(AI_PLR1_TRIBE, 3, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 1), 64, 4, 1);
     ai_set_state(AI_PLR1_TRIBE, TRUE, CP_AT_TYPE_REPAIR_BLDGS);
@@ -228,8 +228,8 @@ function OnGameStart()
   end
   
   if (AI_PLR1_DIFF == AI_EXTREME) then
-    ai_set_spell_entry(AI_PLR1_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 1, 0);
-    ai_set_spell_entry(AI_PLR1_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 1, 1);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 2, 0);
+    ai_set_spell_entry(AI_PLR1_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 2, 1);
     ai_set_spell_entry(AI_PLR1_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 4, 0);
     ai_set_spell_entry(AI_PLR1_TRIBE, 3, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 4, 1);
     ai_set_state(AI_PLR1_TRIBE, TRUE, CP_AT_TYPE_REPAIR_BLDGS);
@@ -263,8 +263,8 @@ function OnGameStart()
   end
   
   if (AI_PLR2_DIFF == AI_MEDIUM) then
-    ai_set_spell_entry(AI_PLR2_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE)), 64, 1, 0);
-    ai_set_spell_entry(AI_PLR2_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE)), 64, 1, 1);
+    ai_set_spell_entry(AI_PLR2_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE)), 64, 2, 0);
+    ai_set_spell_entry(AI_PLR2_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE)), 64, 2, 1);
     ai_set_spell_entry(AI_PLR2_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM)), 64, 4, 0);
     ai_set_spell_entry(AI_PLR2_TRIBE, 3, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM)), 64, 4, 1);
     
@@ -278,8 +278,8 @@ function OnGameStart()
   end
   
   if (AI_PLR2_DIFF == AI_HARD) then
-    ai_set_spell_entry(AI_PLR2_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 1, 0);
-    ai_set_spell_entry(AI_PLR2_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 1, 1);
+    ai_set_spell_entry(AI_PLR2_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 2, 0);
+    ai_set_spell_entry(AI_PLR2_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 2, 1);
     ai_set_spell_entry(AI_PLR2_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 1), 64, 4, 0);
     ai_set_spell_entry(AI_PLR2_TRIBE, 3, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 1), 64, 4, 1);
     ai_set_state(AI_PLR2_TRIBE, TRUE, CP_AT_TYPE_REPAIR_BLDGS);
@@ -294,8 +294,8 @@ function OnGameStart()
   end
   
   if (AI_PLR2_DIFF == AI_EXTREME) then
-    ai_set_spell_entry(AI_PLR2_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 1, 0);
-    ai_set_spell_entry(AI_PLR2_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 1, 1);
+    ai_set_spell_entry(AI_PLR2_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 2, 0);
+    ai_set_spell_entry(AI_PLR2_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 2, 1);
     ai_set_spell_entry(AI_PLR2_TRIBE, 2, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 4, 0);
     ai_set_spell_entry(AI_PLR2_TRIBE, 3, M_SPELL_HYPNOTISM, (SPELL_COST(M_SPELL_HYPNOTISM) >> 2), 64, 4, 1);
     ai_set_state(AI_PLR2_TRIBE, TRUE, CP_AT_TYPE_REPAIR_BLDGS);
@@ -336,19 +336,21 @@ function OnGameStart()
   end
 
   if (AI_PLR3_DIFF == AI_HARD) then
-    ai_set_spell_entry(AI_PLR3_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 1, 0);
-    ai_set_spell_entry(AI_PLR3_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 1, 1);
+    ai_set_spell_entry(AI_PLR3_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 2, 0);
+    ai_set_spell_entry(AI_PLR3_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 2, 1);
 
     PLR3_SH:set_casting_delay(32);
     PLR3_SH:set_offensive_spell_entry(1, M_SPELL_EARTHQUAKE, {1, 2, 3, 5, 6, 7, 8, 15}, 1, SPELL_COST(M_SPELL_EARTHQUAKE) >> 1);
+    PLR3_SH:set_offensive_spell_entry(2, M_SPELL_VOLCANO, {2, 3, 5, 6, 7, 8}, 1, SPELL_COST(M_SPELL_VOLCANO) >> 1);
   end
 
   if (AI_PLR3_DIFF == AI_EXTREME) then
-    ai_set_spell_entry(AI_PLR3_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 1, 0);
-    ai_set_spell_entry(AI_PLR3_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 1, 1);
+    ai_set_spell_entry(AI_PLR3_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 2, 0);
+    ai_set_spell_entry(AI_PLR3_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 2, 1);
 
     PLR3_SH:set_casting_delay(16);
     PLR3_SH:set_offensive_spell_entry(1, M_SPELL_EARTHQUAKE, {1, 2, 3, 5, 6, 7, 8, 15}, 2, SPELL_COST(M_SPELL_EARTHQUAKE) >> 2);
+    PLR3_SH:set_offensive_spell_entry(2, M_SPELL_VOLCANO, {2, 3, 5, 6, 7, 8}, 1, SPELL_COST(M_SPELL_VOLCANO) >> 2);
   end
 
   -- ai player 4 stuff
@@ -374,23 +376,26 @@ function OnGameStart()
     ai_set_spell_entry(AI_PLR4_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE)), 64, 3, 1);
 
     PLR4_SH:set_casting_delay(64);
-    PLR4_SH:set_offensive_spell_entry(1, M_SPELL_EROSION, {1, 2, 3, 4, 5, 6, 7, 8, 15}, 1, SPELL_COST(M_SPELL_EROSION));
+    PLR4_SH:set_offensive_spell_entry(1, M_SPELL_SWAMP, {1, 2, 3, 4, 5, 6, 7, 8, 15}, 2, SPELL_COST(M_SPELL_SWAMP));
+    PLR4_SH:set_offensive_spell_entry(2, M_SPELL_EROSION, {1, 2, 3, 5, 6, 7, 8, 15}, 1, SPELL_COST(M_SPELL_EROSION));
   end
 
   if (AI_PLR4_DIFF == AI_HARD) then
-    ai_set_spell_entry(AI_PLR4_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 1, 0);
-    ai_set_spell_entry(AI_PLR4_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 1, 1);
+    ai_set_spell_entry(AI_PLR4_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 2, 0);
+    ai_set_spell_entry(AI_PLR4_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 1), 64, 2, 1);
 
     PLR4_SH:set_casting_delay(32);
-    PLR4_SH:set_offensive_spell_entry(1, M_SPELL_EROSION, {1, 2, 3, 4, 5, 6, 7, 8, 15}, 1, SPELL_COST(M_SPELL_EROSION) >> 1);
+    PLR4_SH:set_offensive_spell_entry(1, M_SPELL_SWAMP, {1, 2, 3, 4, 5, 6, 7, 8, 15}, 2, SPELL_COST(M_SPELL_SWAMP) >> 1);
+    PLR4_SH:set_offensive_spell_entry(2, M_SPELL_EROSION, {1, 2, 3, 5, 6, 7, 8, 15}, 1, SPELL_COST(M_SPELL_EROSION) >> 1);
   end
 
   if (AI_PLR4_DIFF == AI_EXTREME) then
-    ai_set_spell_entry(AI_PLR4_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 1, 0);
-    ai_set_spell_entry(AI_PLR4_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 1, 1);
+    ai_set_spell_entry(AI_PLR4_TRIBE, 0, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 2, 0);
+    ai_set_spell_entry(AI_PLR4_TRIBE, 1, M_SPELL_INSECT_PLAGUE, (SPELL_COST(M_SPELL_INSECT_PLAGUE) >> 2), 64, 2, 1);
 
     PLR4_SH:set_casting_delay(16);
-    PLR4_SH:set_offensive_spell_entry(1, M_SPELL_EROSION, {1, 2, 3, 4, 5, 6, 7, 8, 15}, 2, SPELL_COST(M_SPELL_EROSION) >> 2);
+    PLR4_SH:set_offensive_spell_entry(1, M_SPELL_SWAMP, {1, 2, 3, 4, 5, 6, 7, 8, 15}, 2, SPELL_COST(M_SPELL_SWAMP) >> 2);
+    PLR4_SH:set_offensive_spell_entry(2, M_SPELL_EROSION, {1, 2, 3, 5, 6, 7, 8, 15}, 2, SPELL_COST(M_SPELL_EROSION) >> 2);
   end
 end
 
